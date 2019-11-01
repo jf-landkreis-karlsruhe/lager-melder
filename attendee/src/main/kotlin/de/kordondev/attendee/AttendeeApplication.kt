@@ -14,13 +14,11 @@ class AttendeeApplication {
 	fun init(attendeeRepository: AttendeeRepository) = ApplicationRunner {
 		attendeeRepository.saveAll(listOf(
 				AttendeeEntry(
-					id = 1,
-					firstName = "Iris",
-					lastName = "Muller"
+						firstName = "Iris",
+						lastName = "Muller"
 				), AttendeeEntry(
-					id = 2,
-					firstName = "Karl",
-					lastName = "Smith"
+						firstName = "Karl",
+						lastName = "Smith"
 		)) )
 	}
 }

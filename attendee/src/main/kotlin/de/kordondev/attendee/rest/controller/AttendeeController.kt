@@ -1,10 +1,10 @@
 package de.kordondev.attendee.rest.controller
 
+import de.kordondev.attendee.core.model.NewAttendee
 import de.kordondev.attendee.core.service.AttendeeService
 import de.kordondev.attendee.rest.model.RestAttendee
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RestController
+import de.kordondev.attendee.rest.model.request.RestAttendeeRequest
+import org.springframework.web.bind.annotation.*
 import java.util.concurrent.atomic.AtomicLong
 
 @RestController
@@ -30,5 +30,19 @@ class AttendeeController(
                 firstName = attendee.firstName,
                 lastName = attendee.lastName
         )
+    }
+
+    @PostMapping("/attendee")
+    fun saveAttendee(@RequestBody(required = true) attendee: RestAttendeeRequest): RestAttendee {
+        val savedAttendee = attendeeService.saveAttendee(NewAttendee(
+                firstName = attendee.firstName,
+                lastName = attendee.lastName
+        ))
+        return RestAttendee(
+                id = savedAttendee.id,
+                firstName = savedAttendee.firstName,
+                lastName = savedAttendee.lastName
+        )
+
     }
 }
