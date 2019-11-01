@@ -1,27 +1,32 @@
 package de.kordondev.attendee.core.service
 
 import de.kordondev.attendee.core.model.Attendee
+import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.exception.NotFoundException
 import org.springframework.stereotype.Component
 
 @Component
-class AttendeeService {
-    private val attendeesMock = listOf<Attendee>(
-        Attendee(
-            id = 1,
-            firstName = "Iris",
-            lastName = "Muller"
-        ), Attendee(
-            id = 2,
-            firstName = "Karl",
-            lastName = "Smith"
-    ))
+class AttendeeService (
+        private val attendeeRepository: AttendeeRepository
+) {
 
     fun getAttendees() : List<Attendee> {
-        return attendeesMock
+        return attendeeRepository.findAll().map{ attendee -> Attendee(
+            id = attendee.id,
+            firstName = attendee.firstName,
+            lastName = attendee.lastName
+        ) }.toList()
     }
 
     fun getAttendee(id: Long) : Attendee {
-        return attendeesMock.find { attendee -> attendee.id == id } ?: throw NotFoundException("Attendee with id $id not found")
+        val attendeeById = attendeeRepository.findById(id)?.map { attendee -> Attendee(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName
+            )}
+        if (attendeeById.isPresent) {
+            return attendeeById.get()
+        }
+        throw NotFoundException("Attendee with id $id not found")
     }
 }
