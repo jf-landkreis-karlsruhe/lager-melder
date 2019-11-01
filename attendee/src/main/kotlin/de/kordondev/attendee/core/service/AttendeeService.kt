@@ -1,6 +1,7 @@
 package de.kordondev.attendee.core.service
 
 import de.kordondev.attendee.core.model.Attendee
+import de.kordondev.attendee.exception.NotFoundException
 import org.springframework.stereotype.Component
 
 @Component
@@ -21,6 +22,6 @@ class AttendeeService {
     }
 
     fun getAttendee(id: Long) : Attendee {
-        return attendeesMock.find { attendee -> attendee.id == id }.
+        return attendeesMock.find { attendee -> attendee.id == id } ?: throw NotFoundException("Attendee with id $id not found")
     }
 }

@@ -22,9 +22,13 @@ class AttendeeController(
         ) }
     }
 
-    // ToDo: https://stackoverflow.com/questions/43888003/return-404-for-every-null-response
     @GetMapping("/attendee/{id}")
     fun getAttendee(@PathVariable(value = "id") id: Long): RestAttendee {
-        return attendeeService.getAttendee(id);
+        val attendee = attendeeService.getAttendee(id);
+        return RestAttendee(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName
+        )
     }
 }
