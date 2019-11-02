@@ -39,4 +39,10 @@ class AttendeeService (
                 lastName = savedAttendee.lastName
         ) }
     }
+
+    fun deleteAttendee(id: Long) {
+         attendeeRepository.findByIdOrNull(id)?.let {
+             attendeeRepository.delete(it)
+         } ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
+    }
 }

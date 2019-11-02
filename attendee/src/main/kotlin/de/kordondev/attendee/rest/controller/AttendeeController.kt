@@ -11,8 +11,6 @@ import java.util.concurrent.atomic.AtomicLong
 class AttendeeController(
         private val attendeeService: AttendeeService
 ) {
-    val counter = AtomicLong()
-
     @GetMapping("/attendee")
     fun getAttendees(): List<RestAttendee> {
         return attendeeService.getAttendees().map { attendee -> RestAttendee(
@@ -34,15 +32,18 @@ class AttendeeController(
 
     @PostMapping("/attendee")
     fun saveAttendee(@RequestBody(required = true) attendee: RestAttendeeRequest): RestAttendee {
-        val savedAttendee = attendeeService.saveAttendee(NewAttendee(
+        return attendeeService.saveAttendee(NewAttendee(
                 firstName = attendee.firstName,
                 lastName = attendee.lastName
-        ))
-        return RestAttendee(
+        )).let { savedAttendee -> RestAttendee(
                 id = savedAttendee.id,
                 firstName = savedAttendee.firstName,
                 lastName = savedAttendee.lastName
-        )
+        )}
+    }
 
+    @DeleteMapping("/attendee/{id}")
+    fun deleteAttendee(@PathVariable(value = "id") id: Long) {
+        attendeeService.deleteAttendee(id)
     }
 }
