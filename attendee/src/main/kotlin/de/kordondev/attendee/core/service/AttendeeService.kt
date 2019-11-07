@@ -14,35 +14,26 @@ class AttendeeService (
 ) {
 
     fun getAttendees() : List<Attendee> {
-        return attendeeRepository.findAll().map{ attendee -> Attendee(
-            id = attendee.id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName
-        ) }.toList()
+        return attendeeRepository.findAll()
+                .map{ attendee -> AttendeeEntry.to(attendee) }
+                .toList()
     }
 
     fun getAttendee(id: Long) : Attendee {
-        return attendeeRepository.findByIdOrNull(id)?.let { attendee -> Attendee(
-                id = attendee.id,
-                firstName = attendee.firstName,
-                lastName = attendee.lastName
-        )} ?: throw NotFoundException("Attendee with id $id not found")
+        return attendeeRepository
+                .findByIdOrNull(id)?.let { attendee -> AttendeeEntry.to(attendee) }
+            ?: throw NotFoundException("Attendee with id $id not found")
     }
 
     fun saveAttendee(attendee: NewAttendee) : Attendee {
-        return attendeeRepository.save(AttendeeEntry(
-                firstName = attendee.firstName,
-                lastName = attendee.lastName
-        )).let { savedAttendee -> Attendee(
-                id = savedAttendee.id,
-                firstName = savedAttendee.firstName,
-                lastName = savedAttendee.lastName
-        ) }
+        return attendeeRepository
+                .save(AttendeeEntry.of(attendee))
+                .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
     }
 
     fun deleteAttendee(id: Long) {
-         attendeeRepository.findByIdOrNull(id)?.let {
-             attendeeRepository.delete(it)
-         } ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
+         attendeeRepository.findByIdOrNull(id)
+                 ?.let { attendeeRepository.delete(it) }
+             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
 }
