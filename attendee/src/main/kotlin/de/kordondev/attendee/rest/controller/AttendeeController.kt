@@ -27,10 +27,22 @@ class AttendeeController(
     }
 
     @PostMapping("/attendee")
-    fun saveAttendee(@RequestBody(required = true) attendee: RestAttendeeRequest): RestAttendee {
+    fun addAttendee(@RequestBody(required = true) attendee: RestAttendeeRequest): RestAttendee {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
-                .saveAttendee(NewAttendee(
+                .createAttendee(NewAttendee(
+                        firstName = attendee.firstName,
+                        lastName = attendee.lastName,
+                        department = department
+                ))
+                .let { savedAttendee -> RestAttendee.of(savedAttendee)}
+    }
+
+    @PutMapping("/attendee/{id}")
+    fun saveAttendee(@RequestBody(required = true) attendee: RestAttendeeRequest, @PathVariable(value = "id") id: Long) {
+        val department = departmentService.getDepartment(attendee.departmentId)
+        return attendeeService
+                .saveAttendee(id, NewAttendee(
                         firstName = attendee.firstName,
                         lastName = attendee.lastName,
                         department = department

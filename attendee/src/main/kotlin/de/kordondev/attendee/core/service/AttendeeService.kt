@@ -25,9 +25,17 @@ class AttendeeService (
             ?: throw NotFoundException("Attendee with id $id not found")
     }
 
-    fun saveAttendee(attendee: NewAttendee) : Attendee {
+    fun createAttendee(attendee: NewAttendee) : Attendee {
         return attendeeRepository
                 .save(AttendeeEntry.of(attendee))
+                .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
+    }
+
+    fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
+        val newAttendee = AttendeeEntry.of(attendee)
+        newAttendee.id = id
+        return attendeeRepository
+                .save(newAttendee)
                 .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
     }
 

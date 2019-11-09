@@ -17,7 +17,7 @@ class DepartmentController(
                 .map{ department -> RestDepartment.of(department)}
     }
 
-    @GetMapping("/department/{id")
+    @GetMapping("/department/{id}")
     fun getDepartment(@PathVariable(value = "id") id: Long): RestDepartment {
         print("Hier wird die Methode aufgerufen")
         return departmentService
