@@ -12,4 +12,10 @@ class ExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleNotFoundException() {
     }
+
+    @ExceptionHandler(ExistingDependencyException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handleExistingDependencyException() {
+
+    }
 }

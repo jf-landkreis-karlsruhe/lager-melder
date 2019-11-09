@@ -1,6 +1,7 @@
 package de.kordondev.attendee.core.persistence.entry
 
 import de.kordondev.attendee.core.model.Department
+import de.kordondev.attendee.core.model.NewDepartment
 import javax.persistence.*
 
 @Entity
@@ -17,15 +18,21 @@ data class DepartmentEntry (
         val leaderName: String,
 
         @Column(name = "leaderEMail")
-        val leaderEMail: String,
-
-        @OneToMany(mappedBy = "department")
-        val attendees: List<AttendeeEntry> = listOf()
+        val leaderEMail: String
 ) {
         companion object {
                 fun of(department: Department): DepartmentEntry {
                         return DepartmentEntry(
                                 id = department.id,
+                                name = department.name,
+                                leaderName = department.leaderName,
+                                leaderEMail = department.leaderEMail
+                        )
+                }
+
+                fun of(department: NewDepartment, id: Long = 0): DepartmentEntry {
+                        return DepartmentEntry(
+                                id = id,
                                 name = department.name,
                                 leaderName = department.leaderName,
                                 leaderEMail = department.leaderEMail

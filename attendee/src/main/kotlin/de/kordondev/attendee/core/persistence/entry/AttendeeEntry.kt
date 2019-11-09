@@ -10,7 +10,7 @@ data class AttendeeEntry (
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var id: Long = 0,
+        val id: Long = 0,
 
         @Column(name = "firstName")
         val firstName: String,
@@ -32,7 +32,8 @@ data class AttendeeEntry (
                         )
                 }
 
-                fun of(attendee: NewAttendee) = AttendeeEntry(
+                fun of(attendee: NewAttendee, id: Long = 0) = AttendeeEntry(
+                        id = id,
                         firstName = attendee.firstName,
                         lastName = attendee.lastName,
                         department = DepartmentEntry.of(attendee.department)
