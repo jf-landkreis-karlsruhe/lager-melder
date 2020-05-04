@@ -12,3 +12,4 @@ data class Attendee(
         val lastName: String,
         val department: Department
 )
+

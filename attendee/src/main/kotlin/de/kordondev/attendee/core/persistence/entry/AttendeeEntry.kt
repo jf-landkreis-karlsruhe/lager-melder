@@ -50,3 +50,4 @@ data class AttendeeEntry (
 
         }
 }
+

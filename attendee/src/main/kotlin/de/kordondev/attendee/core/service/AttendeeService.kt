@@ -6,41 +6,50 @@ import de.kordondev.attendee.core.model.NewAttendee
 import de.kordondev.attendee.core.persistence.entry.AttendeeEntry
 import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
+import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.exception.NotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
 @Component
 class AttendeeService (
-        private val attendeeRepository: AttendeeRepository
+        private val attendeeRepository: AttendeeRepository,
+        private val authorityService: AuthorityService
 ) {
 
     fun getAttendees() : Iterable<Attendee> {
         return attendeeRepository.findAll()
-                .map{ attendee -> AttendeeEntry.to(attendee) }
+                .map { attendee -> AttendeeEntry.to(attendee) }
+                .filter { authorityService.hasAuthorityFilter(it) }
     }
 
     fun getAttendee(id: Long) : Attendee {
         return attendeeRepository
-                .findByIdOrNull(id)?.let { attendee -> AttendeeEntry.to(attendee) }
+                .findByIdOrNull(id)
+                ?.let { attendee -> AttendeeEntry.to(attendee) }
+                ?.let { authorityService.hasAuthority(it) }
             ?: throw NotFoundException("Attendee with id $id not found")
     }
 
     fun createAttendee(attendee: NewAttendee) : Attendee {
+        authorityService.hasAuthority(attendee)
         return attendeeRepository
                 .save(AttendeeEntry.of(attendee))
                 .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
     }
 
     fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
-        val attendeeToSave = AttendeeEntry.of(attendee, id)
+        authorityService.hasAuthority(attendee)
         return attendeeRepository
-                .save(attendeeToSave)
+                .save(AttendeeEntry.of(attendee, id))
                 .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
     }
 
     fun deleteAttendee(id: Long) {
          attendeeRepository.findByIdOrNull(id)
+                 ?.let { AttendeeEntry.to(it) }
+                 ?.let { authorityService.hasAuthority(it) }
+                 ?.let { AttendeeEntry.of(it) }
                  ?.let { attendeeRepository.delete(it) }
              ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
@@ -48,7 +57,7 @@ class AttendeeService (
     fun getAttendeesForDepartment(department: Department): Iterable<Attendee> {
         return attendeeRepository
                 .findByDepartment(DepartmentEntry.of(department))
-                .map{ attendee -> AttendeeEntry.to(attendee) };
-
+                .map{ attendee -> AttendeeEntry.to(attendee) }
+                .filter { authorityService.hasAuthorityFilter(it) }
     }
 }
