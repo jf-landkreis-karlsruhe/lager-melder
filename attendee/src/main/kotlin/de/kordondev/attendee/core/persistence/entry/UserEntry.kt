@@ -1,5 +1,6 @@
 package de.kordondev.attendee.core.persistence.entry
 
+import de.kordondev.attendee.core.model.NewUser
 import de.kordondev.attendee.core.model.User
 import javax.persistence.*
 
@@ -27,6 +28,15 @@ data class UserEntry (
                     userName = user.userName,
                     passWord = user.passWord,
                     department = DepartmentEntry.to(user.department)
+            )
+        }
+
+        fun of(user: NewUser): UserEntry {
+            return UserEntry(
+                    role = user.role,
+                    userName = user.userName,
+                    passWord = user.passWord,
+                    department = DepartmentEntry.of(user.department)
             )
         }
     }

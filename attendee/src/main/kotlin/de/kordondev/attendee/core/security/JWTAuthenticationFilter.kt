@@ -10,6 +10,7 @@ import de.kordondev.attendee.core.security.SecurityConstants.EXPIRATION_TIME
 import de.kordondev.attendee.core.security.SecurityConstants.HEADER_STRING
 import de.kordondev.attendee.core.security.SecurityConstants.SECRET
 import de.kordondev.attendee.core.security.SecurityConstants.TOKEN_PREFIX
+import de.kordondev.attendee.rest.model.RestLoginUser
 import de.kordondev.attendee.rest.model.RestUser
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -29,7 +30,7 @@ class JWTAuthenticationFilter(
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         return try {
-            val user = jacksonObjectMapper().readValue<RestUser>(request.inputStream)
+            val user = jacksonObjectMapper().readValue<RestLoginUser>(request.inputStream)
             auth.authenticate(
                     UsernamePasswordAuthenticationToken(
                             user.username,

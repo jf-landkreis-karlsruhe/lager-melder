@@ -11,15 +11,15 @@ import org.springframework.stereotype.Service
 import javax.mail.SendFailedException
 
 @Configuration
-@Service("EmailService")
-class EmailServiceImpl (
+@Service("MailService")
+class MailService (
         @Value("\${application.mail.send}") private val sendMail: Boolean,
         @Value("\${spring.mail.from}") private val sendFrom: String
 ) {
 
     @Autowired
     lateinit var emailSender: JavaMailSender
-    val logger: Logger = LoggerFactory.getLogger(EmailServiceImpl::class.java)
+    val logger: Logger = LoggerFactory.getLogger(MailService::class.java)
 
     fun sendSimpleMessage(to: String, subject: String, text: String) {
         try {

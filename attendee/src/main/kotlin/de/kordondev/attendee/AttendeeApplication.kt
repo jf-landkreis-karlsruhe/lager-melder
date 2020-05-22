@@ -1,6 +1,6 @@
 package de.kordondev.attendee
 
-import de.kordondev.attendee.core.mail.EmailServiceImpl
+import de.kordondev.attendee.core.mail.MailService
 import de.kordondev.attendee.core.persistence.entry.AttendeeEntry
 import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
 import de.kordondev.attendee.core.persistence.entry.Roles
@@ -22,16 +22,10 @@ class AttendeeApplication {
 	val logger: Logger = LoggerFactory.getLogger(AttendeeApplication::class.java)
 
 	@Bean
-	fun init(emailServiceImpl: EmailServiceImpl) = ApplicationRunner {
-		logger.info("emailServiceImpl called")
-		emailServiceImpl.sendSimpleMessage("kordon91@gmail.com", "Testmail", "es hat geklapp")
-	}
-
-	@Bean
-	fun init(attendeeRepository: AttendeeRepository, departmentRepository: DepartmentRepository, userRepository: UserRepository, emailServiceImpl: EmailServiceImpl) = ApplicationRunner {
+	fun init(attendeeRepository: AttendeeRepository, departmentRepository: DepartmentRepository, userRepository: UserRepository, mailService: MailService) = ApplicationRunner {
 		logger.info("database called")
-		emailServiceImpl.sendSimpleMessage("kordon91@gmail.com", "Testmail", "es hat geklapp")
-        logger.info(emailServiceImpl.toString())
+		mailService.sendSimpleMessage("kordon91@gmail.com", "Testmail", "es hat geklapp")
+        logger.info(mailService.toString())
 		val departmentLA = DepartmentEntry(
 				name = "LA",
 				leaderName = "Brian",
