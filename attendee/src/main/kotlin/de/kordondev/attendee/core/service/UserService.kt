@@ -33,7 +33,7 @@ class UserService (
         mailService.sendSimpleMessage(
                 to = user.department.leaderEMail,
                 subject = "Du hast dich erfolgreich angemeldet",
-                text = "Glückwunsch du bist angemeldet, dein Passwort ist: " + user.passWord
+                text = "Glückwunsch du bist angemeldet mit dem Benutzername ${user.userName} für ${user.department.name}, dein Passwort ist: ${user.passWord}"
         )
 
     }

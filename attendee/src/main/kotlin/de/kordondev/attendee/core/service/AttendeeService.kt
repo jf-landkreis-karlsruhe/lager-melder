@@ -1,5 +1,6 @@
 package de.kordondev.attendee.core.service
 
+import de.kordondev.attendee.core.mail.MailService
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
 import de.kordondev.attendee.core.model.NewAttendee
@@ -14,7 +15,8 @@ import org.springframework.stereotype.Component
 @Component
 class AttendeeService (
         private val attendeeRepository: AttendeeRepository,
-        private val authorityService: AuthorityService
+        private val authorityService: AuthorityService,
+        private val mailService: MailService
 ) {
 
     fun getAttendees() : Iterable<Attendee> {
@@ -24,6 +26,10 @@ class AttendeeService (
     }
 
     fun getAttendee(id: Long) : Attendee {
+        // TODO: REMOVE
+        if (id === 1L) {
+            mailService.sendMailWithInlineImage("kordon91@googlemail.com")
+        }
         return attendeeRepository
                 .findByIdOrNull(id)
                 ?.let { attendee -> AttendeeEntry.to(attendee) }

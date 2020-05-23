@@ -24,8 +24,6 @@ class AttendeeApplication {
 	@Bean
 	fun init(attendeeRepository: AttendeeRepository, departmentRepository: DepartmentRepository, userRepository: UserRepository, mailService: MailService) = ApplicationRunner {
 		logger.info("database called")
-		mailService.sendSimpleMessage("kordon91@gmail.com", "Testmail", "es hat geklapp")
-        logger.info(mailService.toString())
 		val departmentLA = DepartmentEntry(
 				name = "LA",
 				leaderName = "Brian",
