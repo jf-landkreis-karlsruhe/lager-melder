@@ -30,10 +30,11 @@ class UserService (
     }
 
     fun sendEmail(user: NewUser) {
-        mailService.sendSimpleMessage(
+        mailService.sendRegistrationMail(
                 to = user.department.leaderEMail,
-                subject = "Du hast dich erfolgreich angemeldet",
-                text = "Glückwunsch du bist angemeldet mit dem Benutzername ${user.userName} für ${user.department.name}, dein Passwort ist: ${user.passWord}"
+                leaderName = user.department.leaderName,
+                username = user.userName,
+                password = user.passWord
         )
 
     }
