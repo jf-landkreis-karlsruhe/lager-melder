@@ -5,14 +5,14 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Configuration
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
-import java.util.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.mail.SendFailedException
 
 @Service("MailService")
@@ -52,14 +52,19 @@ class MailService (
     fun sendMailWithInlineImage(to: String) {
         authorityService.isAdmin()
         val cxt = Context()
-        cxt.setVariable("name", "Ann")
-        cxt.setVariable("subscriptionDate", Date())
-        cxt.setVariable("hobbies", listOf("Cinema", "Sports", "Music"))
+        val hostCity = "Karlsbad"
+        val registrationDeadline = LocalDate.parse("20.05.2020", DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        cxt.setVariable("leaderName", "Ann")
+        cxt.setVariable("hostCity", hostCity)
+        cxt.setVariable("registrationDeadline", registrationDeadline)
+        cxt.setVariable("userName", "AnnUser")
+        cxt.setVariable("password", "xiaeundiat")
+        logger.info("its late $registrationDeadline")
 
         val mimeMessage = this.mailSender.createMimeMessage()
         val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
         message.setFrom(sendFrom)
-        message.setSubject("New userWith image")
+        message.setSubject("Onlineanmeldung Kreiszeltlager in $hostCity eröffnet")
         message.setTo(to)
         val htmlContent = this.htmlTemplateEngine.process(newUserMailTemplate, cxt)
         message.setText(htmlContent, true)

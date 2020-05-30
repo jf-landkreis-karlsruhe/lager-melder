@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.core.env.Environment
 import org.thymeleaf.TemplateEngine
+import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect
 import org.thymeleaf.spring5.SpringTemplateEngine
 import org.thymeleaf.templatemode.TemplateMode
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
@@ -30,28 +31,15 @@ class SpringMailConfig: ApplicationContextAware, EnvironmentAware {
     @Bean
     fun mailTemplateEngine(): TemplateEngine {
         val templateEngine = SpringTemplateEngine()
-        templateEngine.addTemplateResolver(textTemplateResolver())
+        templateEngine.addDialect(Java8TimeDialect())
         templateEngine.addTemplateResolver(htmlTemplateResolver())
         return templateEngine
-    }
-
-    private fun textTemplateResolver(): ITemplateResolver {
-        val templateResolver = ClassLoaderTemplateResolver()
-        templateResolver.order = 1
-        templateResolver.resolvablePatterns = setOf("text/*")
-        templateResolver.prefix = "/mail/"
-        templateResolver.suffix = ".txt"
-        templateResolver.templateMode = TemplateMode.TEXT
-        templateResolver.characterEncoding = "UTF-8"
-        templateResolver.isCacheable = false
-        return templateResolver
     }
 
     private fun htmlTemplateResolver(): ITemplateResolver {
         val templateResolver = ClassLoaderTemplateResolver()
         templateResolver.order = 2
-        templateResolver.resolvablePatterns = setOf("html/*")
-        templateResolver.prefix = "/mail/"
+        templateResolver.prefix = "mail/"
         templateResolver.suffix = ".html"
         templateResolver.templateMode = TemplateMode.HTML
         templateResolver.characterEncoding = "UTF-8"
