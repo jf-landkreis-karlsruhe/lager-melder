@@ -64,7 +64,7 @@ class MailServiceImpl (
                 logger.info("RegistrationMail send to $to")
                 this.mailSender.send(mimeMessage)
             } else {
-                logger.info("New user mail $message", message)
+                logger.info("RegistrationMail send to $to")
             }
         } catch (exception:SendFailedException) {
             logger.error(exception.message)
@@ -99,7 +99,7 @@ class MailServiceImpl (
                 logger.info("Reminder mail send to $to")
                 this.mailSender.send(mimeMessage)
             } else {
-                logger.info("Reminder mail $message", message)
+                logger.info("Reminder mail send to $to")
             }
             return true
         } catch (exception:SendFailedException) {
@@ -132,7 +132,7 @@ class MailServiceImpl (
                 logger.info("Registration finished mail send to $to")
                 this.mailSender.send(mimeMessage)
             } else {
-                logger.info("Registration finished mail $message", message)
+                logger.info("Registration finished mail send to $to")
             }
             return true
         } catch (exception:SendFailedException) {

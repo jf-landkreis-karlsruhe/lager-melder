@@ -1,6 +1,5 @@
 package de.kordondev.attendee.core.service
 
-import de.kordondev.attendee.core.mail.MailServiceImpl
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
 import de.kordondev.attendee.core.model.NewAttendee
@@ -15,8 +14,7 @@ import org.springframework.stereotype.Component
 @Component
 class AttendeeService (
         private val attendeeRepository: AttendeeRepository,
-        private val authorityService: AuthorityService,
-        private val mailServiceImpl: MailServiceImpl
+        private val authorityService: AuthorityService
 ) {
 
     fun getAttendees() : Iterable<Attendee> {
