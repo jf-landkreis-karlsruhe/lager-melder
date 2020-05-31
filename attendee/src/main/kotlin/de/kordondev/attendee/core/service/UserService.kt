@@ -1,6 +1,6 @@
 package de.kordondev.attendee.core.service
 
-import de.kordondev.attendee.core.mail.MailService
+import de.kordondev.attendee.core.mail.MailServiceImpl
 import de.kordondev.attendee.core.model.NewUser
 import de.kordondev.attendee.core.model.User
 import de.kordondev.attendee.core.persistence.entry.UserEntry
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 class UserService (
         private val userRepository: UserRepository,
         private val authorityService: AuthorityService,
-        private val mailService: MailService,
+        private val mailServiceImpl: MailServiceImpl,
         private val bCryptPasswordEncoder: BCryptPasswordEncoder
     ) {
     fun createUser(user: NewUser) : User {
@@ -30,7 +30,7 @@ class UserService (
     }
 
     fun sendEmail(user: NewUser) {
-        mailService.sendRegistrationMail(
+        mailServiceImpl.sendRegistrationMail(
                 to = user.department.leaderEMail,
                 leaderName = user.department.leaderName,
                 username = user.userName,

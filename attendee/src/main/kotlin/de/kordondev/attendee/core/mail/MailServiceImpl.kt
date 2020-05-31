@@ -18,8 +18,8 @@ import javax.mail.SendFailedException
 
 
 
-@Service("MailService")
-class MailService (
+@Service("MailServiceImpl")
+class MailServiceImpl (
         @Value("\${application.mail.send}") private val sendMail: Boolean,
         @Value("\${spring.mail.from}") private val sendFrom: String,
         @Value("\${data.kreiszeltlager.hostCity}") private val hostCity: String,
@@ -31,7 +31,7 @@ class MailService (
     private lateinit var mailSender: JavaMailSender
     @Autowired
     private lateinit var htmlTemplateEngine: TemplateEngine
-    private val logger: Logger = LoggerFactory.getLogger(MailService::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(MailServiceImpl::class.java)
     private val newUserMailTemplate = "new-user"
     private val reminderMailTemplate = "reminder"
     private val registrationFinishedTemplate = "registration-finished"
@@ -71,7 +71,7 @@ class MailService (
         }
     }
 
-    fun sendReminderMail(to: String, leaderName: String) {
+    fun sendReminderMail(to: String, leaderName: String): Boolean {
         try {
             authorityService.isAdmin()
             val headerLogoName = "kreiszeltlager-logo.jpg"
@@ -101,12 +101,14 @@ class MailService (
             } else {
                 logger.info("Reminder mail $message", message)
             }
+            return true
         } catch (exception:SendFailedException) {
             logger.error(exception.message)
+            return false
         }
     }
 
-    fun sendRegistrationFinishedMail(to: String, leaderName: String) {
+    fun sendRegistrationFinishedMail(to: String, leaderName: String): Boolean {
         try {
             authorityService.isAdmin()
             val headerLogoName = "kreiszeltlager-logo.jpg"
@@ -132,8 +134,10 @@ class MailService (
             } else {
                 logger.info("Registration finished mail $message", message)
             }
+            return true
         } catch (exception:SendFailedException) {
             logger.error(exception.message)
+            return false
         }
     }
 }
