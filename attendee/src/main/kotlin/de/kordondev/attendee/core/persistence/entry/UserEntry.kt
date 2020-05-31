@@ -43,5 +43,5 @@ data class UserEntry (
 }
 
 enum class Roles {
-    USER, ADMIN
+    USER, ADMIN, SPECIALIZED_FIELD_DIRECTOR
 }
