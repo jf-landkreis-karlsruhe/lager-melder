@@ -28,7 +28,7 @@ class AttendeeService (
     fun getAttendee(id: Long) : Attendee {
         // TODO: REMOVE
         if (id === 1L) {
-            mailService.sendReminderMail("kordon91@googlemail.com", "Arn")
+            mailService.sendRegistrationFinishedMail("kordon91@googlemail.com", "Arn")
         }
         return attendeeRepository
                 .findByIdOrNull(id)

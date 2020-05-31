@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:remove="all">Onlineanmeldung zum Kreiszeltlager beendet</title>
+</head>
+<body>
+<img style="width: 100%" src="logo.jpg" th:src="|cid:${headerLogo}|" />
+<p>
+    Hallo <span th:text="${leaderName}"></span>,<br/>
+    die Onlineanmeldung zum Kreiszeltlager der Jugendfeuerwehr Landkreis Karlsruhe in <span th:text="${hostCity}"></span> ist nun abgeschlossen. Falls du eine Liste mit deinen angemeldeten Betreuern und Teilnehmern benötigst, logge dich bitte ein und drucke die Seite mit den Anmeldungen aus.
+</p>
+<p>
+    Kameradschaftliche Grüße,<br/>
+    euer Fachgebietsleiter Lager- und Fahrten
+</p>
+
+</body>
+</html>

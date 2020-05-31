@@ -34,6 +34,7 @@ class MailService (
     private val logger: Logger = LoggerFactory.getLogger(MailService::class.java)
     private val newUserMailTemplate = "new-user"
     private val reminderMailTemplate = "reminder"
+    private val registrationFinishedTemplate = "registration-finished"
 
     fun sendRegistrationMail(to: String, leaderName: String, username: String, password: String) {
         try {
@@ -95,10 +96,41 @@ class MailService (
             message.addInline(headerLogoName, headerLogo);
 
             if (sendMail) {
-                logger.info("Reminder Mail send to $to")
+                logger.info("Reminder mail send to $to")
                 this.mailSender.send(mimeMessage)
             } else {
-                logger.info("New user mail $message", message)
+                logger.info("Reminder mail $message", message)
+            }
+        } catch (exception:SendFailedException) {
+            logger.error(exception.message)
+        }
+    }
+
+    fun sendRegistrationFinishedMail(to: String, leaderName: String) {
+        try {
+            authorityService.isAdmin()
+            val headerLogoName = "kreiszeltlager-logo.jpg"
+            val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
+
+            val cxt = Context()
+            cxt.setVariable("leaderName", leaderName)
+            cxt.setVariable("hostCity", hostCity)
+            cxt.setVariable("headerLogo", headerLogoName);
+
+            val mimeMessage = this.mailSender.createMimeMessage()
+            val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
+            message.setFrom(sendFrom)
+            message.setSubject("Onlineanmeldung Kreiszeltlager in $hostCity abgeschlossen")
+            message.setTo(to)
+            val htmlContent = this.htmlTemplateEngine.process(registrationFinishedTemplate, cxt)
+            message.setText(htmlContent, true)
+            message.addInline(headerLogoName, headerLogo);
+
+            if (sendMail) {
+                logger.info("Registration finished mail send to $to")
+                this.mailSender.send(mimeMessage)
+            } else {
+                logger.info("Registration finished mail $message", message)
             }
         } catch (exception:SendFailedException) {
             logger.error(exception.message)
