@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
+import org.springframework.util.ResourceUtils
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.mail.SendFailedException
+
+
 
 @Service("MailService")
 class MailService (
@@ -33,13 +36,17 @@ class MailService (
     fun sendRegistrationMail(to: String, leaderName: String, username: String, password: String) {
         try {
             authorityService.isAdmin()
+            val headerLogoName = "kreiszeltlager-logo.jpg"
+            val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
+
             val cxt = Context()
             val registrationDeadlineDate = LocalDate.parse(registrationDeadline, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-            cxt.setVariable("leaderName", "Ann")
+            cxt.setVariable("leaderName", leaderName)
             cxt.setVariable("hostCity", hostCity)
             cxt.setVariable("registrationDeadline", registrationDeadlineDate)
             cxt.setVariable("username", username)
             cxt.setVariable("password", password)
+            cxt.setVariable("headerLogo", headerLogoName);
 
             val mimeMessage = this.mailSender.createMimeMessage()
             val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
@@ -48,8 +55,10 @@ class MailService (
             message.setTo(to)
             val htmlContent = this.htmlTemplateEngine.process(newUserMailTemplate, cxt)
             message.setText(htmlContent, true)
+            message.addInline(headerLogoName, headerLogo);
 
             if (sendMail) {
+                logger.info("RegistrationMail send to $to")
                 this.mailSender.send(mimeMessage)
             } else {
                 logger.info("New user mail $message", message)

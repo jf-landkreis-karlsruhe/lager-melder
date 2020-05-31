@@ -26,6 +26,10 @@ class AttendeeService (
     }
 
     fun getAttendee(id: Long) : Attendee {
+        // TODO: REMOVE
+        if (id === 1L) {
+            mailService.sendRegistrationMail("kordon91@googlemail.com", "Arn", "use", "passss")
+        }
         return attendeeRepository
                 .findByIdOrNull(id)
                 ?.let { attendee -> AttendeeEntry.to(attendee) }
