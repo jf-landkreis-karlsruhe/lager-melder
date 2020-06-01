@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">Anmeldedaten für das Kreiszeltlager</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<img style="width: 100%" src="logo.jpg" th:src="|cid:${headerLogo}|" />
+<p>
+    Hallo <span th:text="${leaderName}"></span>,<br/>
+    die Onlineanmeldung zum Kreiszeltlager der Jugendfeuerwehr Landkreis Karlsruhe in <span th:text="${hostCity}"></span> ist ab sofort freigeschalten.
+</p>
+<p>
+    Hier sind deine Logindaten:
+<dl>
+    <dt>Benutzername:</dt>
+    <dd><span th:text="${username}"></span></dd>
+    <dt>Passwort:</dt>
+    <dd><span th:text="${password}"></span></dd>
+</dl>
+</p>
+
+<p>
+    Der Login ist ber die URL: https://anmeldung.jugendfeuerwehrlager.de möglich. <br/>
+    Die eingegeben Teilnehmerdaten sind bis zum Anmeldeschluss am <span th:text="${#temporals.format(registrationDeadline, 'dd.MM.yyyy')}"></span> editier- und löschbar.
+</p>
+<p>
+    Kameradschaftliche Grüße,<br/>
+    euer Fachgebietsleiter Lager- und Fahrten
+</p>
+</body>
+</html>

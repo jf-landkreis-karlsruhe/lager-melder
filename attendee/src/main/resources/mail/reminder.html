@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:remove="all">Erinnerung an die Kreiszeltlageranmeldung</title>
+</head>
+<body>
+<img style="width: 100%" src="logo.jpg" th:src="|cid:${headerLogo}|" />
+<p>
+    Hallo <span th:text="${leaderName}"></span>,<br/>
+    die Onlineanmeldung zum Kreiszeltlager der Jugendfeuerwehr Landkreis Karlsruhe in <span th:text="${hostCity}"></span> ist noch <span th:text="${daysLeft}"></span> Tage offen, daher jetzt schnell anmelden.
+</p>
+<p>
+    Der Login ist über die URL: https://anmeldung.jugendfeuerwehrlager.de möglich.<br/>
+    Die eingegeben Teilnehmerdaten sind bis zum Anmeldeschluss am <span th:text="${#temporals.format(registrationDeadline, 'dd.MM.yyyy')}"></span> um 23:00 Uhr editier- und löschbar.
+</p>
+<p>
+    Anhand der dann angemeldeten Teilnehmer werden auch die T-Shirts bestellt.<br/>
+    Sollte es im Nachhinein noch zu Änderungen kommen, diese bitte an fgl.zeltlager@jf-landkreis-karlsruhe.de schicken.
+</p>
+<p>
+    Kameradschaftliche Grüße,<br/>
+    euer Fachgebietsleiter Lager- und Fahrten
+</p>
+
+</p>
+</body>
+</html>

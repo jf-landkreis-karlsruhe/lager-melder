@@ -14,7 +14,7 @@ class ExceptionHandler {
     fun handleNotFoundException() {
     }
 
-    @ExceptionHandler(ExistingDependencyException::class)
+    @ExceptionHandler(ExistingDependencyException::class, ResourceAlreadyExistsException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
     fun handleExistingDependencyException() {
     }
