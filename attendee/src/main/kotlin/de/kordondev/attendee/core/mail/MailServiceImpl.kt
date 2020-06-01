@@ -60,11 +60,9 @@ class MailServiceImpl (
             message.setText(htmlContent, true)
             message.addInline(headerLogoName, headerLogo);
 
+            logger.info("RegistrationMail send to $to")
             if (sendMail) {
-                logger.info("RegistrationMail send to $to")
                 this.mailSender.send(mimeMessage)
-            } else {
-                logger.info("RegistrationMail send to $to")
             }
         } catch (exception:SendFailedException) {
             logger.error(exception.message)
@@ -95,11 +93,9 @@ class MailServiceImpl (
             message.setText(htmlContent, true)
             message.addInline(headerLogoName, headerLogo);
 
+            logger.info("Reminder mail send to $to")
             if (sendMail) {
-                logger.info("Reminder mail send to $to")
                 this.mailSender.send(mimeMessage)
-            } else {
-                logger.info("Reminder mail send to $to")
             }
             return true
         } catch (exception:SendFailedException) {
@@ -128,11 +124,9 @@ class MailServiceImpl (
             message.setText(htmlContent, true)
             message.addInline(headerLogoName, headerLogo);
 
+            logger.info("Registration finished mail send to $to")
             if (sendMail) {
-                logger.info("Registration finished mail send to $to")
                 this.mailSender.send(mimeMessage)
-            } else {
-                logger.info("Registration finished mail send to $to")
             }
             return true
         } catch (exception:SendFailedException) {

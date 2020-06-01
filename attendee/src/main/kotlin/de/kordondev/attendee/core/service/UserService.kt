@@ -10,6 +10,7 @@ import de.kordondev.attendee.exception.ResourceAlreadyExistsException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 
+
 @Component
 class UserService (
         private val userRepository: UserRepository,
@@ -17,6 +18,8 @@ class UserService (
         private val mailServiceImpl: MailServiceImpl,
         private val bCryptPasswordEncoder: BCryptPasswordEncoder
     ) {
+
+
     fun createUser(user: NewUser) : User {
         authorityService.isAdmin()
         userRepository
@@ -36,7 +39,5 @@ class UserService (
                 username = user.userName,
                 password = user.passWord
         )
-
     }
-
 }

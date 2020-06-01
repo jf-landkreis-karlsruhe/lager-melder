@@ -16,7 +16,6 @@ class AttendeeService (
         private val attendeeRepository: AttendeeRepository,
         private val authorityService: AuthorityService
 ) {
-
     fun getAttendees() : Iterable<Attendee> {
         return attendeeRepository.findAll()
                 .map { attendee -> AttendeeEntry.to(attendee) }

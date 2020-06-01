@@ -9,3 +9,6 @@ cd attendee
 ./mvnw spring-boot:run
 ```
 
+## Customation
+* in the backend in `resource/static/kreiszeltlager-logo.jpg` paste the current logo for the header
+

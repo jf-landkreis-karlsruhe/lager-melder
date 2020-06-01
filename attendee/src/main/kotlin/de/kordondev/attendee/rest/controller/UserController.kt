@@ -24,9 +24,9 @@ class UserController (
         return userService
                 .createUser(NewUser(
                         userName = user.username,
-                        passWord = user.password,
                         role = Roles.valueOf(user.role),
-                        department = department
+                        department = department,
+                        passWord = user.password!!
                 ))
                 .let { savedUser -> RestUser.of(savedUser) }
     }
