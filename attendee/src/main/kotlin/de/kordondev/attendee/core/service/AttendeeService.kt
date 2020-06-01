@@ -5,7 +5,6 @@ import de.kordondev.attendee.core.model.Department
 import de.kordondev.attendee.core.model.NewAttendee
 import de.kordondev.attendee.core.persistence.entry.AttendeeEntry
 import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
-import de.kordondev.attendee.core.persistence.entry.TShirtSize
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.exception.NotFoundException
@@ -24,8 +23,6 @@ class AttendeeService (
     }
 
     fun getAttendee(id: Long) : Attendee {
-        val t = TShirtSize.ONE_HUNDRED_SIXTY_FOUR;
-
         return attendeeRepository
                 .findByIdOrNull(id)
                 ?.let { AttendeeEntry.to(it) }
