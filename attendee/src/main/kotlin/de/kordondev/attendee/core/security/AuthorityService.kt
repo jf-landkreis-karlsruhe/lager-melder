@@ -61,4 +61,21 @@ class AuthorityService {
             throw AccessDeniedException("You need to have the role admin")
         }
     }
+
+    fun isSpecializedFieldDirectorFilter(): Boolean {
+        return SecurityContextHolder
+                .getContext()
+                .authentication
+                .authorities
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch { it == Roles.SPECIALIZED_FIELD_DIRECTOR.toString() || it == Roles.ADMIN.toString() }
+    }
+
+    fun isSpecializedFieldDirector() {
+        if (!isSpecializedFieldDirectorFilter()) {
+            throw AccessDeniedException("You need to have the role specialized field director")
+        }
+
+    }
 }
