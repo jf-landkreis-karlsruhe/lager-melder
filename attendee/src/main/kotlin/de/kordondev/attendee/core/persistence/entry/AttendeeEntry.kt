@@ -18,6 +18,21 @@ data class AttendeeEntry (
         @Column(name = "lastName")
         val lastName: String,
 
+        @Column(name = "birthday")
+        val birthday: String,
+
+        @Column(name = "food")
+        val food: Food,
+
+        @Column(name = "t_shirt_size")
+        val tShirtSize: TShirtSize,
+
+        @Column(name = "additional_information")
+        val additionalInformation: String,
+
+        @Column(name = "role")
+        val role: AttendeeRole,
+
         @ManyToOne
         @JoinColumn(name = "department")
         val department: DepartmentEntry
@@ -28,7 +43,12 @@ data class AttendeeEntry (
                                 id = attendee.id,
                                 firstName = attendee.firstName,
                                 lastName = attendee.lastName,
-                                department = DepartmentEntry.of(attendee.department)
+                                department = DepartmentEntry.of(attendee.department),
+                                birthday = attendee.birthday,
+                                food = attendee.food,
+                                tShirtSize = attendee.tShirtSize,
+                                additionalInformation = attendee.additionalInformation,
+                                role = attendee.role
                         )
                 }
 
@@ -36,7 +56,12 @@ data class AttendeeEntry (
                         id = id,
                         firstName = attendee.firstName,
                         lastName = attendee.lastName,
-                        department = DepartmentEntry.of(attendee.department)
+                        department = DepartmentEntry.of(attendee.department),
+                        birthday = attendee.birthday,
+                        food = attendee.food,
+                        tShirtSize = attendee.tShirtSize,
+                        additionalInformation = attendee.additionalInformation,
+                        role = attendee.role
                 )
 
                 fun to(attendeeEntry: AttendeeEntry): Attendee {
@@ -44,10 +69,16 @@ data class AttendeeEntry (
                                 id = attendeeEntry.id,
                                 firstName = attendeeEntry.firstName,
                                 lastName = attendeeEntry.lastName,
-                                department = DepartmentEntry.to(attendeeEntry.department)
+                                department = DepartmentEntry.to(attendeeEntry.department),
+                                birthday = attendeeEntry.birthday,
+                                food = attendeeEntry.food,
+                                tShirtSize = attendeeEntry.tShirtSize,
+                                additionalInformation = attendeeEntry.additionalInformation,
+                                role = attendeeEntry.role
                         )
                 }
 
         }
 }
+
 

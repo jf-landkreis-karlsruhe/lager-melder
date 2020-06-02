@@ -2,7 +2,10 @@ package de.kordondev.attendee.core.security
 
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
+import de.kordondev.attendee.core.persistence.entry.AttendeeRole
+import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.Roles
+import de.kordondev.attendee.core.persistence.entry.TShirtSize
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -132,7 +135,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(10L, "att", "endee", dep)
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
         assertThat(authorityService.hasAuthorityFilter(attendee)).isEqualTo(true)
     }
 
@@ -144,7 +147,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(10L, "att", "endee", dep)
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
         assertThat(authorityService.hasAuthorityFilter(attendee)).isEqualTo(false)
     }
 
@@ -156,7 +159,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(10L, "att", "endee", dep)
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
         assertThat(authorityService.hasAuthorityFilter(attendee)).isEqualTo(true)
     }
 
@@ -168,7 +171,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(10L, "att", "endee", dep)
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
         assertThat(authorityService.hasAuthorityFilter(attendee)).isEqualTo(true)
     }
 
@@ -181,7 +184,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(10L, "att", "endee", dep)
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
         assertThat(authorityService.hasAuthority(attendee)).isEqualTo(attendee)
     }
 
@@ -193,7 +196,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(10L, "att", "endee", dep)
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
         authorityService.hasAuthority(attendee)
     }
 
@@ -205,7 +208,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(10L, "att", "endee", dep)
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
         assertThat(authorityService.hasAuthority(attendee)).isEqualTo(attendee)
     }
 
@@ -217,7 +220,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(10L, "att", "endee", dep)
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
         assertThat(authorityService.hasAuthority(attendee)).isEqualTo(attendee)
     }
 

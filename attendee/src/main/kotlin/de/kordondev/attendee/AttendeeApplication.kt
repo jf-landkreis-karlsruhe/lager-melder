@@ -1,10 +1,7 @@
 package de.kordondev.attendee
 
 import de.kordondev.attendee.core.mail.MailServiceImpl
-import de.kordondev.attendee.core.persistence.entry.AttendeeEntry
-import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
-import de.kordondev.attendee.core.persistence.entry.Roles
-import de.kordondev.attendee.core.persistence.entry.UserEntry
+import de.kordondev.attendee.core.persistence.entry.*
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.persistence.repository.DepartmentRepository
 import de.kordondev.attendee.core.persistence.repository.UserRepository
@@ -41,11 +38,21 @@ class AttendeeApplication {
 				AttendeeEntry(
 						firstName = "Iris",
 						lastName = "Muller",
-                		department = departmentLA
+                		department = departmentLA,
+						birthday = "1992-12-07",
+						food = Food.ALLERGY,
+						tShirtSize = TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
+						additionalInformation = "Youth, 164, Allergy",
+						role = AttendeeRole.YOUTH
 				), AttendeeEntry(
 						firstName = "Karl",
 						lastName = "Smith",
-						department = departmentLA
+						department = departmentLA,
+						birthday = "1993-12-07",
+						food = Food.NONE,
+						tShirtSize = TShirtSize.M,
+						additionalInformation = "Youth, M, No food",
+						role = AttendeeRole.YOUTH
 				)
 		))
 

@@ -1,6 +1,5 @@
 package de.kordondev.attendee.rest.controller
 
-import de.kordondev.attendee.core.model.NewAttendee
 import de.kordondev.attendee.core.service.AttendeeService
 import de.kordondev.attendee.core.service.DepartmentService
 import de.kordondev.attendee.rest.model.RestAttendee
@@ -30,11 +29,7 @@ class AttendeeController(
     fun addAttendee(@RequestBody(required = true) attendee: RestAttendeeRequest): RestAttendee {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
-                .createAttendee(NewAttendee(
-                        firstName = attendee.firstName,
-                        lastName = attendee.lastName,
-                        department = department
-                ))
+                .createAttendee(RestAttendeeRequest.to(attendee, department))
                 .let { savedAttendee -> RestAttendee.of(savedAttendee)}
     }
 
@@ -42,11 +37,7 @@ class AttendeeController(
     fun saveAttendee(@RequestBody(required = true) attendee: RestAttendeeRequest, @PathVariable("id") id: Long) {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
-                .saveAttendee(id, NewAttendee(
-                        firstName = attendee.firstName,
-                        lastName = attendee.lastName,
-                        department = department
-                ))
+                .saveAttendee(id, RestAttendeeRequest.to(attendee, department))
                 .let { savedAttendee -> RestAttendee.of(savedAttendee)}
     }
 
