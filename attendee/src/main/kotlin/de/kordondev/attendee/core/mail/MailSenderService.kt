@@ -18,20 +18,17 @@ import javax.mail.SendFailedException
 
 
 
-@Service("MailServiceImpl")
-class MailServiceImpl (
+@Service("MailSenderService")
+class MailSenderService (
         @Value("\${application.mail.send}") private val sendMail: Boolean,
         @Value("\${spring.mail.from}") private val sendFrom: String,
         @Value("\${data.kreiszeltlager.hostCity}") private val hostCity: String,
         @Value("\${data.kreiszeltlager.registrationDeadline}") private val registrationDeadline: String,
-        private val authorityService: AuthorityService
+        private val authorityService: AuthorityService,
+        private val mailSender: JavaMailSender,
+        private val htmlTemplateEngine: TemplateEngine
 ) {
-
-    @Autowired
-    private lateinit var mailSender: JavaMailSender
-    @Autowired
-    private lateinit var htmlTemplateEngine: TemplateEngine
-    private val logger: Logger = LoggerFactory.getLogger(MailServiceImpl::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(MailSenderService::class.java)
     private val newUserMailTemplate = "new-user"
     private val reminderMailTemplate = "reminder"
     private val registrationFinishedTemplate = "registration-finished"

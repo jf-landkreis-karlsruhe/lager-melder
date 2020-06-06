@@ -16,28 +16,28 @@ class DepartmentController(
     fun getDepartments(): List<RestDepartment> {
         return departmentService
                 .getDepartments()
-                .map{ department -> RestDepartment.of(department)}
+                .map{ RestDepartment.of(it)}
     }
 
     @GetMapping("/department/{id}")
     fun getDepartment(@PathVariable(value = "id") id: Long): RestDepartment {
         return departmentService
                 .getDepartment(id)
-                .let{ department -> RestDepartment.of(department)}
+                .let{ RestDepartment.of(it)}
     }
 
     @PostMapping("/department")
     fun addDepartment(@RequestBody(required = true) department: RestDepartmentRequest): RestDepartment {
         return departmentService
                 .createDepartment(RestDepartmentRequest.to(department))
-                .let { savedDepartment -> RestDepartment.of(savedDepartment) }
+                .let { RestDepartment.of(it) }
     }
 
     @PutMapping("/department/{id}")
     fun saveDepartment(@RequestBody(required = true) department: RestDepartmentRequest, @PathVariable("id") id: Long): RestDepartment {
         return departmentService
                 .saveDepartment(id, RestDepartmentRequest.to(department))
-                .let { savedDepartment -> RestDepartment.of(savedDepartment) }
+                .let { RestDepartment.of(it) }
     }
 
     @DeleteMapping("/department/{id}")
@@ -49,7 +49,7 @@ class DepartmentController(
     fun getAttendeesForDepartment(@PathVariable(value = "id") id: Long): Iterable<RestAttendee> {
         return departmentService
                 .getDepartment(id)
-                .let { department -> attendeeService.getAttendeesForDepartment(department) }
+                .let { attendeeService.getAttendeesForDepartment(it) }
                 .let { attendees -> attendees.map { attendee -> RestAttendee.of(attendee) } }
     }
 }
