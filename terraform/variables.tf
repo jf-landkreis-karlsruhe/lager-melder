@@ -1,10 +1,11 @@
 variable "prefix" {
   description = "The prefix used for all resources in this example"
-  default     = "xl"
+  default     = "lager-melder"
 }
 
 variable "location" {
   description = "The Azure location where all resources in this example should be created"
+  default = "northeurope"
 }
 
 variable "subscription_id" {
@@ -17,8 +18,10 @@ variable "my_sql_master_password" {
 
 variable "docker_image" {
   description = "Docker image name"
+  default = "kordondev/lager-melder"
 }
 
 variable "docker_image_tag" {
   description = "Docker image tag"
+  default = "latest"
 }

@@ -28,6 +28,7 @@ resource "azurerm_app_service" "main" {
   app_settings = {
     "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = "false"
     "DOCKER_REGISTRY_SERVER_URL"          = "https://index.docker.io"
+    "WEBSITES_PORT"                       = 8080
 
     # These are app specific environment variables
     "SPRING_PROFILES_ACTIVE"     = "prod,swagger"
