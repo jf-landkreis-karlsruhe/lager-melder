@@ -27,7 +27,7 @@ class DepartmentService (
         authorityService.isAdmin()
         return departmentRepository
                 .findByIdOrNull(id)
-                ?.let {  DepartmentEntry.to(it) }
+                ?.let { DepartmentEntry.to(it) }
                 ?.let { authorityService.hasAuthority(it) }
             ?: throw NotFoundException("Attendee with id $id not found")
     }
@@ -49,7 +49,7 @@ class DepartmentService (
     fun deleteDepartment(id: Long) {
         authorityService.isAdmin()
         val department = this.getDepartment(id)
-        if (attendeeService.getAttendeesForDepartment(department).toList().isNotEmpty()) {
+        if (attendeeService.getAttendeesForDepartment(department).isNotEmpty()) {
             throw ExistingDependencyException("Attendees for department existing. Delete them first.")
         }
         departmentRepository.delete(DepartmentEntry.of(department))

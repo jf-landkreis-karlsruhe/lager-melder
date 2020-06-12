@@ -53,7 +53,7 @@ class AttendeeService (
              ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
 
-    fun getAttendeesForDepartment(department: Department): Iterable<Attendee> {
+    fun getAttendeesForDepartment(department: Department): List<Attendee> {
         return attendeeRepository
                 .findByDepartment(DepartmentEntry.of(department))
                 .map{ attendee -> AttendeeEntry.to(attendee) }
