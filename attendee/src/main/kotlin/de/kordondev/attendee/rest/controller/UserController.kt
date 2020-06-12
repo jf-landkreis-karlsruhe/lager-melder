@@ -2,6 +2,7 @@ package de.kordondev.attendee.rest.controller
 
 import de.kordondev.attendee.core.model.NewUser
 import de.kordondev.attendee.core.persistence.entry.Roles
+import de.kordondev.attendee.core.security.PasswordGenerator
 import de.kordondev.attendee.core.service.DepartmentService
 import de.kordondev.attendee.core.service.UserService
 import de.kordondev.attendee.rest.model.RestUser
@@ -24,7 +25,7 @@ class UserController (
                         userName = user.username,
                         role = Roles.valueOf(user.role),
                         department = department,
-                        passWord = user.password!!
+                        passWord = user.password ?: PasswordGenerator.generatePassword()
                 ))
                 .let { RestUser.of(it) }
     }
