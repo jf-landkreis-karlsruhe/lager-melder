@@ -6,6 +6,7 @@ import de.kordondev.attendee.core.persistence.repository.DepartmentRepository
 import de.kordondev.attendee.core.persistence.repository.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -18,7 +19,12 @@ class AttendeeApplication {
 	val logger: Logger = LoggerFactory.getLogger(AttendeeApplication::class.java)
 
 	@Bean
-	fun init(attendeeRepository: AttendeeRepository, departmentRepository: DepartmentRepository, userRepository: UserRepository) = ApplicationRunner {
+	fun init(
+			attendeeRepository: AttendeeRepository,
+			departmentRepository: DepartmentRepository,
+			userRepository: UserRepository,
+			@Value("\${application.admin.password}") adminPassword: String
+	) = ApplicationRunner {
 		logger.info("Initializing database")
 		val departmentLA = DepartmentEntry(
 				name = "LA",
@@ -65,7 +71,7 @@ class AttendeeApplication {
 				UserEntry(
 						role = Roles.ADMIN,
 						userName = "admin",
-						passWord = BCryptPasswordEncoder().encode("password"),
+						passWord = BCryptPasswordEncoder().encode(adminPassword),
 						department = department2
 				))
 		)

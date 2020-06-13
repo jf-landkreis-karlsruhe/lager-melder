@@ -25,3 +25,15 @@ variable "docker_image_tag" {
   description = "Docker image tag"
   default = "latest"
 }
+
+variable "admin_password" {
+  description = "password for admin user of lager-melder"
+}
+
+variable "mail_username" {
+  description = "username for mail stmp"
+}
+
+varible "mail_password" {
+  description = "password for mail stmp"
+}

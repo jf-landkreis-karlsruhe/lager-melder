@@ -1,0 +1,31 @@
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/attendee
+    username: user
+    password: pass
+
+
+  mail:
+    port: 25
+    debug: false
+    from: test@spam.com
+    host: h
+    username: u
+    password: p
+
+application:
+  mail:
+    send: false
+  admin:
+    password: password
+
+data:
+  kreiszeltlager:
+    hostCity: Karlsbad
+    from: 06.07.2020
+    to: 11.07.2020
+    registrationDeadline: 20.05.2020
