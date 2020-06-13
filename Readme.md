@@ -15,8 +15,9 @@ cd attendee
 ## Run backend with docker
 * `cd attendee`
 * `./docker-compose/docker-registry.sh`
+* update `to` part of jib configuration into `<to>http://localhost:5000</to>` and allow unsecure connections
 * `mvn compile jib:build`
 * `cd docker-compose && docker-compose up && cd ..`
-* `docker run -p8080:8080 localhost:5000/lager-melder:built-with-jib`
+* `docker run -p8080:8080 localhost:5000/lager-melder:latest`
 
 * `docker container stop registry`
