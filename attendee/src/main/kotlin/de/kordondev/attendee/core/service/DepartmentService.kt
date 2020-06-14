@@ -8,9 +8,9 @@ import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.exception.ExistingDependencyException
 import de.kordondev.attendee.exception.NotFoundException
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 
-@Component
+@Service
 class DepartmentService (
         private val departmentRepository: DepartmentRepository,
         private val attendeeService: AttendeeService,
@@ -19,7 +19,7 @@ class DepartmentService (
     fun getDepartments() : List<Department> {
         return departmentRepository
                .findAll()
-                .map { department -> DepartmentEntry.to(department) }
+                .map { DepartmentEntry.to(it) }
                 .filter { authorityService.hasAuthorityFilter(it) }
     }
 
@@ -27,7 +27,7 @@ class DepartmentService (
         authorityService.isAdmin()
         return departmentRepository
                 .findByIdOrNull(id)
-                ?.let { department -> DepartmentEntry.to(department) }
+                ?.let { DepartmentEntry.to(it) }
                 ?.let { authorityService.hasAuthority(it) }
             ?: throw NotFoundException("Attendee with id $id not found")
     }
@@ -36,20 +36,20 @@ class DepartmentService (
         authorityService.isAdmin()
         return departmentRepository
                 .save(DepartmentEntry.of(department))
-                .let { savedDepartment -> DepartmentEntry.to(savedDepartment) }
+                .let { DepartmentEntry.to(it) }
     }
 
     fun saveDepartment(id: Long, department: NewDepartment): Department {
         authorityService.isAdmin()
         return departmentRepository
                 .save( DepartmentEntry.of(department, id))
-                .let { savedDepartment -> DepartmentEntry.to(savedDepartment) }
+                .let { DepartmentEntry.to(it) }
     }
 
     fun deleteDepartment(id: Long) {
         authorityService.isAdmin()
         val department = this.getDepartment(id)
-        if (attendeeService.getAttendeesForDepartment(department).toList().isNotEmpty()) {
+        if (attendeeService.getAttendeesForDepartment(department).isNotEmpty()) {
             throw ExistingDependencyException("Attendees for department existing. Delete them first.")
         }
         departmentRepository.delete(DepartmentEntry.of(department))

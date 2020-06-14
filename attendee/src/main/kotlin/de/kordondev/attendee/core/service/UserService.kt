@@ -1,6 +1,6 @@
 package de.kordondev.attendee.core.service
 
-import de.kordondev.attendee.core.mail.MailServiceImpl
+import de.kordondev.attendee.core.mail.MailSenderService
 import de.kordondev.attendee.core.model.NewUser
 import de.kordondev.attendee.core.model.User
 import de.kordondev.attendee.core.persistence.entry.UserEntry
@@ -8,14 +8,14 @@ import de.kordondev.attendee.core.persistence.repository.UserRepository
 import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.exception.ResourceAlreadyExistsException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 
 
-@Component
+@Service
 class UserService (
         private val userRepository: UserRepository,
         private val authorityService: AuthorityService,
-        private val mailServiceImpl: MailServiceImpl,
+        private val mailSenderService: MailSenderService,
         private val bCryptPasswordEncoder: BCryptPasswordEncoder
     ) {
 
@@ -33,7 +33,7 @@ class UserService (
     }
 
     fun sendEmail(user: NewUser) {
-        mailServiceImpl.sendRegistrationMail(
+        mailSenderService.sendRegistrationMail(
                 to = user.department.leaderEMail,
                 leaderName = user.department.leaderName,
                 username = user.userName,

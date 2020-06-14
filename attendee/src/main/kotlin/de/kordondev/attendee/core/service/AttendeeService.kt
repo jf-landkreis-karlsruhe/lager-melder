@@ -9,23 +9,23 @@ import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.exception.NotFoundException
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 
-@Component
+@Service
 class AttendeeService (
         private val attendeeRepository: AttendeeRepository,
         private val authorityService: AuthorityService
 ) {
     fun getAttendees() : Iterable<Attendee> {
         return attendeeRepository.findAll()
-                .map { attendee -> AttendeeEntry.to(attendee) }
+                .map { AttendeeEntry.to(it) }
                 .filter { authorityService.hasAuthorityFilter(it) }
     }
 
     fun getAttendee(id: Long) : Attendee {
         return attendeeRepository
                 .findByIdOrNull(id)
-                ?.let { attendee -> AttendeeEntry.to(attendee) }
+                ?.let { AttendeeEntry.to(it) }
                 ?.let { authorityService.hasAuthority(it) }
             ?: throw NotFoundException("Attendee with id $id not found")
     }
@@ -53,7 +53,7 @@ class AttendeeService (
              ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
 
-    fun getAttendeesForDepartment(department: Department): Iterable<Attendee> {
+    fun getAttendeesForDepartment(department: Department): List<Attendee> {
         return attendeeRepository
                 .findByDepartment(DepartmentEntry.of(department))
                 .map{ attendee -> AttendeeEntry.to(attendee) }

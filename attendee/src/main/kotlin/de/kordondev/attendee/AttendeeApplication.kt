@@ -1,6 +1,6 @@
 package de.kordondev.attendee
 
-import de.kordondev.attendee.core.mail.MailServiceImpl
+import de.kordondev.attendee.core.mail.MailSenderService
 import de.kordondev.attendee.core.persistence.entry.*
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.persistence.repository.DepartmentRepository
@@ -19,8 +19,8 @@ class AttendeeApplication {
 	val logger: Logger = LoggerFactory.getLogger(AttendeeApplication::class.java)
 
 	@Bean
-	fun init(attendeeRepository: AttendeeRepository, departmentRepository: DepartmentRepository, userRepository: UserRepository, mailServiceImpl: MailServiceImpl) = ApplicationRunner {
-		logger.info("database called")
+	fun init(attendeeRepository: AttendeeRepository, departmentRepository: DepartmentRepository, userRepository: UserRepository) = ApplicationRunner {
+		logger.info("Initializing database")
 		val departmentLA = DepartmentEntry(
 				name = "LA",
 				leaderName = "Brian",

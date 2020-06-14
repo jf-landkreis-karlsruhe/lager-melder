@@ -2,11 +2,10 @@ package de.kordondev.attendee.rest.controller
 
 import de.kordondev.attendee.core.model.NewUser
 import de.kordondev.attendee.core.persistence.entry.Roles
+import de.kordondev.attendee.core.security.PasswordGenerator
 import de.kordondev.attendee.core.service.DepartmentService
 import de.kordondev.attendee.core.service.UserService
-import de.kordondev.attendee.rest.model.RestDepartment
 import de.kordondev.attendee.rest.model.RestUser
-import de.kordondev.attendee.rest.model.request.RestDepartmentRequest
 import de.kordondev.attendee.rest.model.request.RestUserRequest
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -26,8 +25,8 @@ class UserController (
                         userName = user.username,
                         role = Roles.valueOf(user.role),
                         department = department,
-                        passWord = user.password!!
+                        passWord = user.password ?: PasswordGenerator.generatePassword()
                 ))
-                .let { savedUser -> RestUser.of(savedUser) }
+                .let { RestUser.of(it) }
     }
 }

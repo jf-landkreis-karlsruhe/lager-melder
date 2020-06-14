@@ -1,23 +1,23 @@
 package de.kordondev.attendee.core.service
 
-import de.kordondev.attendee.core.mail.MailServiceImpl
+import de.kordondev.attendee.core.mail.MailSenderService
 import de.kordondev.attendee.core.model.Department
 import de.kordondev.attendee.core.model.SendTo
 import de.kordondev.attendee.core.security.AuthorityService
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 
-@Component
+@Service
 class MailService (
     private val authorityService: AuthorityService,
     private val departmentService: DepartmentService,
     private val attendeeService: AttendeeService,
-    private val mailServiceImpl: MailServiceImpl
+    private val mailSenderService: MailSenderService
 ) {
     fun sendReminderMail(sendTo: SendTo): Number {
         authorityService.isAdmin()
         return departmentService.getDepartments()
                 .filter { filterDepartmentsBy(it, sendTo) }
-                .map { mailServiceImpl.sendReminderMail(it.leaderEMail, it.leaderName) }
+                .map { mailSenderService.sendReminderMail(it.leaderEMail, it.leaderName) }
                 .filter { it }
                 .count()
     }
@@ -26,7 +26,7 @@ class MailService (
         authorityService.isAdmin()
         return departmentService.getDepartments()
                 .filter { filterDepartmentsBy(it, sendTo) }
-                .map { mailServiceImpl.sendRegistrationFinishedMail(it.leaderEMail, it.leaderName) }
+                .map { mailSenderService.sendRegistrationFinishedMail(it.leaderEMail, it.leaderName) }
                 .filter { it }
                 .count()
     }

@@ -15,14 +15,14 @@ class AttendeeController(
     fun getAttendees(): List<RestAttendee> {
         return attendeeService
                 .getAttendees()
-                .map { attendee -> RestAttendee.of(attendee) }
+                .map { RestAttendee.of(it) }
     }
 
     @GetMapping("/attendee/{id}")
     fun getAttendee(@PathVariable(value = "id") id: Long): RestAttendee {
         return attendeeService
                 .getAttendee(id)
-                .let { attendee -> RestAttendee.of(attendee) };
+                .let { RestAttendee.of(it) };
     }
 
     @PostMapping("/attendee")
@@ -30,7 +30,7 @@ class AttendeeController(
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
                 .createAttendee(RestAttendeeRequest.to(attendee, department))
-                .let { savedAttendee -> RestAttendee.of(savedAttendee)}
+                .let { RestAttendee.of(it)}
     }
 
     @PutMapping("/attendee/{id}")
@@ -38,7 +38,7 @@ class AttendeeController(
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
                 .saveAttendee(id, RestAttendeeRequest.to(attendee, department))
-                .let { savedAttendee -> RestAttendee.of(savedAttendee)}
+                .let { RestAttendee.of(it)}
     }
 
     @DeleteMapping("/attendee/{id}")
