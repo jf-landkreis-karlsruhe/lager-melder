@@ -12,35 +12,35 @@ import org.springframework.stereotype.Service
 @Service("authorityService")
 class AuthorityService {
 
-    fun hasAuthorityFilter(department: Department): Boolean {
+    fun hasAuthorityFilter(department: Department, allowedRoles: List<Roles>): Boolean {
         return SecurityContextHolder.
                 getContext()
                 .authentication
                 .authorities
                 .map { it.authority }
-                .any { it == department.id.toString() || it == Roles.ADMIN.toString() }
+                .any { role -> role == department.id.toString() || allowedRoles.any { it.toString() == role } }
     }
 
-    fun hasAuthorityFilter(attendee: Attendee): Boolean {
-        return hasAuthorityFilter(attendee.department);
+    fun hasAuthorityFilter(attendee: Attendee, allowedRoles: List<Roles>): Boolean {
+        return hasAuthorityFilter(attendee.department, allowedRoles);
     }
 
 
-    fun hasAuthority(department: Department): Department {
-        if (hasAuthorityFilter(department)) {
+    fun hasAuthority(department: Department, allowedRoles: List<Roles>): Department {
+        if (hasAuthorityFilter(department, allowedRoles)) {
             return department
         }
         throw AccessDeniedException("You are not allowed to access department with other department id")
     }
 
-    fun hasAuthority(attendee: Attendee): Attendee {
-        if (hasAuthorityFilter(attendee)) {
+    fun hasAuthority(attendee: Attendee, allowedRoles: List<Roles>): Attendee {
+        if (hasAuthorityFilter(attendee, allowedRoles)) {
             return attendee
         }
         throw AccessDeniedException("You are not allowed to access attendee from other department id")
     }
-    fun hasAuthority(attendee: NewAttendee): NewAttendee {
-        if (hasAuthorityFilter(attendee.department)) {
+    fun hasAuthority(attendee: NewAttendee, allowedRoles: List<Roles>): NewAttendee {
+        if (hasAuthorityFilter(attendee.department, allowedRoles)) {
             return attendee
         }
         throw AccessDeniedException("You are not allowed to change attendees from other departments")

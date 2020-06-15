@@ -43,7 +43,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        assertThat(authorityService.hasAuthorityFilter(dep)).isEqualTo(true)
+        assertThat(authorityService.hasAuthorityFilter(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(true)
     }
 
     @Test
@@ -54,7 +54,29 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        assertThat(authorityService.hasAuthorityFilter(dep)).isEqualTo(false)
+        assertThat(authorityService.hasAuthorityFilter(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(false)
+    }
+
+    @Test
+    fun isSpecializedFieldDirector_has_DepartmentId_department_hasAuthorityFilter() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("1"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+        ))
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        assertThat(authorityService.hasAuthorityFilter(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(true)
+    }
+
+    @Test
+    fun `isSpecializedFieldDirector_doesn't_has_DepartmentId_department_hasAuthorityFilter`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+        ))
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        assertThat(authorityService.hasAuthorityFilter(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(true)
     }
 
     @Test
@@ -65,7 +87,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        assertThat(authorityService.hasAuthorityFilter(dep)).isEqualTo(true)
+        assertThat(authorityService.hasAuthorityFilter(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(true)
     }
 
     @Test
@@ -76,7 +98,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        assertThat(authorityService.hasAuthorityFilter(dep)).isEqualTo(true)
+        assertThat(authorityService.hasAuthorityFilter(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(true)
     }
 
 
@@ -88,7 +110,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        assertThat(authorityService.hasAuthority(dep)).isEqualTo(dep)
+        assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(dep)
     }
 
     @Test(expected = AccessDeniedException::class)
@@ -99,7 +121,29 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        authorityService.hasAuthority(dep)
+        authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+    }
+
+    @Test
+    fun isSpecializedFieldDirector_has_DepartmentId_department_hasAuthority() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("1"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+        ))
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(dep)
+    }
+
+    @Test
+    fun `isSpecializedFieldDirector_doesn't_has_DepartmentId_department_hasAuthority`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+        ))
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(dep)
     }
 
     @Test
@@ -110,7 +154,7 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        assertThat(authorityService.hasAuthority(dep)).isEqualTo(dep)
+        assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(dep)
     }
 
     @Test
@@ -121,9 +165,8 @@ class HasAuthorityTest {
         ))
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        assertThat(authorityService.hasAuthority(dep)).isEqualTo(dep)
+        assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(dep)
     }
-
 
 
     // Attendee
@@ -136,7 +179,7 @@ class HasAuthorityTest {
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
-        assertThat(authorityService.hasAuthorityFilter(attendee)).isEqualTo(true)
+        assertThat(authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(true)
     }
 
     @Test
@@ -148,7 +191,31 @@ class HasAuthorityTest {
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
-        assertThat(authorityService.hasAuthorityFilter(attendee)).isEqualTo(false)
+        assertThat(authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(false)
+    }
+
+    @Test
+    fun isSpecializedFieldDirector_has_DepartmentId_attendee_hasAuthorityFilter() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("1"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+        ))
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
+        assertThat(authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(true)
+    }
+
+    @Test
+    fun `isSpecializedFieldDirector_doesn't_has_DepartmentId_attendee_hasAuthorityFilter`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+        ))
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
+        assertThat(authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(true)
     }
 
     @Test
@@ -160,7 +227,7 @@ class HasAuthorityTest {
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
-        assertThat(authorityService.hasAuthorityFilter(attendee)).isEqualTo(true)
+        assertThat(authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(true)
     }
 
     @Test
@@ -172,9 +239,8 @@ class HasAuthorityTest {
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
-        assertThat(authorityService.hasAuthorityFilter(attendee)).isEqualTo(true)
+        assertThat(authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(true)
     }
-
 
     @Test
     fun isUser_has_DepartmentId_attendee_hasAuthority() {
@@ -185,7 +251,7 @@ class HasAuthorityTest {
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
-        assertThat(authorityService.hasAuthority(attendee)).isEqualTo(attendee)
+        assertThat(authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(attendee)
     }
 
     @Test(expected = AccessDeniedException::class)
@@ -197,7 +263,31 @@ class HasAuthorityTest {
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
-        authorityService.hasAuthority(attendee)
+        authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+    }
+
+    @Test
+    fun isSpecializedFieldDirector_has_DepartmentId_attendee_hasAuthority() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("1"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+        ))
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
+        assertThat(authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(attendee)
+    }
+
+    @Test
+    fun `isSpecializedFieldDirector_doesn't_has_DepartmentId_attendee_hasAuthority`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+        ))
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
+        assertThat(authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(attendee)
     }
 
     @Test
@@ -209,7 +299,7 @@ class HasAuthorityTest {
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
-        assertThat(authorityService.hasAuthority(attendee)).isEqualTo(attendee)
+        assertThat(authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(attendee)
     }
 
     @Test
@@ -221,7 +311,67 @@ class HasAuthorityTest {
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         val attendee = Attendee(10L, "att", "endee", "20-09-2005", Food.MEAT, TShirtSize.ONE_HUNDRED_SIXTY_FOUR, "", AttendeeRole.YOUTH, dep)
-        assertThat(authorityService.hasAuthority(attendee)).isEqualTo(attendee)
+        assertThat(authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(attendee)
+    }
+
+    // specializedFieldDirector
+    @Test
+    fun `isUser__isSpecializedFieldDirectorFilter`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.USER.toString())
+        ))
+
+        assertThat(authorityService.isSpecializedFieldDirectorFilter()).isEqualTo(false)
+    }
+
+    @Test
+    fun `isSpecializedFieldDirector__isSpecializedFieldDirectorFilter`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+        ))
+
+        assertThat(authorityService.isSpecializedFieldDirectorFilter()).isEqualTo(true)
+    }
+
+    @Test
+    fun `isAdmin__isSpecializedFieldDirectorFilter`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.ADMIN.toString())
+        ))
+
+        assertThat(authorityService.isSpecializedFieldDirectorFilter()).isEqualTo(true)
+    }
+
+    @Test(expected = AccessDeniedException::class)
+    fun `isUser__isSpecializedFieldDirector`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.USER.toString())
+        ))
+
+        authorityService.isSpecializedFieldDirector()
+    }
+
+    fun `isSpecializedFieldDirector__isSpecializedFieldDirector`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+        ))
+
+        assertThat(authorityService.isSpecializedFieldDirector()).isEqualTo(Unit)
+    }
+
+    @Test
+    fun `isAdmin__isSpecializedFieldDirector`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.ADMIN.toString())
+        ))
+
+        assertThat(authorityService.isSpecializedFieldDirector()).isEqualTo(Unit)
     }
 
     // admin
@@ -230,6 +380,16 @@ class HasAuthorityTest {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
                 SimpleGrantedAuthority("0"),
                 SimpleGrantedAuthority(Roles.USER.toString())
+        ))
+
+        assertThat(authorityService.isAdminFilter()).isEqualTo(false)
+    }
+
+    @Test
+    fun `isSpecializedFieldDirector__isAdminFilter`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
         ))
 
         assertThat(authorityService.isAdminFilter()).isEqualTo(false)
@@ -250,6 +410,16 @@ class HasAuthorityTest {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
                 SimpleGrantedAuthority("0"),
                 SimpleGrantedAuthority(Roles.USER.toString())
+        ))
+
+        authorityService.isAdmin()
+    }
+
+    @Test(expected = AccessDeniedException::class)
+    fun `isSpecializedFieldDirector__isAdmin`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(listOf(
+                SimpleGrantedAuthority("0"),
+                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
         ))
 
         authorityService.isAdmin()
