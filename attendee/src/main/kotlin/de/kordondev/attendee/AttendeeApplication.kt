@@ -1,6 +1,5 @@
 package de.kordondev.attendee
 
-import de.kordondev.attendee.core.mail.MailSenderService
 import de.kordondev.attendee.core.persistence.entry.*
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.persistence.repository.DepartmentRepository
