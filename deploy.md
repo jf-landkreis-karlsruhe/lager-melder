@@ -7,5 +7,6 @@
 ## Deploy to Azure
 * `az account list`
 * `terraform plan`
+* `terraform refresh`
 * `terraform apply`
 * `terraform destroy`
