@@ -31,14 +31,14 @@ resource "azurerm_app_service" "main" {
     "WEBSITES_PORT"                       = 8080
 
     # These are app specific environment variables
-    "SPRING_PROFILES_ACTIVE"     = "prod,swagger"
+    "SPRING_PROFILES_ACTIVE"     = "prd,swagger,azure"
     "SPRING_DATASOURCE_URL"      = "jdbc:mysql://${azurerm_mysql_server.main.fqdn}:3306/${azurerm_mysql_database.main.name}?useUnicode=true&characterEncoding=utf8&useSSL=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
     "SPRING_DATASOURCE_USERNAME" = "${azurerm_mysql_server.main.administrator_login}@${azurerm_mysql_server.main.name}"
     "SPRING_DATASOURCE_PASSWORD" = var.my_sql_master_password
-    "SPRING_JPA_DATABASE-PLATFORM"="org.hibernate.dialect.MySQL5InnoDBDialect"
-    "MAIL_HOST"                  = "${mail_username}.kasserver.com"
-    "MAIL_USERNAME"                  = mail_username
-    "MAIL_PASSWORD"                  = mail_password
-    "APPLICATION_ADMIN_PASSWORD"     = admin_password
+ #   "SPRING_JPA_DATABASE-PLATFORM"="org.hibernate.dialect.MySQL5InnoDBDialect"
+    "MAIL_HOST"                  = "${var.mail_username}.kasserver.com"
+    "MAIL_USERNAME"                  = var.mail_username
+    "MAIL_PASSWORD"                  = var.mail_password
+    "APPLICATION_ADMIN_PASSWORD"     = var.admin_password
   }
 }

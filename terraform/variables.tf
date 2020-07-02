@@ -31,9 +31,9 @@ variable "admin_password" {
 }
 
 variable "mail_username" {
-  description = "username for mail stmp"
+  description = "username for mail smtp"
 }
 
-varible "mail_password" {
-  description = "password for mail stmp"
+variable "mail_password" {
+  description = "password for mail smtp"
 }
