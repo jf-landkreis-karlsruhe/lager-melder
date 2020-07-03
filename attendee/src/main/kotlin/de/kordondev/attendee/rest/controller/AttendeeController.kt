@@ -5,6 +5,7 @@ import de.kordondev.attendee.core.service.DepartmentService
 import de.kordondev.attendee.rest.model.RestAttendee
 import de.kordondev.attendee.rest.model.request.RestAttendeeRequest
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 class AttendeeController(
@@ -26,7 +27,7 @@ class AttendeeController(
     }
 
     @PostMapping("/attendee")
-    fun addAttendee(@RequestBody(required = true) attendee: RestAttendeeRequest): RestAttendee {
+    fun addAttendee(@RequestBody(required = true) @Valid attendee: RestAttendeeRequest): RestAttendee {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
                 .createAttendee(RestAttendeeRequest.to(attendee, department))
@@ -34,7 +35,7 @@ class AttendeeController(
     }
 
     @PutMapping("/attendee/{id}")
-    fun saveAttendee(@RequestBody(required = true) attendee: RestAttendeeRequest, @PathVariable("id") id: Long) {
+    fun saveAttendee(@RequestBody(required = true) @Valid attendee: RestAttendeeRequest, @PathVariable("id") id: Long) {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
                 .saveAttendee(id, RestAttendeeRequest.to(attendee, department))
