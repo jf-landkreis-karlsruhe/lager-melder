@@ -10,6 +10,7 @@ import de.kordondev.attendee.rest.model.request.RestUserRequest
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import javax.validation.Valid
 
 @RestController
 class UserController (
@@ -18,7 +19,7 @@ class UserController (
 ) {
 
     @PostMapping("/user")
-    fun addUser(@RequestBody(required = true) user: RestUserRequest): RestUser {
+    fun addUser(@RequestBody(required = true) @Valid user: RestUserRequest): RestUser {
         val department = departmentService.getDepartment(user.departmentId)
         return userService
                 .createUser(NewUser(

@@ -6,6 +6,7 @@ import de.kordondev.attendee.rest.model.RestAttendee
 import de.kordondev.attendee.rest.model.RestDepartment
 import de.kordondev.attendee.rest.model.request.RestDepartmentRequest
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 class DepartmentController(
@@ -27,14 +28,14 @@ class DepartmentController(
     }
 
     @PostMapping("/department")
-    fun addDepartment(@RequestBody(required = true) department: RestDepartmentRequest): RestDepartment {
+    fun addDepartment(@RequestBody(required = true) @Valid department: RestDepartmentRequest): RestDepartment {
         return departmentService
                 .createDepartment(RestDepartmentRequest.to(department))
                 .let { RestDepartment.of(it) }
     }
 
     @PutMapping("/department/{id}")
-    fun saveDepartment(@RequestBody(required = true) department: RestDepartmentRequest, @PathVariable("id") id: Long): RestDepartment {
+    fun saveDepartment(@RequestBody(required = true) @Valid department: RestDepartmentRequest, @PathVariable("id") id: Long): RestDepartment {
         return departmentService
                 .saveDepartment(id, RestDepartmentRequest.to(department))
                 .let { RestDepartment.of(it) }
