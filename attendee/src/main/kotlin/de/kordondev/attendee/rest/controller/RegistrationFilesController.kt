@@ -19,7 +19,7 @@ class RegistrationFilesController(
     @Throws(IOException::class)
     @GetMapping(value = "registrationFiles/youthPlan/{id}", produces = [ "application/pdf" ])
     fun getYouthPlan(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
-        return registrationFilesService.getYouthPlan(id);
+        return registrationFilesService.testFunction();
     }
 
 
