@@ -2,7 +2,6 @@ package de.kordondev.attendee.core.service
 
 import org.apache.commons.io.IOUtils
 import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.pdmodel.PDDocumentCatalog
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import org.apache.pdfbox.pdmodel.interactive.form.PDField
 import org.slf4j.Logger
@@ -13,32 +12,6 @@ import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB
-
-import org.apache.pdfbox.pdmodel.graphics.color.PDColor
-
-import org.apache.pdfbox.cos.COSDictionary
-
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAppearanceCharacteristicsDictionary
-
-import org.apache.pdfbox.pdmodel.common.PDRectangle
-
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationWidget
-
-import org.apache.pdfbox.pdmodel.interactive.form.PDTextField
-
-import org.apache.pdfbox.cos.COSName
-
-import org.apache.pdfbox.pdmodel.PDResources
-
-import org.apache.pdfbox.pdmodel.font.PDType1Font
-
-import org.apache.pdfbox.pdmodel.font.PDFont
-
-import org.apache.pdfbox.pdmodel.PDPage
-
-
-
 
 
 @Service
@@ -47,57 +20,23 @@ class RegistrationFilesService(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(RegistrationFilesService::class.java)
 
-    /*
-        Organisation
-        Auswahl{type: PDCheckBox value: COSName{Heimfreizeiten Zeitlager}}
-        Blatt{type: PDTextField value: COSString{123}}
-     */
-
     @Throws(IOException::class)
     fun getYouthPlan(id: Long): ByteArray {
         val resource: Resource = resourceLoader.getResource("classpath:data/paedagogischerBetreuer.pdf")
-        val result = PDDocument()
 
+        val result = PDDocument()
         val fields = mutableListOf<PDField>()
 
-        val pdfDocument: PDDocument = PDDocument.load(resource.inputStream)
-        val form1 = pdfDocument.documentCatalog.acroForm;
-
-        val field1 = form1.getField("Landesjugendplan_19")
-        field1.setValue("WAS")
-        field1.partialName = "1Landesjugendplan_19"
-
-        val fieldAuswahl = form1.getField("Auswahl")
-        fieldAuswahl?.setValue("Heimfreizeiten Zeitlager")
-        fieldAuswahl.partialName = "1Auswahl"
-
-         for (i in 0..155) {
-             val testField = form1.getField("Texteingabe$i")
-             testField?.setValue(i.toString())
-             // testField?.partialName = "1Texteingabe$i"
-             if (testField != null ) {
-                 fields.add(testField)
-             }
-         }
-
-        fields.add(field1)
-        fields.add(fieldAuswahl)
-        result.addPage(pdfDocument.getPage(0))
-
-
-
-        // Second document
-        //val pdfDocument1: PDDocument = PDDocument.load(resource.inputStream)
-        //result.addPage(pdfDocument1.getPage(0))
-
+        for (i in 1..3) {
+            val pdfDocument = PDDocument.load(resource.inputStream)
+            fields.addAll(fillPage(pdfDocument, i))
+            result.addPage(pdfDocument.getPage(0))
+        }
 
         val finalForm = PDAcroForm(result)
         result.documentCatalog.acroForm = finalForm
         finalForm.fields = fields
-
-        val test = result.documentCatalog.acroForm.getField("1Landesjugendplan_19")?.valueAsString
-        logger.info("test $test")
-
+        finalForm.needAppearances = true
 
         val out = ByteArrayOutputStream()
         result.save(out)
@@ -105,46 +44,52 @@ class RegistrationFilesService(
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
     }
 
-    fun testFunction(): ByteArray? {
-        val pdDocument: PDDocument? = PDDocument()
-        val page: /*@@ohpepy@@*/PDPage? = PDPage(PDRectangle.A4)
-        pdDocument?.addPage(page)
+    val YEAR = "Landesjugendplan_19"
+    val CATEGORY = "Auswahl"
+    val CATEGORY_VALUE = "Heimfreizeiten Zeitlager"
+    val ORGANISATION = "Organisation"
+    val PAGE = "Blatt"
+    val TABLE_FIELDS = listOf(
+            listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
+            listOf("106", "107", "108", "109", "110", "111", "112", "113", "114", "115"),
+            listOf("116", "117", "118", "119", "120", "121", "122", "123", "124", "125"),
+            listOf("126", "127", "128", "129", "130", "131", "132", "133", "134", "135"),
+            listOf("136", "137", "138", "139", "140", "141", "142", "143", "144", "145"),
+            listOf("146", "147", "148", "149", "150", "151", "152", "153", "154", "155"),
+            listOf("11", "12", "18", "19", "20", "21", "22", "23", "24", "25"),
+            listOf("26", "27", "28", "29", "30", "31", "32", "33", "34", "35"),
+            listOf("36", "37", "38", "39", "40", "41", "42", "43", "44", "45"),
+            listOf("46", "47", "48", "49", "50", "51", "52", "53", "54", "55")
+    )
+    val TABLE_SUM = listOf("13", "14", "15", "16", "17")
 
-        val form: /*@@bbirja@@*/PDAcroForm? = PDAcroForm(pdDocument)
-        pdDocument?.documentCatalog?.acroForm = form
+    fun fillPage(pdfDocument: PDDocument, page: Number): MutableList<PDField> {
+        val form1 = pdfDocument.documentCatalog.acroForm;
+        val fields = mutableListOf<PDField>()
 
-        val font: /*@@lkkyjh@@*/PDFont? = PDType1Font.HELVETICA
-        val resources: /*@@ftqssz@@*/PDResources? = PDResources()
-        resources?.put(COSName.getPDFName("Helv"), font)
-        form?.setDefaultResources(resources)
+        fillField(form1, YEAR, "2020", page)?.let { fields.add(it) }
+        fillField(form1, CATEGORY, CATEGORY_VALUE, page)?.let { fields.add(it) }
+        fillField(form1, ORGANISATION, "FW Landkreis Karlsruhe", page)?.let { fields.add(it) }
+        fillField(form1, PAGE, "$page", page)?.let { fields.add(it) }
+        var count = 1
+        TABLE_FIELDS.map { column ->
+            column.map { cellId ->
+                fillField(form1, "Texteingabe$cellId", "$count", page)?.let { fields.add(it) }
+                count++
+            }
+        }
+        TABLE_SUM.map { cellId ->
+            fillField(form1, "Texteingabe$cellId", "s$count", page)?.let { fields.add(it) }
+            count++
+        }
+        return fields
+    }
 
-        val textField: /*@@tivgxy@@*/PDTextField? = PDTextField(form)
-        textField?.setPartialName("SampleField")
-
-        val defaultAppearance: /*@@josevw@@*/kotlin.String? = "/Helv 12 Tf 0 0 1 rg"
-        textField?.setDefaultAppearance(defaultAppearance)
-
-        form?.getFields()?.add(textField)
-
-        val widget: /*@@rknobj@@*/PDAnnotationWidget? = textField?.getWidgets()?.get(0)
-        val rect: /*@@znavhi@@*/PDRectangle? = PDRectangle(50F, 750F, 200F, 50F)
-        widget?.setRectangle(rect)
-        widget?.setPage(page)
-
-        val fieldAppearance: /*@@dvfqiw@@*/PDAppearanceCharacteristicsDictionary? = PDAppearanceCharacteristicsDictionary(COSDictionary())
-        fieldAppearance?.setBorderColour(PDColor(floatArrayOf(0f, 1f, 0f), PDDeviceRGB.INSTANCE))
-        fieldAppearance?.setBackground(PDColor(floatArrayOf(1f, 1f, 0f), PDDeviceRGB.INSTANCE))
-        widget?.setAppearanceCharacteristics(fieldAppearance)
-
-        widget?.setPrinted(true)
-
-        page?.getAnnotations()?.add(widget)
-
-        textField?.setValue("Sample Field 44")
-
-        val out = ByteArrayOutputStream()
-        pdDocument?.save(out)
-        pdDocument?.close()
-        return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
+    fun fillField(form: PDAcroForm, fieldName: String, fieldText: String, page: Number): PDField? {
+        val field = form.getField(fieldName)
+        field?.setValue(fieldText)
+        field?.partialName = "$page$fieldName"
+        field?.isReadOnly = true
+        return field
     }
 }
