@@ -1,5 +1,6 @@
 package de.kordondev.attendee.core.service
 
+import de.kordondev.attendee.core.pdf.AttendeesBW
 import de.kordondev.attendee.core.pdf.YouthPlanOverview
 import org.apache.commons.io.IOUtils
 import org.apache.pdfbox.pdmodel.PDDocument
@@ -17,7 +18,10 @@ import java.io.IOException
 
 @Service
 class RegistrationFilesService(
-        val youthPlanOverview: YouthPlanOverview
+        val youthPlanOverview: YouthPlanOverview,
+        val attendeesBW: AttendeesBW,
+        val attendeeService: AttendeeService,
+        val departmentService: DepartmentService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(RegistrationFilesService::class.java)
 
@@ -28,5 +32,19 @@ class RegistrationFilesService(
         result.close()
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
     }
+
+    fun getAttendeesBW(id: Long):ByteArray {
+        val dep =departmentService.getDepartment(id);
+        val att  = attendeeService.getAttendeesForDepartment(dep)
+        val result = departmentService.getDepartment(id)
+                .let { attendeeService.getAttendeesForDepartment(it) }
+                .let { attendeesBW.createAttendeesBWPdf(it) }
+
+        val out = ByteArrayOutputStream()
+        result.save(out)
+        result.close()
+        return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
+    }
+
 
 }

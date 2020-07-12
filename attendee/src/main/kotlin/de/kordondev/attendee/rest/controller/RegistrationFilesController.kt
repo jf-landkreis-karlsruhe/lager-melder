@@ -22,7 +22,7 @@ class RegistrationFilesController(
     @GetMapping(value = "registrationFiles/youthPlan/{id}", produces = [ "application/pdf" ])
     fun getYouthPlan(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=pädagogischeBetreuer.pdf")
-        return registrationFilesService.getYouthPlan(1);
+        return registrationFilesService.getAttendeesBW(id);
     }
 
 

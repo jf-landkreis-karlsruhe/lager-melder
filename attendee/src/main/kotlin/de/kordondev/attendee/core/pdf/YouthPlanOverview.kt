@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class YouthPlanOverview (
-        val resourceLoader: ResourceLoader
+        val resourceLoader: ResourceLoader,
+        val pdfHelper: PDFHelper
 ) {
     val YEAR = "Landesjugendplan_19"
     val CATEGORY = "Auswahl"
@@ -53,29 +54,22 @@ class YouthPlanOverview (
         val form1 = pdfDocument.documentCatalog.acroForm;
         val fields = mutableListOf<PDField>()
 
-        fillField(form1, YEAR, "2020", page)?.let { fields.add(it) }
-        fillField(form1, CATEGORY, CATEGORY_VALUE, page)?.let { fields.add(it) }
-        fillField(form1, ORGANISATION, "FW Landkreis Karlsruhe", page)?.let { fields.add(it) }
-        fillField(form1, PAGE, "$page", page)?.let { fields.add(it) }
+        pdfHelper.fillField(form1, YEAR, "2020", page)?.let { fields.add(it) }
+        pdfHelper.fillField(form1, CATEGORY, CATEGORY_VALUE, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form1, ORGANISATION, "FW Landkreis Karlsruhe", page)?.let { fields.add(it) }
+        pdfHelper.fillField(form1, PAGE, "$page", page)?.let { fields.add(it) }
         var count = 1
         TABLE_FIELDS.map { column ->
             column.map { cellId ->
-                fillField(form1, "Texteingabe$cellId", "$count", page)?.let { fields.add(it) }
+                pdfHelper.fillField(form1, "Texteingabe$cellId", "$count", page)?.let { fields.add(it) }
                 count++
             }
         }
         TABLE_SUM.map { cellId ->
-            fillField(form1, "Texteingabe$cellId", "s$count", page)?.let { fields.add(it) }
+            pdfHelper.fillField(form1, "Texteingabe$cellId", "s$count", page)?.let { fields.add(it) }
             count++
         }
         return fields
     }
 
-    private fun fillField(form: PDAcroForm, fieldName: String, fieldText: String, page: Number): PDField? {
-        val field = form.getField(fieldName)
-        field?.setValue(fieldText)
-        field?.partialName = "$page$fieldName"
-        field?.isReadOnly = true
-        return field
-    }
 }

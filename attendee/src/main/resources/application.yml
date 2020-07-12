@@ -29,3 +29,9 @@ data:
     from: 06.07.2020
     to: 11.07.2020
     registrationDeadline: 20.05.2020
+    year: 2020
+    listBW:
+      organisationAddress: "Aaahahnan \n\
+      next Line\n\
+      last  line"
+      eventAddress: bbb
