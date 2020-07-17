@@ -26,53 +26,19 @@ class AttendeeApplication {
 			@Value("\${application.admin.password}") adminPassword: String
 	) = ApplicationRunner {
 		logger.info("Initializing database")
-		val departmentLA = DepartmentEntry(
-				name = "LA",
-				leaderName = "Brian",
-				leaderEMail = "brian@email.com"
-		)
-        val department2 = DepartmentEntry(
-						name = "ET",
-						leaderName = "Jim",
-						leaderEMail = "jim@mail.ka"
+        val adminDepartment = DepartmentEntry(
+						name = "Admin",
+						leaderName = "KordonDev",
+						leaderEMail = "KordonDev@mail.ka"
 				)
-		departmentRepository.save(department2)
-		departmentRepository.save(departmentLA)
-
-		attendeeRepository.saveAll(listOf(
-				AttendeeEntry(
-						firstName = "Iris",
-						lastName = "Muller",
-                		department = departmentLA,
-						birthday = "1992-12-07",
-						food = Food.ALLERGY,
-						tShirtSize = TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-						additionalInformation = "Youth, 164, Allergy",
-						role = AttendeeRole.YOUTH
-				), AttendeeEntry(
-						firstName = "Karl",
-						lastName = "Smith",
-						department = departmentLA,
-						birthday = "1993-12-07",
-						food = Food.NONE,
-						tShirtSize = TShirtSize.M,
-						additionalInformation = "Youth, M, No food",
-						role = AttendeeRole.YOUTH
-				)
-		))
+		departmentRepository.save(adminDepartment)
 
 		userRepository.saveAll(listOf(
-				UserEntry(
-						role = Roles.USER,
-						userName = "user",
-						passWord = BCryptPasswordEncoder().encode("pass"),
-						department = departmentLA
-				),
 				UserEntry(
 						role = Roles.ADMIN,
 						userName = "admin",
 						passWord = BCryptPasswordEncoder().encode(adminPassword),
-						department = department2
+						department = adminDepartment
 				))
 		)
 	}

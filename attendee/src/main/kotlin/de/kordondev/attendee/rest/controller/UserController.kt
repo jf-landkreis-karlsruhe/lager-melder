@@ -18,7 +18,7 @@ class UserController (
         private val departmentService: DepartmentService
 ) {
 
-    @PostMapping("/user")
+    @PostMapping("/users")
     fun addUser(@RequestBody(required = true) @Valid user: RestUserRequest): RestUser {
         val department = departmentService.getDepartment(user.departmentId)
         return userService

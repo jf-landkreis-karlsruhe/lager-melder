@@ -12,21 +12,21 @@ class AttendeeController(
         private val attendeeService: AttendeeService,
         private val departmentService: DepartmentService
 ) {
-    @GetMapping("/attendee")
+    @GetMapping("/attendees")
     fun getAttendees(): List<RestAttendee> {
         return attendeeService
                 .getAttendees()
                 .map { RestAttendee.of(it) }
     }
 
-    @GetMapping("/attendee/{id}")
+    @GetMapping("/attendees/{id}")
     fun getAttendee(@PathVariable(value = "id") id: Long): RestAttendee {
         return attendeeService
                 .getAttendee(id)
                 .let { RestAttendee.of(it) };
     }
 
-    @PostMapping("/attendee")
+    @PostMapping("/attendees")
     fun addAttendee(@RequestBody(required = true) @Valid attendee: RestAttendeeRequest): RestAttendee {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
@@ -34,7 +34,7 @@ class AttendeeController(
                 .let { RestAttendee.of(it)}
     }
 
-    @PutMapping("/attendee/{id}")
+    @PutMapping("/attendees/{id}")
     fun saveAttendee(@RequestBody(required = true) @Valid attendee: RestAttendeeRequest, @PathVariable("id") id: Long) {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
@@ -42,7 +42,7 @@ class AttendeeController(
                 .let { RestAttendee.of(it)}
     }
 
-    @DeleteMapping("/attendee/{id}")
+    @DeleteMapping("/attendees/{id}")
     fun deleteAttendee(@PathVariable(value = "id") id: Long) {
         attendeeService.deleteAttendee(id)
     }
