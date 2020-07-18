@@ -49,21 +49,22 @@ class AttendeesBW (
         val result = PDDocument()
         val fields = mutableListOf<PDField>()
 
-        val pdfDocument = PDDocument.load(resource.inputStream)
-        val form = pdfDocument.documentCatalog.acroForm;
-        logger.info("multiline ${form.getField(ORGANISATION_ADDRESS).valueAsString}")
-
         if (attendees.size <= ATTENDEES_ON_FIRST_PAGE) {
+            val pdfDocument = PDDocument.load(resource.inputStream)
             fields.addAll(fillPage(pdfDocument, attendees, TABLE_ROW_START_PAGE_1, 1))
             fields.addAll(fillFirstPage(pdfDocument, attendees, 1))
             result.addPage(pdfDocument.getPage(0))
 
         } else {
+            var pdfDocument = PDDocument.load(resource.inputStream)
             fields.addAll(fillPage(pdfDocument, attendees.subList(0, ATTENDEES_ON_FIRST_PAGE), TABLE_ROW_START_PAGE_1, 1))
             fields.addAll(fillFirstPage(pdfDocument, attendees, 1))
             result.addPage(pdfDocument.getPage(0))
             var page = 2
             for (i in ATTENDEES_ON_FIRST_PAGE until attendees.size step ATTENDEES_ON_SECOND_PAGE) {
+
+                pdfDocument = PDDocument.load(resource.inputStream)
+
                 val attendeesForPage = if (attendees.size <= i + ATTENDEES_ON_SECOND_PAGE) {
                     attendees.subList(i, attendees.size)} else { attendees.subList(i, i + ATTENDEES_ON_SECOND_PAGE)}
                 fields.addAll(fillPage(pdfDocument, attendeesForPage, TABLE_ROW_START_PAGE_2, page))
