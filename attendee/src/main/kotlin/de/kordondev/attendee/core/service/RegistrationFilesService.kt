@@ -1,6 +1,7 @@
 package de.kordondev.attendee.core.service
 
 import de.kordondev.attendee.core.pdf.AttendeesBW
+import de.kordondev.attendee.core.pdf.AttendeesKarlsruhe
 import de.kordondev.attendee.core.pdf.YouthPlanOverview
 import org.apache.commons.io.IOUtils
 import org.apache.pdfbox.pdmodel.PDDocument
@@ -20,6 +21,7 @@ import java.io.IOException
 class RegistrationFilesService(
         val youthPlanOverview: YouthPlanOverview,
         val attendeesBW: AttendeesBW,
+        val attendeesKarlsruhe: AttendeesKarlsruhe,
         val attendeeService: AttendeeService,
         val departmentService: DepartmentService
 ) {
@@ -34,8 +36,6 @@ class RegistrationFilesService(
     }
 
     fun getAttendeesBW(id: Long):ByteArray {
-        val dep =departmentService.getDepartment(id);
-        val att  = attendeeService.getAttendeesForDepartment(dep)
         val result = departmentService.getDepartment(id)
                 .let { attendeeService.getAttendeesForDepartment(it) }
                 .let { attendeesBW.createAttendeesBWPdf(it) }
@@ -44,6 +44,17 @@ class RegistrationFilesService(
         result.save(out)
         result.close()
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
+    }
+
+    fun getAttendeesKarlrsuhe(id:Long): ByteArray {
+        val result = departmentService.getDepartment(id)
+                .let { attendeeService.getAttendeesForDepartment(it) }
+                .let { attendeesKarlsruhe.createAttendeesKarlsruhePdf(it) }
+        val out = ByteArrayOutputStream()
+        result.save(out)
+        result.close()
+        return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
+
     }
 
 

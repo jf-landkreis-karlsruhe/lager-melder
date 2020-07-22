@@ -126,5 +126,4 @@ class AttendeesBW (
         pdfHelper.fillField(form, "Texteingabe$daysCellId", "$DAYS_OF_EVENT", page)?.let { fields.add(it) }
         return fields
     }
-
 }

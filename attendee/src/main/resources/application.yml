@@ -35,3 +35,8 @@ data:
       next Line\n\
       last  line"
       eventAddress: bbb
+    listKa:
+      location: Karlsbad Hautstraße 4
+      organisation: Karlsbader
+      from: 06.07.20
+      to: 11.07.20
