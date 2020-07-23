@@ -46,7 +46,7 @@ class RegistrationFilesService(
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
     }
 
-    fun getAttendeesKarlrsuhe(id:Long): ByteArray {
+    fun getAttendeesKarlrsuhe(id: Long): ByteArray {
         val result = departmentService.getDepartment(id)
                 .let { attendeeService.getAttendeesForDepartment(it) }
                 .let { attendeesKarlsruhe.createAttendeesKarlsruhePdf(it) }
@@ -54,7 +54,16 @@ class RegistrationFilesService(
         result.save(out)
         result.close()
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
+    }
 
+    fun getYouthLeader(id: Long): ByteArray {
+        val result = departmentService.getDepartment(id)
+                .let { attendeeService.getAttendeesForDepartment(it) }
+                .let { attendeesKarlsruhe.createAttendeesKarlsruhePdf(it) }
+        val out = ByteArrayOutputStream()
+        result.save(out)
+        result.close()
+        return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
     }
 
 
