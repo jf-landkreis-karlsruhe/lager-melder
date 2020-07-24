@@ -2,6 +2,7 @@ package de.kordondev.attendee.core.service
 
 import de.kordondev.attendee.core.pdf.AttendeesBW
 import de.kordondev.attendee.core.pdf.AttendeesKarlsruhe
+import de.kordondev.attendee.core.pdf.YouthLeader
 import de.kordondev.attendee.core.pdf.YouthPlanOverview
 import org.apache.commons.io.IOUtils
 import org.apache.pdfbox.pdmodel.PDDocument
@@ -23,6 +24,7 @@ class RegistrationFilesService(
         val attendeesBW: AttendeesBW,
         val attendeesKarlsruhe: AttendeesKarlsruhe,
         val attendeeService: AttendeeService,
+        val youthLeader: YouthLeader,
         val departmentService: DepartmentService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(RegistrationFilesService::class.java)
@@ -59,7 +61,7 @@ class RegistrationFilesService(
     fun getYouthLeader(id: Long): ByteArray {
         val result = departmentService.getDepartment(id)
                 .let { attendeeService.getAttendeesForDepartment(it) }
-                .let { attendeesKarlsruhe.createAttendeesKarlsruhePdf(it) }
+                .let { youthLeader.createYouthLeaderPdf(it) }
         val out = ByteArrayOutputStream()
         result.save(out)
         result.close()

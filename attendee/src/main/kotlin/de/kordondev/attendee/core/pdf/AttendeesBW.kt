@@ -20,8 +20,8 @@ class AttendeesBW (
         @Value("\${data.kreiszeltlager.from}") private val eventStart: String,
         @Value("\${data.kreiszeltlager.to}") private val eventEnd: String,
         @Value("\${data.kreiszeltlager.year}") private val dataYear: String,
-        @Value("\${data.kreiszeltlager.listBW.eventAddress}") private val dataEventAddress: String,
-        @Value("\${data.kreiszeltlager.listBW.organisationAddress}") private val dataOrganisationAddress: String
+        @Value("\${data.kreiszeltlager.organisationAddress}") private val dataOrganisationAddress: String,
+        @Value("\${data.kreiszeltlager.listBW.eventAddress}") private val dataEventAddress: String
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AttendeesBW::class.java)
 

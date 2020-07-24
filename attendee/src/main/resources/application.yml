@@ -30,13 +30,15 @@ data:
     to: 11.07.2020
     registrationDeadline: 20.05.2020
     year: 2020
-    listBW:
-      organisationAddress: "Aaahahnan \n\
+    organisationAddress: "Aaahahnan \n\
       next Line\n\
       last  line"
+    listBW:
       eventAddress: bbb
     listKa:
       location: Karlsbad Hautstraße 4
       organisation: Karlsbader
       from: 06.07.20
       to: 11.07.20
+    listYouthLeader:
+      moneyProYouthLeader: 8,99
