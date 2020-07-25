@@ -21,7 +21,6 @@ class YouthLeader(
         @Value("\${data.kreiszeltlager.year}") private val dataYear: String,
         @Value("\${data.kreiszeltlager.organisationAddress}") private val dataOrganisationAddress: String,
         @Value("\${data.kreiszeltlager.listYouthLeader.moneyProYouthLeader}") private val dataMoneyProYouthLeader: String
-
 ) {
     private val logger: Logger = LoggerFactory.getLogger(YouthLeader::class.java)
 

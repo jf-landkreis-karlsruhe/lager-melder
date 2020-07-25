@@ -1,9 +1,6 @@
 package de.kordondev.attendee.core.service
 
-import de.kordondev.attendee.core.pdf.AttendeesBW
-import de.kordondev.attendee.core.pdf.AttendeesKarlsruhe
-import de.kordondev.attendee.core.pdf.YouthLeader
-import de.kordondev.attendee.core.pdf.YouthPlanOverview
+import de.kordondev.attendee.core.pdf.*
 import org.apache.commons.io.IOUtils
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
@@ -25,6 +22,7 @@ class RegistrationFilesService(
         val attendeesKarlsruhe: AttendeesKarlsruhe,
         val attendeeService: AttendeeService,
         val youthLeader: YouthLeader,
+        val attendeesCommunal: AttendeesCommunal,
         val departmentService: DepartmentService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(RegistrationFilesService::class.java)
@@ -68,5 +66,15 @@ class RegistrationFilesService(
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
     }
 
+    fun getAttendeesCommunal(id: Long): ByteArray {
+        val department = departmentService.getDepartment(id)
+        val result = department
+                .let { attendeeService.getAttendeesForDepartment(it) }
+                .let { attendeesCommunal.createAttendeesCommunalPdf(it, department.name) }
+        val out = ByteArrayOutputStream()
+        result.save(out)
+        result.close()
+        return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
+    }
 
 }
