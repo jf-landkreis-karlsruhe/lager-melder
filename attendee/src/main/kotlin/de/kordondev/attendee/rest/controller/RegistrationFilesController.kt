@@ -22,8 +22,30 @@ class RegistrationFilesController(
     @GetMapping(value = "registrationFiles/youthPlan/{id}", produces = [ "application/pdf" ])
     fun getYouthPlan(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=pädagogischeBetreuer.pdf")
-        return registrationFilesService.getAttendeesCommunal(id);
+        return registrationFilesService.getYouthLeader(id);
     }
 
+    @ResponseBody
+    @Throws(IOException::class)
+    @GetMapping(value = "registrationFiles/attendeesKarlsruhe/{id}", produces = [ "application/pdf" ])
+    fun getAttendeesKarlsruhe(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=teilnehmenlisteKarlsruhe.pdf")
+        return registrationFilesService.getAttendeesKarlrsuhe(id);
+    }
 
+    @ResponseBody
+    @Throws(IOException::class)
+    @GetMapping(value = "registrationFiles/attendeesBWü/{id}", produces = [ "application/pdf" ])
+    fun getAttendeesBW(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=teilnehmenlisteBadenWürttemberg.pdf")
+        return registrationFilesService.getAttendeesBW(id);
+    }
+
+    @ResponseBody
+    @Throws(IOException::class)
+    @GetMapping(value = "registrationFiles/attendeesCommunal/{id}", produces = [ "application/pdf" ])
+    fun getAttendeesCommunal(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=teilnehmerKommandant.pdf")
+        return registrationFilesService.getAttendeesCommunal(id);
+    }
 }

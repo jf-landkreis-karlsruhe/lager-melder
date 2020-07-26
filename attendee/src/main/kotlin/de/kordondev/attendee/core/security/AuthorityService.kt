@@ -13,14 +13,12 @@ import org.springframework.stereotype.Service
 class AuthorityService {
 
     fun hasAuthorityFilter(department: Department, allowedRoles: List<Roles>): Boolean {
-        // FIXME
-        return true
-        /*return SecurityContextHolder.
-                getContext()
+        return SecurityContextHolder
+                .getContext()
                 .authentication
                 .authorities
                 .map { it.authority }
-                .any { role -> role == department.id.toString() || allowedRoles.any { it.toString() == role } }*/
+                .any { role -> role == department.id.toString() || allowedRoles.any { it.toString() == role } }
     }
 
     fun hasAuthorityFilter(attendee: Attendee, allowedRoles: List<Roles>): Boolean {
