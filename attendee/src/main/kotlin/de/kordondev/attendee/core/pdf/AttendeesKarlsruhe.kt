@@ -26,10 +26,10 @@ class AttendeesKarlsruhe(
 
     private val logger: Logger = LoggerFactory.getLogger(AttendeesKarlsruhe::class.java)
 
-    private val ATTENDEES_ON_FIRST_PAGE = 16
-    private val ATTENDEES_ON_SECOND_PAGE = 19
-    private val TABLE_ROW_START_PAGE_1 = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
-    private val TABLE_ROW_START_PAGE_2 = listOf(17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35)
+    private val TABLE_ROW_START_PAGE_1 = (1..16).toList()
+    private val TABLE_ROW_START_PAGE_2 = (17..35).toList()
+    private val ATTENDEES_ON_FIRST_PAGE = TABLE_ROW_START_PAGE_1.size
+    private val ATTENDEES_ON_SECOND_PAGE = TABLE_ROW_START_PAGE_2.size
     private val ORGANISATION = "für"
     private val LOCATION = "in"
     private val EVENT_START = "vom"
@@ -90,10 +90,10 @@ class AttendeesKarlsruhe(
     fun fillFirstPage(pdfDocument: PDDocument, attendees: List<Attendee>, page: Int): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
-        pdfHelper.fillField(form, ORGANISATION, "$organisation", page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, LOCATION, "$location", page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, EVENT_START, "$eventStart", page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, EVENT_END, "$eventEnd", page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, ORGANISATION, organisation, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, LOCATION, location, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, EVENT_START, eventStart, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, EVENT_END, eventEnd, page)?.let { fields.add(it) }
         return fields
     }
 

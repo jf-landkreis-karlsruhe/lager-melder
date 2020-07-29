@@ -1,9 +1,7 @@
 package de.kordondev.attendee.rest.controller
 
 import de.kordondev.attendee.core.service.RegistrationFilesService
-import org.apache.commons.io.IOUtils
 import org.springframework.http.HttpHeaders
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.ResponseBody
@@ -30,7 +28,7 @@ class RegistrationFilesController(
     @GetMapping(value = "registrationFiles/attendeesKarlsruhe/{id}", produces = [ "application/pdf" ])
     fun getAttendeesKarlsruhe(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=teilnehmenlisteKarlsruhe.pdf")
-        return registrationFilesService.getAttendeesKarlrsuhe(id);
+        return registrationFilesService.getAttendeesKarlsruhe(id);
     }
 
     @ResponseBody

@@ -27,7 +27,7 @@ async function createDataForADepartment(departmentName, leaderName, numberOfAtte
     await createUser(departmentId, user, baseUrl, token)
     for (i = 0; i < numberOfAttendees * 4 / 5; i++) {
         const youthAttendee = youthData[totalYouthCounter];
-       await createAttendee(youthAttendee.firstName, youthAttendee.lastName, departmentId, youthAttendee.birthday, youthAttendee.additionalInformation, 'YOUTH', baseUrl, token);
+        await createAttendee(youthAttendee.firstName, youthAttendee.lastName, departmentId, youthAttendee.birthday, youthAttendee.additionalInformation, 'YOUTH', baseUrl, token);
         totalYouthCounter++;
         if (i % 5 === 0) {
             const youthLeader = youthLeaderData[totalYouthLeaderCounter]

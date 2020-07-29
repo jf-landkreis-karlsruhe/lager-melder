@@ -31,10 +31,10 @@ class AttendeesCommunal(
     val NAME = "T"
     val YOUTH_LEADER = "J"
 
-    val ATTENDEES_ON_FIRST_PAGE = 30
-    val ATTENDEES_ON_SECOND_PAGE = 20
     val TABLE_ROW_START_FIRST_PAGE = (1..30).toList()
     val TABLE_ROW_START_SECOND_PAGE = (31..50).toList()
+    val ATTENDEES_ON_FIRST_PAGE = TABLE_ROW_START_FIRST_PAGE.size
+    val ATTENDEES_ON_SECOND_PAGE = TABLE_ROW_START_SECOND_PAGE.size
 
     fun createAttendeesCommunalPdf(attendees: List<Attendee>, departmentName: String): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/attendeesCommunal.pdf")

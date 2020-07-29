@@ -28,7 +28,9 @@ class RegistrationFilesService(
     private val logger: Logger = LoggerFactory.getLogger(RegistrationFilesService::class.java)
 
     fun getYouthPlan(id: Long): ByteArray {
-        val result = youthPlanOverview.createYouthPlan()
+        val result = departmentService.getDepartment(id)
+                .let { attendeeService.getAttendeesForDepartment(it) }
+                .let { youthPlanOverview.createYouthPlan(it) }
         val out = ByteArrayOutputStream()
         result.save(out)
         result.close()
@@ -46,7 +48,7 @@ class RegistrationFilesService(
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
     }
 
-    fun getAttendeesKarlrsuhe(id: Long): ByteArray {
+    fun getAttendeesKarlsruhe(id: Long): ByteArray {
         val result = departmentService.getDepartment(id)
                 .let { attendeeService.getAttendeesForDepartment(it) }
                 .let { attendeesKarlsruhe.createAttendeesKarlsruhePdf(it) }
