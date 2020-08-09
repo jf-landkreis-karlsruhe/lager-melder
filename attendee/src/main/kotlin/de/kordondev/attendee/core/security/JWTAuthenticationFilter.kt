@@ -11,7 +11,6 @@ import de.kordondev.attendee.core.security.SecurityConstants.HEADER_STRING
 import de.kordondev.attendee.core.security.SecurityConstants.SECRET
 import de.kordondev.attendee.core.security.SecurityConstants.TOKEN_PREFIX
 import de.kordondev.attendee.rest.model.RestLoginUser
-import de.kordondev.attendee.rest.model.RestUser
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -55,8 +54,13 @@ class JWTAuthenticationFilter(
                             .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION_TIME))
                             .sign(Algorithm.HMAC512(SECRET))
                 }
-                ?.let { token -> response.addHeader(HEADER_STRING, TOKEN_PREFIX + token) }
-
-
+                ?.let { token ->
+                    response.contentType = "application/json"
+                    response.characterEncoding = "UTF-8"
+                    val jsonBody ="{\"$HEADER_STRING\":\"$TOKEN_PREFIX$token\"}"
+                    response.writer.write(jsonBody)
+                    response.writer.flush()
+                    response.writer.close()
+                }
     }
 }
