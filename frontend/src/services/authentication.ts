@@ -17,11 +17,12 @@ export const login = (username: string, password: string) => {
       password,
     }
   )
+    .then(res => res.Authorization)
     .then((jwt: any) => {
       saveJWT(jwt);
       return jwt;
     })
-    .then(response => decodeJWT(response.Authorization));
+    .then(response => decodeJWT(response));
 };
 
 export const logout = () => {

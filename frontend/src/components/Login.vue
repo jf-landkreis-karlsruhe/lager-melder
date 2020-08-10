@@ -10,48 +10,39 @@
       <button type="submit">Einloggen</button>
     </form>
 
+    <button @click="logout">Logout</button>
     <div v-if="loggedIn">You are now logged in</div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { login, isLoggedIn } from "../services/authentication";
+import { Component } from "vue-property-decorator";
 
-export default Vue.extend({
-  name: "HelloWorld",
-  data: function() {
-    return {
-      username: "admin",
-      password: "password",
-      loggedIn: false
-    };
-  },
-  methods: {
-    loginHandler: function() {
-      login(this.username, this.password).then(() => (this.loggedIn = true));
-    }
-  },
-  mounted: function() {
+import { login, isLoggedIn, logout } from "../services/authentication";
+
+@Component({})
+export default class Login extends Vue {
+  username = "admin";
+  password = "password";
+  loggedIn = false;
+
+  loginHandler() {
+    login(this.username, this.password).then(() => (this.loggedIn = true));
+  }
+  logout() {
+    logout();
+  }
+
+  mounted() {
     this.loggedIn = isLoggedIn();
   }
-});
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
 }
 </style>
