@@ -1,7 +1,7 @@
 <template>
-    <header>
-        <img alt="Zeltlager logo" class="hero-image" src="../assets/logo.png" />
-    </header>
+  <header>
+    <img alt="Zeltlager logo" class="hero-image" src="../assets/logo.png" />
+  </header>
 </template>
 
 <script>
@@ -15,5 +15,4 @@ export default {
   max-width: 1000px;
   width: 100%;
 }
-
 </style>

@@ -1,6 +1,5 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
     <form @submit.prevent="loginHandler" v-if="!loggedIn">
       <label for="username">Benutzername</label>
       <input type="text" v-model="username" id="username" />
@@ -16,13 +15,11 @@
 </template>
 
 <script lang="ts">
-import { login, isLoggedIn } from "../services/authentication.js";
+import Vue from "vue";
+import { login, isLoggedIn } from "../services/authentication";
 
-export default {
+export default Vue.extend({
   name: "HelloWorld",
-  props: {
-    msg: String
-  },
   data: function() {
     return {
       username: "admin",
@@ -32,18 +29,13 @@ export default {
   },
   methods: {
     loginHandler: function() {
-      console.log("username", this.username);
-      console.log("password", this.password);
-      login(this.username, this.password)
-      .then(console.log)
-      .then(() => this.loggedIn = true)
+      login(this.username, this.password).then(() => (this.loggedIn = true));
     }
   },
   mounted: function() {
-    this.loggedIn = isLoggedIn()
-    console.log(this.loggedIn)
+    this.loggedIn = isLoggedIn();
   }
-};
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
