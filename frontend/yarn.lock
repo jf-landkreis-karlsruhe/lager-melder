@@ -1144,6 +1144,13 @@
   dependencies:
     "@vue/cli-shared-utils" "^4.4.6"
 
+"@vue/cli-plugin-router@~4.5.0":
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-router/-/cli-plugin-router-4.5.2.tgz#6305edabf006aef7591925cbe215dfd18c277632"
+  integrity sha512-5TWVE3sLOAPikfByi5sb+Foea8vm0PQJF2w8rpxN2XoUTi9MS6J2/dMCP7Up403Hvm2N7cSdY01cQz3geYwnFQ==
+  dependencies:
+    "@vue/cli-shared-utils" "^4.5.2"
+
 "@vue/cli-plugin-typescript@~4.4.0":
   version "4.4.6"
   resolved "https://registry.yarnpkg.com/@vue/cli-plugin-typescript/-/cli-plugin-typescript-4.4.6.tgz#f63b9ede16e7244ed407bbe2f1621361d5a035eb"
@@ -1227,6 +1234,24 @@
   version "4.4.6"
   resolved "https://registry.yarnpkg.com/@vue/cli-shared-utils/-/cli-shared-utils-4.4.6.tgz#0ec59880920736c6dd79079ac0b5ceac29fa55e1"
   integrity sha512-ba+FZZCjiTSu2otnLjY4qXqASe7ZIQ/QBljk5oRPgqrR0p1NUkDPUcZhqa041aOaSW1yAfSfhOD7Q84nMnWhzQ==
+  dependencies:
+    "@hapi/joi" "^15.0.1"
+    chalk "^2.4.2"
+    execa "^1.0.0"
+    launch-editor "^2.2.1"
+    lru-cache "^5.1.1"
+    node-ipc "^9.1.1"
+    open "^6.3.0"
+    ora "^3.4.0"
+    read-pkg "^5.1.1"
+    request "^2.88.2"
+    semver "^6.1.0"
+    strip-ansi "^6.0.0"
+
+"@vue/cli-shared-utils@^4.5.2":
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/@vue/cli-shared-utils/-/cli-shared-utils-4.5.2.tgz#f46f04ad0476f9758d1ce8c1a306124dde704ed6"
+  integrity sha512-V/nNcYX+IRVG9o/9o3fxsj3aBPfpYExzjIHSusjWuSxUHpv0Vn4f9sIXG3N+FHgmcnQLqhmDNwlvRKIc+WFnLQ==
   dependencies:
     "@hapi/joi" "^15.0.1"
     chalk "^2.4.2"
@@ -8139,6 +8164,11 @@ vue-property-decorator@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-9.0.0.tgz#0a5f6d47d33ca62a8876108ccfa65c2c4fb7325a"
   integrity sha512-oegTNPItuHOkW0AP1MnbdNwkmyhfsUIIXvIRHpgC18tVoEo21/i6kItyeekjMs8JgZJeuHzsaTc/DZaJFH4IWQ==
+
+vue-router@^3.2.0:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.4.2.tgz#541221d7ac467786c1c9381bcf36019d883b9cf8"
+  integrity sha512-n3Ok70hW0EpcJF4lcWIwSHAQbFTnIOLl/fhO8+oTs4jHNtBNsovcVvPZeTOyKEd8C3xF1Crft2ASuOiVT5K1mw==
 
 vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:
   version "4.1.2"

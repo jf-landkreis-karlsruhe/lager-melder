@@ -1,20 +1,24 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <Login />
+    <div class="container">
+      <Header />
+      <main>
+        <router-view />
+      </main>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import Login from "./components/Login.vue";
+import { Component } from "vue-property-decorator";
 
-export default Vue.extend({
-  name: "App",
-  components: {
-    Login
-  }
-});
+import Header from "./components/Header.vue";
+
+@Component({
+  components: { Header }
+})
+export default class App extends Vue {}
 </script>
 
 <style>
@@ -24,6 +28,14 @@ export default Vue.extend({
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(auto, 1000px) minmax(0, 1fr);
+  grid-gap: 14px;
+}
+
+.container {
+  grid-column: 2;
+  grid-row: 1;
 }
 </style>

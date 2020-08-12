@@ -28,10 +28,13 @@ export default class Login extends Vue {
   loggedIn = false;
 
   loginHandler() {
-    login(this.username, this.password).then(() => (this.loggedIn = true));
+    login(this.username, this.password)
+      .then(() => (this.loggedIn = true))
+      .then(() => this.$router.push("/"));
   }
   logout() {
     logout();
+    this.loggedIn = false;
   }
 
   mounted() {

@@ -4,16 +4,16 @@ export const getData = (relativeUrl: string, headers: HeadersInit) => {
   return fetchData(relativeUrl, {
     headers: {
       "Content-Type": "application/json",
-      ...headers,
-    },
-  }).then((res) => res.json());
+      ...headers
+    }
+  }).then(res => res.json());
 };
 
 export const postData = (
   relativeUrl: string,
   headers: HeadersInit,
   body: object
-) => postDataRaw(relativeUrl, headers, body).then((res) => res.json());
+) => postDataRaw(relativeUrl, headers, body).then(res => res.json());
 
 export const postDataRaw = (
   relativeUrl: string,
@@ -24,9 +24,9 @@ export const postDataRaw = (
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      ...headers,
+      ...headers
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body)
   });
 };
 
@@ -39,10 +39,10 @@ export const putData = (
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      ...headers,
+      ...headers
     },
-    body: JSON.stringify(body),
-  }).then((res) => res.json());
+    body: JSON.stringify(body)
+  }).then(res => res.json());
 };
 
 export const delteData = (relativeUrl: string, headers: HeadersInit) => {
@@ -50,13 +50,13 @@ export const delteData = (relativeUrl: string, headers: HeadersInit) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      ...headers,
-    },
+      ...headers
+    }
   });
 };
 
 const fetchData = (relativeUrl: string, config: RequestInit) => {
-  return fetch(`${BASE_URL}/${relativeUrl}`, config).then((res) => {
+  return fetch(`${BASE_URL}/${relativeUrl}`, config).then(res => {
     if (!res.ok) {
       throw res;
     }

@@ -14,7 +14,7 @@ export const login = (username: string, password: string) => {
     {},
     {
       username,
-      password,
+      password
     }
   )
     .then(res => res.Authorization)
