@@ -43,6 +43,11 @@ export const getToken = () => {
   return jwt;
 };
 
+export const getTokenData = () => {
+  const token = getToken();
+  return token && decodeJWT(token);
+};
+
 const decodeJWT = (jwt: string): JWT => {
   const base64Url = jwt.split(".")[1];
   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
