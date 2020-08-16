@@ -1,17 +1,34 @@
 <template>
-  <div class="hello">
-    <form @submit.prevent="loginHandler" v-if="!loggedIn">
-      <label for="username">Benutzername</label>
-      <input type="text" v-model="username" id="username" />
+  <div>
+    <v-card v-if="!loggedIn">
+      <v-card-title>Login</v-card-title>
+      <form @submit.prevent="loginHandler">
+        <v-card-text>
+          <v-text-field prepend-icon="mdi-account" v-model="username" label="Benutzername" />
+          <v-text-field
+            type="password"
+            prepend-icon="mdi-lock"
+            v-model="password"
+            label="Passwort"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-container fluid>
+            <v-row justify="end">
+              <v-btn color="primary" type="submit">Einloggen</v-btn>
+            </v-row>
+          </v-container>
+        </v-card-actions>
+      </form>
+    </v-card>
 
-      <label for="password">Password</label>
-      <input type="password" v-model="password" id="password" />
-
-      <button type="submit">Einloggen</button>
-    </form>
-
-    <button @click="logout">Logout</button>
-    <div v-if="loggedIn">You are now logged in</div>
+    <v-card v-if="!!loggedIn">
+      <v-card-title>Eingeloggt</v-card-title>
+      <v-card-text>
+        Du bist eingeloggt. Du kannst dich jetzt
+        <v-btn text @click="logout">ausloggen</v-btn>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -42,10 +59,3 @@ export default class Login extends Vue {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-</style>

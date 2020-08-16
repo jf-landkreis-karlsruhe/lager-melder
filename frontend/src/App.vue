@@ -1,12 +1,14 @@
 <template>
-  <div id="app">
-    <div class="container">
-      <Header />
-      <main>
-        <router-view />
-      </main>
+  <v-app>
+    <div id="grid-container">
+      <div class="my-container">
+        <Header />
+        <main>
+          <router-view />
+        </main>
+      </div>
     </div>
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -21,8 +23,8 @@ import Header from "./components/Header.vue";
 export default class App extends Vue {}
 </script>
 
-<style>
-#app {
+<style scoped>
+#grid-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -34,7 +36,7 @@ export default class App extends Vue {}
   grid-gap: 14px;
 }
 
-.container {
+.my-container {
   grid-column: 2;
   grid-row: 1;
 }

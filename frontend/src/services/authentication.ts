@@ -8,6 +8,8 @@ export interface JWT {
   exp: number;
 }
 
+export const AuthenticationChangedEvent = "authenticationChanged";
+
 export const login = (username: string, password: string) => {
   return postData(
     "login",
@@ -22,11 +24,17 @@ export const login = (username: string, password: string) => {
       saveJWT(jwt);
       return jwt;
     })
-    .then(response => decodeJWT(response));
+    .then(response => {
+      const loggoutEvent = new CustomEvent(AuthenticationChangedEvent);
+      window && window.dispatchEvent(loggoutEvent);
+      return decodeJWT(response);
+    });
 };
 
 export const logout = () => {
   localStorage.removeItem(TOKEN_STORAGE);
+  const loggoutEvent = new CustomEvent(AuthenticationChangedEvent);
+  window && window.dispatchEvent(loggoutEvent);
 };
 
 export const isLoggedIn = () => !!getToken();

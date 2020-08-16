@@ -11,7 +11,7 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "baseUrl": ".",
-    "types": ["webpack-env"],
+    "types": ["webpack-env", "vuetify"],
     "paths": {
       "@/*": ["src/*"]
     },
