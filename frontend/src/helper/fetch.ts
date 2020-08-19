@@ -13,27 +13,6 @@ export const postData = (
   relativeUrl: string,
   headers: HeadersInit,
   body: object
-) => postDataRaw(relativeUrl, headers, body).then(res => res.json());
-
-export const postDataRaw = (
-  relativeUrl: string,
-  headers: HeadersInit,
-  body: object
-) => {
-  return fetchData(relativeUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...headers
-    },
-    body: JSON.stringify(body)
-  });
-};
-
-export const putData = (
-  relativeUrl: string,
-  headers: HeadersInit,
-  body: object
 ) => {
   return fetchData(relativeUrl, {
     method: "POST",
@@ -45,7 +24,22 @@ export const putData = (
   }).then(res => res.json());
 };
 
-export const delteData = (relativeUrl: string, headers: HeadersInit) => {
+export const putData = (
+  relativeUrl: string,
+  headers: HeadersInit,
+  body: object
+) => {
+  return fetchData(relativeUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...headers
+    },
+    body: JSON.stringify(body)
+  }).then(res => res.json());
+};
+
+export const deleteData = (relativeUrl: string, headers: HeadersInit) => {
   return fetchData(relativeUrl, {
     method: "DELETE",
     headers: {

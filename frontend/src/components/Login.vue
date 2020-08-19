@@ -13,7 +13,7 @@
           />
         </v-card-text>
         <v-card-actions>
-          <v-container fluid>
+          <v-container>
             <v-row justify="end">
               <v-btn color="primary" type="submit">Einloggen</v-btn>
             </v-row>
@@ -22,7 +22,7 @@
       </form>
     </v-card>
 
-    <v-card v-if="!!loggedIn">
+    <v-card v-if="loggedIn">
       <v-card-title>Eingeloggt</v-card-title>
       <v-card-text>
         Du bist eingeloggt. Du kannst dich jetzt

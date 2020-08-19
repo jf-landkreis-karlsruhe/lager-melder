@@ -45,7 +45,11 @@ export const getToken = () => {
     return undefined;
   }
   const jwt = JSON.parse(jwtString);
-  if (!jwt || jwt.exp > new Date().getTime()) {
+  if (!jwt) {
+    return undefined;
+  }
+  const jwtData = decodeJWT(jwt)
+  if (jwtData.exp * 1000 < new Date().getTime()) {
     return undefined;
   }
   return jwt;
