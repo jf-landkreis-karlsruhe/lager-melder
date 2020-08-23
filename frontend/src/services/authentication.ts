@@ -48,7 +48,7 @@ export const getToken = () => {
   if (!jwt) {
     return undefined;
   }
-  const jwtData = decodeJWT(jwt)
+  const jwtData = decodeJWT(jwt);
   if (jwtData.exp * 1000 < new Date().getTime()) {
     return undefined;
   }
@@ -75,3 +75,7 @@ const decodeJWT = (jwt: string): JWT => {
 const saveJWT = (jwt: JWT) => {
   localStorage.setItem(TOKEN_STORAGE, JSON.stringify(jwt));
 };
+
+export const withAuthenticationHeader = () => ({
+  Authorization: getToken()
+});
