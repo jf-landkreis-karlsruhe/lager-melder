@@ -1,8 +1,17 @@
 import { getData, postData, putData, deleteData } from "../helper/fetch";
-import { withAuthenticationHeader } from "./authentication";
+import { withAuthenticationHeader, getTokenData } from "./authentication";
 
 export const getAttendees = () =>
   getData<Attendee[]>("attendees", withAuthenticationHeader());
+
+export const getAttendeesForMyDepartment = () => {
+  const departmentId = getTokenData().departmentId;
+  return getAttendeesForDepartment(departmentId);
+};
+
+export const getAttendeesForDepartment = (departmentId: number) =>
+  getData<Attendee[]>(`/departments/${departmentId}/attendees`, withAuthenticationHeader())
+
 
 export const getAttendee = (id: string) =>
   getData<Attendee>(`attendees/${id}`, withAuthenticationHeader());
@@ -31,11 +40,11 @@ export enum Food {
 }
 
 export enum TShirtSize {
-  ONE_HUNDRED_TWENTY_EIGHT = "128",
-  ONE_HUNDRED_FORTY = "140",
-  ONE_HUNDRED_FIFTY_TWO = "152",
-  ONE_HUNDRED_FIFTY_EIGHT = "158",
-  ONE_HUNDRED_SIXTY_FOUR = "164",
+  ONE_HUNDRED_TWENTY_EIGHT = "ONE_HUNDRED_TWENTY_EIGHT",
+  ONE_HUNDRED_FORTY = "ONE_HUNDRED_FORTY",
+  ONE_HUNDRED_FIFTY_TWO = "ONE_HUNDRED_FIFTY_TWO",
+  ONE_HUNDRED_FIFTY_EIGHT = "ONE_HUNDRED_FIFTY_EIGHT",
+  ONE_HUNDRED_SIXTY_FOUR = "ONE_HUNDRED_SIXTY_FOUR",
   S = "S",
   M = "M",
   L = "L",

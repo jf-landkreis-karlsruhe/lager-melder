@@ -18,6 +18,11 @@ const routes: Array<RouteConfig> = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/LoginView.vue")
+  },
+  {
+    path: "/teilnehmer",
+    name: "AttendeesRegistration",
+    component: () => import("../views/AttendeesRegistrationView.vue")
   }
 ];
 

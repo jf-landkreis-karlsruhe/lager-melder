@@ -11,7 +11,7 @@ export interface JWT {
 export const AuthenticationChangedEvent = "authenticationChanged";
 
 export const login = (username: string, password: string) => {
-  return postData(
+  return postData<AuthorizationResponse>(
     "login",
     {},
     {
@@ -79,3 +79,7 @@ const saveJWT = (jwt: JWT) => {
 export const withAuthenticationHeader = () => ({
   Authorization: getToken()
 });
+
+export interface AuthorizationResponse {
+  Authorization: string;
+}
