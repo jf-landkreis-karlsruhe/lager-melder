@@ -2,7 +2,9 @@
   <div>
     <v-container>
       <v-row justify="space-between">
-        <div class="search"></div>
+        <div>
+          <v-text-field prepend-icon="mdi-magnify" v-model="filterInput" label="Teilnehmerfilter" />
+        </div>
         <div class="department-count">Anzahl Teilnehmer: {{attendees.length}}</div>
       </v-row>
     </v-container>
@@ -30,17 +32,31 @@ import AttendeesTable from "./AttendeesTable.vue";
 })
 export default class AttendeesRegistration extends Vue {
   attendees: Attendee[] = [];
+  filterInput: string = "";
 
   get youthAttendees(): Attendee[] {
     return this.attendees
       .filter(attendee => attendee.role === AttendeeRole.YOUTH)
+      .filter(this.filterByFilterInput)
       .slice(0, 10);
   }
 
   get youthLeaderAttendees(): Attendee[] {
     return this.attendees
       .filter(attendee => attendee.role === AttendeeRole.YOUTH_LEADER)
+      .filter(this.filterByFilterInput)
       .slice(0, 10);
+  }
+
+  filterByFilterInput(attendee: Attendee) {
+    if (this.filterInput.length > 0) {
+      return (
+        attendee.firstName.includes(this.filterInput) ||
+        attendee.lastName.includes(this.filterInput) ||
+        attendee.additionalInformation.includes(this.filterInput)
+      );
+    }
+    return true;
   }
 
   mounted() {
