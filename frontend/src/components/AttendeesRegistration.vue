@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-container>
+      <h1 class="h1">Teilnehmer {{department.name}}</h1>
       <v-row justify="space-between">
         <div>
           <v-text-field prepend-icon="mdi-magnify" v-model="filterInput" label="Teilnehmerfilter" />
@@ -18,12 +19,14 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 import {
-  // getAttendeesForMyDepartment,
+  getAttendeesForMyDepartment,
   // eslint-disable-next-line no-unused-vars
   Attendee,
-  AttendeeRole,
-  getAttendees
+  AttendeeRole
 } from "../services/attendee";
+
+// eslint-disable-next-line no-unused-vars
+import { Department, getMyDepartment } from "../services/department";
 
 import AttendeesTable from "./AttendeesTable.vue";
 
@@ -32,20 +35,19 @@ import AttendeesTable from "./AttendeesTable.vue";
 })
 export default class AttendeesRegistration extends Vue {
   attendees: Attendee[] = [];
+  department: Department = {} as Department;
   filterInput: string = "";
 
   get youthAttendees(): Attendee[] {
     return this.attendees
       .filter(attendee => attendee.role === AttendeeRole.YOUTH)
-      .filter(this.filterByFilterInput)
-      .slice(0, 10);
+      .filter(this.filterByFilterInput);
   }
 
   get youthLeaderAttendees(): Attendee[] {
     return this.attendees
       .filter(attendee => attendee.role === AttendeeRole.YOUTH_LEADER)
-      .filter(this.filterByFilterInput)
-      .slice(0, 10);
+      .filter(this.filterByFilterInput);
   }
 
   filterByFilterInput(attendee: Attendee) {
@@ -60,8 +62,10 @@ export default class AttendeesRegistration extends Vue {
   }
 
   mounted() {
-    // getAttendeesForMyDepartment().then(
-    getAttendees().then(attendees => (this.attendees = attendees));
+    getAttendeesForMyDepartment().then(
+      attendees => (this.attendees = attendees)
+    );
+    getMyDepartment().then(department => (this.department = department));
   }
 }
 </script>

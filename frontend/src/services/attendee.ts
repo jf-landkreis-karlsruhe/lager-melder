@@ -10,10 +10,10 @@ export const getAttendeesForMyDepartment = () => {
 };
 
 export const getAttendeesForDepartment = (departmentId: number) =>
-  getData<Attendee[]>(`/departments/${departmentId}/attendees`, withAuthenticationHeader())
+  getData<Attendee[]>(`departments/${departmentId}/attendees`, withAuthenticationHeader())
 
 
-export const getAttendee = (id: string) =>
+export const getAttendee = (id: number) =>
   getData<Attendee>(`attendees/${id}`, withAuthenticationHeader());
 
 export const createAttendee = (attendee: NewAttendee) =>

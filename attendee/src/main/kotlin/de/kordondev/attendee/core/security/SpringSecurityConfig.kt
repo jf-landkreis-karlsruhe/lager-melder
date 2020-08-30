@@ -25,8 +25,8 @@ class SpringSecurityConfig(
         http
                 //HTTP Basic authentication
                 .authorizeRequests()
-                .antMatchers("/attendee/**").authenticated()
-                .antMatchers("/department/**").authenticated()
+                .antMatchers("/attendees/**").authenticated()
+                .antMatchers("/departments/**").authenticated()
                 .and()
                 .addFilter(JWTAuthenticationFilter(authenticationManager(), userRepository))
                 .addFilter(JWTAuthorizationFilter(authenticationManager(), userRepository))
