@@ -15,12 +15,28 @@
           :disable-items-per-page="true"
           :hide-default-footer="true"
         >
+          <template v-slot:item.firstName="{ item }">
+            <div v-if="!editingAttendeeIds.includes(item.id)">{{item.firstName}}</div>
+            <div v-if="editingAttendeeIds.includes(item.id)">
+              <v-text-field type="text" v-model="item.firstName" label="Vorname" />
+            </div>
+          </template>
           <template v-slot:item.tshirtSize="{ item }">{{tshirtSizeText(item.tshirtSize)}}</template>
           <template v-slot:item.food="{ item }">{{foodText(item.food)}}</template>
           <template v-slot:item.actions="{ item }">
-            <v-row>
-              <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-              <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+            <v-row class="actions">
+              <div v-if="!editingAttendeeIds.includes(item.id)">
+                <v-icon medium class="mr-2" @click.prevent="editAttendee(item)">mdi-pencil</v-icon>
+              </div>
+              <div v-if="editingAttendeeIds.includes(item.id)">
+                <v-icon medium class="mr-2" @click.prevent="saveAttendee(item)">mdi-content-save</v-icon>
+              </div>
+              <span v-if="!deletingAttendees.includes(item.id)">
+                <v-icon medium @click.prevent="deleteAttendee(item)">mdi-delete</v-icon>
+              </span>
+              <span v-if="deletingAttendees.includes(item.id)">
+                <v-progress-circular indeterminate :size="24" color="green" />
+              </span>
             </v-row>
           </template>
         </v-data-table>
@@ -41,11 +57,15 @@ import {
   TShirtSize
 } from "../services/attendee";
 
+import { deleteAttendee } from "../services/attendee";
+
 @Component({})
 export default class AttendeesTable extends Vue {
   @Prop() attendees!: Attendee[];
   @Prop() headlineText!: string;
 
+  deletingAttendees: string[] = [];
+  editingAttendeeIds: string[] = [];
   headers = [
     { text: "Vorname", value: "firstName" },
     { text: "Nachname", value: "lastName" },
@@ -55,6 +75,24 @@ export default class AttendeesTable extends Vue {
     { text: "Anmerkung", value: "additionalInformation" },
     { text: "", value: "actions", sortable: false }
   ];
+
+  deleteAttendee = (attendee: Attendee) => {
+    this.deletingAttendees.push(attendee.id);
+    deleteAttendee(attendee.id).catch(() =>
+      this.removeAttendeeIdFromList(attendee.id, this.deletingAttendees)
+    );
+  };
+  editAttendee = (attendee: Attendee) =>
+    this.editingAttendeeIds.push(attendee.id);
+
+  saveAttendee = (attendee: Attendee) => {
+    console.log(attendee.id, attendee.firstName);
+    this.removeAttendeeIdFromList(attendee.id, this.editingAttendeeIds);
+  };
+  removeAttendeeIdFromList = (id: string, list: string[]) => {
+    const indexOfAttendee = list.indexOf(id);
+    list.splice(indexOfAttendee, 1);
+  };
 
   tshirtSizeText = (tshirtSize: TShirtSize) => {
     switch (tshirtSize) {
@@ -121,5 +159,8 @@ export default class AttendeesTable extends Vue {
 }
 .headline {
   margin: 14px 0;
+}
+.actions {
+  width: 56px;
 }
 </style>

@@ -67,5 +67,5 @@ export interface NewAttendee {
 }
 
 export interface Attendee extends NewAttendee {
-  id: number;
+  id: string;
 }
