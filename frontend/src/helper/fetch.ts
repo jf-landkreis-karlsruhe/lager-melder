@@ -1,15 +1,15 @@
 import { BASE_URL } from "../assets/config";
 
-export const getData = (relativeUrl: string, headers: HeadersInit) => {
+export const getData = <T>(relativeUrl: string, headers: HeadersInit) => {
   return fetchData(relativeUrl, {
     headers: {
       "Content-Type": "application/json",
       ...headers
     }
-  }).then(res => res.json());
+  }).then(res => res.json() as Promise<T>);
 };
 
-export const postData = (
+export const postData = <T>(
   relativeUrl: string,
   headers: HeadersInit,
   body: object
@@ -21,10 +21,10 @@ export const postData = (
       ...headers
     },
     body: JSON.stringify(body)
-  }).then(res => res.json());
+  }).then(res => res.json() as Promise<T>);
 };
 
-export const putData = (
+export const putData = <T>(
   relativeUrl: string,
   headers: HeadersInit,
   body: object
@@ -36,7 +36,7 @@ export const putData = (
       ...headers
     },
     body: JSON.stringify(body)
-  }).then(res => res.json());
+  }).then(res => res.json() as Promise<T>);
 };
 
 export const deleteData = (relativeUrl: string, headers: HeadersInit) => {

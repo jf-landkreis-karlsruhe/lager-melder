@@ -3,7 +3,8 @@
     <img alt="Zeltlager logo" class="hero-image" src="../assets/logo.png" />
     <div id="nav" v-if="loggedIn">
       <router-link to="/">Home</router-link>|
-      <router-link to="/login">Login</router-link>
+      <router-link to="/login">Login</router-link>|
+      <router-link to="/teilnehmer">Teilnehmer</router-link>
     </div>
   </header>
 </template>
