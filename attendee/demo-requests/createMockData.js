@@ -69,7 +69,7 @@ function createAttendee(firstName, lastName, departmentId, birthday, additionalI
         "firstName": firstName,
         "lastName": lastName,
         "departmentId" : departmentId,
-        "birthday": `${month}/${day}/${year}`,
+        "birthday": `${year}-${month}-${day}`,
         "food": food,
         "tShirtSize": tShirtSize,
         "additionalInformation": additionalInformation || '',

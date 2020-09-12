@@ -44,7 +44,11 @@ class SpringSecurityConfig(
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = listOf("*")
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTION")
         val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
         source.registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues())
         return source
     }

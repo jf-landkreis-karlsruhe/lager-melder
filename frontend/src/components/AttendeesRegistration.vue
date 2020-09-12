@@ -9,8 +9,18 @@
         <div class="department-count">Anzahl Teilnehmer: {{attendees.length}}</div>
       </v-row>
     </v-container>
-    <AttendeesTable headlineText="Jugendliche" :attendees="youthAttendees" />
-    <AttendeesTable headlineText="Jugendleiter" :attendees="youthLeaderAttendees" />
+    <AttendeesTable
+      headlineText="Jugendliche"
+      :attendees="youthAttendees"
+      :departmentId="department.id"
+      :role="attendeeRoleYouth"
+    />
+    <AttendeesTable
+      headlineText="Jugendleiter"
+      :attendees="youthLeaderAttendees"
+      :role="attendeeRoleYouthLeader"
+      :departmentId="department.id"
+    />
   </div>
 </template>
 
@@ -37,6 +47,8 @@ export default class AttendeesRegistration extends Vue {
   attendees: Attendee[] = [];
   department: Department = {} as Department;
   filterInput: string = "";
+  attendeeRoleYouth = AttendeeRole.YOUTH;
+  attendeeRoleYouthLeader = AttendeeRole.YOUTH_LEADER;
 
   get youthAttendees(): Attendee[] {
     return this.attendees
