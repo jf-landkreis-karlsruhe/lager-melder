@@ -27,13 +27,13 @@
               <v-text-field type="text" v-model="item.lastName" label="Nachname" />
             </div>
           </template>
-          <template v-slot:item.tshirtSize="{ item }">
+          <template v-slot:item.tShirtSize="{ item }">
             <div style="max-width: 190px;">
-              <div v-if="!editingAttendeeIds.includes(item.id)">{{tshirtSizeText(item.tshirtSize)}}</div>
+              <div v-if="!editingAttendeeIds.includes(item.id)">{{tShirtSizeText(item.tShirtSize)}}</div>
               <div v-if="editingAttendeeIds.includes(item.id)">
                 <v-select
-                  v-model="item.tshirtSize"
-                  :items="tshirtSizes"
+                  v-model="item.tShirtSize"
+                  :items="tShirtSizes"
                   item-text="text"
                   item-value="value"
                   label="TShirt Größe"
@@ -121,7 +121,7 @@ export default class AttendeesTable extends Vue {
     { text: "Vorname", value: "firstName" },
     { text: "Nachname", value: "lastName" },
     { text: "Essen", value: "food" },
-    { text: "TShirt Größe", value: "tshirtSize" },
+    { text: "TShirt Größe", value: "tShirtSize" },
     { text: "Geburtsdatum", value: "birthday" },
     { text: "Anmerkung", value: "additionalInformation" },
     { text: "", value: "actions", sortable: false }
@@ -158,10 +158,10 @@ export default class AttendeesTable extends Vue {
     list.splice(indexOfAttendee, 1);
   };
 
-  get tshirtSizes(): { value: TShirtSize; text: string }[] {
+  get tShirtSizes(): { value: TShirtSize; text: string }[] {
     return Object.values(TShirtSize).map(value => ({
       value,
-      text: this.tshirtSizeText(value)
+      text: this.tShirtSizeText(value)
     }));
   }
 
@@ -199,8 +199,8 @@ export default class AttendeesTable extends Vue {
     return `${day}.${month}.${year}`;
   };
 
-  tshirtSizeText = (tshirtSize: TShirtSize) => {
-    switch (tshirtSize) {
+  tShirtSizeText = (tShirtSize: TShirtSize) => {
+    switch (tShirtSize) {
       case TShirtSize.ONE_HUNDRED_TWENTY_EIGHT:
         return "128";
       case TShirtSize.ONE_HUNDRED_FORTY:
@@ -228,7 +228,7 @@ export default class AttendeesTable extends Vue {
       case TShirtSize.XXXXXL:
         return "XXXXXL";
       default:
-        return tshirtSize;
+        return tShirtSize;
     }
   };
 
