@@ -95,13 +95,13 @@ import { Component, Prop } from "vue-property-decorator";
 import { updateAttendee } from "../services/attendee";
 
 import {
-  // getAttendeesForMyDepartment,
   // eslint-disable-next-line no-unused-vars
   Attendee,
   Food,
   TShirtSize,
   // eslint-disable-next-line no-unused-vars
-  AttendeeRole
+  AttendeeRole,
+  createAttendee
 } from "../services/attendee";
 
 import { deleteAttendee } from "../services/attendee";
@@ -137,21 +137,22 @@ export default class AttendeesTable extends Vue {
     this.editingAttendeeIds.push(attendee.id);
 
   saveAttendee = (attendee: Attendee) => {
+    debugger;
     console.log(attendee.id, attendee.firstName);
     if (attendee.id === this.newAttendeeId) {
       this.newAttendees.push({
         ...attendee,
         id: (Math.floor(Math.random() * 100) + 100).toString()
       });
-      /*createAttendee(attendee).then((attendee) => {
-        this.attendees.push(attendee)
-
-      })*/
+      createAttendee(attendee).then(attendee => {
+        this.attendees.push(attendee);
+      });
       return;
     }
-    updateAttendee(attendee).then(() =>
-      this.removeAttendeeIdFromList(attendee.id, this.editingAttendeeIds)
-    );
+    updateAttendee(attendee).then(() => {
+      console.log("update", attendee.id);
+      this.removeAttendeeIdFromList(attendee.id, this.editingAttendeeIds);
+    });
   };
   removeAttendeeIdFromList = (id: string, list: string[]) => {
     const indexOfAttendee = list.indexOf(id);
