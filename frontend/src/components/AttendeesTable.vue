@@ -88,12 +88,9 @@
               {{ birthdayText(item.birthday) }}
             </div>
             <div v-if="editingAttendeeIds.includes(item.id)">
-              <v-text-field
-                type="date"
-                v-model="item.birthday"
-                label="Geburtsdatum"
-                required
-                :form="createFormName(item)"
+              <v-text-field type="date" v-model="item.birthday"
+              label="Geburtsdatum" <<<<<<< HEAD required
+              :form="createFormName(item)" ======= >>>>>>> Show all departments
               />
             </div>
           </template>
