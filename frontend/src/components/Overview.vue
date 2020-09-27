@@ -57,6 +57,7 @@ import {
 } from "../services/department";
 
 import AttendeesTable from "./AttendeesTable.vue";
+import { youthLeaderAttendees, youthAttendees } from "../helper/filterHelper";
 
 interface DepartmentWithAttendees {
   department: Department;
@@ -74,33 +75,21 @@ export default class AttendeesRegistration extends Vue {
   attendeeRoleYouth = AttendeeRole.YOUTH;
   attendeeRoleYouthLeader = AttendeeRole.YOUTH_LEADER;
 
-  youthAttendees = (
-    departmentId: string,
-    attendees: Attendee[]
-  ): Attendee[] => {
-    return attendees
-      .filter(attendee => attendee.departmentId === departmentId)
-      .filter(attendee => attendee.role === AttendeeRole.YOUTH)
-      .filter(this.filterByFilterInput);
-  };
-
-  youthLeaderAttendees = (
-    departmentId: string,
-    attendees: Attendee[]
-  ): Attendee[] => {
-    return attendees
-      .filter(attendee => attendee.departmentId === departmentId)
-      .filter(attendee => attendee.role === AttendeeRole.YOUTH_LEADER)
-      .filter(this.filterByFilterInput);
-  };
-
   get departmentWithAttendees(): DepartmentWithAttendees[] {
     return this.departments
       .map(department => {
         return {
           department: department,
-          youthAttendees: this.youthAttendees(department.id, this.attendees),
-          youthLeader: this.youthLeaderAttendees(department.id, this.attendees)
+          youthAttendees: youthAttendees(
+            department.id,
+            this.attendees,
+            this.filterInput
+          ),
+          youthLeader: youthLeaderAttendees(
+            department.id,
+            this.attendees,
+            this.filterInput
+          )
         };
       })
       .filter(
@@ -108,17 +97,6 @@ export default class AttendeesRegistration extends Vue {
           registration.youthAttendees.length > 0 ||
           registration.youthLeader.length > 0
       );
-  }
-
-  filterByFilterInput(attendee: Attendee) {
-    if (this.filterInput.length > 0) {
-      return (
-        attendee.firstName.includes(this.filterInput) ||
-        attendee.lastName.includes(this.filterInput) ||
-        attendee.additionalInformation.includes(this.filterInput)
-      );
-    }
-    return true;
   }
 
   mounted() {

@@ -88,9 +88,12 @@
               {{ birthdayText(item.birthday) }}
             </div>
             <div v-if="editingAttendeeIds.includes(item.id)">
-              <v-text-field type="date" v-model="item.birthday"
-              label="Geburtsdatum" <<<<<<< HEAD required
-              :form="createFormName(item)" ======= >>>>>>> Show all departments
+              <v-text-field
+                type="date"
+                v-model="item.birthday"
+                label="Geburtsdatum"
+                required
+                :form="createFormName(item)"
               />
             </div>
           </template>
@@ -150,6 +153,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { updateAttendee } from "../services/attendee";
+import { tShirtSizeText, foodText, birthdayText } from "../helper/displayText";
 
 import {
   // eslint-disable-next-line no-unused-vars
@@ -242,6 +246,10 @@ export default class AttendeesTable extends Vue {
     }));
   }
 
+  birthdayText = birthdayText;
+  foodText = foodText;
+  tShirtSizeText = tShirtSizeText;
+
   get attendeesWithNew(): AttendeeWithValidation[] {
     return this.attendees
       .concat(this.newAttendees)
@@ -261,69 +269,6 @@ export default class AttendeesTable extends Vue {
       ])
       .map(attendee => ({ ...attendee, tShirtSizeError: false }));
   }
-
-  birthdayText = (birthday: string) => {
-    const date = new Date(birthday);
-    const day = date
-      .getDate()
-      .toString()
-      .padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}.${month}.${year}`;
-  };
-
-  tShirtSizeText = (tShirtSize: TShirtSize) => {
-    switch (tShirtSize) {
-      case TShirtSize.ONE_HUNDRED_TWENTY_EIGHT:
-        return "128";
-      case TShirtSize.ONE_HUNDRED_FORTY:
-        return "140";
-      case TShirtSize.ONE_HUNDRED_FIFTY_TWO:
-        return "152";
-      case TShirtSize.ONE_HUNDRED_FIFTY_EIGHT:
-        return "158";
-      case TShirtSize.ONE_HUNDRED_SIXTY_FOUR:
-        return "164";
-      case TShirtSize.S:
-        return "S";
-      case TShirtSize.M:
-        return "M";
-      case TShirtSize.L:
-        return "L";
-      case TShirtSize.XL:
-        return "XL";
-      case TShirtSize.XXL:
-        return "XXL";
-      case TShirtSize.XXXL:
-        return "XXXL";
-      case TShirtSize.XXXXL:
-        return "XXXXL";
-      case TShirtSize.XXXXXL:
-        return "XXXXXL";
-      default:
-        return tShirtSize;
-    }
-  };
-
-  foodText = (food: Food) => {
-    switch (food) {
-      case Food.MEAT:
-        return "Fleisch";
-      case Food.NONE:
-        return "Nichts";
-      case Food.ALLERGY:
-        return "Allergie";
-      case Food.VEGETARIAN:
-        return "Vegetarisch";
-      case Food.VEGAN:
-        return "Vegan";
-      case Food.MUSLIM:
-        return "Muslimisch";
-      default:
-        return food;
-    }
-  };
 }
 </script>
 

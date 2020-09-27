@@ -11,7 +11,9 @@
           />
         </div>
         <div class="department-count">
-          Anzahl Teilnehmer: {{ totalAttendeeCount }}
+          <<<<<<< HEAD Anzahl Teilnehmer: {{ totalAttendeeCount }} =======
+          Anzahl Teilnehmer: {{ attendees.length }}
+          >>>>>>> Remove duplication
         </div>
       </v-row>
     </v-container>
@@ -45,6 +47,7 @@ import {
 
 // eslint-disable-next-line no-unused-vars
 import { Department, getMyDepartment } from "../services/department";
+import { youthLeaderAttendees, youthAttendees } from "../helper/filterHelper";
 
 import AttendeesTable from "./AttendeesTable.vue";
 
@@ -60,15 +63,21 @@ export default class AttendeesRegistration extends Vue {
   totalAttendeeCount: number = 0;
 
   get youthAttendees(): Attendee[] {
-    return this.attendees
-      .filter(attendee => attendee.role === AttendeeRole.YOUTH)
-      .filter(this.filterByFilterInput);
+    if (!this.department || !this.department.id) {
+      return [];
+    }
+    return youthAttendees(this.department.id, this.attendees, this.filterInput);
   }
 
   get youthLeaderAttendees(): Attendee[] {
-    return this.attendees
-      .filter(attendee => attendee.role === AttendeeRole.YOUTH_LEADER)
-      .filter(this.filterByFilterInput);
+    if (!this.department || !this.department.id) {
+      return [];
+    }
+    return youthLeaderAttendees(
+      this.department.id,
+      this.attendees,
+      this.filterInput
+    );
   }
 
   attendeesChanged(change: number) {
@@ -83,7 +92,6 @@ export default class AttendeesRegistration extends Vue {
         attendee.additionalInformation.includes(this.filterInput)
       );
     }
-    return true;
   }
 
   mounted() {
