@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Distribution :attendees="attendees" />
     <div>
       <v-text-field
         prepend-icon="mdi-magnify"
@@ -43,11 +44,16 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
+import Distribution from "./Distribution";
 import {
   getAttendees,
   // eslint-disable-next-line no-unused-vars
   Attendee,
-  AttendeeRole
+  AttendeeRole,
+  // eslint-disable-next-line no-unused-vars
+  Food,
+  // eslint-disable-next-line no-unused-vars
+  TShirtSize
 } from "../services/attendee";
 
 import {
@@ -66,7 +72,7 @@ interface DepartmentWithAttendees {
 }
 
 @Component({
-  components: { AttendeesTable }
+  components: { AttendeesTable, Distribution }
 })
 export default class AttendeesRegistration extends Vue {
   attendees: Attendee[] = [];
