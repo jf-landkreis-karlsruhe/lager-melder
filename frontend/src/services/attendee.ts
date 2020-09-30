@@ -2,9 +2,7 @@ import { getData, postData, putData, deleteData } from "../helper/fetch";
 import { withAuthenticationHeader, getTokenData } from "./authentication";
 
 export const getAttendees = () =>
-  getData<Attendee[]>("attendees", withAuthenticationHeader()).then(attendees =>
-    attendees.map(fixAttendee)
-  );
+  getData<Attendee[]>("attendees", withAuthenticationHeader())
 
 export const getAttendeesForMyDepartment = () => {
   const departmentId = getTokenData().departmentId;
@@ -12,26 +10,19 @@ export const getAttendeesForMyDepartment = () => {
 }
 
 export const getAttendeesForDepartment = (departmentId: number) =>
-  getData<Attendee[]>(`departments/${departmentId}/attendees`, withAuthenticationHeader()).then(attendees =>
-    attendees.map(fixAttendee)
-  );
+  getData<Attendee[]>(`departments/${departmentId}/attendees`, withAuthenticationHeader());
 
 export const getAttendee = (id: number) =>
-  getData<Attendee>(`attendees/${id}`, withAuthenticationHeader()).then(fixAttendee);
+  getData<Attendee>(`attendees/${id}`, withAuthenticationHeader());
 
 export const createAttendee = (attendee: NewAttendee) =>
-  postData<Attendee>("attendees", withAuthenticationHeader(), attendee).then(fixAttendee);
+  postData<Attendee>("attendees", withAuthenticationHeader(), attendee);
 
 export const updateAttendee = (attendee: Attendee) =>
-  putData<Attendee>(`attendees/${attendee.id}`, withAuthenticationHeader(), attendee).then(fixAttendee);
+  putData<Attendee>(`attendees/${attendee.id}`, withAuthenticationHeader(), attendee);
 
 export const deleteAttendee = (id: string) =>
   deleteData(`attendees/${id}`, withAuthenticationHeader());
-
-const fixAttendee = (attendee: any): Attendee => ({
-  ...attendee,
-  tShirtSize: attendee.tshirtSize
-});
 
 export enum AttendeeRole {
   YOUTH = "YOUTH",

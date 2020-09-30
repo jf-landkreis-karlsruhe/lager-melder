@@ -3,8 +3,10 @@
     <v-card class="card">
       <v-card-title>
         <v-row justify="space-between">
-          <h1 class="headline">{{headlineText}}</h1>
-          <div class="additional-information">Anzahl {{headlineText}}: {{attendees.length}}</div>
+          <h1 class="headline">{{ headlineText }}</h1>
+          <div class="additional-information">
+            Anzahl {{ headlineText }}: {{ attendees.length }}
+          </div>
         </v-row>
       </v-card-title>
       <v-card-text>
@@ -16,20 +18,34 @@
           :hide-default-footer="true"
         >
           <template v-slot:item.firstName="{ item }">
-            <div v-if="!editingAttendeeIds.includes(item.id)">{{item.firstName}}</div>
+            <div v-if="!editingAttendeeIds.includes(item.id)">
+              {{ item.firstName }}
+            </div>
             <div v-if="editingAttendeeIds.includes(item.id)">
-              <v-text-field type="text" v-model="item.firstName" label="Vorname" />
+              <v-text-field
+                type="text"
+                v-model="item.firstName"
+                label="Vorname"
+              />
             </div>
           </template>
           <template v-slot:item.lastName="{ item }">
-            <div v-if="!editingAttendeeIds.includes(item.id)">{{item.lastName}}</div>
+            <div v-if="!editingAttendeeIds.includes(item.id)">
+              {{ item.lastName }}
+            </div>
             <div v-if="editingAttendeeIds.includes(item.id)">
-              <v-text-field type="text" v-model="item.lastName" label="Nachname" />
+              <v-text-field
+                type="text"
+                v-model="item.lastName"
+                label="Nachname"
+              />
             </div>
           </template>
           <template v-slot:item.tShirtSize="{ item }">
             <div style="max-width: 190px;">
-              <div v-if="!editingAttendeeIds.includes(item.id)">{{tShirtSizeText(item.tShirtSize)}}</div>
+              <div v-if="!editingAttendeeIds.includes(item.id)">
+                {{ tShirtSizeText(item.tShirtSize) }}
+              </div>
               <div v-if="editingAttendeeIds.includes(item.id)">
                 <v-select
                   v-model="item.tShirtSize"
@@ -43,7 +59,9 @@
             </div>
           </template>
           <template v-slot:item.food="{ item }">
-            <div v-if="!editingAttendeeIds.includes(item.id)">{{foodText(item.food)}}</div>
+            <div v-if="!editingAttendeeIds.includes(item.id)">
+              {{ foodText(item.food) }}
+            </div>
             <div v-if="editingAttendeeIds.includes(item.id)">
               <v-select
                 v-model="item.food"
@@ -56,13 +74,21 @@
             </div>
           </template>
           <template v-slot:item.birthday="{ item }">
-            <div v-if="!editingAttendeeIds.includes(item.id)">{{birthdayText(item.birthday)}}</div>
+            <div v-if="!editingAttendeeIds.includes(item.id)">
+              {{ birthdayText(item.birthday) }}
+            </div>
             <div v-if="editingAttendeeIds.includes(item.id)">
-              <v-text-field type="date" v-model="item.birthday" label="Geburtsdatum" />
+              <v-text-field
+                type="date"
+                v-model="item.birthday"
+                label="Geburtsdatum"
+              />
             </div>
           </template>
           <template v-slot:item.additionalInformation="{ item }">
-            <div v-if="!editingAttendeeIds.includes(item.id)">{{item.additionalInformation}}</div>
+            <div v-if="!editingAttendeeIds.includes(item.id)">
+              {{ item.additionalInformation }}
+            </div>
             <div v-if="editingAttendeeIds.includes(item.id)">
               <v-textarea v-model="item.additionalInformation" />
             </div>
@@ -70,13 +96,24 @@
           <template v-slot:item.actions="{ item }">
             <v-row class="actions">
               <div v-if="!editingAttendeeIds.includes(item.id)">
-                <v-icon medium class="mr-2" @click.prevent="editAttendee(item)">mdi-pencil</v-icon>
+                <v-icon medium class="mr-2" @click.prevent="editAttendee(item)"
+                  >mdi-pencil</v-icon
+                >
               </div>
               <div v-if="editingAttendeeIds.includes(item.id)">
-                <v-icon medium class="mr-2" @click.prevent="saveAttendee(item)">mdi-content-save</v-icon>
+                <v-icon medium class="mr-2" @click.prevent="saveAttendee(item)"
+                  >mdi-content-save</v-icon
+                >
               </div>
-              <span v-if="!deletingAttendees.includes(item.id) && item.id !== newAttendeeId">
-                <v-icon medium @click.prevent="deleteAttendee(item)">mdi-delete</v-icon>
+              <span
+                v-if="
+                  !deletingAttendees.includes(item.id) &&
+                    item.id !== newAttendeeId
+                "
+              >
+                <v-icon medium @click.prevent="deleteAttendee(item)"
+                  >mdi-delete</v-icon
+                >
               </span>
               <span v-if="deletingAttendees.includes(item.id)">
                 <v-progress-circular indeterminate :size="24" color="green" />
@@ -137,7 +174,6 @@ export default class AttendeesTable extends Vue {
     this.editingAttendeeIds.push(attendee.id);
 
   saveAttendee = (attendee: Attendee) => {
-    debugger;
     console.log(attendee.id, attendee.firstName);
     if (attendee.id === this.newAttendeeId) {
       this.newAttendees.push({
