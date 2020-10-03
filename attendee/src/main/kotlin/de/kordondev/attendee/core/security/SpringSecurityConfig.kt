@@ -50,11 +50,10 @@ class SpringSecurityConfig(
         configuration.allowCredentials = true
         // setAllowedHeaders is important! Without it, OPTIONS preflight request
         // will fail with 403 Invalid CORS request
-        configuration.allowedHeaders = listOf("*") // listOf("Authorization", "Cache-Control", "Content-Type")
+        configuration.allowedHeaders = listOf("Authorization", "Cache-Control", "Content-Type")
         configuration.maxAge = 1800L
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
-        // source.registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues())
         return source
     }
 

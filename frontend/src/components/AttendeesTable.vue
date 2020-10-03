@@ -26,6 +26,7 @@
                 type="text"
                 v-model="item.firstName"
                 label="Vorname"
+                reqired
               />
             </div>
           </template>
@@ -38,6 +39,7 @@
                 type="text"
                 v-model="item.lastName"
                 label="Nachname"
+                reqired
               />
             </div>
           </template>
@@ -54,6 +56,7 @@
                   item-value="value"
                   label="TShirt Größe"
                   single-line
+                  reqired
                 ></v-select>
               </div>
             </div>
@@ -70,6 +73,7 @@
                 item-value="value"
                 label="Essen"
                 single-line
+                reqired
               ></v-select>
             </div>
           </template>
@@ -82,6 +86,7 @@
                 type="date"
                 v-model="item.birthday"
                 label="Geburtsdatum"
+                reqired
               />
             </div>
           </template>
@@ -96,14 +101,14 @@
           <template v-slot:item.actions="{ item }">
             <v-row class="actions">
               <div v-if="!editingAttendeeIds.includes(item.id)">
-                <v-icon medium class="mr-2" @click.prevent="editAttendee(item)"
-                  >mdi-pencil</v-icon
-                >
+                <v-icon medium class="mr-2" @click.prevent="editAttendee(item)">
+                  mdi-pencil
+                </v-icon>
               </div>
               <div v-if="editingAttendeeIds.includes(item.id)">
-                <v-icon medium class="mr-2" @click.prevent="saveAttendee(item)"
-                  >mdi-content-save</v-icon
-                >
+                <v-icon medium class="mr-2" @click.prevent="saveAttendee(item)">
+                  mdi-content-save
+                </v-icon>
               </div>
               <span
                 v-if="
