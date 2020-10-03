@@ -5,7 +5,7 @@
         <v-row justify="space-between">
           <h1 class="headline">{{ headlineText }}</h1>
           <div class="additional-information">
-            Anzahl {{ headlineText }}: {{ attendees.length }}
+            Anzahl {{ headlineText }}: {{ attendeesWithNew.length - 1 }}
           </div>
         </v-row>
       </v-card-title>
@@ -149,8 +149,10 @@ export default class AttendeesTable extends Vue {
   @Prop() headlineText!: string;
   @Prop() role!: AttendeeRole;
   @Prop() departmentId!: number;
+  @Prop() attendeesChanged!: (change: number) => void;
 
   newAttendees: Attendee[] = [];
+  deletedAttendeeIds: string[] = [];
   newAttendeeId = "newAttendee";
   deletingAttendees: string[] = [];
   editingAttendeeIds: string[] = [this.newAttendeeId];
@@ -166,27 +168,24 @@ export default class AttendeesTable extends Vue {
 
   deleteAttendee = (attendee: Attendee) => {
     this.deletingAttendees.push(attendee.id);
-    deleteAttendee(attendee.id).catch(() =>
-      this.removeAttendeeIdFromList(attendee.id, this.deletingAttendees)
-    );
+    deleteAttendee(attendee.id).then(() => {
+      this.removeAttendeeIdFromList(attendee.id, this.deletingAttendees);
+      this.deletedAttendeeIds.push(attendee.id);
+      this.attendeesChanged(-1);
+    });
   };
   editAttendee = (attendee: Attendee) =>
     this.editingAttendeeIds.push(attendee.id);
 
   saveAttendee = (attendee: Attendee) => {
-    console.log(attendee.id, attendee.firstName);
     if (attendee.id === this.newAttendeeId) {
-      this.newAttendees.push({
-        ...attendee,
-        id: (Math.floor(Math.random() * 100) + 100).toString()
-      });
       createAttendee(attendee).then(attendee => {
-        this.attendees.push(attendee);
+        this.newAttendees.push(attendee);
+        this.attendeesChanged(1);
       });
       return;
     }
     updateAttendee(attendee).then(() => {
-      console.log("update", attendee.id);
       this.removeAttendeeIdFromList(attendee.id, this.editingAttendeeIds);
     });
   };
@@ -210,19 +209,22 @@ export default class AttendeesTable extends Vue {
   }
 
   get attendeesWithNew(): Attendee[] {
-    return this.attendees.concat(this.newAttendees).concat([
-      {
-        id: this.newAttendeeId,
-        firstName: "",
-        lastName: "",
-        birthday: "",
-        food: Food.MEAT,
-        tShirtSize: "" as TShirtSize,
-        additionalInformation: "",
-        role: this.role,
-        departmentId: this.departmentId
-      }
-    ]);
+    return this.attendees
+      .concat(this.newAttendees)
+      .filter(attendee => !this.deletedAttendeeIds.includes(attendee.id))
+      .concat([
+        {
+          id: this.newAttendeeId,
+          firstName: "",
+          lastName: "",
+          birthday: "",
+          food: Food.MEAT,
+          tShirtSize: "" as TShirtSize,
+          additionalInformation: "",
+          role: this.role,
+          departmentId: this.departmentId
+        }
+      ]);
   }
 
   birthdayText = (birthday: string) => {
