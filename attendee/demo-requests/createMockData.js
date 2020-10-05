@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-// {"firstName":"Skell","lastName":"Rutherfoord","birthday":"25.07.2012"}
+// {"firstName":"Skell","lastName":"Rutherfoord","birthday":"25.07.2012"} const [ day, month, year] = a.split(".")
 const youthData = require('./_youth.json');
 // {"firstName":"Pandora","lastName":"Loosely","birthday":"16.02.1993"}
 const youthLeaderData = require('./_youthLeader.json');
@@ -64,11 +64,12 @@ const T_SHIRT_SIZE = [ 'ONE_HUNDRED_TWENTY_EIGHT', 'ONE_HUNDRED_FORTY', 'ONE_HUN
 function createAttendee(firstName, lastName, departmentId, birthday, additionalInformation, role, baseUrl, token) {
     const food = getRandomValue(FOOD);
     const tShirtSize = getRandomValue(T_SHIRT_SIZE);
+    const [ day, month, year ] = birthday.split('.')
     const data = {
         "firstName": firstName,
         "lastName": lastName,
         "departmentId" : departmentId,
-        "birthday": birthday,
+        "birthday": `${year}-${month}-${day}`,
         "food": food,
         "tShirtSize": tShirtSize,
         "additionalInformation": additionalInformation || '',

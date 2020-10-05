@@ -44,8 +44,16 @@ class SpringSecurityConfig(
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = listOf("*")
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
+        configuration.allowCredentials = true
+        // setAllowedHeaders is important! Without it, OPTIONS preflight request
+        // will fail with 403 Invalid CORS request
+        configuration.allowedHeaders = listOf("Authorization", "Cache-Control", "Content-Type")
+        configuration.maxAge = 1800L
         val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues())
+        source.registerCorsConfiguration("/**", configuration)
         return source
     }
 

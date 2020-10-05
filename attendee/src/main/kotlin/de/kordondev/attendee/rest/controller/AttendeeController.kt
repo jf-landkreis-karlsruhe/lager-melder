@@ -35,7 +35,7 @@ class AttendeeController(
     }
 
     @PutMapping("/attendees/{id}")
-    fun saveAttendee(@RequestBody(required = true) @Valid attendee: RestAttendeeRequest, @PathVariable("id") id: Long) {
+    fun saveAttendee(@RequestBody(required = true) @Valid attendee: RestAttendeeRequest, @PathVariable("id") id: Long): RestAttendee {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
                 .saveAttendee(id, RestAttendeeRequest.to(attendee, department))

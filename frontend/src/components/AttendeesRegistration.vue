@@ -1,16 +1,34 @@
 <template>
   <div>
     <v-container>
-      <h1 class="h1">Teilnehmer {{department.name}}</h1>
+      <h1 class="h1">Teilnehmer {{ department.name }}</h1>
       <v-row justify="space-between">
         <div>
-          <v-text-field prepend-icon="mdi-magnify" v-model="filterInput" label="Teilnehmerfilter" />
+          <v-text-field
+            prepend-icon="mdi-magnify"
+            v-model="filterInput"
+            label="Teilnehmerfilter"
+          />
         </div>
-        <div class="department-count">Anzahl Teilnehmer: {{attendees.length}}</div>
+        <div class="department-count">
+          Anzahl Teilnehmer: {{ totalAttendeeCount }}
+        </div>
       </v-row>
     </v-container>
-    <AttendeesTable headlineText="Jugendliche" :attendees="youthAttendees" />
-    <AttendeesTable headlineText="Jugendleiter" :attendees="youthLeaderAttendees" />
+    <AttendeesTable
+      headlineText="Jugendliche"
+      :attendees="youthAttendees"
+      :departmentId="department.id"
+      :role="attendeeRoleYouth"
+      :attendeesChanged="attendeesChanged"
+    />
+    <AttendeesTable
+      headlineText="Jugendleiter"
+      :attendees="youthLeaderAttendees"
+      :role="attendeeRoleYouthLeader"
+      :departmentId="department.id"
+      :attendeesChanged="attendeesChanged"
+    />
   </div>
 </template>
 
@@ -37,6 +55,9 @@ export default class AttendeesRegistration extends Vue {
   attendees: Attendee[] = [];
   department: Department = {} as Department;
   filterInput: string = "";
+  attendeeRoleYouth = AttendeeRole.YOUTH;
+  attendeeRoleYouthLeader = AttendeeRole.YOUTH_LEADER;
+  totalAttendeeCount: number = 0;
 
   get youthAttendees(): Attendee[] {
     return this.attendees
@@ -48,6 +69,10 @@ export default class AttendeesRegistration extends Vue {
     return this.attendees
       .filter(attendee => attendee.role === AttendeeRole.YOUTH_LEADER)
       .filter(this.filterByFilterInput);
+  }
+
+  attendeesChanged(change: number) {
+    this.totalAttendeeCount += change;
   }
 
   filterByFilterInput(attendee: Attendee) {
@@ -62,9 +87,10 @@ export default class AttendeesRegistration extends Vue {
   }
 
   mounted() {
-    getAttendeesForMyDepartment().then(
-      attendees => (this.attendees = attendees)
-    );
+    getAttendeesForMyDepartment().then(attendees => {
+      this.attendees = attendees;
+      this.totalAttendeeCount = attendees.length;
+    });
     getMyDepartment().then(department => (this.department = department));
   }
 }

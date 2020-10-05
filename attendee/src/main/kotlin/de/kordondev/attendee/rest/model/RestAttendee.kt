@@ -1,5 +1,6 @@
 package de.kordondev.attendee.rest.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.persistence.entry.AttendeeRole
 import de.kordondev.attendee.core.persistence.entry.Food
@@ -12,6 +13,7 @@ data class RestAttendee(
         val departmentId: Long,
         val birthday: String,
         val food: Food,
+        @get:JsonProperty("tShirtSize")
         val tShirtSize: TShirtSize,
         val additionalInformation: String,
         val role: AttendeeRole
