@@ -26,7 +26,8 @@
                 type="text"
                 v-model="item.firstName"
                 label="Vorname"
-                reqired
+                required
+                :form="createFormName(item)"
               />
             </div>
           </template>
@@ -39,7 +40,8 @@
                 type="text"
                 v-model="item.lastName"
                 label="Nachname"
-                reqired
+                required
+                :form="createFormName(item)"
               />
             </div>
           </template>
@@ -56,7 +58,10 @@
                   item-value="value"
                   label="TShirt Größe"
                   single-line
-                  reqired
+                  :error-messages="
+                    item.tShirtSizeError ? ['TShirt Größe auswählen'] : []
+                  "
+                  :form="createFormName(item)"
                 ></v-select>
               </div>
             </div>
@@ -73,7 +78,8 @@
                 item-value="value"
                 label="Essen"
                 single-line
-                reqired
+                required
+                :form="createFormName(item)"
               ></v-select>
             </div>
           </template>
@@ -86,7 +92,8 @@
                 type="date"
                 v-model="item.birthday"
                 label="Geburtsdatum"
-                reqired
+                required
+                :form="createFormName(item)"
               />
             </div>
           </template>
@@ -95,7 +102,10 @@
               {{ item.additionalInformation }}
             </div>
             <div v-if="editingAttendeeIds.includes(item.id)">
-              <v-textarea v-model="item.additionalInformation" />
+              <v-textarea
+                v-model="item.additionalInformation"
+                :form="createFormName(item)"
+              />
             </div>
           </template>
           <template v-slot:item.actions="{ item }">
@@ -106,9 +116,11 @@
                 </v-icon>
               </div>
               <div v-if="editingAttendeeIds.includes(item.id)">
-                <v-icon medium class="mr-2" @click.prevent="saveAttendee(item)">
-                  mdi-content-save
-                </v-icon>
+                <button type="sumbit" :form="createFormName(item)">
+                  <v-icon medium class="mr-2">
+                    mdi-content-save
+                  </v-icon>
+                </button>
               </div>
               <span
                 v-if="
@@ -128,6 +140,12 @@
         </v-data-table>
       </v-card-text>
     </v-card>
+    <form
+      v-for="attendee in attendeesWithNew"
+      :key="attendee.id"
+      :id="createFormName(attendee)"
+      v-on:submit.prevent="saveAttendee(attendee)"
+    ></form>
   </section>
 </template>
 
@@ -147,6 +165,10 @@ import {
 } from "../services/attendee";
 
 import { deleteAttendee } from "../services/attendee";
+
+interface AttendeeWithValidation extends Attendee {
+  tShirtSizeError: boolean;
+}
 
 @Component({})
 export default class AttendeesTable extends Vue {
@@ -182,7 +204,14 @@ export default class AttendeesTable extends Vue {
   editAttendee = (attendee: Attendee) =>
     this.editingAttendeeIds.push(attendee.id);
 
-  saveAttendee = (attendee: Attendee) => {
+  saveAttendee = (attendee: AttendeeWithValidation) => {
+    if (!attendee.tShirtSize) {
+      attendee.tShirtSizeError = true;
+      return;
+    } else {
+      attendee.tShirtSizeError = false;
+    }
+
     if (attendee.id === this.newAttendeeId) {
       createAttendee(attendee).then(attendee => {
         this.newAttendees.push(attendee);
@@ -199,6 +228,9 @@ export default class AttendeesTable extends Vue {
     list.splice(indexOfAttendee, 1);
   };
 
+  createFormName = (attendee: Attendee) =>
+    `form-${this.departmentId}-${this.headlineText}-${attendee.id}`;
+
   get tShirtSizes(): { value: TShirtSize; text: string }[] {
     return Object.values(TShirtSize).map(value => ({
       value,
@@ -213,7 +245,7 @@ export default class AttendeesTable extends Vue {
     }));
   }
 
-  get attendeesWithNew(): Attendee[] {
+  get attendeesWithNew(): AttendeeWithValidation[] {
     return this.attendees
       .concat(this.newAttendees)
       .filter(attendee => !this.deletedAttendeeIds.includes(attendee.id))
@@ -229,7 +261,8 @@ export default class AttendeesTable extends Vue {
           role: this.role,
           departmentId: this.departmentId
         }
-      ]);
+      ])
+      .map(attendee => ({ ...attendee, tShirtSizeError: false }));
   }
 
   birthdayText = (birthday: string) => {
