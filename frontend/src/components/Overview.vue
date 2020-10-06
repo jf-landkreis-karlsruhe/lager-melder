@@ -1,6 +1,7 @@
 <template>
   <div>
     <Distribution :attendees="attendees" />
+    <h1>Teilnehmer</h1>
     <div>
       <v-text-field
         prepend-icon="mdi-magnify"
@@ -13,7 +14,7 @@
       :key="registration.department.id"
     >
       <v-container>
-        <h1 class="h1">Teilnehmer {{ registration.department.name }}</h1>
+        <h2 class="h1">Teilnehmer {{ registration.department.name }}</h2>
         <v-row justify="end">
           <div class="department-count">
             Anzahl Teilnehmer:

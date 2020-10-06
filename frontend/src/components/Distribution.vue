@@ -1,13 +1,11 @@
 <template>
-  <div>
-    <div v-for="food in foodDistribution" :key="food.food">
-      {{ food.name }}: {{ food.count }}
-    </div>
-    <div v-for="tShirt in tShirtDistribution" :key="tShirt.tShirt">
-      {{ tShirt.name }}: {{ tShirt.count }}
-    </div>
+  <div class="mt-5 mb-10">
+    <h1>Auswahl</h1>
     <div v-if="tShirtDistribution.length > 0">
       <BarChart chartLabel="TShirt" :rawData="tShirtDistribution" />
+    </div>
+    <div v-if="foodDistribution.length > 0">
+      <BarChart chartLabel="Essen" :rawData="foodDistribution" />
     </div>
   </div>
 </template>
@@ -25,6 +23,9 @@ import {
   // eslint-disable-next-line no-unused-vars
   TShirtSize
 } from "../services/attendee";
+
+import { foodText, tShirtSizeText } from "../helper/displayText";
+import { FoodSortOrder, TShirtSizeSortOrder } from "@/helper/filterHelper";
 
 type FoodDestribution = {
   name: Food;
@@ -49,7 +50,16 @@ export default class Header extends Vue {
           return acc;
         }
         return [...acc, { name: value, count: 1 }];
-      }, [] as TShirtDestribution[]);
+      }, [] as TShirtDestribution[])
+      .sort(
+        (distributionA, distributionB) =>
+          TShirtSizeSortOrder.indexOf(distributionA.name) -
+          TShirtSizeSortOrder.indexOf(distributionB.name)
+      )
+      .map(distribution => ({
+        name: tShirtSizeText(distribution.name),
+        count: distribution.count
+      }));
   }
 
   get foodDistribution() {
@@ -62,7 +72,16 @@ export default class Header extends Vue {
           return acc;
         }
         return [...acc, { name: value, count: 1 }];
-      }, [] as FoodDestribution[]);
+      }, [] as FoodDestribution[])
+      .sort(
+        (distributionA, distributionB) =>
+          FoodSortOrder.indexOf(distributionA.name) -
+          FoodSortOrder.indexOf(distributionB.name)
+      )
+      .map(distribution => ({
+        name: foodText(distribution.name),
+        count: distribution.count
+      }));
   }
 }
 </script>
