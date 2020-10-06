@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="hasAdministrationRole()">
     <Distribution :attendees="attendees" />
     <h1>Teilnehmer</h1>
     <div>
@@ -66,6 +66,8 @@ import {
 import AttendeesTable from "./AttendeesTable.vue";
 import { youthLeaderAttendees, youthAttendees } from "../helper/filterHelper";
 
+import { hasAdministrationRole } from "../services/authentication";
+
 interface DepartmentWithAttendees {
   department: Department;
   youthAttendees: Attendee[];
@@ -81,6 +83,7 @@ export default class AttendeesRegistration extends Vue {
   filterInput: string = "";
   attendeeRoleYouth = AttendeeRole.YOUTH;
   attendeeRoleYouthLeader = AttendeeRole.YOUTH_LEADER;
+  hasAdministrationRole = hasAdministrationRole;
 
   get departmentWithAttendees(): DepartmentWithAttendees[] {
     return this.departments

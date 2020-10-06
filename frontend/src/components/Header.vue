@@ -2,9 +2,12 @@
   <header>
     <img alt="Zeltlager logo" class="hero-image" src="../assets/logo.png" />
     <div id="nav" v-if="loggedIn">
-      <router-link to="/">Home</router-link>|
-      <router-link to="/login">Login</router-link>|
+      <router-link to="/">Home</router-link> |
+      <router-link to="/login">Login</router-link> |
       <router-link to="/teilnehmer">Teilnehmer</router-link>
+      <span v-if="hasAdministrationRole()">
+        | <router-link to="/overview">Übersicht</router-link>
+      </span>
     </div>
   </header>
 </template>
@@ -14,13 +17,16 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import {
   getTokenData,
-  AuthenticationChangedEvent
+  AuthenticationChangedEvent,
+  hasAdministrationRole
 } from "../services/authentication";
 
 @Component({})
 export default class Header extends Vue {
   timeoutId = 0;
   loggedIn = false;
+
+  hasAdministrationRole = hasAdministrationRole;
 
   mounted() {
     window.addEventListener("focus", this.checkToken);

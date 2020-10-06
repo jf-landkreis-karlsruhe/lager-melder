@@ -1,9 +1,17 @@
 import { postData } from "../helper/fetch";
 
 const TOKEN_STORAGE = "access_token";
+
+export enum Roles {
+  UNAUTHORIZED = "UNAUTHORIZED",
+  USER = "USER",
+  ADMIN = "ADMIN",
+  SPECIALIZED_FIELD_DIRECTOR = "SPECIALIZED_FIELD_DIRECTOR"
+}
+
 export interface JWT {
   sub: string;
-  role: string;
+  role: Roles;
   departmentId: number;
   exp: number;
 }
@@ -54,6 +62,9 @@ export const getToken = () => {
   }
   return jwt;
 };
+
+export const hasAdministrationRole = () =>
+  [Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR].includes(getTokenData().role);
 
 export const getTokenData = () => {
   const token = getToken();
