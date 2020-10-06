@@ -6,7 +6,9 @@
     <div v-for="tShirt in tShirtDistribution" :key="tShirt.tShirt">
       {{ tShirt.name }}: {{ tShirt.count }}
     </div>
-    <BarChart chartLabel="TShirt" />
+    <div v-if="tShirtDistribution.length > 0">
+      <BarChart chartLabel="TShirt" :rawData="tShirtDistribution" />
+    </div>
   </div>
 </template>
 

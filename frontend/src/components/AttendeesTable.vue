@@ -176,7 +176,7 @@ export default class AttendeesTable extends Vue {
   @Prop() attendees!: Attendee[];
   @Prop() headlineText!: string;
   @Prop() role!: AttendeeRole;
-  @Prop() departmentId!: number;
+  @Prop() departmentId!: string;
   @Prop() attendeesChanged!: (change: number) => void;
 
   newAttendees: Attendee[] = [];

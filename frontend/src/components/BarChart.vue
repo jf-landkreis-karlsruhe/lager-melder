@@ -1,7 +1,7 @@
 
 <script lang="ts">
 // eslint-disable-next-line no-unused-vars
-import { PropType } from "vue";
+import Vue, { PropType } from "vue";
 import { Bar } from "vue-chartjs";
 
 interface ChartData {
@@ -9,41 +9,43 @@ interface ChartData {
   count: number;
 }
 
-export default {
+export default Vue.extend({
   extends: Bar,
   name: "BarChart",
   props: {
     rawData: Array as PropType<ChartData[]>,
-    chartLabel: String
+    chartLabel: String,
+    update: Number
   },
-  data: () => ({
-    chartdata: {
-      labels: ["One", "Two", "Three", "Four"],
-      datasets: [
-        {
-          label: this.chartLabel,
-          data: [5, 7, 8, 10],
-          backgroundColor: "#f87979"
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        yAxes: [
+  data: function() {
+    return {
+      chartdata: {
+        labels: this.rawData.map(data => data.name), // ["One", "Two", "Three", "Four"],
+        datasets: [
           {
-            ticks: {
-              beginAtZero: true
-            }
+            label: this.chartLabel,
+            data: this.rawData.map(data => data.count), // [5, 7, 8, 10],
+            backgroundColor: "#f87979"
           }
         ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true
+              }
+            }
+          ]
+        }
       }
-    }
-  }),
-
-  mounted() {
+    };
+  },
+  mounted: function() {
     this.renderChart(this.chartdata, this.options);
   }
-};
+});
 </script>

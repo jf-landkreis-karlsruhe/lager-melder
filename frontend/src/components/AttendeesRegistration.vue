@@ -11,9 +11,7 @@
           />
         </div>
         <div class="department-count">
-          <<<<<<< HEAD Anzahl Teilnehmer: {{ totalAttendeeCount }} =======
-          Anzahl Teilnehmer: {{ attendees.length }}
-          >>>>>>> Remove duplication
+          HEAD Anzahl Teilnehmer: {{ totalAttendeeCount }}
         </div>
       </v-row>
     </v-container>
