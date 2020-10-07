@@ -11,7 +11,7 @@
           />
         </div>
         <div class="department-count">
-          HEAD Anzahl Teilnehmer: {{ totalAttendeeCount }}
+          Anzahl Teilnehmer: {{ totalAttendeeCount }}
         </div>
       </v-row>
     </v-container>
@@ -90,6 +90,7 @@ export default class AttendeesRegistration extends Vue {
         attendee.additionalInformation.includes(this.filterInput)
       );
     }
+    return true;
   }
 
   mounted() {

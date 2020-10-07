@@ -14,17 +14,16 @@ export default Vue.extend({
   name: "BarChart",
   props: {
     rawData: Array as PropType<ChartData[]>,
-    chartLabel: String,
-    update: Number
+    chartLabel: String
   },
   data: function() {
     return {
       chartdata: {
-        labels: this.rawData.map(data => data.name), // ["One", "Two", "Three", "Four"],
+        labels: this.rawData.map(data => data.name),
         datasets: [
           {
             label: this.chartLabel,
-            data: this.rawData.map(data => data.count), // [5, 7, 8, 10],
+            data: this.rawData.map(data => data.count),
             backgroundColor: "#f87979"
           }
         ]
