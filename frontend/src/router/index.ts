@@ -23,6 +23,11 @@ const routes: Array<RouteConfig> = [
     path: "/teilnehmer",
     name: "AttendeesRegistration",
     component: () => import("../views/AttendeesRegistrationView.vue")
+  },
+  {
+    path: "/overview",
+    name: "LagerOverview",
+    component: () => import("../components/Overview.vue")
   }
 ];
 

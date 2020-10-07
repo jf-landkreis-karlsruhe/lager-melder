@@ -57,7 +57,7 @@ export enum TShirtSize {
 export interface NewAttendee {
   firstName: string;
   lastName: string;
-  departmentId: number;
+  departmentId: string;
   birthday: string;
   food: Food;
   tShirtSize: TShirtSize;
