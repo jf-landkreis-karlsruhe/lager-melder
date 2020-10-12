@@ -49,7 +49,7 @@ export const deleteData = (relativeUrl: string, headers: HeadersInit) => {
   });
 };
 
-const fetchData = (relativeUrl: string, config: RequestInit) => {
+export const fetchData = (relativeUrl: string, config: RequestInit) => {
   return fetch(`${BASE_URL}/${relativeUrl}`, config).then(res => {
     if (!res.ok) {
       throw res;

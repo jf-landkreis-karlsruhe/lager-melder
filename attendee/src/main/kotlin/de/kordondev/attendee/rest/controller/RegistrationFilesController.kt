@@ -19,7 +19,7 @@ class RegistrationFilesController(
     @Throws(IOException::class)
     @GetMapping(value = "registrationFiles/youthPlan/{id}", produces = [ "application/pdf" ])
     fun getYouthPlan(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
-        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=pädagogischeBetreuer.pdf")
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=paedagogischeBetreuer.pdf")
         return registrationFilesService.getYouthLeader(id);
     }
 
@@ -33,7 +33,7 @@ class RegistrationFilesController(
 
     @ResponseBody
     @Throws(IOException::class)
-    @GetMapping(value = "registrationFiles/attendeesBWü/{id}", produces = [ "application/pdf" ])
+    @GetMapping(value = "registrationFiles/attendeesBW/{id}", produces = [ "application/pdf" ])
     fun getAttendeesBW(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=teilnehmenlisteBadenWürttemberg.pdf")
         return registrationFilesService.getAttendeesBW(id);

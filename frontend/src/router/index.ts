@@ -26,8 +26,13 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/overview",
-    name: "LagerOverview",
+    name: "Lagerübersicht",
     component: () => import("../components/Overview.vue")
+  },
+  {
+    path: "/files",
+    name: "Registrierungsunterlagen",
+    component: () => import("../components/RegistrationFiles.vue")
   }
 ];
 

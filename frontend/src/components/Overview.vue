@@ -45,7 +45,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
-import Distribution from "./Distribution";
+import Distribution from "./Distribution.vue";
 import {
   getAttendees,
   // eslint-disable-next-line no-unused-vars
