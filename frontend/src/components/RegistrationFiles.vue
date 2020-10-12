@@ -9,7 +9,7 @@
     </p>
     <FileList :departmentId="departmentId" :departmentName="departmentName" />
     <p>
-      In einegen PDF Viewern kommt es zu Probleme mit der Anzeige, funktionieren
+      In einigen PDF Viewern kommt es zu Probleme mit der Anzeige, funktionieren
       tut es mit Google Chrome und Adobe Acrobat Reader.
     </p>
     <div v-if="hasAdministrationRole() && departments">

@@ -5,7 +5,7 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/login">Login</router-link> |
       <router-link to="/teilnehmer">Teilnehmer</router-link> |
-      <router-link to="/files">Registrierungsunterlagen</router-link>
+      <router-link to="/files">Anmeldeunterlagen</router-link>
       <span v-if="hasAdministrationRole()">
         | <router-link to="/overview">Übersicht</router-link>
       </span>
