@@ -1,8 +1,8 @@
-
 spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+      dialect: org.hibernate.dialect.MySQL5Dialect
   datasource:
     url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/attendee
     username: user
@@ -22,6 +22,7 @@ application:
     send: false
   admin:
     password: password
+  corsOrigins: http://localhost:8081, http://lagermelder.kordondev.de
 
 data:
   kreiszeltlager:

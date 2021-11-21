@@ -13,7 +13,11 @@ export const getMyDepartment = () => {
 };
 
 export const updateDepartment = (department: Department) =>
-  putData<Department>(`departments/${department.id}`, withAuthenticationHeader(), department);
+  putData<Department>(
+    `departments/${department.id}`,
+    withAuthenticationHeader(),
+    department
+  );
 
 export interface Department {
   id: string;

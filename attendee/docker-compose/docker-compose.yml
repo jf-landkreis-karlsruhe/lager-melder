@@ -10,3 +10,5 @@ services:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
       - MYSQL_ROOT_PASSWORD=secRET
+    expose:
+      - '3306'

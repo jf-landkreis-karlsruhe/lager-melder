@@ -9,5 +9,5 @@ curl -i -H "Content-Type: application/json" -H "Authorization: Bearer $1" -X POS
     "tShirtSize": "M",
     "additionalInformation": "nix",
     "role": "YOUTH"
-}' http://localhost:8080/attendee
+}' http://localhost:8080/attendees
 

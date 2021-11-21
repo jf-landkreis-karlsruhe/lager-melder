@@ -1,6 +1,7 @@
 package de.kordondev.attendee.core.security
 
 import de.kordondev.attendee.core.persistence.repository.UserRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -14,28 +15,30 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @EnableWebSecurity
 class SpringSecurityConfig(
-        private val userDetailsService: UserDetailsServiceImpl,
-        private val bCryptPasswordEncoder: BCryptPasswordEncoder,
-        private val userRepository: UserRepository
-) : WebSecurityConfigurerAdapter()  {
+    private val userDetailsService: UserDetailsServiceImpl,
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+    private val userRepository: UserRepository,
+    @Value("\${application.corsOrigins}") private val corsAllowedOrigins: List<String>
+) : WebSecurityConfigurerAdapter() {
 
     // Secure the endpoins with HTTP Basic authentication
     override fun configure(http: HttpSecurity) {
 
         http
-                //HTTP Basic authentication
-                .authorizeRequests()
-                .antMatchers("/attendees/**").authenticated()
-                .antMatchers("/departments/**").authenticated()
-                .and()
-                .addFilter(JWTAuthenticationFilter(authenticationManager(), userRepository))
-                .addFilter(JWTAuthorizationFilter(authenticationManager(), userRepository))
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .csrf().disable()
-                .cors()
-                .and()
-                .formLogin().disable()
+            //HTTP Basic authentication
+            .authorizeRequests()
+            .antMatchers("/attendees/**").authenticated()
+            .antMatchers("/departments/**").authenticated()
+            .antMatchers("/register").authenticated()
+            .and()
+            .addFilter(JWTAuthenticationFilter(authenticationManager(), userRepository))
+            .addFilter(JWTAuthorizationFilter(authenticationManager(), userRepository))
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .csrf().disable()
+            .cors()
+            .and()
+            .formLogin().disable()
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
@@ -44,8 +47,10 @@ class SpringSecurityConfig(
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
+
+
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("*")
+        configuration.allowedOrigins = corsAllowedOrigins
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
         configuration.allowCredentials = true
         // setAllowedHeaders is important! Without it, OPTIONS preflight request
