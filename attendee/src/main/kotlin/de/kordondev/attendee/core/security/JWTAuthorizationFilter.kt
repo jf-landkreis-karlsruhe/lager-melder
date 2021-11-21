@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JWTAuthorizationFilter(
-        authenticationManager: AuthenticationManager,
-        private val userRepository: UserRepository
+    authenticationManager: AuthenticationManager,
+    private val userRepository: UserRepository
 ) : BasicAuthenticationFilter(authenticationManager) {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
@@ -41,22 +41,22 @@ class JWTAuthorizationFilter(
         val token = request.getHeader(HEADER_STRING)
         if (token != null) {
             val username = JWT.require(Algorithm.HMAC512(SECRET))
-                    .build()
-                    .verify(token.replace(TOKEN_PREFIX, ""))
-                    .subject
+                .build()
+                .verify(token.replace(TOKEN_PREFIX, ""))
+                .subject
             if (username != null) {
                 return userRepository.findOneByUserName(username)
-                        ?.let { UserEntry.to(it) }
-                        ?.let {user ->
-                             UsernamePasswordAuthenticationToken(
-                                user.userName,
-                                null,
-                                listOf(
-                                        SimpleGrantedAuthority(user.department.id.toString()),
-                                        SimpleGrantedAuthority(user.role.toString())
-                                )
+                    ?.let { UserEntry.to(it) }
+                    ?.let { user ->
+                        UsernamePasswordAuthenticationToken(
+                            user.userName,
+                            null,
+                            listOf(
+                                SimpleGrantedAuthority(user.department.id.toString()),
+                                SimpleGrantedAuthority(user.role.toString())
                             )
-                        }
+                        )
+                    }
             }
         }
         return null

@@ -1,0 +1,41 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+
+
+  mail:
+    port: 25
+    debug: false
+    from: test@spam.com
+    host: h
+    username: u
+    password: p
+
+application:
+  mail:
+    send: false
+  admin:
+    password: password
+
+data:
+  kreiszeltlager:
+    hostCity: Karlsbad
+    from: 06.07.2020
+    to: 11.07.2020
+    registrationDeadline: 20.05.2020
+    year: 2020
+    organisationAddress: "Aaahahnan \n\
+      next Line\n\
+      last  line"
+    listBW:
+      eventAddress: bbb
+    listKa:
+      location: Karlsbad Hautstraße 4
+      organisation: Karlsbader
+      from: 06.07.20
+      to: 11.07.20
+    listYouthLeader:
+      moneyProYouthLeader: 8,99
