@@ -13,21 +13,23 @@ import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
 @RestController
-class UserController (
-        private val userService: UserService,
-        private val departmentService: DepartmentService
+class UserController(
+    private val userService: UserService,
+    private val departmentService: DepartmentService
 ) {
 
     @PostMapping("/users")
     fun addUser(@RequestBody(required = true) @Valid user: RestUserRequest): RestUser {
         val department = departmentService.getDepartment(user.departmentId)
         return userService
-                .createUser(NewUser(
-                        userName = user.username,
-                        role = Roles.valueOf(user.role),
-                        department = department,
-                        passWord = user.password ?: PasswordGenerator.generatePassword()
-                ))
-                .let { RestUser.of(it) }
+            .createUser(
+                NewUser(
+                    userName = user.username,
+                    role = Roles.filterToExistingRoles(user.role),
+                    department = department,
+                    passWord = user.password ?: PasswordGenerator.generatePassword()
+                )
+            )
+            .let { RestUser.of(it) }
     }
 }

@@ -16,16 +16,15 @@ import java.time.format.DateTimeFormatter
 import javax.mail.SendFailedException
 
 
-
 @Service("MailSenderService")
-class MailSenderService (
-        @Value("\${application.mail.send}") private val sendMail: Boolean,
-        @Value("\${spring.mail.from}") private val sendFrom: String,
-        @Value("\${data.kreiszeltlager.hostCity}") private val hostCity: String,
-        @Value("\${data.kreiszeltlager.registrationDeadline}") private val registrationDeadline: String,
-        private val authorityService: AuthorityService,
-        private val mailSender: JavaMailSender,
-        private val htmlTemplateEngine: TemplateEngine
+class MailSenderService(
+    @Value("\${application.mail.send}") private val sendMail: Boolean,
+    @Value("\${spring.mail.from}") private val sendFrom: String,
+    @Value("\${data.kreiszeltlager.hostCity}") private val hostCity: String,
+    @Value("\${data.kreiszeltlager.registrationDeadline}") private val registrationDeadline: String,
+    private val authorityService: AuthorityService,
+    private val mailSender: JavaMailSender,
+    private val htmlTemplateEngine: TemplateEngine
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MailSenderService::class.java)
     private val newUserMailTemplate = "new-user"
@@ -34,12 +33,13 @@ class MailSenderService (
 
     fun sendRegistrationMail(to: String, leaderName: String, username: String, password: String) {
         try {
-            authorityService.isAdmin()
+            authorityService.isSpecializedFieldDirector()
             val headerLogoName = "kreiszeltlager-logo.jpg"
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
 
             val cxt = Context()
-            val registrationDeadlineDate = LocalDate.parse(registrationDeadline, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+            val registrationDeadlineDate =
+                LocalDate.parse(registrationDeadline, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
             cxt.setVariable("leaderName", leaderName)
             cxt.setVariable("hostCity", hostCity)
             cxt.setVariable("registrationDeadline", registrationDeadlineDate)
@@ -60,7 +60,7 @@ class MailSenderService (
             if (sendMail) {
                 this.mailSender.send(mimeMessage)
             }
-        } catch (exception:SendFailedException) {
+        } catch (exception: SendFailedException) {
             logger.error(exception.message)
         }
     }
@@ -70,8 +70,10 @@ class MailSenderService (
             authorityService.isAdmin()
             val headerLogoName = "kreiszeltlager-logo.jpg"
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
-            val registrationDeadlineDate = LocalDate.parse(registrationDeadline, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-            val daysLeft = Duration.between(registrationDeadlineDate.atStartOfDay(), LocalDate.now().atStartOfDay()).toDays()
+            val registrationDeadlineDate =
+                LocalDate.parse(registrationDeadline, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+            val daysLeft =
+                Duration.between(registrationDeadlineDate.atStartOfDay(), LocalDate.now().atStartOfDay()).toDays()
 
             val cxt = Context()
             cxt.setVariable("leaderName", leaderName)
@@ -94,7 +96,7 @@ class MailSenderService (
                 this.mailSender.send(mimeMessage)
             }
             return true
-        } catch (exception:SendFailedException) {
+        } catch (exception: SendFailedException) {
             logger.error(exception.message)
             return false
         }
@@ -125,7 +127,7 @@ class MailSenderService (
                 this.mailSender.send(mimeMessage)
             }
             return true
-        } catch (exception:SendFailedException) {
+        } catch (exception: SendFailedException) {
             logger.error(exception.message)
             return false
         }

@@ -37,7 +37,7 @@ class RegisterControllerTest(val context: WebApplicationContext) {
     }
 
     @Test
-    @WithMockUser(authorities = ["SPECIALIZED_FIELD_DIRECTOR"])
+    @WithMockUser(authorities = [Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun addDepartmentAndUser() {
         val departmentWithUserRequest = RestDepartmentWithUserRequest(
             username = "username",
