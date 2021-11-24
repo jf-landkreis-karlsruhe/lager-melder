@@ -12,34 +12,35 @@ import org.springframework.stereotype.Service
 @Service("authorityService")
 class AuthorityService {
 
-    fun hasAuthorityFilter(department: Department, allowedRoles: List<Roles>): Boolean {
+    fun hasAuthorityFilter(department: Department, allowedRoles: List<String>): Boolean {
         return SecurityContextHolder
-                .getContext()
-                .authentication
-                .authorities
-                .map { it.authority }
-                .any { role -> role == department.id.toString() || allowedRoles.any { it.toString() == role } }
+            .getContext()
+            .authentication
+            .authorities
+            .map { it.authority }
+            .any { role -> role == department.id.toString() || allowedRoles.any { it.toString() == role } }
     }
 
-    fun hasAuthorityFilter(attendee: Attendee, allowedRoles: List<Roles>): Boolean {
+    fun hasAuthorityFilter(attendee: Attendee, allowedRoles: List<String>): Boolean {
         return hasAuthorityFilter(attendee.department, allowedRoles);
     }
 
 
-    fun hasAuthority(department: Department, allowedRoles: List<Roles>): Department {
+    fun hasAuthority(department: Department, allowedRoles: List<String>): Department {
         if (hasAuthorityFilter(department, allowedRoles)) {
             return department
         }
         throw AccessDeniedException("You are not allowed to access department with other department id")
     }
 
-    fun hasAuthority(attendee: Attendee, allowedRoles: List<Roles>): Attendee {
+    fun hasAuthority(attendee: Attendee, allowedRoles: List<String>): Attendee {
         if (hasAuthorityFilter(attendee, allowedRoles)) {
             return attendee
         }
         throw AccessDeniedException("You are not allowed to access attendee from other department id")
     }
-    fun hasAuthority(attendee: NewAttendee, allowedRoles: List<Roles>): NewAttendee {
+
+    fun hasAuthority(attendee: NewAttendee, allowedRoles: List<String>): NewAttendee {
         if (hasAuthorityFilter(attendee.department, allowedRoles)) {
             return attendee
         }
@@ -48,12 +49,12 @@ class AuthorityService {
 
     fun isAdminFilter(): Boolean {
         return SecurityContextHolder
-                .getContext()
-                .authentication
-                .authorities
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch { it == Roles.ADMIN.toString() }
+            .getContext()
+            .authentication
+            .authorities
+            .stream()
+            .map(GrantedAuthority::getAuthority)
+            .anyMatch { it == Roles.ADMIN.toString() }
     }
 
     fun isAdmin() {
@@ -64,12 +65,12 @@ class AuthorityService {
 
     fun isSpecializedFieldDirectorFilter(): Boolean {
         return SecurityContextHolder
-                .getContext()
-                .authentication
-                .authorities
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch { it == Roles.SPECIALIZED_FIELD_DIRECTOR.toString() || it == Roles.ADMIN.toString() }
+            .getContext()
+            .authentication
+            .authorities
+            .stream()
+            .map(GrantedAuthority::getAuthority)
+            .anyMatch { it == Roles.SPECIALIZED_FIELD_DIRECTOR || it == Roles.ADMIN }
     }
 
     fun isSpecializedFieldDirector() {

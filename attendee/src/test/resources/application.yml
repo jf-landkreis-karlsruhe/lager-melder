@@ -1,11 +1,9 @@
 spring:
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/attendee
-    username: user
-    password: pass
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
 
 
   mail:
@@ -21,7 +19,6 @@ application:
     send: false
   admin:
     password: password
-  corsOrigins: http://localhost:8081, http://lagermelder.kordondev.de
 
 data:
   kreiszeltlager:

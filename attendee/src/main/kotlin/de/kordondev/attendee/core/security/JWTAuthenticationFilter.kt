@@ -23,19 +23,19 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JWTAuthenticationFilter(
-        private val auth: AuthenticationManager,
-        private val userRepository: UserRepository
+    private val auth: AuthenticationManager,
+    private val userRepository: UserRepository
 ) : UsernamePasswordAuthenticationFilter() {
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         return try {
             val user = jacksonObjectMapper().readValue<RestLoginUser>(request.inputStream)
             auth.authenticate(
-                    UsernamePasswordAuthenticationToken(
-                            user.username,
-                            user.password,
-                            listOf()
-                    )
+                UsernamePasswordAuthenticationToken(
+                    user.username,
+                    user.password,
+                    listOf()
+                )
             )
         } catch (e: IOException) {
             throw RuntimeException(e)
@@ -43,24 +43,29 @@ class JWTAuthenticationFilter(
         return super.attemptAuthentication(request, response)
     }
 
-    override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain, authResult: Authentication) {
+    override fun successfulAuthentication(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        chain: FilterChain,
+        authResult: Authentication
+    ) {
         userRepository.findOneByUserName((authResult.principal as User).username)
-                ?.let { UserEntry.to(it) }
-                ?.let { user ->
-                     JWT.create()
-                            .withSubject(user?.userName)
-                            .withClaim("departmentId", user?.department.id)
-                            .withClaim("role", user?.role.toString())
-                            .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                            .sign(Algorithm.HMAC512(SECRET))
-                }
-                ?.let { token ->
-                    response.contentType = "application/json"
-                    response.characterEncoding = "UTF-8"
-                    val jsonBody ="{\"$HEADER_STRING\":\"$TOKEN_PREFIX$token\"}"
-                    response.writer.write(jsonBody)
-                    response.writer.flush()
-                    response.writer.close()
-                }
+            ?.let { UserEntry.to(it) }
+            ?.let { user ->
+                JWT.create()
+                    .withSubject(user?.userName)
+                    .withClaim("departmentId", user?.department.id)
+                    .withClaim("role", user?.role.toString())
+                    .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                    .sign(Algorithm.HMAC512(SECRET))
+            }
+            ?.let { token ->
+                response.contentType = "application/json"
+                response.characterEncoding = "UTF-8"
+                val jsonBody = "{\"$HEADER_STRING\":\"$TOKEN_PREFIX$token\"}"
+                response.writer.write(jsonBody)
+                response.writer.flush()
+                response.writer.close()
+            }
     }
 }
