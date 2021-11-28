@@ -1,7 +1,11 @@
 <template>
   <div v-if="!error">
     <form v-on:submit.prevent="updateDepartment()">
-      <v-text-field v-model="department.leaderName" label="Jugendwart" required />
+      <v-text-field
+        v-model="department.leaderName"
+        label="Jugendwart"
+        required
+      />
       <v-text-field
         type="email"
         v-model="department.leaderEMail"
@@ -31,14 +35,20 @@
                   </ol>
                 </v-card-text>
                 <v-card-text v-if="emailSent">
-                  <v-icon medium>mdi-check</v-icon> Registrierungsmail erfolgreich versendet
+                  <v-icon medium>mdi-check</v-icon> Registrierungsmail
+                  erfolgreich versendet
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn text @click="closeModal">
                     Schließen
                   </v-btn>
-                  <v-btn color="primary" v-if="!emailSent" :loading="sendingEmail" type="submit">
+                  <v-btn
+                    color="primary"
+                    v-if="!emailSent"
+                    :loading="sendingEmail"
+                    type="submit"
+                  >
                     Senden
                   </v-btn>
                 </v-card-actions>

@@ -52,7 +52,7 @@ class AuthorityService {
         throw AccessDeniedException("You are not allowed to change attendees from other departments")
     }
 
-    fun hasAuthority(user: User, allowedRoles: List<Roles>): User {
+    fun hasAuthority(user: User, allowedRoles: List<String>): User {
         if (hasRole(allowedRoles) || hasUserId(user.id)) {
             return user
         }
@@ -60,11 +60,11 @@ class AuthorityService {
     }
 
     fun hasUserId(userId: Long): Boolean {
-        val userId = getUserId()
-        if (userId.isEmpty) {
+        val loggedInUserId = getUserId()
+        if (loggedInUserId.isEmpty) {
             return false;
         }
-        return userId.get() == USER_ID_PREFIX + userId.toString()
+        return loggedInUserId.get() == USER_ID_PREFIX + userId.toString()
     }
 
     fun getUserId(): Optional<String> {
@@ -74,18 +74,18 @@ class AuthorityService {
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
-            .filter { it == USER_ID_PREFIX }
+            .filter { it.startsWith(USER_ID_PREFIX) }
             .findFirst()
     }
 
-    fun hasRole(allowedRoles: List<Roles>): Boolean {
+    fun hasRole(allowedRoles: List<String>): Boolean {
         return SecurityContextHolder
             .getContext()
             .authentication
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
-            .anyMatch { authority -> allowedRoles.any { authority == ROLE_PREFIX + it.toString() } }
+            .anyMatch { authority -> allowedRoles.any { authority == ROLE_PREFIX + it } }
     }
 
     fun isAdminFilter(): Boolean {
@@ -95,7 +95,7 @@ class AuthorityService {
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
-            .anyMatch { it == ROLE_PREFIX + Roles.ADMIN.toString() }
+            .anyMatch { it == ROLE_PREFIX + Roles.ADMIN }
     }
 
     fun isAdmin() {
@@ -111,7 +111,7 @@ class AuthorityService {
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
-            .anyMatch { it == ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR.toString() || it == ROLE_PREFIX + Roles.ADMIN.toString() }
+            .anyMatch { it == ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR || it == ROLE_PREFIX + Roles.ADMIN }
     }
 
     fun isSpecializedFieldDirector() {

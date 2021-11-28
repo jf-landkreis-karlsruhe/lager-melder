@@ -1,6 +1,6 @@
 <template>
   <div class="mb-10">
-    <form v-on:submit.prevent="createUser()">
+    <form v-on:submit.prevent="addDepartmentAndUser()">
       <v-text-field
         v-model="departmentName"
         label="Name der Feuerwehr"
@@ -15,7 +15,7 @@
       />
       <v-text-field v-model="username" label="Benutzername" required />
       <v-alert v-if="error" type="error">
-        Es gab einen Fehler beim erzeugen des Benutzers
+        Es gab einen Fehler beim erzeugen der Feuerwehr oder des Benutzers.
       </v-alert>
       <v-row justify="end">
         <v-btn color="primary" :loading="loading" type="submit">
@@ -37,14 +37,13 @@ import { Component, Prop } from "vue-property-decorator";
 
 import {
   // eslint-disable-next-line no-unused-vars
-  Department,
-  createDepartment
+  Department
 } from "../services/department";
 
 import {
   // eslint-disable-next-line no-unused-vars
   User,
-  createUser
+  registerNewDepartmentAndUser
 } from "../services/user";
 
 @Component({})
@@ -54,31 +53,40 @@ export default class AddDepartment extends Vue {
   departmentName = "";
   leaderName = "";
   leaderMail = "";
+  // TODO: Username doesn't allow whitespace
   username = "";
 
   loading: boolean = false;
   created: boolean = false;
   error: boolean = false;
 
-  createUser() {
+  addDepartmentAndUser() {
     this.loading = true;
     this.error = false;
-    let newDepartment: Department;
-    createDepartment(this.departmentName, this.leaderName, this.leaderMail)
-      .then(department => {
-        newDepartment = department;
-        return createUser(department.id, this.username);
-      })
-      .then(() => {
+
+    const departmentWithUserReguest = {
+      departmentName: this.departmentName,
+      leaderName: this.leaderName,
+      leaderEMail: this.leaderMail,
+      username: this.username
+    };
+    registerNewDepartmentAndUser(departmentWithUserReguest)
+      .then(departmentWithUser => {
         this.loading = false;
         this.created = true;
-        this.onDepartmentCreated(newDepartment);
+        this.onDepartmentCreated({
+          id: departmentWithUser.departmentId,
+          name: departmentWithUser.departmentName,
+          leaderName: departmentWithUser.leaderName,
+          leaderEMail: departmentWithUser.leaderEMail
+        });
         this.departmentName = "";
         this.leaderName = "";
         this.leaderMail = "";
         this.username = "";
       })
-      .catch(() => {
+      .catch((e: any) => {
+        console.log("error", e);
         this.loading = false;
         this.error = true;
       });

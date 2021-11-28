@@ -33,7 +33,6 @@ export const createDepartment = (
 export interface Department {
   id: string;
   name: string;
-  leader: string;
   leaderName: string;
   leaderEMail: string;
 }

@@ -55,7 +55,6 @@ class JWTAuthorizationFilter(
                             user.userName,
                             null,
                             listOf(
-                                // PREFIX ME
                                 SimpleGrantedAuthority(USER_ID_PREFIX + user.id.toString()),
                                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + user.department.id.toString()),
                                 SimpleGrantedAuthority(ROLE_PREFIX + user.role)

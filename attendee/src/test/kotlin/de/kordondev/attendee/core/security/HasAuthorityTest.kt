@@ -14,7 +14,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
@@ -25,14 +24,14 @@ import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 
 class HasAuthorityTest {
-    private lateinit var authorityService: AuthorityService;
+    private lateinit var authorityService: AuthorityService
 
     @BeforeEach
     fun setupMock() {
         MockitoAnnotations.initMocks(this)
-        val authentication = mock(Authentication::class.java);
+        val authentication = mock(Authentication::class.java)
         val securityContext = mock(SecurityContext::class.java)
-        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
+        `when`(securityContext.authentication).thenReturn(authentication)
         SecurityContextHolder.setContext(securityContext)
         `when`(SecurityContextHolder.getContext().authentication).thenReturn(authentication)
 
@@ -589,7 +588,7 @@ class HasAuthorityTest {
 
     // specializedFieldDirector
     @Test
-    fun `isUser__isSpecializedFieldDirectorFilter`() {
+    fun isUser__isSpecializedFieldDirectorFilter() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
@@ -738,7 +737,6 @@ class HasAuthorityTest {
     }
 
 
-    @Test(expected = AccessDeniedException::class)
     fun `isUser__hasAuthority`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
@@ -749,7 +747,9 @@ class HasAuthorityTest {
 
         val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         val user = User(id = 1L, role = Roles.USER, department = dep, userName = "user", passWord = "pass")
-        assertThat(authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)))
+        Assertions.assertThrows(
+            AccessDeniedException::class.java,
+        ) { authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
     }
 
     @Test
@@ -757,7 +757,7 @@ class HasAuthorityTest {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(USER_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER.toString())
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 

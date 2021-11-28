@@ -3,19 +3,20 @@ import { Department } from "./department";
 import { putData, getData, postData } from "../helper/fetch";
 
 export interface User {
-  id: String;
-  username: String;
-  password?: String;
+  id: string;
+  username: string;
+  password?: string;
   role?: Roles;
   department: Department;
 }
 
-export const getMe = () => getData<User>(`users/me`, withAuthenticationHeader());
+export const getMe = () =>
+  getData<User>(`users/me`, withAuthenticationHeader());
 
 export const changePassword = (user: User) =>
   putData<User>(`users/${user.id}/password`, withAuthenticationHeader(), user);
 
-export const sendRegistrationMail = (userId: String) =>
+export const sendRegistrationMail = (userId: string) =>
   postData<User>(
     `users/${userId}/sendRegistrationEmail`,
     withAuthenticationHeader(),
@@ -31,3 +32,24 @@ export const createUser = (departmentId: string, username: string) =>
     username,
     role: "USER"
   });
+
+export interface DepartmentWithUserRequest {
+  username: string;
+  departmentName: string;
+  leaderName: string;
+  leaderEMail: string;
+}
+export interface DepartmentWithUser extends DepartmentWithUserRequest {
+  departmentId: string;
+  userId: string;
+}
+
+export const registerNewDepartmentAndUser = (
+  departmentWithUser: DepartmentWithUserRequest
+) => {
+  return postData<DepartmentWithUser>(
+    `register`,
+    withAuthenticationHeader(),
+    departmentWithUser
+  );
+};

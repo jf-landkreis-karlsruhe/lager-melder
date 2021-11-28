@@ -53,7 +53,7 @@
 
     <div v-if="hasAdministrationRole()">
       <h2>Feuerwehr hinzufügen</h2>
-      <AddDepartment />
+      <AddDepartment :onDepartmentCreated="onDepartmentCreated" />
     </div>
   </div>
 </template>

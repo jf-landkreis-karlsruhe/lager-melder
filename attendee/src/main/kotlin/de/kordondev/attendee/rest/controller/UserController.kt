@@ -1,6 +1,7 @@
 package de.kordondev.attendee.rest.controller
 
 import de.kordondev.attendee.core.model.NewUser
+import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.security.PasswordGenerator
 import de.kordondev.attendee.core.service.DepartmentService
 import de.kordondev.attendee.core.service.UserService
@@ -18,23 +19,22 @@ class UserController(
     @GetMapping("/users/me")
     fun getMe(): RestUser {
         return userService
-                .getMe()
-                .let { RestUser.of(it)}
+            .getMe()
+            .let { RestUser.of(it) }
     }
 
     @GetMapping("/users/department/{id}")
     fun getUserForDepartment(@PathVariable("id") id: Long): RestUser {
         val department = departmentService.getDepartment(id)
         return userService
-                .getUserForDepartment(department)
-                .let { RestUser.of(it) }
+            .getUserForDepartment(department)
+            .let { RestUser.of(it) }
     }
 
     @PostMapping("/users")
     fun addUser(@RequestBody(required = true) @Valid user: RestUserRequest): RestUser {
         val department = departmentService.getDepartment(user.departmentId)
         return userService
-<<<<<<< HEAD
             .createUser(
                 NewUser(
                     userName = user.username,
@@ -44,31 +44,25 @@ class UserController(
                 )
             )
             .let { RestUser.of(it) }
-=======
-                .createUser(NewUser(
-                        userName = user.username,
-                        role = user.role,
-                        department = department,
-                        passWord = user.password ?: PasswordGenerator.generatePassword()
-                ))
-                .let { RestUser.of(it) }
->>>>>>> Add user endpoints to send mail and change pasword
     }
 
     @PutMapping("/users/{id}/password")
-    fun changePassword(@RequestBody(required = true) @Valid user: RestUserRequest, @PathVariable("id") id: Long): RestUser {
+    fun changePassword(
+        @RequestBody(required = true) @Valid user: RestUserRequest,
+        @PathVariable("id") id: Long
+    ): RestUser {
         val department = departmentService.getDepartment(user.departmentId)
         return userService
-                .saveUpdatePassword(RestUserRequest.to(user, id, department))
-                .let { RestUser.of(it) }
+            .saveUpdatePassword(RestUserRequest.to(user, id, department))
+            .let { RestUser.of(it) }
     }
 
     @PostMapping("/users/{id}/sendRegistrationEmail")
     fun sendRegistrationEmail(@PathVariable("id") id: Long): RestUser {
         val user = userService.getUser(id)
         return userService
-                .updatePasswordAndSendEmail(user)
-                .let { RestUser.of(it) }
+            .updatePasswordAndSendEmail(user)
+            .let { RestUser.of(it) }
     }
 
 }
