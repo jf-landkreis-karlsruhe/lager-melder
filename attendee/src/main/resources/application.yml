@@ -1,5 +1,6 @@
 spring:
   jpa:
+    show-sql: false
     hibernate:
       ddl-auto: create-drop
   datasource:
@@ -17,11 +18,13 @@ spring:
     password: p
 
 application:
+  error:
+    include-message: always
   mail:
     send: false
   admin:
     password: password
-  corsOrigins: http://localhost:8081, http://lagermelder.kordondev.de
+  corsOrigins: http://localhost:9000, http://lagermelder.kordondev.de
 
 data:
   kreiszeltlager:

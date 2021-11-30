@@ -19,17 +19,6 @@ export const updateDepartment = (department: Department) =>
     department
   );
 
-export const createDepartment = (
-  name: string,
-  leaderName: string,
-  leaderEMail: string
-) =>
-  postData<Department>(`departments`, withAuthenticationHeader(), {
-    name,
-    leaderName,
-    leaderEMail
-  });
-
 export interface Department {
   id: string;
   name: string;
