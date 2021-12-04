@@ -18,13 +18,15 @@ services:
     container_name: lm-backend
     ports:
       - "8080:8080"
+    environment:
+      - MYSQL_HOST=database
     depends_on:
       - "database"
   frontend:
     image: "node:lts-alpine"
     container_name: lm-frontend
     ports:
-      - "8081:9000"
+      - "9000:9000"
     volumes:
       - "../../frontend/:/app/:rw"
     command: sh -c "cd /app && yarn install && yarn serve"
