@@ -1,11 +1,11 @@
 import { getData, postData, putData, deleteData } from "../helper/fetch";
 import { withAuthenticationHeader, getTokenData } from "./authentication";
 
-interface NewEvent {
+export interface NewEvent {
   name: string;
 }
 
-interface Event {
+export interface Event {
   name: string;
   id: string;
   code: string;
