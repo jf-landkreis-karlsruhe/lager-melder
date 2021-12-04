@@ -1,24 +1,39 @@
 <template>
   <div>
-    <h1>☄️ Scanner</h1>
 
-    <div
-      id="scanner"
-      style="width: 640px; height: 480px; margin-bottom: 30px"
-    ></div>
+    <v-container>
+      <h1>☄️ Scanner</h1>
+      <v-row justify="center">
+        <div
+          id="scanner"
+          style="width: 640px; height: 480px; margin-bottom: 30px"
+        ></div>
+      </v-row>
 
-    <form v-on:submit.prevent="() => {}">
-      <v-text-field label="Dein gescannter Teilnahmecode" :value="attendeeCode" />
+      <v-row justify="center">
+        <form v-on:submit.prevent="() => {}">
+          <p v-if="!attendeeCode">...Scanning</p>
 
-      <v-alert v-if="scannerError.length > 0" type="error">
-        {{ scannerError }}
-      </v-alert>
+          <v-alert class="attandee-code-alert" :value="!!attendeeCode" type="success" transition="slide-y-transition">
+            {{ attendeeCode }}
+          </v-alert>
 
-      <v-btn @click="toggleScanning" color="primary" type="button">
-        <span v-if="isScanning"><v-icon medium>mdi-stop</v-icon> Stop</span>
-        <span v-else><v-icon medium>mdi-play</v-icon> Start</span>
-      </v-btn>
-    </form>
+          <div class="errors">
+            <v-alert class="network-error" :value="!!networkError" type="error" transition="slide-y-transition">
+              {{ networkError }}
+            </v-alert>
+            <v-alert class="scanner-error" v-if="scannerError" type="error" transition="slide-y-transition">
+              {{ scannerError }}
+            </v-alert>
+          </div>
+
+          <v-btn @click="toggleScanning" color="primary" type="button">
+            <span v-if="isScanning"><v-icon medium>mdi-stop</v-icon> Stop</span>
+            <span v-else><v-icon medium>mdi-play</v-icon> Start</span>
+          </v-btn>
+      </form>
+    </v-row>
+  </v-container>
   </div>
 </template>
 
@@ -31,10 +46,13 @@ import { loginToEvent } from "../services/event";
 @Component({ name: "ScannerComponent" })
 export default class ListDepartment extends Vue {
   eventCode: string = "";
+
   attendeeCode: string = "";
+  previousAttandeeCode: string = "";
+
   isScanning: boolean = true;
   scannerError: string = "";
-  previousAttandeeCode: string = "";
+  networkError: string = "";
 
   protected toggleScanning() {
     if (this.isScanning) {
@@ -43,6 +61,16 @@ export default class ListDepartment extends Vue {
       this.initQuagga();
     }
     this.isScanning = !this.isScanning;
+  }
+
+  protected async codeDetected(data) {
+    this.attendeeCode = data.codeResult.code;
+    if (this.previousAttandeeCode !== this.attendeeCode) {
+      this.previousAttandeeCode = this.attendeeCode;
+      await loginToEvent(this.eventCode, this.attendeeCode).catch(reason => {
+        this.networkError = JSON.stringify(reason);
+      });
+    }
   }
 
   mounted() {
@@ -60,7 +88,7 @@ export default class ListDepartment extends Vue {
           target: document.querySelector("#scanner") // Or '#yourElement' (optional)
         },
         decoder: {
-          readers: ["code_93_reader"],
+          readers: ["code_93_reader"]
           // debug: {
           //   drawBoundingBox: true,
           //   showFrequency: true,
@@ -77,14 +105,7 @@ export default class ListDepartment extends Vue {
         }
         console.log("Initialization finished. Ready to start");
         Quagga.start();
-        Quagga.onDetected(data => {
-          console.warn("HERE IS YOUR CODE:", data.codeResult.code, data);
-          this.attendeeCode = data.codeResult.code;
-          if(this.previousAttandeeCode !== this.attendeeCode) {
-            this.previousAttandeeCode = this.attendeeCode;
-            loginToEvent(this.eventCode, this.attendeeCode);
-          }
-        });
+        Quagga.onDetected(this.codeDetected);
       }
     );
   }
@@ -94,5 +115,9 @@ export default class ListDepartment extends Vue {
 <style scoped>
 .underline {
   text-decoration: underline;
+}
+.attandee-code-alert, .network-error, .scanner-error {
+  max-width: 100%;
+  width: 300px;
 }
 </style>
