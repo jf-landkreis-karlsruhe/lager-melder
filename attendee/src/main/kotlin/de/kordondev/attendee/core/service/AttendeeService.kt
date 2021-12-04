@@ -64,6 +64,12 @@ class AttendeeService(
             .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
     }
 
+    fun getAttendeeByCode(code: String): Attendee {
+        return attendeeRepository.findByCodeOrNull(code)
+            ?.let { AttendeeEntry.to(it) }
+            ?: throw NotFoundException("No Attendee for code $code found")
+    }
+
     private fun checkFirstNameAndLastNameAreUnique(attendee: NewAttendee) {
         attendeeRepository.findByDepartmentAndFirstNameAndLastName(
             DepartmentEntry.of(attendee.department),
