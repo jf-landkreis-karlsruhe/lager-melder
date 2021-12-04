@@ -6,13 +6,16 @@ import de.kordondev.attendee.core.model.NewUser
 import de.kordondev.attendee.core.persistence.entry.Roles
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 data class RestDepartmentWithUserRequest(
     @field: Size(min = 4, max = 20, message = "username needs to be between 4 and 20 chars long")
     val username: String,
+    @field:NotNull(message = "departmen name cannot be missing")
     @field:NotBlank(message = "departmen name cannot be blank")
     val departmentName: String,
+    @field:NotNull(message = "leaderName cannot be missing")
     @field:NotBlank(message = "leaderName cannot be blank")
     val leaderName: String,
     @field:Email(message = "leaderEMail needs to be an email")

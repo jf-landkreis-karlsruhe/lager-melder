@@ -53,7 +53,6 @@ export default class AddDepartment extends Vue {
   departmentName = "";
   leaderName = "";
   leaderMail = "";
-  // TODO: Username doesn't allow whitespace
   username = "";
 
   loading: boolean = false;

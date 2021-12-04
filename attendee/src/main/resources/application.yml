@@ -17,9 +17,12 @@ spring:
     username: u
     password: p
 
-application:
+server:
   error:
     include-message: always
+    include-binding-errors: always
+
+application:
   mail:
     send: false
   admin:

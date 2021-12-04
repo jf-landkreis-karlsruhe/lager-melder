@@ -1,6 +1,5 @@
 package de.kordondev.attendee.exception
 
-import org.springframework.context.support.DefaultMessageSourceResolvable
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -28,8 +27,9 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(BadRequestException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleBadRequestException() {
-        logger.debug("bad request")
     }
+
+    data class ValidationError(val message: String?, val fieldName: String)
 
     override fun handleMethodArgumentNotValid(
         ex: MethodArgumentNotValidException,
@@ -37,12 +37,10 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatus,
         request: WebRequest
     ): ResponseEntity<Any> {
-        val body: MutableMap<String, List<String>> = HashMap()
-        val errors: List<String> = ex.bindingResult
-            .fieldErrors
-            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-            .filterNotNull()
-        body["errors"] = errors
+        val body: List<ValidationError> = ex.bindingResult
+            .fieldErrors.mapNotNull { ValidationError(it.defaultMessage, it.field) }
+        logger.error("Validation error $body")
         return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
+
 }
