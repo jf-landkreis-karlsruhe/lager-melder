@@ -43,7 +43,7 @@ export default Vue.extend({
     };
   },
   mounted: function() {
-    // this.renderChart(this.chartdata, this.options);
+    (this as any).renderChart(this.chartdata, this.options);
   }
 });
 </script>

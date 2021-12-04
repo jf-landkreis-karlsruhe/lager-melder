@@ -22,7 +22,10 @@ export const youthAttendees = (
     .filter(attendees => filterByFilterInput(attendees, filterInput));
 };
 
-export const filterByFilterInput = (attendee: Attendee, filterInput: string) => {
+export const filterByFilterInput = (
+  attendee: Attendee,
+  filterInput: string
+) => {
   if (filterInput.length > 0) {
     return (
       attendee.firstName.includes(filterInput) ||

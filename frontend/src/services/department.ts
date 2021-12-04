@@ -1,4 +1,4 @@
-import { getData, putData } from "../helper/fetch";
+import { getData, postData, putData } from "../helper/fetch";
 import { withAuthenticationHeader, getTokenData } from "./authentication";
 
 export const getDepartments = () =>
@@ -22,7 +22,6 @@ export const updateDepartment = (department: Department) =>
 export interface Department {
   id: string;
   name: string;
-  leader: string;
   leaderName: string;
   leaderEMail: string;
 }

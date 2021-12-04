@@ -2,15 +2,18 @@ package de.kordondev.attendee.core.security
 
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
+import de.kordondev.attendee.core.model.User
 import de.kordondev.attendee.core.persistence.entry.AttendeeRole
 import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.entry.TShirtSize
+import de.kordondev.attendee.core.security.SecurityConstants.DEPARTMENT_ID_PREFIX
+import de.kordondev.attendee.core.security.SecurityConstants.ROLE_PREFIX
+import de.kordondev.attendee.core.security.SecurityConstants.USER_ID_PREFIX
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
@@ -21,14 +24,14 @@ import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 
 class HasAuthorityTest {
-    private lateinit var authorityService: AuthorityService;
+    private lateinit var authorityService: AuthorityService
 
     @BeforeEach
     fun setupMock() {
         MockitoAnnotations.initMocks(this)
-        val authentication = mock(Authentication::class.java);
+        val authentication = mock(Authentication::class.java)
         val securityContext = mock(SecurityContext::class.java)
-        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
+        `when`(securityContext.authentication).thenReturn(authentication)
         SecurityContextHolder.setContext(securityContext)
         `when`(SecurityContextHolder.getContext().authentication).thenReturn(authentication)
 
@@ -41,8 +44,8 @@ class HasAuthorityTest {
     fun isUser_has_DepartmentId_department_hasAuthorityFilter() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 
@@ -59,8 +62,8 @@ class HasAuthorityTest {
     fun `isUser_doesn't_has_DepartmentId_department_hasAuthorityFilter`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 
@@ -77,8 +80,8 @@ class HasAuthorityTest {
     fun isSpecializedFieldDirector_has_DepartmentId_department_hasAuthorityFilter() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -95,8 +98,8 @@ class HasAuthorityTest {
     fun `isSpecializedFieldDirector_doesn't_has_DepartmentId_department_hasAuthorityFilter`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -113,8 +116,8 @@ class HasAuthorityTest {
     fun isAdmin_has_DepartmentId_department_hasAuthorityFilter() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
@@ -131,8 +134,8 @@ class HasAuthorityTest {
     fun `isAdmin_doesn't_has_DepartmentId_department_hasAuthorityFilter`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
@@ -150,8 +153,8 @@ class HasAuthorityTest {
     fun isUser_has_DepartmentId_department_hasAuthority() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 
@@ -165,8 +168,8 @@ class HasAuthorityTest {
     fun `isUser_doesn't_has_DepartmentId_department_hasAuthority`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 
@@ -180,8 +183,8 @@ class HasAuthorityTest {
     fun isSpecializedFieldDirector_has_DepartmentId_department_hasAuthority() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -195,8 +198,8 @@ class HasAuthorityTest {
     fun `isSpecializedFieldDirector_doesn't_has_DepartmentId_department_hasAuthority`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -210,8 +213,8 @@ class HasAuthorityTest {
     fun isAdmin_has_DepartmentId_department_hasAuthority() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
@@ -225,8 +228,8 @@ class HasAuthorityTest {
     fun `isAdmin_doesn't_has_DepartmentId_department_hasAuthority`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
@@ -242,8 +245,8 @@ class HasAuthorityTest {
     fun isUser_has_DepartmentId_attendee_hasAuthorityFilter() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 
@@ -271,8 +274,8 @@ class HasAuthorityTest {
     fun `isUser_doesn't_has_DepartmentId_attendee_hasAuthorityFilter`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 
@@ -300,8 +303,8 @@ class HasAuthorityTest {
     fun isSpecializedFieldDirector_has_DepartmentId_attendee_hasAuthorityFilter() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -329,8 +332,8 @@ class HasAuthorityTest {
     fun `isSpecializedFieldDirector_doesn't_has_DepartmentId_attendee_hasAuthorityFilter`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -358,8 +361,8 @@ class HasAuthorityTest {
     fun isAdmin_has_DepartmentId_attendee_hasAuthorityFilter() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
@@ -387,8 +390,8 @@ class HasAuthorityTest {
     fun `isAdmin_doesn't_has_DepartmentId_attendee_hasAuthorityFilter`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
@@ -416,8 +419,8 @@ class HasAuthorityTest {
     fun isUser_has_DepartmentId_attendee_hasAuthority() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 
@@ -445,8 +448,8 @@ class HasAuthorityTest {
     fun `isUser_doesn't_has_DepartmentId_attendee_hasAuthority`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 
@@ -471,8 +474,8 @@ class HasAuthorityTest {
     fun isSpecializedFieldDirector_has_DepartmentId_attendee_hasAuthority() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -500,8 +503,8 @@ class HasAuthorityTest {
     fun `isSpecializedFieldDirector_doesn't_has_DepartmentId_attendee_hasAuthority`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -529,8 +532,8 @@ class HasAuthorityTest {
     fun isAdmin_has_DepartmentId_attendee_hasAuthority() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("1"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
@@ -558,8 +561,8 @@ class HasAuthorityTest {
     fun `isAdmin_doesn't_has_DepartmentId_attendee_hasAuthority`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
@@ -585,11 +588,11 @@ class HasAuthorityTest {
 
     // specializedFieldDirector
     @Test
-    fun `isUser__isSpecializedFieldDirectorFilter`() {
+    fun isUser__isSpecializedFieldDirectorFilter() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 
@@ -600,8 +603,8 @@ class HasAuthorityTest {
     fun `isSpecializedFieldDirector__isSpecializedFieldDirectorFilter`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -612,8 +615,8 @@ class HasAuthorityTest {
     fun `isAdmin__isSpecializedFieldDirectorFilter`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
@@ -624,8 +627,8 @@ class HasAuthorityTest {
     fun `isUser__isSpecializedFieldDirector`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 
@@ -639,8 +642,8 @@ class HasAuthorityTest {
     fun `isSpecializedFieldDirector__isSpecializedFieldDirector`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -651,8 +654,8 @@ class HasAuthorityTest {
     fun `isAdmin__isSpecializedFieldDirector`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
@@ -664,8 +667,8 @@ class HasAuthorityTest {
     fun `isUser__isAdminFilter`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
 
@@ -676,8 +679,8 @@ class HasAuthorityTest {
     fun `isSpecializedFieldDirector__isAdminFilter`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -688,8 +691,8 @@ class HasAuthorityTest {
     fun `isAdmin__isAdminFilter`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
@@ -700,14 +703,10 @@ class HasAuthorityTest {
     fun `isUser__isAdmin`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.USER.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
             )
         )
-
-        Assertions.assertThrows(
-            AccessDeniedException::class.java
-        ) { authorityService.isAdmin() }
 
     }
 
@@ -715,8 +714,8 @@ class HasAuthorityTest {
     fun `isSpecializedFieldDirector__isAdmin`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
             )
         )
 
@@ -729,11 +728,84 @@ class HasAuthorityTest {
     fun `isAdmin__isAdmin`() {
         `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
             listOf(
-                SimpleGrantedAuthority("0"),
-                SimpleGrantedAuthority(Roles.ADMIN.toString())
+                SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
             )
         )
 
         assertThat(authorityService.isAdmin()).isEqualTo(Unit)
+    }
+
+
+    fun `isUser__hasAuthority`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
+            listOf(
+                SimpleGrantedAuthority(USER_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER.toString())
+            )
+        )
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val user = User(id = 1L, role = Roles.USER, department = dep, userName = "user", passWord = "pass")
+        Assertions.assertThrows(
+            AccessDeniedException::class.java,
+        ) { authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
+    }
+
+    @Test
+    fun `isUserWithSameUserID__hasAuthority`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
+            listOf(
+                SimpleGrantedAuthority(USER_ID_PREFIX + "1"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
+            )
+        )
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val user = User(id = 1L, role = Roles.USER, department = dep, userName = "user", passWord = "pass")
+        assertThat(
+            authorityService.hasAuthority(
+                user,
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
+            )
+        ).isEqualTo(user)
+    }
+
+    @Test
+    fun `isSepcializedFieldDirector__hasAuthority`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
+            listOf(
+                SimpleGrantedAuthority(USER_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
+            )
+        )
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val user = User(id = 1L, role = Roles.USER, department = dep, userName = "user", passWord = "pass")
+        assertThat(
+            authorityService.hasAuthority(
+                user,
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
+            )
+        ).isEqualTo(user)
+    }
+
+    @Test
+    fun `isAdmin__hasAuthority`() {
+        `when`(SecurityContextHolder.getContext().authentication.authorities).thenReturn(
+            listOf(
+                SimpleGrantedAuthority(USER_ID_PREFIX + "0"),
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN.toString())
+            )
+        )
+
+        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val user = User(id = 1L, role = Roles.USER, department = dep, userName = "user", passWord = "pass")
+        assertThat(
+            authorityService.hasAuthority(
+                user,
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
+            )
+        ).isEqualTo(user)
     }
 }
