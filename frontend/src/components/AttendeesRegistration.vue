@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container>
-      <h1 class="h1">Teilnehmer {{ department.name }}</h1>
+      <h1 class="h1">🙌 Teilnehmer {{ department.name }}</h1>
       <v-row justify="space-between">
         <div>
           <v-text-field

@@ -8,7 +8,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/",
     name: "Home",
-    component: HomeView
+    component: HomeView,
   },
   {
     path: "/login",
@@ -17,34 +17,39 @@ const routes: Array<RouteConfig> = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/LoginView.vue")
+      import(/* webpackChunkName: "about" */ "../views/LoginView.vue"),
   },
   {
     path: "/teilnehmer",
     name: "AttendeesRegistration",
-    component: () => import("../views/AttendeesRegistrationView.vue")
+    component: () => import("../views/AttendeesRegistrationView.vue"),
   },
   {
     path: "/overview",
     name: "Lagerübersicht",
-    component: () => import("../components/Overview.vue")
+    component: () => import("../components/Overview.vue"),
   },
   {
     path: "/files",
     name: "Registrierungsunterlagen",
-    component: () => import("../components/RegistrationFiles.vue")
+    component: () => import("../components/RegistrationFiles.vue"),
   },
   {
     path: "/feuerwehr",
     name: "Meine Feuerwehr",
-    component: () => import("../components/ListDepartment.vue")
-  }
+    component: () => import("../components/ListDepartment.vue"),
+  },
+  {
+    path: "/scanner/:eventCode",
+    name: "Scanner",
+    component: () => import("../components/Scanner.vue"),
+  },
 ];
 
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
-  routes
+  routes,
 });
 
 export default router;
