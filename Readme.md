@@ -21,3 +21,7 @@ cd attendee
 * `docker run -p8080:8080 localhost:5000/lager-melder:latest`
 
 * `docker container stop registry`
+
+## Run app with database + backend + frontend
+For the first time you might need to add rights: `chmod 577 ./run.sh` <br/>
+Then just: `./run.sh`
