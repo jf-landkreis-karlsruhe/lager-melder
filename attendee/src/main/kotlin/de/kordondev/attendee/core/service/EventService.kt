@@ -46,7 +46,9 @@ class EventService(
     fun saveEvent(id: Long, event: NewEvent): Event {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         return eventRepository.findByIdOrNull(id)
-            ?.let { eventRepository.save(EventEntry.of(event, it.code, id)) }
+            ?.let {
+                eventRepository.save(EventEntry.of(event, it.code, id))
+            }
             ?.let { EventEntry.to(it) }
             ?: createEvent(event)
     }

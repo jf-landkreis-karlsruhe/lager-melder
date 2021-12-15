@@ -44,11 +44,14 @@ class AttendeeService(
 
     fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
         // TODO: check for attendee from db with id
-        authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         checkFirstNameAndLastNameAreUnique(attendee)
         return attendeeRepository.findByIdOrNull(id)
             ?.let {
-                attendeeRepository.save(AttendeeEntry.of(attendee, it.code, id))
+                authorityService.hasAuthority(
+                    AttendeeEntry.to(it),
+                    listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
+                )
+                attendeeRepository.save(AttendeeEntry.of(attendee, it.code, it.id))
             }
             ?.let { AttendeeEntry.to(it) }
             ?: createAttendee(attendee)
@@ -56,10 +59,13 @@ class AttendeeService(
 
     fun deleteAttendee(id: Long) {
         attendeeRepository.findByIdOrNull(id)
-            ?.let { AttendeeEntry.to(it) }
-            ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
-            ?.let { AttendeeEntry.of(it) }
-            ?.let { attendeeRepository.delete(it) }
+            ?.let {
+                authorityService.hasAuthority(
+                    AttendeeEntry.to(it),
+                    listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
+                )
+                attendeeRepository.delete(it)
+            }
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
 
