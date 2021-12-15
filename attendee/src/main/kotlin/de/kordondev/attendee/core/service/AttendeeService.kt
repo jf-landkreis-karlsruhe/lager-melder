@@ -8,6 +8,7 @@ import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
 import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.security.AuthorityService
+import de.kordondev.attendee.core.security.PasswordGenerator
 import de.kordondev.attendee.exception.NotFoundException
 import de.kordondev.attendee.exception.UniqueException
 import org.springframework.data.repository.findByIdOrNull
@@ -35,17 +36,22 @@ class AttendeeService(
     fun createAttendee(attendee: NewAttendee): Attendee {
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         checkFirstNameAndLastNameAreUnique(attendee)
+        val code = PasswordGenerator.generateCode()
         return attendeeRepository
-            .save(AttendeeEntry.of(attendee))
+            .save(AttendeeEntry.of(attendee, code))
             .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
     }
 
     fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
+        // TODO: check for attendee from db with id
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         checkFirstNameAndLastNameAreUnique(attendee)
-        return attendeeRepository
-            .save(AttendeeEntry.of(attendee, id))
-            .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
+        return attendeeRepository.findByIdOrNull(id)
+            ?.let {
+                attendeeRepository.save(AttendeeEntry.of(attendee, it.code, id))
+            }
+            ?.let { AttendeeEntry.to(it) }
+            ?: createAttendee(attendee)
     }
 
     fun deleteAttendee(id: Long) {

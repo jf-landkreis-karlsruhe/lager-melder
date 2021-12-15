@@ -1,6 +1,7 @@
 package de.kordondev.attendee.core.persistence.entry
 
 import de.kordondev.attendee.core.model.Event
+import de.kordondev.attendee.core.model.NewEvent
 import javax.persistence.*
 
 @Entity
@@ -18,11 +19,19 @@ data class EventEntry(
     val code: String
 ) {
     companion object {
-        fun of(event: Event): EventEntry {
+        fun of(event: NewEvent, code: String, id: Long = 0): EventEntry {
+            return EventEntry(
+                id = id,
+                name = event.name,
+                code = code
+            )
+        }
+
+        fun of(event: Event, code: String): EventEntry {
             return EventEntry(
                 id = event.id,
                 name = event.name,
-                code = event.code
+                code = code
             )
         }
 
