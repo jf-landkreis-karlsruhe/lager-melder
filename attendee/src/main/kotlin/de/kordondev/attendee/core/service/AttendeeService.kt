@@ -77,7 +77,7 @@ class AttendeeService(
     }
 
     fun getAttendeeByCode(code: String): Attendee {
-        return attendeeRepository.findByCodeOrNull(code)
+        return attendeeRepository.findByCode(code)
             ?.let { AttendeeEntry.to(it) }
             ?: throw NotFoundException("No Attendee for code $code found")
     }

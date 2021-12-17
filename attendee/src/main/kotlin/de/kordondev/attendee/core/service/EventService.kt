@@ -21,7 +21,7 @@ class EventService(
     val attendeeInEventRepository: AttendeeInEventRepository
 ) {
     fun getEventByCode(code: String): Event {
-        return eventRepository.findByCodeOrNull(code)
+        return eventRepository.findByCode(code)
             ?.let { EventEntry.to(it) }
             ?: throw NotFoundException("Event not found for code $code")
     }

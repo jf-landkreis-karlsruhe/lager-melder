@@ -19,6 +19,7 @@ application:
     send: false
   admin:
     password: password
+  corsOrigins: http://test
 
 data:
   kreiszeltlager:

@@ -13,5 +13,5 @@ interface AttendeeRepository : CrudRepository<AttendeeEntry, Long> {
         lastName: String
     ): AttendeeEntry?
 
-    fun findByCodeOrNull(code: String): AttendeeEntry?
+    fun findByCode(code: String): AttendeeEntry?
 }

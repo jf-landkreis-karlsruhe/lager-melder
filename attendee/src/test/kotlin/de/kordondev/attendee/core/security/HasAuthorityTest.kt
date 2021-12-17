@@ -1,15 +1,10 @@
 package de.kordondev.attendee.core.security
 
-import de.kordondev.attendee.core.model.Attendee
-import de.kordondev.attendee.core.model.Department
-import de.kordondev.attendee.core.model.User
-import de.kordondev.attendee.core.persistence.entry.AttendeeRole
-import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.Roles
-import de.kordondev.attendee.core.persistence.entry.TShirtSize
 import de.kordondev.attendee.core.security.SecurityConstants.DEPARTMENT_ID_PREFIX
 import de.kordondev.attendee.core.security.SecurityConstants.ROLE_PREFIX
 import de.kordondev.attendee.core.security.SecurityConstants.USER_ID_PREFIX
+import de.kordondev.attendee.helper.Entities
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -49,7 +44,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
@@ -67,7 +62,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
@@ -85,7 +80,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
@@ -103,7 +98,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
@@ -121,7 +116,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
@@ -139,7 +134,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
@@ -158,7 +153,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(
             dep
         )
@@ -173,7 +168,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         Assertions.assertThrows(
             AccessDeniedException::class.java,
         ) { authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
@@ -188,7 +183,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(
             dep
         )
@@ -203,7 +198,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(
             dep
         )
@@ -218,7 +213,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(
             dep
         )
@@ -233,7 +228,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        val dep = Entities.department()
         assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(
             dep
         )
@@ -250,18 +245,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
@@ -279,18 +263,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
@@ -308,18 +281,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
@@ -337,18 +299,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
@@ -366,18 +317,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
@@ -395,18 +335,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
@@ -424,18 +353,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthority(
                 attendee,
@@ -453,18 +371,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         Assertions.assertThrows(
             AccessDeniedException::class.java
         ) { authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
@@ -479,18 +386,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthority(
                 attendee,
@@ -508,18 +404,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthority(
                 attendee,
@@ -537,18 +422,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthority(
                 attendee,
@@ -566,18 +440,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val attendee = Attendee(
-            10L,
-            "att",
-            "endee",
-            "20-09-2005",
-            Food.MEAT,
-            TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-            "",
-            AttendeeRole.YOUTH,
-            dep
-        )
+        val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthority(
                 attendee,
@@ -745,8 +608,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val user = User(id = 1L, role = Roles.USER, department = dep, userName = "user", passWord = "pass")
+        val user = Entities.user()
         Assertions.assertThrows(
             AccessDeniedException::class.java,
         ) { authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
@@ -761,8 +623,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val user = User(id = 1L, role = Roles.USER, department = dep, userName = "user", passWord = "pass")
+        val user = Entities.user()
         assertThat(
             authorityService.hasAuthority(
                 user,
@@ -780,8 +641,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val user = User(id = 1L, role = Roles.USER, department = dep, userName = "user", passWord = "pass")
+        val user = Entities.user()
         assertThat(
             authorityService.hasAuthority(
                 user,
@@ -799,8 +659,7 @@ class HasAuthorityTest {
             )
         )
 
-        val dep = Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
-        val user = User(id = 1L, role = Roles.USER, department = dep, userName = "user", passWord = "pass")
+        val user = Entities.user()
         assertThat(
             authorityService.hasAuthority(
                 user,
