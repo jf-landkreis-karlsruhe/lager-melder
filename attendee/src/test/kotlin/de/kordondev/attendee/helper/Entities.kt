@@ -7,7 +7,10 @@ import de.kordondev.attendee.core.persistence.entry.AttendeeRole
 import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.entry.TShirtSize
+import de.kordondev.attendee.rest.model.request.RestAttendeeRequest
+import de.kordondev.attendee.rest.model.request.RestDepartmentRequest
 import de.kordondev.attendee.rest.model.request.RestDepartmentWithUserRequest
+import de.kordondev.attendee.rest.model.request.RestEventRequest
 
 
 class Entities() {
@@ -31,6 +34,20 @@ class Entities() {
             )
         }
 
+        fun restAttendeeRequest(departmentId: Long = department().id): RestAttendeeRequest {
+            return RestAttendeeRequest(
+                firstName = "att",
+                lastName = "endee",
+                departmentId = departmentId,
+                birthday = "05-09-2005",
+                food = Food.MEAT,
+                tShirtSize = TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
+                additionalInformation = "n",
+                role = AttendeeRole.YOUTH
+            )
+
+        }
+
         fun user(): User {
             return User(id = 1L, role = Roles.USER, department = department(), userName = "user", passWord = "pass")
         }
@@ -42,6 +59,18 @@ class Entities() {
                 leaderName = "leaderName",
                 leaderEMail = "leader@department.de"
             )
+        }
+
+        fun restDepartmentRequest(): RestDepartmentRequest {
+            return RestDepartmentRequest(
+                name = "department",
+                leaderEMail = "leader@mail.de",
+                leaderName = "leader"
+            )
+        }
+
+        fun event(): RestEventRequest {
+            return RestEventRequest("event")
         }
     }
 

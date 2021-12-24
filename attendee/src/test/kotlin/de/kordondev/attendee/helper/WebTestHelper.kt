@@ -3,6 +3,10 @@ package de.kordondev.attendee.helper
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
+import org.springframework.test.web.servlet.MvcResult
+import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.nio.charset.Charset
 
 @Service
@@ -20,5 +24,29 @@ class WebTestHelper(
 
     fun toJSON(inputObject: Any?): ByteArray {
         return objectMapper.writeValueAsBytes(inputObject)
+    }
+
+    fun <T> toObject(requestResult: ResultActions, valueTypeRef: Class<T>): T {
+        val result: MvcResult = requestResult.andReturn()
+        val json = result.response.contentAsString
+        return objectMapper.readValue(json, valueTypeRef)
+    }
+
+    fun <T> post(url: String, body: T): MockHttpServletRequestBuilder {
+        return MockMvcRequestBuilders.post(url).contentType(CONTENT_TYPE_JSON)
+            .content(toJSON(body))
+    }
+
+    fun <T> put(url: String, body: T): MockHttpServletRequestBuilder {
+        return MockMvcRequestBuilders.put(url).contentType(CONTENT_TYPE_JSON)
+            .content(toJSON(body))
+    }
+
+    fun delete(url: String): MockHttpServletRequestBuilder {
+        return MockMvcRequestBuilders.delete(url).contentType(CONTENT_TYPE_JSON)
+    }
+
+    fun get(url: String): MockHttpServletRequestBuilder {
+        return MockMvcRequestBuilders.get(url).contentType(CONTENT_TYPE_JSON)
     }
 }

@@ -26,7 +26,9 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(BadRequestException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    fun handleBadRequestException() {
+    fun handleBadRequestException(ex: BadRequestException) {
+        logger.error("bad request exception $ex")
+        throw ex
     }
 
     @ExceptionHandler(UniqueException::class)

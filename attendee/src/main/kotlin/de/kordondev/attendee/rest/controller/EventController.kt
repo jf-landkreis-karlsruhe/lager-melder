@@ -11,7 +11,7 @@ import javax.validation.Valid
 class EventController(
     private val eventService: EventService
 ) {
-    @PostMapping("events/by-code/{eventCode}/{attendeeCode}")
+    @PostMapping("/events/by-code/{eventCode}/{attendeeCode}")
     fun addAttendeeToEvent(
         @PathVariable(value = "eventCode") eventCode: String,
         @PathVariable(value = "attendeeCode") attendeeCode: String
@@ -21,19 +21,19 @@ class EventController(
         }
     }
 
-    @GetMapping("events/by-code/{eventCode}")
+    @GetMapping("/events/by-code/{eventCode}")
     fun getEventByCode(@PathVariable(value = "eventCode") eventCode: Long): RestEvent {
         return eventService.getEvent(eventCode)
             .let { RestEvent.of(it) }
     }
 
-    @GetMapping("events")
+    @GetMapping("/events")
     fun getEvents(): List<RestEvent> {
         return eventService.getEvents()
             .map { RestEvent.of(it) }
     }
 
-    @GetMapping("events/{id}")
+    @GetMapping("/events/{id}")
     fun getEvent(@PathVariable(value = "id") id: Long): RestEvent {
         return eventService.getEvent(id)
             .let { RestEvent.of(it) }
@@ -45,7 +45,7 @@ class EventController(
             .let { RestEvent.of(it) }
     }
 
-    @PutMapping("/event/{id}")
+    @PutMapping("/events/{id}")
     fun saveEvent(
         @RequestBody(required = true) @Valid event: RestEventRequest,
         @PathVariable("id") id: Long
@@ -54,7 +54,7 @@ class EventController(
             .let { RestEvent.of(it) }
     }
 
-    @DeleteMapping("/event/{id}")
+    @DeleteMapping("/events/{id}")
     fun deleteEvent(@PathVariable(value = "id") id: Long) {
         eventService.deleteEvent(id)
     }
