@@ -7,10 +7,7 @@ import de.kordondev.attendee.core.persistence.entry.AttendeeRole
 import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.entry.TShirtSize
-import de.kordondev.attendee.rest.model.request.RestAttendeeRequest
-import de.kordondev.attendee.rest.model.request.RestDepartmentRequest
-import de.kordondev.attendee.rest.model.request.RestDepartmentWithUserRequest
-import de.kordondev.attendee.rest.model.request.RestEventRequest
+import de.kordondev.attendee.rest.model.request.*
 
 
 class Entities() {
@@ -46,6 +43,15 @@ class Entities() {
                 role = AttendeeRole.YOUTH
             )
 
+        }
+
+        fun restUserRequest(departmentId: Long = department().id): RestUserRequest {
+            return RestUserRequest(
+                username = "username",
+                password = "password",
+                departmentId = departmentId,
+                role = Roles.USER
+            )
         }
 
         fun user(): User {
