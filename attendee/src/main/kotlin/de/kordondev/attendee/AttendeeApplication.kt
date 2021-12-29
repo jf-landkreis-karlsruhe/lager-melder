@@ -1,6 +1,8 @@
 package de.kordondev.attendee
 
-import de.kordondev.attendee.core.persistence.entry.*
+import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
+import de.kordondev.attendee.core.persistence.entry.Roles
+import de.kordondev.attendee.core.persistence.entry.UserEntry
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.persistence.repository.DepartmentRepository
 import de.kordondev.attendee.core.persistence.repository.UserRepository
@@ -16,40 +18,43 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 @SpringBootApplication
 class AttendeeApplication {
 
-	val logger: Logger = LoggerFactory.getLogger(AttendeeApplication::class.java)
+    val logger: Logger = LoggerFactory.getLogger(AttendeeApplication::class.java)
 
-	@Bean
-	fun init(
-			attendeeRepository: AttendeeRepository,
-			departmentRepository: DepartmentRepository,
-			userRepository: UserRepository,
-			@Value("\${application.admin.password}") adminPassword: String
-	) = ApplicationRunner {
-		logger.info("Initializing database")
+    @Bean
+    fun init(
+        attendeeRepository: AttendeeRepository,
+        departmentRepository: DepartmentRepository,
+        userRepository: UserRepository,
+        @Value("\${application.admin.password}") adminPassword: String
+    ) = ApplicationRunner {
+        logger.info("Initializing database")
         val adminDepartment = DepartmentEntry(
-						name = "Admin",
-						leaderName = "KordonDev",
-						leaderEMail = "KordonDev@mail.ka"
-				)
-		departmentRepository.save(adminDepartment)
+            name = "Admin",
+            leaderName = "KordonDev",
+            leaderEMail = "KordonDev@mail.ka"
+        )
+        departmentRepository.save(adminDepartment)
 
-		userRepository.saveAll(listOf(
-				UserEntry(
-						role = Roles.ADMIN,
-						userName = "admin",
-						passWord = BCryptPasswordEncoder().encode(adminPassword),
-						department = adminDepartment
-				))
-		)
-	}
+        userRepository.saveAll(
+            listOf(
+                UserEntry(
+                    role = Roles.ADMIN,
+                    userName = "admin",
+                    passWord = BCryptPasswordEncoder().encode(adminPassword),
+                    department = adminDepartment
+                )
+            )
+        )
+
+    }
 
 
-	@Bean
-	fun bCryptPasswordEncoder(): BCryptPasswordEncoder {
-		return BCryptPasswordEncoder()
-	}
+    @Bean
+    fun bCryptPasswordEncoder(): BCryptPasswordEncoder {
+        return BCryptPasswordEncoder()
+    }
 }
 
 fun main(args: Array<String>) {
-	runApplication<AttendeeApplication>(*args)
+    runApplication<AttendeeApplication>(*args)
 }
