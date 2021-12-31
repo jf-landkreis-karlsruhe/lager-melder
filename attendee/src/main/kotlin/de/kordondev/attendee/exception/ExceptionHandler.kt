@@ -29,6 +29,11 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     fun handleBadRequestException() {
     }
 
+    @ExceptionHandler(UniqueException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleUniqueException() {
+    }
+
     data class ValidationError(val message: String?, val fieldName: String)
 
     override fun handleMethodArgumentNotValid(

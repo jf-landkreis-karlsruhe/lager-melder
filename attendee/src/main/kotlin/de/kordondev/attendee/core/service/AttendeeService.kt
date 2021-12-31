@@ -9,6 +9,7 @@ import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.exception.NotFoundException
+import de.kordondev.attendee.exception.UniqueException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -33,6 +34,7 @@ class AttendeeService(
 
     fun createAttendee(attendee: NewAttendee): Attendee {
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        checkFirstNameAndLastNameAreUnique(attendee)
         return attendeeRepository
             .save(AttendeeEntry.of(attendee))
             .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
@@ -40,6 +42,7 @@ class AttendeeService(
 
     fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        checkFirstNameAndLastNameAreUnique(attendee)
         return attendeeRepository
             .save(AttendeeEntry.of(attendee, id))
             .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
@@ -59,5 +62,14 @@ class AttendeeService(
             .findByDepartment(DepartmentEntry.of(department))
             .map { attendee -> AttendeeEntry.to(attendee) }
             .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
+    }
+
+    private fun checkFirstNameAndLastNameAreUnique(attendee: NewAttendee) {
+        attendeeRepository.findByDepartmentAndFirstNameAndLastName(
+            DepartmentEntry.of(attendee.department),
+            attendee.firstName,
+            attendee.lastName
+        )
+            ?.let { throw UniqueException("Vorname (${attendee.firstName}) und Nachname (${attendee.lastName}) müssen pro Feuerwehr einmalig sein") }
     }
 }
