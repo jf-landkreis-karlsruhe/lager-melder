@@ -1,7 +1,10 @@
 package de.kordondev.attendee.core.service
 
-import com.lowagie.text.Document
-import com.lowagie.text.PageSize
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.client.j2se.MatrixToImageWriter
+import com.google.zxing.common.BitMatrix
+import com.lowagie.text.*
 import com.lowagie.text.pdf.*
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
@@ -13,13 +16,13 @@ import org.springframework.stereotype.Service
 import java.awt.Color
 import java.io.ByteArrayOutputStream
 
+
 @Service
-class AdminPDFService(
+class AdminFilesService(
     private val resourceLoader: ResourceLoader,
     private val attendeeService: AttendeeService
 ) {
     fun createBatches(): ByteArray {
-
         val out = ByteArrayOutputStream()
         val outerOut = ByteArrayOutputStream()
         val document = Document(PageSize.A4)
@@ -48,8 +51,8 @@ class AdminPDFService(
             val pdfReader = PdfReader(resource.inputStream)
             val stamper = PdfStamper(pdfReader, out)
 
-            val content = stamper.getOverContent(1);
-            content.setColorFill(Color.BLACK);
+            val content = stamper.getOverContent(1)
+            content.setColorFill(Color.BLACK)
             content.setFontAndSize(
                 BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED),
                 16F
@@ -68,7 +71,7 @@ class AdminPDFService(
             stamper.close()
             pdfReader.close()
 
-            val readInputPDF = PdfReader(out.toByteArray());
+            val readInputPDF = PdfReader(out.toByteArray())
 
             pdfCopy.addPage(pdfCopy.getImportedPage(readInputPDF, 1))
             pdfCopy.freeReader(readInputPDF)
@@ -77,26 +80,26 @@ class AdminPDFService(
         document.close()
         pdfCopy.close()
 
-        return outerOut.toByteArray();
+        return outerOut.toByteArray()
     }
 
     fun addName(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
-        content.beginText();
-        content.setTextMatrix(345F, 738F - 141F * attendeesOnPage); //TODO: Fix calculation
-        content.showText("${attendeesOnPage} ${attendee.firstName} ${attendee.lastName}");
-        content.endText();
+        content.beginText()
+        content.setTextMatrix(345F, 738F - 141F * attendeesOnPage)
+        content.showText("${attendee.firstName} ${attendee.lastName}")
+        content.endText()
     }
 
     fun addDepartment(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         content.beginText()
-        content.setTextMatrix(335F, 723F - 141F * attendeesOnPage) //TODO: Fix calculation
-        content.showText("$attendeesOnPage ${attendee.department.name}")
+        content.setTextMatrix(335F, 723F - 141F * attendeesOnPage)
+        content.showText(attendee.department.name)
         content.endText()
     }
 
     fun addBarCode(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         val barcode128 = Barcode128()
-        val code = "att-000$attendeesOnPage" // TODO: useAttendeeCode
+        val code = "att-000$attendeesOnPage"
         barcode128.code = code
         barcode128.barHeight = 40F
         barcode128.x = 1.5F
@@ -104,8 +107,51 @@ class AdminPDFService(
         barcode128.baseline = 12F
         barcode128.size = 12F
         val template = barcode128.createTemplateWithBarcode(content, Color.BLACK, Color.BLACK)
-        content.addTemplate(template, 320F, 660F - 141F * attendeesOnPage)//TODO: Fix calculation
+        content.addTemplate(template, 320F, 660F - 141F * attendeesOnPage)
+    }
 
+    fun createEventPDF(): ByteArray {
+        val out = ByteArrayOutputStream()
+
+        val document = Document(PageSize.A4)
+        val writer = PdfWriter.getInstance(document, out)
+
+        writer.isCloseStream = false
+
+        val font = Font(
+            BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED),
+            20F,
+            Font.BOLD,
+            Color.BLACK
+        )
+
+        // TODO: Loop over events
+        val headline = Paragraph("Eventname", font) // TODO: Change to event name
+        headline.alignment = Element.ALIGN_CENTER
+        headline.spacingAfter = 50F
+
+
+        document.open()
+        document.add(headline)
+        document.add(Paragraph("Bitte beim Kommen und Gehen ein und ausloggen.")) //TODO: Correct sentence
+
+        val qrCode = Image.getInstance(createEventCode("123456")) // TODO: Use event code
+        qrCode.scaleToFit(PageSize.A4.width, PageSize.A4.height)
+        val x = (PageSize.A4.width - qrCode.scaledWidth) / 2
+        val y = (PageSize.A4.height - qrCode.scaledHeight) / 2
+        qrCode.setAbsolutePosition(x, y)
+        document.add(qrCode)
+        // TODO: Loop over events end
+
+        document.close()
+        return out.toByteArray()
+    }
+
+    fun createEventCode(eventCode: String): ByteArray {
+        val out = ByteArrayOutputStream()
+        val matrix: BitMatrix = MultiFormatWriter().encode(eventCode, BarcodeFormat.QR_CODE, 400, 400)
+        MatrixToImageWriter.writeToStream(matrix, "png", out)
+        return out.toByteArray()
     }
 
 }
