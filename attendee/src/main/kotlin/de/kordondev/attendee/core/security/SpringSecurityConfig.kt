@@ -30,6 +30,8 @@ class SpringSecurityConfig(
             .antMatchers("/attendees/**").authenticated()
             .antMatchers("/departments/**").authenticated()
             .antMatchers("/users/**").authenticated()
+            .antMatchers("/admin-files/**").authenticated()
+            .antMatchers("/registrationFiles/**").authenticated()
             .antMatchers("/register").authenticated()
             .antMatchers(("/login")).permitAll()
             .and()
