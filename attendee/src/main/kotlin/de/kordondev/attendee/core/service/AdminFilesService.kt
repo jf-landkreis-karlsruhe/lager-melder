@@ -22,11 +22,12 @@ class AdminFilesService(
     private val resourceLoader: ResourceLoader,
     private val attendeeService: AttendeeService
 ) {
+    private val yDistanceBetweenBatches = 141F
     fun createBatches(): ByteArray {
-        val out = ByteArrayOutputStream()
-        val outerOut = ByteArrayOutputStream()
+        val pageStream = ByteArrayOutputStream()
+        val documentStream = ByteArrayOutputStream()
         val document = Document(PageSize.A4)
-        val pdfCopy = PdfCopy(document, outerOut)
+        val pdfCopy = PdfCopy(document, documentStream)
         document.open()
 
         val department = Department(0, "dep", "leader", "leader@a")
@@ -49,7 +50,7 @@ class AdminFilesService(
 
             val resource = resourceLoader.getResource("classpath:data/batch.pdf")
             val pdfReader = PdfReader(resource.inputStream)
-            val stamper = PdfStamper(pdfReader, out)
+            val stamper = PdfStamper(pdfReader, pageStream)
 
             val content = stamper.getOverContent(1)
             content.setColorFill(Color.BLACK)
@@ -71,7 +72,7 @@ class AdminFilesService(
             stamper.close()
             pdfReader.close()
 
-            val readInputPDF = PdfReader(out.toByteArray())
+            val readInputPDF = PdfReader(pageStream.toByteArray())
 
             pdfCopy.addPage(pdfCopy.getImportedPage(readInputPDF, 1))
             pdfCopy.freeReader(readInputPDF)
@@ -80,26 +81,30 @@ class AdminFilesService(
         document.close()
         pdfCopy.close()
 
-        return outerOut.toByteArray()
+        return documentStream.toByteArray()
     }
 
     fun addName(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         content.beginText()
-        content.setTextMatrix(345F, 738F - 141F * attendeesOnPage)
+        val xValue = 345F
+        val yValue = 738F
+        content.setTextMatrix(xValue, yValue - yDistanceBetweenBatches * attendeesOnPage)
         content.showText("${attendee.firstName} ${attendee.lastName}")
         content.endText()
     }
 
     fun addDepartment(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         content.beginText()
-        content.setTextMatrix(335F, 723F - 141F * attendeesOnPage)
+        val xValue = 335F
+        val yValue = 723F
+        content.setTextMatrix(xValue, yValue - yDistanceBetweenBatches * attendeesOnPage)
         content.showText(attendee.department.name)
         content.endText()
     }
 
     fun addBarCode(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         val barcode128 = Barcode128()
-        val code = "att-000$attendeesOnPage"
+        val code = "att-000$attendeesOnPage" // TODO: use code from attendee
         barcode128.code = code
         barcode128.barHeight = 40F
         barcode128.x = 1.5F
@@ -107,7 +112,9 @@ class AdminFilesService(
         barcode128.baseline = 12F
         barcode128.size = 12F
         val template = barcode128.createTemplateWithBarcode(content, Color.BLACK, Color.BLACK)
-        content.addTemplate(template, 320F, 660F - 141F * attendeesOnPage)
+        val xValue = 320F
+        val yValue = 660F
+        content.addTemplate(template, xValue, yValue - yDistanceBetweenBatches * attendeesOnPage)
     }
 
     fun createEventPDF(): ByteArray {
