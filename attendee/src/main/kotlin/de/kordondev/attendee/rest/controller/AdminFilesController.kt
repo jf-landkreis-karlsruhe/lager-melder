@@ -3,7 +3,7 @@ package de.kordondev.attendee.rest.controller
 import de.kordondev.attendee.core.service.AdminFilesService
 import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 import java.io.IOException
@@ -17,9 +17,12 @@ class AdminFilesController(
     @ResponseBody
     @Throws(IOException::class)
     @GetMapping(value = ["admin-files/events}"], produces = ["application/pdf"])
-    fun getEventsPDF(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
+    fun getEventsPDF(
+        @RequestParam(value = "frontendBaseUrl") frontendBaseUrl: String,
+        response: HttpServletResponse
+    ): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=events.pdf")
-        return adminFilesService.createEventPDF() //TODO:create correct file
+        return adminFilesService.createEventPDF(frontendBaseUrl)
     }
 
     @ResponseBody

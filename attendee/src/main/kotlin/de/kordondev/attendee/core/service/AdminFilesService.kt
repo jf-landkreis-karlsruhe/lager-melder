@@ -7,10 +7,6 @@ import com.google.zxing.common.BitMatrix
 import com.lowagie.text.*
 import com.lowagie.text.pdf.*
 import de.kordondev.attendee.core.model.Attendee
-import de.kordondev.attendee.core.model.Department
-import de.kordondev.attendee.core.persistence.entry.AttendeeRole
-import de.kordondev.attendee.core.persistence.entry.Food
-import de.kordondev.attendee.core.persistence.entry.TShirtSize
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.awt.Color
@@ -20,7 +16,8 @@ import java.io.ByteArrayOutputStream
 @Service
 class AdminFilesService(
     private val resourceLoader: ResourceLoader,
-    private val attendeeService: AttendeeService
+    private val attendeeService: AttendeeService,
+    private val eventService: EventService
 ) {
     private val yDistanceBetweenBatches = 141F
     fun createBatches(): ByteArray {
@@ -30,21 +27,7 @@ class AdminFilesService(
         val pdfCopy = PdfCopy(document, documentStream)
         document.open()
 
-        val department = Department(0, "dep", "leader", "leader@a")
-        val attendee = Attendee(
-            0, "first", "last", "01-01-1990", Food.VEGAN,
-            TShirtSize.M, "", AttendeeRole.YOUTH, department
-        )
-
-        val attendees = listOf(
-            attendee,
-            attendee,
-            attendee,
-            attendee,
-            attendee,
-            attendee,
-            attendee
-        ) // TODO: attendeeService.getAttendees().toList()
+        val attendees = attendeeService.getAttendees().toList()
         var attendeeIndex = 0
         while (attendeeIndex < attendees.size) {
 
@@ -104,11 +87,10 @@ class AdminFilesService(
 
     fun addBarCode(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         val barcode128 = Barcode128()
-        val code = "att-000$attendeesOnPage" // TODO: use code from attendee
-        barcode128.code = code
+        barcode128.code = attendee.code
         barcode128.barHeight = 40F
         barcode128.x = 1.5F
-        barcode128.altText = code
+        barcode128.altText = attendee.code
         barcode128.baseline = 12F
         barcode128.size = 12F
         val template = barcode128.createTemplateWithBarcode(content, Color.BLACK, Color.BLACK)
@@ -117,7 +99,7 @@ class AdminFilesService(
         content.addTemplate(template, xValue, yValue - yDistanceBetweenBatches * attendeesOnPage)
     }
 
-    fun createEventPDF(): ByteArray {
+    fun createEventPDF(frontendBaseUrl: String): ByteArray {
         val out = ByteArrayOutputStream()
 
         val document = Document(PageSize.A4)
@@ -132,23 +114,26 @@ class AdminFilesService(
             Color.BLACK
         )
 
-        // TODO: Loop over events
-        val headline = Paragraph("Eventname", font) // TODO: Change to event name
-        headline.alignment = Element.ALIGN_CENTER
-        headline.spacingAfter = 50F
+        val events = eventService.getEvents()
+
+        for (event in events) {
+            val headline = Paragraph(event.name, font)
+            headline.alignment = Element.ALIGN_CENTER
+            headline.spacingAfter = 50F
+
+            document.open()
+            document.add(headline)
+            document.add(Paragraph("Bitte beim Kommen und Gehen ein und ausloggen.")) //TODO: Correct sentence
 
 
-        document.open()
-        document.add(headline)
-        document.add(Paragraph("Bitte beim Kommen und Gehen ein und ausloggen.")) //TODO: Correct sentence
-
-        val qrCode = Image.getInstance(createEventCode("123456")) // TODO: Use event code
-        qrCode.scaleToFit(PageSize.A4.width, PageSize.A4.height)
-        val x = (PageSize.A4.width - qrCode.scaledWidth) / 2
-        val y = (PageSize.A4.height - qrCode.scaledHeight) / 2
-        qrCode.setAbsolutePosition(x, y)
-        document.add(qrCode)
-        // TODO: Loop over events end
+            val qrCode = Image.getInstance(createEventCode(createEventUrl(frontendBaseUrl, event.name)))
+            qrCode.scaleToFit(PageSize.A4.width, PageSize.A4.height)
+            val x = (PageSize.A4.width - qrCode.scaledWidth) / 2
+            val y = (PageSize.A4.height - qrCode.scaledHeight) / 2
+            qrCode.setAbsolutePosition(x, y)
+            document.add(qrCode)
+            document.newPage()
+        }
 
         document.close()
         return out.toByteArray()
@@ -159,6 +144,13 @@ class AdminFilesService(
         val matrix: BitMatrix = MultiFormatWriter().encode(eventCode, BarcodeFormat.QR_CODE, 400, 400)
         MatrixToImageWriter.writeToStream(matrix, "png", out)
         return out.toByteArray()
+    }
+
+    fun createEventUrl(frontendBaseUrl: String, eventCode: String): String {
+        if (frontendBaseUrl.endsWith("/", true)) {
+            return "$frontendBaseUrl$eventCode"
+        }
+        return "$frontendBaseUrl/$eventCode"
     }
 
 }
