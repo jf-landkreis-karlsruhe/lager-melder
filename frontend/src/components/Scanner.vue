@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container>
-      <h1>☄️ Scanner</h1>
+      <h1>Event: {{ eventCode }}</h1>
       <v-row justify="center">
         <div
           id="scanner"
@@ -13,14 +13,16 @@
         <form v-on:submit.prevent="() => {}">
           <p v-if="!attendeeCode">...Scanning</p>
 
-          <v-alert
-            class="attandee-code-alert"
-            :value="!!attendeeCode"
-            type="success"
-            transition="slide-y-transition"
-          >
-            {{ attendeeCode }}
-          </v-alert>
+          <transition name="slide-fade" mode="out-in">
+            <v-alert
+              :key="attendeeCode"
+              class="attandee-code-alert"
+              :value="!!attendeeCode"
+              type="success"
+            >
+              {{ attendeeCode }}
+            </v-alert>
+          </transition>
 
           <div class="errors">
             <v-alert
@@ -54,30 +56,30 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import Quagga from "quagga"; // ES6
+import Quagga, { Code } from "quagga"; // ES6
 import { loginToEvent } from "../services/event";
 
 @Component({ name: "ScannerComponent" })
-export default class ListDepartment extends Vue {
+export default class ScannerComponent extends Vue {
   eventCode: string = "";
 
   attendeeCode: string = "";
   previousAttandeeCode: string = "";
 
-  isScanning: boolean = true;
+  isScanning: boolean = false;
   scannerError: string = "";
   networkError: string = "";
 
   protected toggleScanning() {
     if (this.isScanning) {
-      Quagga.stop();
+      this.stopQuagga();
     } else {
       this.initQuagga();
     }
     this.isScanning = !this.isScanning;
   }
 
-  protected async codeDetected(data) {
+  protected async codeDetected(data: Code) {
     this.attendeeCode = data.codeResult.code;
     if (this.previousAttandeeCode !== this.attendeeCode) {
       this.previousAttandeeCode = this.attendeeCode;
@@ -92,6 +94,13 @@ export default class ListDepartment extends Vue {
     this.initQuagga();
   }
 
+  stopQuagga() {
+    Quagga.stop();
+    this.attendeeCode = "";
+    this.networkError = "";
+    this.scannerError = "";
+  }
+
   initQuagga() {
     Quagga.init(
       {
@@ -102,7 +111,7 @@ export default class ListDepartment extends Vue {
           target: document.querySelector("#scanner"), // Or '#yourElement' (optional)
         },
         decoder: {
-          readers: ["code_93_reader"],
+          readers: ["code_93_reader", "code_128_reader"],
           // debug: {
           //   drawBoundingBox: true,
           //   showFrequency: true,
@@ -127,10 +136,25 @@ export default class ListDepartment extends Vue {
 </script>
 
 <style scoped>
+.underline {
+  text-decoration: underline;
+}
 .attandee-code-alert,
 .network-error,
 .scanner-error {
   max-width: 100%;
   width: 300px;
+}
+
+.slide-fade-enter-active {
+  transition: all 0.25s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: translateX(100%);
+  opacity: 0;
 }
 </style>

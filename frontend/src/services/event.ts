@@ -19,7 +19,7 @@ export const createEvent = (event: NewEvent) =>
 
 export const loginToEvent = (eventCode: string, attendeeCode: string) =>
   postData<{}>(
-    `events/${eventCode}/${attendeeCode}`,
+    `events/by-code/${eventCode}/${attendeeCode}`,
     withAuthenticationHeader(),
     {}
   );
