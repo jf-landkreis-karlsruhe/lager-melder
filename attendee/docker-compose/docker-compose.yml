@@ -14,7 +14,7 @@ services:
     expose:
       - '3306'
   backend:
-    image: "kordondev/lager-melder"
+    image: openjdk
     container_name: lm-backend
     ports:
       - "8080:8080"
@@ -22,6 +22,9 @@ services:
       - MYSQL_HOST=database
     depends_on:
       - "database"
+    volumes:
+      - "..:/app/:rw"
+    command: sh -c "cd /app && ./mvnw install && ./mvnw spring-boot:run"
   frontend:
     image: "node:lts-alpine"
     container_name: lm-frontend

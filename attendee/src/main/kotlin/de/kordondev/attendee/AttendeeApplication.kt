@@ -47,6 +47,7 @@ class AttendeeApplication {
         )
 
         eventRepository.save(EventEntry(name = "Test event 001", code = "event001"))
+        eventRepository.save(EventEntry(name = "Test event 002", code = "event002"))
         attendeeRepository.saveAll(
             listOf(
                 AttendeeEntry(

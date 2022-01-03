@@ -16,7 +16,7 @@ class AdminFilesController(
 
     @ResponseBody
     @Throws(IOException::class)
-    @GetMapping(value = ["admin-files/events}"], produces = ["application/pdf"])
+    @GetMapping(value = ["/admin-files/events"], produces = ["application/pdf"])
     fun getEventsPDF(
         @RequestParam(value = "frontendBaseUrl") frontendBaseUrl: String,
         response: HttpServletResponse
@@ -27,7 +27,7 @@ class AdminFilesController(
 
     @ResponseBody
     @Throws(IOException::class)
-    @GetMapping(value = ["admin-files/batches"], produces = ["application/pdf"])
+    @GetMapping(value = ["/admin-files/batches"], produces = ["application/pdf"])
     fun getBatchPDF(response: HttpServletResponse): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=batches.pdf")
         return adminFilesService.createBatches()

@@ -126,7 +126,7 @@ class AdminFilesService(
             document.add(Paragraph("Bitte beim Kommen und Gehen ein und ausloggen.")) //TODO: Correct sentence
 
 
-            val qrCode = Image.getInstance(createEventCode(createEventUrl(frontendBaseUrl, event.name)))
+            val qrCode = Image.getInstance(createEventCode(createEventUrl(frontendBaseUrl, event.code)))
             qrCode.scaleToFit(PageSize.A4.width, PageSize.A4.height)
             val x = (PageSize.A4.width - qrCode.scaledWidth) / 2
             val y = (PageSize.A4.height - qrCode.scaledHeight) / 2
