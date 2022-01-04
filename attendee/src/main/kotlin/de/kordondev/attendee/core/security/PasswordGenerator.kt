@@ -9,7 +9,7 @@ class PasswordGenerator() {
         private val alphabeticalRule: CharacterRule = CharacterRule(EnglishCharacterData.Alphabetical)
         private val digitRule: CharacterRule = CharacterRule(EnglishCharacterData.Digit)
         private const val passwordLength = 12
-        private const val codeLength = 6
+        private const val codeLength = 8
 
         private var passwordGenerator = PasswordGenerator()
         fun generatePassword(): String {

@@ -14,8 +14,8 @@ export interface Event {
 export const getEvents = () =>
   getData<Event[]>("events", withAuthenticationHeader());
 
-export const createEvents = (event: NewEvent) =>
-  postData<NewEvent>("events", withAuthenticationHeader(), event);
+export const createEvent = (event: NewEvent) =>
+  postData<Event>("events", withAuthenticationHeader(), event);
 
 export const loginToEvent = (eventCode: string, attendeeCode: string) =>
   postData<{}>(
@@ -24,8 +24,8 @@ export const loginToEvent = (eventCode: string, attendeeCode: string) =>
     {}
   );
 
-export const updateEvent = (event: NewEvent, id: string) =>
-  putData<NewEvent>(`events/${id}`, withAuthenticationHeader(), event);
+export const updateEvent = (event: Event) =>
+  putData<Event>(`events/${event.id}`, withAuthenticationHeader(), event);
 
 export const deleteEvent = (id: string) =>
   deleteData(`events/${id}`, withAuthenticationHeader());

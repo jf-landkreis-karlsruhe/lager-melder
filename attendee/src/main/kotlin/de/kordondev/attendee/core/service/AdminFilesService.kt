@@ -86,14 +86,14 @@ class AdminFilesService(
     }
 
     fun addBarCode(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
-        val barcode128 = Barcode128()
-        barcode128.code = attendee.code
-        barcode128.barHeight = 40F
-        barcode128.x = 1.5F
-        barcode128.altText = attendee.code
-        barcode128.baseline = 12F
-        barcode128.size = 12F
-        val template = barcode128.createTemplateWithBarcode(content, Color.BLACK, Color.BLACK)
+        val barcode = Barcode128()
+        barcode.code = attendee.code
+        barcode.barHeight = 40F
+        barcode.x = 1.5F
+        barcode.altText = attendee.code
+        barcode.baseline = 12F
+        barcode.size = 12F
+        val template = barcode.createTemplateWithBarcode(content, Color.BLACK, Color.BLACK)
         val xValue = 320F
         val yValue = 660F
         content.addTemplate(template, xValue, yValue - yDistanceBetweenBatches * attendeesOnPage)

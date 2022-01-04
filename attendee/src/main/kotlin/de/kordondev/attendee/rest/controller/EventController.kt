@@ -22,8 +22,8 @@ class EventController(
     }
 
     @GetMapping("/events/by-code/{eventCode}")
-    fun getEventByCode(@PathVariable(value = "eventCode") eventCode: Long): RestEvent {
-        return eventService.getEvent(eventCode)
+    fun getEventByCode(@PathVariable(value = "eventCode") eventCode: String): RestEvent {
+        return eventService.getEventByCode(eventCode)
             .let { RestEvent.of(it) }
     }
 
