@@ -1,18 +1,28 @@
 <template>
   <div>
     <v-container>
-      <h1>Event: {{ eventName || "Anstehendes Event" }}</h1>
+      <h1>🏕 Event: {{ eventName || "Anstehendes Event" }}</h1>
       <v-row justify="center">
-        <div
-          id="scanner"
-          v-show="isScanning"
-          style="width: 640px; height: 480px; margin-bottom: 30px"
-        ></div>
+        <transition name="fade" mode="out-in">
+          <div v-show="isScanning">
+            <label class="camera-selection">
+              <span>📸 Kamera: </span>
+              <select
+                id="deviceSelection"
+                name="input-stream_constraints"
+                class="camera-select"
+              >
+                <option value="">--Select your camera--</option>
+              </select>
+            </label>
+            <div id="scanner" class="scanner"></div>
+          </div>
+        </transition>
       </v-row>
 
       <v-row justify="center">
         <form v-on:submit.prevent="() => {}">
-          <p v-if="isScanning">...Scanning</p>
+          <p v-if="isScanning" class="scanning-label">...Scanning</p>
 
           <transition name="slide-fade" mode="out-in">
             <v-alert
@@ -45,8 +55,10 @@
           </div>
 
           <v-btn @click="toggleScanning" color="primary" type="button">
-            <span v-if="isScanning"><v-icon medium>mdi-stop</v-icon> Stop</span>
-            <span v-else><v-icon medium>mdi-play</v-icon> Start</span>
+            <span v-if="isScanning"
+              ><v-icon medium>mdi-stop</v-icon> Stop Scanner</span
+            >
+            <span v-else><v-icon medium>mdi-play</v-icon> Start Scanner</span>
           </v-btn>
         </form>
       </v-row>
@@ -58,7 +70,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import Quagga from "quagga"; // ES6
-import { getEventByCode, loginToEvent } from "../services/event";
+import { getEventNameByCode, loginToEvent } from "../services/event";
 
 @Component({ name: "ScannerComponent" })
 export default class ScannerComponent extends Vue {
@@ -93,9 +105,10 @@ export default class ScannerComponent extends Vue {
 
   async mounted() {
     this.eventCode = this.$route.params.eventCode;
-    getEventByCode(this.eventCode).then(name => {
+    getEventNameByCode(this.eventCode).then(name => {
       this.eventName = name;
     });
+    this.initCameraSelection();
     this.initQuagga();
   }
 
@@ -145,12 +158,92 @@ export default class ScannerComponent extends Vue {
       }
     );
   }
+
+  initCameraSelection() {
+    var streamLabel = Quagga.CameraAccess.getActiveStreamLabel();
+
+    return Quagga.CameraAccess.enumerateVideoDevices().then((devices: any) => {
+      function pruneText(text: string) {
+        return text.length > 30 ? text.substr(0, 30) : text;
+      }
+      const $deviceSelection = document.getElementById("deviceSelection");
+      while ($deviceSelection?.firstChild) {
+        $deviceSelection.removeChild($deviceSelection.firstChild);
+      }
+      devices.forEach((device: any) => {
+        var $option = document.createElement("option");
+        $option.value = device.deviceId || device.id;
+        $option.appendChild(
+          document.createTextNode(
+            pruneText(device.label || device.deviceId || device.id)
+          )
+        );
+        $option.selected = streamLabel === device.label;
+        $deviceSelection?.appendChild($option);
+      });
+    });
+  }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+* {
+  box-sizing: border-box;
+}
 .underline {
   text-decoration: underline;
+}
+
+.scanner {
+  position: relative;
+  overflow: hidden;
+  width: 640px;
+  max-width: 100%;
+  height: 480px;
+  max-height: 100%;
+  margin-bottom: 6px;
+
+  // scan-effect-animation
+  &::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    width: 100%;
+    height: 5px;
+    background-color: white;
+    box-shadow: 0 0 35px 5px white;
+    animation: scan 3s ease-in-out infinite;
+    opacity: 0.5;
+  }
+
+  // todo: figure out why this does not work
+  .drawingBuffer {
+    position: absolute;
+    width: 10px !important;
+    height: auto;
+  }
+}
+.scanning-label {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.camera-selection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+
+  .camera-select {
+    font-weight: bold;
+    border: 1px solid gray;
+    margin: 0 0 0 6px;
+    padding: 6px;
+  }
 }
 
 .attandee-code-alert,
@@ -160,12 +253,30 @@ export default class ScannerComponent extends Vue {
   width: 300px;
 }
 
-#scanner .drawingBuffer {
-  width: 10px !important;
-  height: auto;
+/* animations */
+// scan-effect
+@keyframes scan {
+  from {
+    margin-top: -20px;
+  }
+  to {
+    margin-top: 100%;
+  }
 }
 
-/* animations */
+// fade
+.fade-enter-active {
+  transition: all 2s ease;
+}
+.fade-leave-active {
+  transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+// slide-fade
 .slide-fade-enter-active {
   transition: all 0.25s ease;
 }
