@@ -11,13 +11,19 @@ export interface Event {
   code: string;
 }
 
-export const getEvents = () =>
+export const getEvents = (): Promise<Event[]> =>
   getData<Event[]>("events", withAuthenticationHeader());
 
-export const createEvent = (event: NewEvent) =>
+export const getEventByCode = (eventCode: string): Promise<string> =>
+  getData<string>(`events/by-code/${eventCode}`, withAuthenticationHeader());
+
+export const createEvents = (event: NewEvent): Promise<Event> =>
   postData<Event>("events", withAuthenticationHeader(), event);
 
-export const loginToEvent = (eventCode: string, attendeeCode: string) =>
+export const loginToEvent = (
+  eventCode: string,
+  attendeeCode: string
+): Promise<{}> =>
   postData<{}>(
     `events/by-code/${eventCode}/${attendeeCode}`,
     withAuthenticationHeader(),
@@ -27,5 +33,5 @@ export const loginToEvent = (eventCode: string, attendeeCode: string) =>
 export const updateEvent = (event: Event) =>
   putData<Event>(`events/${event.id}`, withAuthenticationHeader(), event);
 
-export const deleteEvent = (id: string) =>
+export const deleteEvent = (id: string): Promise<Response> =>
   deleteData(`events/${id}`, withAuthenticationHeader());

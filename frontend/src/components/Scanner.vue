@@ -1,17 +1,18 @@
 <template>
   <div>
     <v-container>
-      <h1>Event: {{ eventCode }}</h1>
+      <h1>Event: {{ eventName || "Anstehendes Event" }}</h1>
       <v-row justify="center">
         <div
           id="scanner"
+          v-show="isScanning"
           style="width: 640px; height: 480px; margin-bottom: 30px"
         ></div>
       </v-row>
 
       <v-row justify="center">
         <form v-on:submit.prevent="() => {}">
-          <p v-if="!attendeeCode">...Scanning</p>
+          <p v-if="isScanning">...Scanning</p>
 
           <transition name="slide-fade" mode="out-in">
             <v-alert
@@ -56,17 +57,18 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import Quagga, { Code } from "quagga"; // ES6
-import { loginToEvent } from "../services/event";
+import Quagga from "quagga"; // ES6
+import { getEventByCode, loginToEvent } from "../services/event";
 
 @Component({ name: "ScannerComponent" })
 export default class ScannerComponent extends Vue {
   eventCode: string = "";
+  eventName: string = "";
 
   attendeeCode: string = "";
   previousAttandeeCode: string = "";
 
-  isScanning: boolean = false;
+  isScanning: boolean = true;
   scannerError: string = "";
   networkError: string = "";
 
@@ -79,7 +81,7 @@ export default class ScannerComponent extends Vue {
     this.isScanning = !this.isScanning;
   }
 
-  protected async codeDetected(data: Code) {
+  protected async codeDetected(data: Quagga.Code) {
     this.attendeeCode = data.codeResult.code;
     if (this.previousAttandeeCode !== this.attendeeCode) {
       this.previousAttandeeCode = this.attendeeCode;
@@ -89,8 +91,11 @@ export default class ScannerComponent extends Vue {
     }
   }
 
-  mounted() {
+  async mounted() {
     this.eventCode = this.$route.params.eventCode;
+    getEventByCode(this.eventCode).then(name => {
+      this.eventName = name;
+    });
     this.initQuagga();
   }
 
@@ -108,7 +113,11 @@ export default class ScannerComponent extends Vue {
         inputStream: {
           name: "Live",
           type: "LiveStream",
+<<<<<<< HEAD
           target: document.querySelector("#scanner"), // Or '#yourElement' (optional)
+=======
+          target: document.querySelector("#scanner")
+>>>>>>> add getEventNameByCode
         },
         decoder: {
           readers: ["code_93_reader", "code_128_reader"],
@@ -120,7 +129,11 @@ export default class ScannerComponent extends Vue {
           // },
         },
       },
+<<<<<<< HEAD
       (err) => {
+=======
+      (err: any) => {
+>>>>>>> add getEventNameByCode
         if (err) {
           console.log(err);
           this.scannerError = err;
@@ -139,6 +152,7 @@ export default class ScannerComponent extends Vue {
 .underline {
   text-decoration: underline;
 }
+
 .attandee-code-alert,
 .network-error,
 .scanner-error {
@@ -146,6 +160,12 @@ export default class ScannerComponent extends Vue {
   width: 300px;
 }
 
+#scanner .drawingBuffer {
+  width: 10px !important;
+  height: auto;
+}
+
+/* animations */
 .slide-fade-enter-active {
   transition: all 0.25s ease;
 }
