@@ -40,9 +40,7 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn text @click="closeModal">
-                    Schließen
-                  </v-btn>
+                  <v-btn text @click="closeModal"> Schließen </v-btn>
                   <v-btn
                     color="primary"
                     v-if="!emailSent"
@@ -59,9 +57,7 @@
             <span v-if="saved">
               <v-icon medium>mdi-check</v-icon> Gespeichert
             </span>
-            <span v-if="!saved">
-              Speichern
-            </span>
+            <span v-if="!saved"> Speichern </span>
           </v-btn>
         </v-row>
       </v-container>
@@ -76,14 +72,14 @@ import { Component, Prop } from "vue-property-decorator";
 import {
   // eslint-disable-next-line no-unused-vars
   Department,
-  updateDepartment
+  updateDepartment,
 } from "../services/department";
 
 import {
   // eslint-disable-next-line no-unused-vars
   User,
   sendRegistrationMail,
-  userForDepartment
+  userForDepartment,
 } from "../services/user";
 
 @Component({})
@@ -124,14 +120,11 @@ export default class EditDepartment extends Vue {
 
   mounted() {
     userForDepartment(this.department.id)
-      .then(user => (this.user = user))
+      .then((user) => (this.user = user))
       .catch(() => (this.error = true));
   }
 }
 </script>
 
 <style scoped>
-.underline {
-  text-decoration: underline;
-}
 </style>

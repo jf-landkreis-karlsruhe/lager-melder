@@ -35,9 +35,7 @@
             <div v-if="passwordSuccess">
               <v-icon medium>mdi-check</v-icon> geändert
             </div>
-            <div v-if="!passwordSuccess">
-              Password ändern
-            </div>
+            <div v-if="!passwordSuccess">Password ändern</div>
           </v-btn>
         </v-row>
       </v-container>
@@ -70,14 +68,14 @@ import {
   Department,
   getDepartments,
   getMyDepartment,
-  updateDepartment
+  updateDepartment,
 } from "../services/department";
 
 // eslint-disable-next-line no-unused-vars
 import { changePassword, User, getMe } from "../services/user";
 
 @Component({
-  components: { EditDepartment, AddDepartment }
+  components: { EditDepartment, AddDepartment },
 })
 export default class ListDepartment extends Vue {
   myDepartment: Department = {} as Department;
@@ -97,7 +95,7 @@ export default class ListDepartment extends Vue {
   updateDepartment(departmentId: string) {
     console.log(departmentId);
     const department = [this.myDepartment, ...this.departments].find(
-      dep => dep.id === departmentId
+      (dep) => dep.id === departmentId
     );
     if (department) {
       updateDepartment(department);
@@ -118,7 +116,7 @@ export default class ListDepartment extends Vue {
         this.repeatPassword = "";
         setTimeout(() => (this.passwordSuccess = false), 2000);
       })
-      .catch(error => {
+      .catch((error) => {
         this.passwordLoading = false;
         console.log(error);
         this.errorMessage = error;
@@ -126,7 +124,7 @@ export default class ListDepartment extends Vue {
   }
 
   onDepartmentCreated(department: Department) {
-    if (this.departments.find(dep => dep.id === department.id)) {
+    if (this.departments.find((dep) => dep.id === department.id)) {
       return;
     }
     this.departments.push(department);
@@ -142,9 +140,9 @@ export default class ListDepartment extends Vue {
   }
 
   mounted() {
-    getMe().then(user => (this.user = user));
+    getMe().then((user) => (this.user = user));
     getMyDepartment()
-      .then(department => {
+      .then((department) => {
         this.myDepartment = department;
       })
       .then(() => {
@@ -152,9 +150,9 @@ export default class ListDepartment extends Vue {
           return getDepartments();
         }
       })
-      .then(departments => {
+      .then((departments) => {
         this.departments = (departments || []).filter(
-          department => department.id !== this.myDepartment.id
+          (department) => department.id !== this.myDepartment.id
         );
       });
   }
@@ -162,7 +160,4 @@ export default class ListDepartment extends Vue {
 </script>
 
 <style scoped>
-.underline {
-  text-decoration: underline;
-}
 </style>

@@ -1,22 +1,29 @@
 <template>
-  <div>
-    <v-container>
-      <h1>Events</h1>
-      <form v-on:submit.prevent="createEventInternal()">
-        <v-text-field v-model="eventName" label="Titel des Event" required />
-        <v-alert v-if="error" type="error">
-          Es gab einen Fehler beim erzeugen der Feuerwehr oder des Benutzers.
-        </v-alert>
-        <v-row justify="end">
-          <v-btn color="primary" :loading="loading" type="submit">
-            <span v-if="created">
-              <v-icon medium>mdi-check</v-icon> Erstellt
-            </span>
-            <span v-if="!created"> Erstellen </span>
-          </v-btn>
-        </v-row>
-      </form>
-    </v-container>
+  <v-container>
+    <h1>Events</h1>
+    <h2>Event erstellen</h2>
+    <form v-on:submit.prevent="createEventInternal()">
+      <v-text-field v-model="eventName" label="Titel des Event" required />
+      <v-alert v-if="error" type="error">
+        Es gab einen Fehler beim erzeugen der Feuerwehr oder des Benutzers.
+      </v-alert>
+      <v-row justify="end">
+        <v-btn color="primary" :loading="loading" type="submit">
+          <span v-if="created">
+            <v-icon medium>mdi-check</v-icon> Erstellt
+          </span>
+          <span v-if="!created"> Erstellen </span>
+        </v-btn>
+      </v-row>
+    </form>
+
+    <h2>Event QR Codes</h2>
+    <p>
+      Die QR Codes für alle Events herrunterladen.
+      <button class="underline" @click="downloadEventsPDF">Download</button>
+    </p>
+
+    <h2>Event verwalten</h2>
     <div class="flex-row flex-center">
       <v-card class="card event-card">
         <div class="flex-row event" v-for="event in events" :key="event.id">
@@ -66,7 +73,7 @@
         />
       </v-card>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -80,6 +87,8 @@ import {
   deleteEvent,
   updateEvent,
 } from "../services/event";
+import { getEventCodes } from "../services/adminFiles";
+import { showFile } from "../services/filesHelper";
 
 @Component({ name: "EventsConfiguration" })
 export default class EventsConfiguration extends Vue {
@@ -129,6 +138,12 @@ export default class EventsConfiguration extends Vue {
       })
       .then((data) => (this.events = data));
   }
+
+  downloadEventsPDF = () => {
+    getEventCodes().then((fileData) =>
+      showFile(fileData.data, fileData.fileName)
+    );
+  };
 }
 </script>
 
@@ -147,9 +162,6 @@ export default class EventsConfiguration extends Vue {
 }
 .event-card {
   flex: 0 1 800px;
-}
-.underline {
-  text-decoration: underline;
 }
 .card {
   padding: 14px;
