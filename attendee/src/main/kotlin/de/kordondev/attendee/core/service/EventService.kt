@@ -9,7 +9,6 @@ import de.kordondev.attendee.core.persistence.repository.AttendeeInEventReposito
 import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.core.security.PasswordGenerator
 import de.kordondev.attendee.exception.NotFoundException
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -21,18 +20,18 @@ class EventService(
     val attendeeInEventRepository: AttendeeInEventRepository
 ) {
     fun getEventByCode(code: String): Event {
-        return eventRepository.findByCode(code)
+        return eventRepository.findByCodeAndTrashedIsFalse(code)
             ?.let { EventEntry.to(it) }
             ?: throw NotFoundException("Event not found for code $code")
     }
 
     fun getEvent(id: Long): Event {
-        return eventRepository.findByIdOrNull(id)?.let { EventEntry.to(it) }
+        return eventRepository.findByIdAndTrashedIsFalse(id)?.let { EventEntry.to(it) }
             ?: throw NotFoundException("Event with $id not found")
     }
 
     fun getEvents(): List<Event> {
-        return eventRepository.findAll()
+        return eventRepository.findAllByTrashedIsFalse()
             .map { EventEntry.to(it) }
     }
 
@@ -45,7 +44,7 @@ class EventService(
 
     fun saveEvent(id: Long, event: NewEvent): Event {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
-        return eventRepository.findByIdOrNull(id)
+        return eventRepository.findByIdAndTrashedIsFalse(id)
             ?.let {
                 eventRepository.save(EventEntry.of(event, it.code, id))
             }
@@ -55,7 +54,10 @@ class EventService(
 
     fun deleteEvent(id: Long) {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
-        getEvent(id)?.let { eventRepository.delete(EventEntry.of(it, it.code)) }
+        getEvent(id)?.let {
+            val trashEvent = it.copy(trashed = true)
+            eventRepository.save(EventEntry.of(trashEvent, trashEvent.code))
+        }
     }
 
 

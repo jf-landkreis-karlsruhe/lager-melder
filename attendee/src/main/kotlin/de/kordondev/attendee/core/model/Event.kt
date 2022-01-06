@@ -7,5 +7,6 @@ data class NewEvent(
 data class Event(
     val id: Long,
     val name: String,
-    val code: String
+    val code: String,
+    val trashed: Boolean
 )

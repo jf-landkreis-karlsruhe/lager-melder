@@ -16,14 +16,18 @@ data class EventEntry(
     val name: String,
 
     @Column(name = "code")
-    val code: String
+    val code: String,
+
+    @Column(name = "deactivated")
+    val trashed: Boolean
 ) {
     companion object {
         fun of(event: NewEvent, code: String, id: Long = 0): EventEntry {
             return EventEntry(
                 id = id,
                 name = event.name,
-                code = code
+                code = code,
+                trashed = false
             )
         }
 
@@ -31,7 +35,8 @@ data class EventEntry(
             return EventEntry(
                 id = event.id,
                 name = event.name,
-                code = code
+                code = code,
+                trashed = event.trashed
             )
         }
 
@@ -39,7 +44,8 @@ data class EventEntry(
             return Event(
                 id = eventEntry.id,
                 name = eventEntry.name,
-                code = eventEntry.code
+                code = eventEntry.code,
+                trashed = eventEntry.trashed
             )
         }
     }

@@ -168,6 +168,28 @@ class EventControllerTest(val context: WebApplicationContext) {
 
     }
 
+    @Test
+    @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
+    fun deleteEvent() {
+
+        val event = Entities.event()
+
+        var createdEvent = webTestHelper.toObject(
+            restMockMvc.perform(webTestHelper.post("/events", event))
+                .andExpect(MockMvcResultMatchers.status().isOk),
+            RestEvent::class.java
+        )
+
+        restMockMvc.perform(webTestHelper.get("/events/${createdEvent.id}"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+
+        restMockMvc.perform(webTestHelper.delete("/events/${createdEvent.id}"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+
+        restMockMvc.perform(webTestHelper.get("/events/${createdEvent.id}"))
+            .andExpect(MockMvcResultMatchers.status().isNotFound)
+    }
+
 
     //add attendeeToEvent, delete event and attendeeToEvent need to be still there
     // errror unknown event code
