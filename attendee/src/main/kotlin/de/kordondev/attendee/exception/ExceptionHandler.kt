@@ -36,6 +36,11 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     fun handleUniqueException() {
     }
 
+    @ExceptionHandler(EndOfRegistrationExceededException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleEndOfRegistrationExceededException(ex: AccessDeniedException, request: WebRequest) {
+    }
+
     data class ValidationError(val message: String?, val fieldName: String)
 
     override fun handleMethodArgumentNotValid(

@@ -1,11 +1,11 @@
 package de.kordondev.attendee.rest.model
 
 import de.kordondev.attendee.core.model.Settings
-import java.time.LocalDateTime
+import java.time.Instant
 
 data class RestSettings(
     val id: Long,
-    val registrationEnd: LocalDateTime
+    val registrationEnd: Instant
 ) {
     companion object {
         fun of(settings: Settings) = RestSettings(

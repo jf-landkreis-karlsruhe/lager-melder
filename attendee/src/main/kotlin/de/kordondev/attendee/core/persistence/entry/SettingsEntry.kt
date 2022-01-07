@@ -1,7 +1,7 @@
 package de.kordondev.attendee.core.persistence.entry
 
 import de.kordondev.attendee.core.model.Settings
-import java.time.LocalDateTime
+import java.time.Instant
 import javax.persistence.*
 
 @Entity
@@ -12,7 +12,7 @@ data class SettingsEntry(
     val id: Long = 0,
 
     @Column(name = "registration_end")
-    val registrationEnd: LocalDateTime
+    val registrationEnd: Instant
 ) {
     companion object {
         fun of(settings: Settings, id: Long) = SettingsEntry(

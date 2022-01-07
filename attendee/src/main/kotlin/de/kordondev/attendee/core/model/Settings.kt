@@ -1,8 +1,8 @@
 package de.kordondev.attendee.core.model
 
-import java.time.LocalDateTime
+import java.time.Instant
 
 data class Settings(
     val id: Long,
-    val registrationEnd: LocalDateTime
+    val registrationEnd: Instant
 )
