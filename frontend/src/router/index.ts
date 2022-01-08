@@ -48,6 +48,11 @@ const routes: Array<RouteConfig> = [
     path: "/events/",
     name: "Events",
     component: () => import("../components/EventsConfiguration.vue")
+  },
+  {
+    path: "/einstellungen",
+    name: "Einstellungen",
+    component: () => import("../components/SettingsPage/SettingsPage.vue")
   }
 ];
 
