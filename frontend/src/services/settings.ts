@@ -4,6 +4,13 @@ import { putData, getData } from "../helper/fetch";
 export interface Settings {
   id: string;
   registrationEnd: string;
+  hostCity: string;
+  eventStart: string;
+  eventEnd: string;
+  eventAddress: string;
+  organizer: string;
+  organisationAddress: string; // multiline
+  moneyPerYouthLoader: string;
 }
 
 export const getSettings = () =>

@@ -8,6 +8,7 @@ import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.exception.EndOfRegistrationExceededException
 import org.springframework.stereotype.Service
 import java.time.Instant
+import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 @Service
@@ -23,7 +24,17 @@ class SettingsService(
             .map { SettingsEntry.to(it) }
         if (settingsList.isEmpty()) {
             return saveSettings(
-                Settings(id = 1, registrationEnd = Instant.now().plus(1L, ChronoUnit.DAYS))
+                Settings(
+                    id = 1,
+                    registrationEnd = Instant.now().plus(365L, ChronoUnit.DAYS),
+                    hostCity = "Austragungsort",
+                    eventStart = LocalDate.now().plusDays(1),
+                    eventEnd = LocalDate.now().plusDays(6),
+                    eventAddress = "",
+                    organizer = "",
+                    organisationAddress = "",
+                    moneyPerYouthLoader = "8,99"
+                )
             )
         }
         return settingsList.first()
