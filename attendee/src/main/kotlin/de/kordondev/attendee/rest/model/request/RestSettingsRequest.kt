@@ -24,6 +24,10 @@ data class RestSettingsRequest(
 
     @NotNull
     @NotBlank
+    val eventName: String,
+
+    @NotNull
+    @NotBlank
     val eventAddress: String,
 
     @NotNull
@@ -45,6 +49,7 @@ data class RestSettingsRequest(
             hostCity = settings.hostCity,
             eventStart = settings.eventStart,
             eventEnd = settings.eventEnd,
+            eventName = settings.eventName,
             eventAddress = settings.eventAddress,
             organizer = settings.organizer,
             organisationAddress = settings.organisationAddress,

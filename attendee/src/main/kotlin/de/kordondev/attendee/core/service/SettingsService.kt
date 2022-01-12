@@ -30,6 +30,7 @@ class SettingsService(
                     hostCity = "Austragungsort",
                     eventStart = LocalDate.now().plusDays(1),
                     eventEnd = LocalDate.now().plusDays(6),
+                    eventName = "",
                     eventAddress = "",
                     organizer = "",
                     organisationAddress = "",

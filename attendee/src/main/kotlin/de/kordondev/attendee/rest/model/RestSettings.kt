@@ -10,6 +10,7 @@ data class RestSettings(
     val hostCity: String,
     val eventStart: LocalDate,
     val eventEnd: LocalDate,
+    val eventName: String,
     val eventAddress: String,
     val organizer: String,
     val organisationAddress: String, // Multiline
@@ -22,6 +23,7 @@ data class RestSettings(
             hostCity = settings.hostCity,
             eventStart = settings.eventStart,
             eventEnd = settings.eventEnd,
+            eventName = settings.eventName,
             eventAddress = settings.eventAddress,
             organizer = settings.organizer,
             organisationAddress = settings.organisationAddress,
@@ -34,6 +36,7 @@ data class RestSettings(
             hostCity = settings.hostCity,
             eventStart = settings.eventStart,
             eventEnd = settings.eventEnd,
+            eventName = settings.eventName,
             eventAddress = settings.eventAddress,
             organizer = settings.organizer,
             organisationAddress = settings.organisationAddress,

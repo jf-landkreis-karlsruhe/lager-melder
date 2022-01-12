@@ -24,6 +24,9 @@ data class SettingsEntry(
     @Column(name = "event_end")
     val eventEnd: LocalDate,
 
+    @Column(name = "event_name")
+    val eventName: String,
+
     @Column(name = "event_address")
     val eventAddress: String,
 
@@ -43,6 +46,7 @@ data class SettingsEntry(
             hostCity = settings.hostCity,
             eventStart = settings.eventStart,
             eventEnd = settings.eventEnd,
+            eventName = settings.eventName,
             eventAddress = settings.eventAddress,
             organizer = settings.organizer,
             organisationAddress = settings.organisationAddress,
@@ -55,6 +59,7 @@ data class SettingsEntry(
             hostCity = settings.hostCity,
             eventStart = settings.eventStart,
             eventEnd = settings.eventEnd,
+            eventName = settings.eventName,
             eventAddress = settings.eventAddress,
             organizer = settings.organizer,
             organisationAddress = settings.organisationAddress,

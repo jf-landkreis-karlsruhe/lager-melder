@@ -9,6 +9,7 @@ data class Settings(
     val hostCity: String,
     val eventStart: LocalDate,
     val eventEnd: LocalDate,
+    val eventName: String,
     val eventAddress: String,
     val organizer: String,
     val organisationAddress: String, // Multiline
