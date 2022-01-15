@@ -70,7 +70,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import Quagga from "quagga"; // ES6
-import { getEventNameByCode, loginToEvent } from "../services/event";
+import { getEventByCode, loginToEvent } from "../services/event";
 
 @Component({ name: "ScannerComponent" })
 export default class ScannerComponent extends Vue {
@@ -105,8 +105,8 @@ export default class ScannerComponent extends Vue {
 
   async mounted() {
     this.eventCode = this.$route.params.eventCode;
-    getEventNameByCode(this.eventCode).then(name => {
-      this.eventName = name;
+    getEventByCode(this.eventCode).then((event) => {
+      this.eventName = event.name;
     });
     this.initCameraSelection();
     this.initQuagga();
@@ -126,11 +126,7 @@ export default class ScannerComponent extends Vue {
         inputStream: {
           name: "Live",
           type: "LiveStream",
-<<<<<<< HEAD
-          target: document.querySelector("#scanner"), // Or '#yourElement' (optional)
-=======
-          target: document.querySelector("#scanner")
->>>>>>> add getEventNameByCode
+          target: document.querySelector("#scanner"),
         },
         decoder: {
           readers: ["code_93_reader", "code_128_reader"],
@@ -142,11 +138,7 @@ export default class ScannerComponent extends Vue {
           // },
         },
       },
-<<<<<<< HEAD
-      (err) => {
-=======
       (err: any) => {
->>>>>>> add getEventNameByCode
         if (err) {
           console.log(err);
           this.scannerError = err;

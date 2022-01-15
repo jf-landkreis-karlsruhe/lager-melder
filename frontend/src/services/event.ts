@@ -14,8 +14,8 @@ export interface Event {
 export const getEvents = (): Promise<Event[]> =>
   getData<Event[]>("events", withAuthenticationHeader());
 
-export const getEventNameByCode = (eventCode: string): Promise<string> =>
-  getData<string>(`events/by-code/${eventCode}`, withAuthenticationHeader());
+export const getEventByCode = (eventCode: string): Promise<Event> =>
+  getData<Event>(`events/by-code/${eventCode}`, withAuthenticationHeader());
 
 export const createEvents = (event: NewEvent): Promise<Event> =>
   postData<Event>("events", withAuthenticationHeader(), event);
