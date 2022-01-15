@@ -1,3 +1,19 @@
 .underline {
   text-decoration: underline;
 }
+
+.v-card {
+  padding: 14px;
+  margin-bottom: 30px;
+}
+
+h1 {
+  margin: 14px 0;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+
+}
+
+h2 {
+  margin: 9px 0;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+}

@@ -52,7 +52,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/einstellungen",
     name: "Einstellungen",
-    component: () => import("../components/SettingsPage/SettingsPage.vue")
+    component: () => import("../views/SettingsView.vue")
   }
 ];
 

@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <EditSettings />
+  <section>
     <v-card>
       <form v-on:submit.prevent="saveSettings(settings)">
         <v-text>
@@ -68,21 +67,18 @@
         </v-card-actions>
       </form>
     </v-card>
-  </div>
+  </section>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
-import EditSettings from "./EditSettings.vue";
-
 // eslint-disable-next-line no-unused-vars
 import { getSettings, updateSettings, Settings } from "../../services/settings";
-@Component({
-  components: { EditSettings },
-})
-export default class SettingsPage extends Vue {
+
+@Component({})
+export default class EditSettings extends Vue {
   settings: Settings = {} as Settings;
 
   saveSettings(settings: Settings) {
