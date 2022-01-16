@@ -4,9 +4,16 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox
 import org.apache.pdfbox.pdmodel.interactive.form.PDField
 import org.springframework.stereotype.Service
+import java.time.format.DateTimeFormatter
+
 
 @Service
 class PDFHelper {
+    companion object {
+        var germanDate = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+        var germanDateShort = DateTimeFormatter.ofPattern("dd.MM.yy")
+    }
+
     fun fillField(form: PDAcroForm, fieldName: String, fieldText: String, page: Number): PDField? {
         val field = form.getField(fieldName)
         field?.setValue(fieldText)

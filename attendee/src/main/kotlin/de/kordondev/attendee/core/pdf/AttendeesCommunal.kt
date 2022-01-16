@@ -1,26 +1,24 @@
 package de.kordondev.attendee.core.pdf
 
 import de.kordondev.attendee.core.model.Attendee
+import de.kordondev.attendee.core.model.Settings
+import de.kordondev.attendee.core.pdf.PDFHelper.Companion.germanDate
 import de.kordondev.attendee.core.persistence.entry.AttendeeRole
+import de.kordondev.attendee.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import org.apache.pdfbox.pdmodel.interactive.form.PDField
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 
 @Service
 class AttendeesCommunal(
-        val resourceLoader: ResourceLoader,
-        val pdfHelper: PDFHelper,
-        @Value("\${data.kreiszeltlager.from}") private val eventStart: String,
-        @Value("\${data.kreiszeltlager.to}") private val eventEnd: String,
-        @Value("\${data.kreiszeltlager.year}") private val dataYear: String,
-        @Value("\${data.kreiszeltlager.organisationAddress}") private val dataOrganisationAddress: String,
-        @Value("\${data.kreiszeltlager.listYouthLeader.moneyProYouthLeader}") private val dataMoneyProYouthLeader: String
+    private val resourceLoader: ResourceLoader,
+    private val pdfHelper: PDFHelper,
+    private val settingsService: SettingsService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AttendeesCommunal::class.java)
 
@@ -38,6 +36,7 @@ class AttendeesCommunal(
 
     fun createAttendeesCommunalPdf(attendees: List<Attendee>, departmentName: String): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/attendeesCommunal.pdf")
+        val settings = settingsService.getSettings()
 
         logger.info("attendees ${attendees.size}")
         val result = PDDocument()
@@ -69,7 +68,7 @@ class AttendeesCommunal(
         }
 
         val attendeesForPage = attendees.subList(lastAttendeeIndex, attendees.size)
-        fields.addAll(fillSecondPage(pdfDocument, attendeesForPage, page))
+        fields.addAll(fillSecondPage(pdfDocument, attendeesForPage, page, settings))
         result.addPage(pdfDocument.getPage(1))
 
 
@@ -80,24 +79,40 @@ class AttendeesCommunal(
         return result
     }
 
-    fun fillFirstPage(pdfDocument: PDDocument, departmentName: String, attendees: List<Attendee>, page: Int): MutableList<PDField> {
+    fun fillFirstPage(
+        pdfDocument: PDDocument,
+        departmentName: String,
+        attendees: List<Attendee>,
+        page: Int
+    ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
         pdfHelper.fillField(form, NAME_JFW, departmentName, page)?.let { fields.add(it) }
         fields.addAll(fillPage(pdfDocument, attendees, TABLE_ROW_START_FIRST_PAGE, page))
         return fields
     }
-    fun fillSecondPage(pdfDocument: PDDocument, attendees: List<Attendee>, page: Int): MutableList<PDField> {
+
+    fun fillSecondPage(
+        pdfDocument: PDDocument,
+        attendees: List<Attendee>,
+        page: Int,
+        settings: Settings
+    ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
-        pdfHelper.fillField(form, EVENT_LOCATION, dataOrganisationAddress, page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, START_DATE, eventStart, page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, END_DATE, eventEnd, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, EVENT_LOCATION, settings.organisationAddress, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, START_DATE, settings.eventStart.format(germanDate), page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, END_DATE, settings.eventEnd.format(germanDate), page)?.let { fields.add(it) }
         fields.addAll(fillPage(pdfDocument, attendees, TABLE_ROW_START_SECOND_PAGE, page))
         return fields
     }
 
-    fun fillPage(pdfDocument: PDDocument, attendees: List<Attendee>, cellIds: List<Int>, page: Int): MutableList<PDField> {
+    fun fillPage(
+        pdfDocument: PDDocument,
+        attendees: List<Attendee>,
+        cellIds: List<Int>,
+        page: Int
+    ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
         for (i in attendees.indices) {
@@ -108,7 +123,8 @@ class AttendeesCommunal(
 
     fun fillAttendeeInForm(attendee: Attendee, form: PDAcroForm, cellId: Int, page: Int): List<PDField> {
         val fields = mutableListOf<PDField>()
-        pdfHelper.fillField(form, "$NAME$cellId", "${attendee.firstName} ${attendee.lastName}", page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, "$NAME$cellId", "${attendee.firstName} ${attendee.lastName}", page)
+            ?.let { fields.add(it) }
         if (attendee.role == AttendeeRole.YOUTH_LEADER) {
             pdfHelper.checkField(form, "$YOUTH_LEADER$cellId", page)?.let { fields.add(it) }
         }

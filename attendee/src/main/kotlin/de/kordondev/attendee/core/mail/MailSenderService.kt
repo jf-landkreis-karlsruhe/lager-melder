@@ -1,5 +1,7 @@
 package de.kordondev.attendee.core.mail
 
+import de.kordondev.attendee.core.model.Settings
+import de.kordondev.attendee.core.pdf.PDFHelper.Companion.germanDate
 import de.kordondev.attendee.core.security.AuthorityService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,7 +14,7 @@ import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import java.time.Duration
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.ZoneId
 import javax.mail.SendFailedException
 
 
@@ -20,8 +22,6 @@ import javax.mail.SendFailedException
 class MailSenderService(
     @Value("\${application.mail.send}") private val sendMail: Boolean,
     @Value("\${spring.mail.from}") private val sendFrom: String,
-    @Value("\${data.kreiszeltlager.hostCity}") private val hostCity: String,
-    @Value("\${data.kreiszeltlager.registrationDeadline}") private val registrationDeadline: String,
     private val authorityService: AuthorityService,
     private val mailSender: JavaMailSender,
     private val htmlTemplateEngine: TemplateEngine
@@ -31,18 +31,17 @@ class MailSenderService(
     private val reminderMailTemplate = "reminder"
     private val registrationFinishedTemplate = "registration-finished"
 
-    fun sendRegistrationMail(to: String, leaderName: String, username: String, password: String) {
+    fun sendRegistrationMail(to: String, leaderName: String, username: String, password: String, settings: Settings) {
         try {
             authorityService.isSpecializedFieldDirector()
             val headerLogoName = "kreiszeltlager-logo.jpg"
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
 
             val cxt = Context()
-            val registrationDeadlineDate =
-                LocalDate.parse(registrationDeadline, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+            val registrationDeadlineDate = LocalDate.ofInstant(settings.registrationEnd, ZoneId.of("Europe/Berlin"))
             cxt.setVariable("leaderName", leaderName)
-            cxt.setVariable("hostCity", hostCity)
-            cxt.setVariable("registrationDeadline", registrationDeadlineDate)
+            cxt.setVariable("hostCity", settings.hostCity)
+            cxt.setVariable("registrationDeadline", registrationDeadlineDate.format(germanDate))
             cxt.setVariable("username", username)
             cxt.setVariable("password", password)
             cxt.setVariable("headerLogo", headerLogoName);
@@ -50,7 +49,7 @@ class MailSenderService(
             val mimeMessage = this.mailSender.createMimeMessage()
             val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
             message.setFrom(sendFrom)
-            message.setSubject("Onlineanmeldung Kreiszeltlager in $hostCity eröffnet")
+            message.setSubject("Onlineanmeldung Kreiszeltlager in ${settings.hostCity} eröffnet")
             message.setTo(to)
             val htmlContent = this.htmlTemplateEngine.process(newUserMailTemplate, cxt)
             message.setText(htmlContent, true)
@@ -65,27 +64,26 @@ class MailSenderService(
         }
     }
 
-    fun sendReminderMail(to: String, leaderName: String): Boolean {
+    fun sendReminderMail(to: String, leaderName: String, settings: Settings): Boolean {
         try {
             authorityService.isAdmin()
             val headerLogoName = "kreiszeltlager-logo.jpg"
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
-            val registrationDeadlineDate =
-                LocalDate.parse(registrationDeadline, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+            val registrationDeadlineDate = LocalDate.ofInstant(settings.registrationEnd, ZoneId.of("Europe/Berlin"))
             val daysLeft =
                 Duration.between(registrationDeadlineDate.atStartOfDay(), LocalDate.now().atStartOfDay()).toDays()
 
             val cxt = Context()
             cxt.setVariable("leaderName", leaderName)
-            cxt.setVariable("hostCity", hostCity)
-            cxt.setVariable("registrationDeadline", registrationDeadlineDate)
+            cxt.setVariable("hostCity", settings.hostCity)
+            cxt.setVariable("registrationDeadline", registrationDeadlineDate.format(germanDate))
             cxt.setVariable("daysLeft", daysLeft)
             cxt.setVariable("headerLogo", headerLogoName);
 
             val mimeMessage = this.mailSender.createMimeMessage()
             val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
             message.setFrom(sendFrom)
-            message.setSubject("Onlineanmeldung Kreiszeltlager in $hostCity noch $daysLeft Tage offen")
+            message.setSubject("Onlineanmeldung Kreiszeltlager in ${settings.hostCity} noch $daysLeft Tage offen")
             message.setTo(to)
             val htmlContent = this.htmlTemplateEngine.process(reminderMailTemplate, cxt)
             message.setText(htmlContent, true)
@@ -102,7 +100,7 @@ class MailSenderService(
         }
     }
 
-    fun sendRegistrationFinishedMail(to: String, leaderName: String): Boolean {
+    fun sendRegistrationFinishedMail(to: String, leaderName: String, settings: Settings): Boolean {
         try {
             authorityService.isAdmin()
             val headerLogoName = "kreiszeltlager-logo.jpg"
@@ -110,13 +108,13 @@ class MailSenderService(
 
             val cxt = Context()
             cxt.setVariable("leaderName", leaderName)
-            cxt.setVariable("hostCity", hostCity)
+            cxt.setVariable("hostCity", settings.hostCity)
             cxt.setVariable("headerLogo", headerLogoName);
 
             val mimeMessage = this.mailSender.createMimeMessage()
             val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
             message.setFrom(sendFrom)
-            message.setSubject("Onlineanmeldung Kreiszeltlager in $hostCity abgeschlossen")
+            message.setSubject("Onlineanmeldung Kreiszeltlager in ${settings.hostCity} abgeschlossen")
             message.setTo(to)
             val htmlContent = this.htmlTemplateEngine.process(registrationFinishedTemplate, cxt)
             message.setText(htmlContent, true)
