@@ -18,6 +18,20 @@
               </select>
             </label>
             <div id="scanner" class="scanner"></div>
+
+            <form
+              @submit="
+                e => {
+                  e.preventDefault();
+                  submitEvent(e);
+                }
+              "
+            >
+              <label>
+                Manuelle Eingabe:
+                <input name="code_fallback" type="text" class="code_fallback" />
+              </label>
+            </form>
           </div>
         </transition>
       </v-row>
@@ -96,8 +110,10 @@ export default class ScannerComponent extends Vue {
         type: "LiveStream",
         target: document.querySelector(inputStreamTarget),
         constraints: {
-          deviceId: deviceId
           // facingMode: "environment",
+          deviceId: deviceId,
+          width: 640,
+          height: 480
         }
       },
       decoder: {
@@ -131,17 +147,22 @@ export default class ScannerComponent extends Vue {
 
     if (this.attendeeCode !== this.previousAttandeeCode) {
       this.previousAttandeeCode = this.attendeeCode;
-      const attendeeRes = await loginToEvent(
-        this.eventCode,
-        this.attendeeCode
-      ).catch(reason => {
-        this.networkError = JSON.stringify(reason);
-      });
+      const attendeeRes = await this.submitEvent(this.attendeeCode);
 
       if (attendeeRes) {
         this.attendeeAddedSentence = `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`;
       }
     }
+  }
+
+  protected async submitEvent(attendeeCode: string) {
+    console.log("submit code", attendeeCode);
+    if (!isValidTestCode(attendeeCode)) {
+      return;
+    }
+    return loginToEvent(this.eventCode, attendeeCode).catch(reason => {
+      this.networkError = JSON.stringify(reason);
+    });
   }
 
   async mounted() {
@@ -271,6 +292,12 @@ export default class ScannerComponent extends Vue {
     margin: 0 0 0 6px;
     padding: 6px;
   }
+}
+
+.code_fallback {
+  border: 1px solid gray;
+  min-width: 250px;
+  height: 30px;
 }
 
 .attandee-code-alert,
