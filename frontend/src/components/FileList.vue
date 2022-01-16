@@ -1,41 +1,31 @@
 <template>
-  <p>
+  <div>
     <ul>
       <li>
-        <button
-          class="underline"
-          @click="downloadAttendeesCommunal"
-        >
+        <button class="underline" @click="downloadAttendeesCommunal">
           Anmeldung
-        </button> mit Unterschrift des Kommandanten
+        </button>
+        mit Unterschrift des Kommandanten
       </li>
       <li>
-        <button
-          class="underline"
-          @click="downloadAttendeesBW"
-        >
+        <button class="underline" @click="downloadAttendeesBW">
           Teilnehmerlisten
-        </button> für den Landesjugendplan
+        </button>
+        für den Landesjugendplan
       </li>
       <li>
-        <button
-          class="underline"
-          @click="downloadYouthPlan"
-        >
+        <button class="underline" @click="downloadYouthPlan">
           Pädagogische Betreuer
         </button>
       </li>
       <li>
-        <button
-          class="underline"
-          @click="downloadAttendeesKarlsruhe"
-        >
-        Teilnehmerliste
+        <button class="underline" @click="downloadAttendeesKarlsruhe">
+          Teilnehmerliste
         </button>
-          für den Zuschuss des Landkreis Karlsruhe
+        für den Zuschuss des Landkreis Karlsruhe
       </li>
     </ul>
-  </p>
+  </div>
 </template>
 
 <script lang="ts">
@@ -46,7 +36,7 @@ import {
   getAttendeesBW,
   getAttendeesCommunal,
   getAttendeesKarlsruhe,
-  getYouthPlan,
+  getYouthPlan
 } from "../services/registrationFiles";
 import { showFile } from "../services/filesHelper";
 
@@ -56,30 +46,31 @@ export default class RegistrationFiles extends Vue {
   @Prop() departmentName!: string;
 
   downloadYouthPlan = () => {
-    getYouthPlan(this.departmentId, this.departmentName).then((fileData) =>
+    getYouthPlan(this.departmentId, this.departmentName).then(fileData =>
       showFile(fileData.data, fileData.fileName)
     );
   };
 
   downloadAttendeesKarlsruhe = () => {
-    getAttendeesKarlsruhe(this.departmentId, this.departmentName).then(
-      (fileData) => showFile(fileData.data, fileData.fileName)
-    );
+    getAttendeesKarlsruhe(
+      this.departmentId,
+      this.departmentName
+    ).then(fileData => showFile(fileData.data, fileData.fileName));
   };
 
   downloadAttendeesBW = () => {
-    getAttendeesBW(this.departmentId, this.departmentName).then((fileData) =>
+    getAttendeesBW(this.departmentId, this.departmentName).then(fileData =>
       showFile(fileData.data, fileData.fileName)
     );
   };
 
   downloadAttendeesCommunal = () => {
-    getAttendeesCommunal(this.departmentId, this.departmentName).then(
-      (fileData) => showFile(fileData.data, fileData.fileName)
-    );
+    getAttendeesCommunal(
+      this.departmentId,
+      this.departmentName
+    ).then(fileData => showFile(fileData.data, fileData.fileName));
   };
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

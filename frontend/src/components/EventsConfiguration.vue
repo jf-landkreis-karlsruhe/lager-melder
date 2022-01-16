@@ -89,7 +89,7 @@ import {
   // eslint-disable-next-line no-unused-vars
   Event,
   deleteEvent,
-  updateEvent,
+  updateEvent
 } from "../services/event";
 import { getEventCodes } from "../services/adminFiles";
 import { showFile } from "../services/filesHelper";
@@ -104,7 +104,7 @@ export default class EventsConfiguration extends Vue {
   loadingDownload: boolean = false;
 
   mounted() {
-    getEvents().then((data) => (this.events = data));
+    getEvents().then(data => (this.events = data));
   }
 
   addToEditing(event: Event) {
@@ -119,7 +119,7 @@ export default class EventsConfiguration extends Vue {
         this.loadingEventId = "";
         return getEvents();
       })
-      .then((data) => (this.events = data));
+      .then(data => (this.events = data));
   }
 
   saveEvent(event: Event) {
@@ -140,12 +140,12 @@ export default class EventsConfiguration extends Vue {
       .then(() => {
         return getEvents();
       })
-      .then((data) => (this.events = data));
+      .then(data => (this.events = data));
   }
 
   downloadEventsPDF = () => {
     this.loadingDownload = true;
-    getEventCodes().then((fileData) => {
+    getEventCodes().then(fileData => {
       showFile(fileData.data, fileData.fileName);
       this.loadingDownload = false;
     });

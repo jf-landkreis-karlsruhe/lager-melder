@@ -97,7 +97,7 @@ export default class ScannerComponent extends Vue {
     this.attendeeCode = data.codeResult.code;
     if (this.previousAttandeeCode !== this.attendeeCode) {
       this.previousAttandeeCode = this.attendeeCode;
-      await loginToEvent(this.eventCode, this.attendeeCode).catch((reason) => {
+      await loginToEvent(this.eventCode, this.attendeeCode).catch(reason => {
         this.networkError = JSON.stringify(reason);
       });
     }
@@ -105,7 +105,7 @@ export default class ScannerComponent extends Vue {
 
   async mounted() {
     this.eventCode = this.$route.params.eventCode;
-    getEventByCode(this.eventCode).then((event) => {
+    getEventByCode(this.eventCode).then(event => {
       this.eventName = event.name;
     });
     this.initCameraSelection();
@@ -126,17 +126,17 @@ export default class ScannerComponent extends Vue {
         inputStream: {
           name: "Live",
           type: "LiveStream",
-          target: document.querySelector("#scanner"),
+          target: document.querySelector("#scanner")
         },
         decoder: {
-          readers: ["code_93_reader", "code_128_reader"],
+          readers: ["code_128_reader"]
           // debug: {
           //   drawBoundingBox: true,
           //   showFrequency: true,
           //   drawScanline: true,
           //   showPattern: true,
           // },
-        },
+        }
       },
       (err: any) => {
         if (err) {

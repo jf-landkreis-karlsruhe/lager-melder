@@ -40,7 +40,7 @@ import {
   getAttendeesForMyDepartment,
   // eslint-disable-next-line no-unused-vars
   Attendee,
-  AttendeeRole,
+  AttendeeRole
 } from "../services/attendee";
 
 // eslint-disable-next-line no-unused-vars
@@ -50,7 +50,7 @@ import { youthLeaderAttendees, youthAttendees } from "../helper/filterHelper";
 import AttendeesTable from "./AttendeesTable.vue";
 
 @Component({
-  components: { AttendeesTable },
+  components: { AttendeesTable }
 })
 export default class AttendeesRegistration extends Vue {
   attendees: Attendee[] = [];
@@ -94,11 +94,11 @@ export default class AttendeesRegistration extends Vue {
   }
 
   mounted() {
-    getAttendeesForMyDepartment().then((attendees) => {
+    getAttendeesForMyDepartment().then(attendees => {
       this.attendees = attendees;
       this.totalAttendeeCount = attendees.length;
     });
-    getMyDepartment().then((department) => (this.department = department));
+    getMyDepartment().then(department => (this.department = department));
   }
 }
 </script>

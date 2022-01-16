@@ -25,7 +25,7 @@
             Anzahl Teilnehmer:
             {{
               registration.youthAttendees.length +
-              registration.youthLeader.length
+                registration.youthLeader.length
             }}
           </div>
         </v-row>
@@ -59,13 +59,13 @@ import {
   // eslint-disable-next-line no-unused-vars
   Food,
   // eslint-disable-next-line no-unused-vars
-  TShirtSize,
+  TShirtSize
 } from "../services/attendee";
 
 import {
   // eslint-disable-next-line no-unused-vars
   Department,
-  getDepartments,
+  getDepartments
 } from "../services/department";
 
 import AttendeesTable from "./AttendeesTable.vue";
@@ -82,7 +82,7 @@ interface DepartmentWithAttendees {
 }
 
 @Component({
-  components: { AttendeesTable, Distribution },
+  components: { AttendeesTable, Distribution }
 })
 export default class AttendeesRegistration extends Vue {
   attendees: Attendee[] = [];
@@ -94,7 +94,7 @@ export default class AttendeesRegistration extends Vue {
 
   get departmentWithAttendees(): DepartmentWithAttendees[] {
     return this.departments
-      .map((department) => {
+      .map(department => {
         return {
           department: department,
           youthAttendees: youthAttendees(
@@ -106,25 +106,25 @@ export default class AttendeesRegistration extends Vue {
             department.id,
             this.attendees,
             this.filterInput
-          ),
+          )
         };
       })
       .filter(
-        (registration) =>
+        registration =>
           registration.youthAttendees.length > 0 ||
           registration.youthLeader.length > 0
       );
   }
 
   downloadBatchesPDF = () => {
-    getBatches().then((fileData) => showFile(fileData.data, fileData.fileName));
+    getBatches().then(fileData => showFile(fileData.data, fileData.fileName));
   };
 
   mounted() {
-    getAttendees().then((attendees) => {
+    getAttendees().then(attendees => {
       this.attendees = attendees;
     });
-    getDepartments().then((departments) => (this.departments = departments));
+    getDepartments().then(departments => (this.departments = departments));
   }
 }
 </script>

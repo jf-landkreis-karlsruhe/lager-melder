@@ -17,14 +17,16 @@ export const getBatches = (): Promise<FileReponse> => {
 
 export const getEventCodes = (): Promise<FileReponse> => {
   return fetchData(
-    `admin-files/events?frontendBaseUrl=${encodeURI(window.location.hostname)}`, {
-    headers: {
-      ...withAuthenticationHeader()
+    `admin-files/events?frontendBaseUrl=${encodeURI(window.location.hostname)}`,
+    {
+      headers: {
+        ...withAuthenticationHeader()
+      }
     }
-  })
+  )
     .then(r => r.blob())
     .then(blob => ({
       data: blob,
       fileName: `events.pdf`
     }));
-}
+};
