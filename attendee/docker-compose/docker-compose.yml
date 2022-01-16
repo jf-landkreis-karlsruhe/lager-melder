@@ -16,7 +16,6 @@ services:
       - '3306'
   backend:
     image: openjdk
-    platform: linux/amd64
     container_name: lm-backend
     ports:
       - "8080:8080"

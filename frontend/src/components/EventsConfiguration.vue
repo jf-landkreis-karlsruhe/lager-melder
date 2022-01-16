@@ -4,15 +4,9 @@
     <h2>Event erstellen</h2>
     <form v-on:submit.prevent="createEventInternal()">
       <v-text-field v-model="eventName" label="Titel des Event" required />
-      <v-alert v-if="error" type="error">
-        Es gab einen Fehler beim erzeugen der Feuerwehr oder des Benutzers.
-      </v-alert>
       <v-row justify="end">
-        <v-btn color="primary" :loading="loading" type="submit">
-          <span v-if="created">
-            <v-icon medium>mdi-check</v-icon> Erstellt
-          </span>
-          <span v-if="!created"> Erstellen </span>
+        <v-btn color="primary" :loading="loadingEventId === '0'" type="submit">
+          <span>Erstellen</span>
         </v-btn>
       </v-row>
     </form>
@@ -20,7 +14,13 @@
     <h2>Event QR Codes</h2>
     <p>
       Die QR Codes für alle Events herrunterladen.
-      <button class="underline" @click="downloadEventsPDF">Download</button>
+      <v-btn
+        class="underline"
+        :loading="loadingDownload"
+        @click="downloadEventsPDF"
+      >
+        Download
+      </v-btn>
     </p>
 
     <h2>Event verwalten</h2>
@@ -54,9 +54,13 @@
                 </v-icon>
               </div>
               <div v-if="editingEventIds.includes(event.id)">
-                <button type="sumbit" :form="createFormName(event)">
+                <v-btn
+                  type="sumbit"
+                  :loading="loadingEventId === event.id"
+                  :form="createFormName(event)"
+                >
                   <v-icon medium class="mr-2"> mdi-content-save </v-icon>
-                </button>
+                </v-btn>
               </div>
               <v-icon medium @click.prevent="deleteEventInteral(event.id)">
                 mdi-delete
@@ -67,7 +71,7 @@
 
         <form
           v-for="event in events"
-          :key="event.id"
+          :key="'form-' + event.id"
           :id="createFormName(event)"
           v-on:submit.prevent="saveEvent(event)"
         />
@@ -96,11 +100,8 @@ export default class EventsConfiguration extends Vue {
   events: Event[] = [];
   editingEventIds: string[] = [];
 
-  // ToDO: needed?
-  created: boolean = false;
-  loading: boolean = false;
-
-  networkError: string = "";
+  loadingEventId: string = "";
+  loadingDownload: boolean = false;
 
   mounted() {
     getEvents().then((data) => (this.events = data));
@@ -111,19 +112,22 @@ export default class EventsConfiguration extends Vue {
   }
 
   createEventInternal() {
+    this.loadingEventId = "0";
     createEvent({ name: this.eventName })
       .then(() => {
         this.eventName = "";
+        this.loadingEventId = "";
         return getEvents();
       })
       .then((data) => (this.events = data));
   }
 
   saveEvent(event: Event) {
-    console.log("save", event);
+    this.loadingEventId = event.id;
     updateEvent(event).then((data: Event) => {
       const indexOfAttendee = this.editingEventIds.indexOf(data.id);
       this.editingEventIds.splice(indexOfAttendee, 1);
+      this.loadingEventId = "";
     });
   }
 
@@ -140,9 +144,11 @@ export default class EventsConfiguration extends Vue {
   }
 
   downloadEventsPDF = () => {
-    getEventCodes().then((fileData) =>
-      showFile(fileData.data, fileData.fileName)
-    );
+    this.loadingDownload = true;
+    getEventCodes().then((fileData) => {
+      showFile(fileData.data, fileData.fileName);
+      this.loadingDownload = false;
+    });
   };
 }
 </script>

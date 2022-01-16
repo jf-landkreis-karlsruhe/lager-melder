@@ -43,7 +43,6 @@ class AttendeeService(
     }
 
     fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
-        // TODO: check for attendee from db with id
         checkFirstNameAndLastNameAreUnique(attendee)
         return attendeeRepository.findByIdOrNull(id)
             ?.let {
