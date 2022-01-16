@@ -11,6 +11,13 @@ export interface Event {
   code: string;
 }
 
+export interface AttendeeResponse {
+  attendeeFirstName: string;
+  attendeeLastName: string;
+  eventName: string;
+  time: string;
+}
+
 export const getEvents = (): Promise<Event[]> =>
   getData<Event[]>("events", withAuthenticationHeader());
 
@@ -23,8 +30,8 @@ export const createEvent = (event: NewEvent): Promise<Event> =>
 export const loginToEvent = (
   eventCode: string,
   attendeeCode: string
-): Promise<{}> =>
-  postData<{}>(
+): Promise<AttendeeResponse> =>
+  postData<AttendeeResponse>(
     `events/by-code/${eventCode}/${attendeeCode}`,
     withAuthenticationHeader(),
     {}

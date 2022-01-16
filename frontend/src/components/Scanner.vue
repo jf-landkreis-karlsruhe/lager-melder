@@ -1,16 +1,18 @@
 <template>
   <div>
-    <v-container>
+    <v-container class="scanner-root">
       <h1>🏕 Event: {{ eventName || "Anstehendes Event" }}</h1>
       <v-row justify="center">
         <transition name="fade" mode="out-in">
           <div v-show="isScanning">
             <label class="camera-selection">
               <span>📸 Kamera: </span>
+
               <select
                 id="deviceSelection"
                 name="input-stream_constraints"
                 class="camera-select"
+                @change="cameraChanged"
               >
                 <option value="">--Select your camera--</option>
               </select>
@@ -31,7 +33,7 @@
               :value="!!attendeeCode"
               type="success"
             >
-              {{ attendeeCode }}
+              {{ attendeeAddedSentence }}
             </v-alert>
           </transition>
 
@@ -71,6 +73,7 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import Quagga from "quagga"; // ES6
 import { getEventByCode, loginToEvent } from "../services/event";
+import { isValidTestCode } from "@/assets/config";
 
 @Component({ name: "ScannerComponent" })
 export default class ScannerComponent extends Vue {
@@ -79,27 +82,65 @@ export default class ScannerComponent extends Vue {
 
   attendeeCode: string = "";
   previousAttandeeCode: string = "";
+  attendeeAddedSentence: string = "";
 
   isScanning: boolean = true;
   scannerError: string = "";
   networkError: string = "";
 
+  private getQuaggaConfig(deviceId?: string, inputStreamTarget = "#scanner") {
+    return {
+      debug: true,
+      inputStream: {
+        name: "Live",
+        type: "LiveStream",
+        target: document.querySelector(inputStreamTarget),
+        constraints: {
+          deviceId: deviceId
+          // facingMode: "environment",
+        }
+      },
+      decoder: {
+        readers: ["code_128_reader"]
+        // debug: {
+        //   drawBoundingBox: true,
+        //   showFrequency: true,
+        //   drawScanline: true,
+        //   showPattern: true,
+        // },
+      }
+    };
+  }
+
   protected toggleScanning() {
     if (this.isScanning) {
       this.stopQuagga();
     } else {
-      this.initQuagga();
+      this.initQuagga(this.getQuaggaConfig());
     }
     this.isScanning = !this.isScanning;
   }
 
   protected async codeDetected(data: Quagga.Code) {
-    this.attendeeCode = data.codeResult.code;
-    if (this.previousAttandeeCode !== this.attendeeCode) {
+    const detectedCode = data.codeResult.code;
+    // TODO: use isValidCode for prod
+    if (!isValidTestCode(detectedCode)) {
+      return;
+    }
+    this.attendeeCode = detectedCode;
+
+    if (this.attendeeCode !== this.previousAttandeeCode) {
       this.previousAttandeeCode = this.attendeeCode;
-      await loginToEvent(this.eventCode, this.attendeeCode).catch(reason => {
+      const attendeeRes = await loginToEvent(
+        this.eventCode,
+        this.attendeeCode
+      ).catch(reason => {
         this.networkError = JSON.stringify(reason);
       });
+
+      if (attendeeRes) {
+        this.attendeeAddedSentence = `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`;
+      }
     }
   }
 
@@ -109,7 +150,7 @@ export default class ScannerComponent extends Vue {
       this.eventName = event.name;
     });
     this.initCameraSelection();
-    this.initQuagga();
+    this.initQuagga(this.getQuaggaConfig());
   }
 
   stopQuagga() {
@@ -119,36 +160,25 @@ export default class ScannerComponent extends Vue {
     this.scannerError = "";
   }
 
-  initQuagga() {
-    Quagga.init(
-      {
-        debug: true,
-        inputStream: {
-          name: "Live",
-          type: "LiveStream",
-          target: document.querySelector("#scanner")
-        },
-        decoder: {
-          readers: ["code_128_reader"]
-          // debug: {
-          //   drawBoundingBox: true,
-          //   showFrequency: true,
-          //   drawScanline: true,
-          //   showPattern: true,
-          // },
-        }
-      },
-      (err: any) => {
-        if (err) {
-          console.log(err);
-          this.scannerError = err;
-          return;
-        }
-        console.log("Initialization finished. Ready to start");
-        Quagga.start();
-        Quagga.onDetected(this.codeDetected);
+  initQuagga(config: any) {
+    Quagga.init(config, (err: any) => {
+      if (err) {
+        console.log(err);
+        this.scannerError = err;
+        return;
       }
-    );
+      console.log("Initialization finished. Ready to start");
+      Quagga.start();
+      Quagga.onDetected(this.codeDetected);
+    });
+  }
+
+  cameraChanged(e: any) {
+    e.preventDefault();
+    const cameraDeviceId = e.target.value;
+
+    Quagga.stop();
+    this.initQuagga(this.getQuaggaConfig(cameraDeviceId));
   }
 
   initCameraSelection() {
@@ -159,6 +189,7 @@ export default class ScannerComponent extends Vue {
         return text.length > 30 ? text.substr(0, 30) : text;
       }
       const $deviceSelection = document.getElementById("deviceSelection");
+
       while ($deviceSelection?.firstChild) {
         $deviceSelection.removeChild($deviceSelection.firstChild);
       }
@@ -184,6 +215,10 @@ export default class ScannerComponent extends Vue {
 }
 .underline {
   text-decoration: underline;
+}
+
+.scanner-root {
+  margin-bottom: 2rem;
 }
 
 .scanner {
@@ -242,7 +277,7 @@ export default class ScannerComponent extends Vue {
 .network-error,
 .scanner-error {
   max-width: 100%;
-  width: 300px;
+  min-width: 300px;
 }
 
 /* animations */
