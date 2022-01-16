@@ -25,3 +25,8 @@ cd attendee
 ## Run app with database + backend + frontend
 For the first time you might need to add rights: `chmod 577 ./run.sh` <br/>
 Then just: `./run.sh`
+
+## Example Data
+See https://github.com/KordonDev/lager-melder/blob/master/attendee/src/main/kotlin/de/kordondev/attendee/AttendeeApplication.kt
+
+Event: <frontendUrl>/scanner/event001

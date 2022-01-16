@@ -18,7 +18,7 @@ data class EventEntry(
     @Column(name = "code")
     val code: String,
 
-    @Column(name = "deactivated")
+    @Column(name = "trashed")
     val trashed: Boolean
 ) {
     companion object {

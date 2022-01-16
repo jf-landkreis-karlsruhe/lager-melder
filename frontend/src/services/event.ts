@@ -17,7 +17,7 @@ export const getEvents = (): Promise<Event[]> =>
 export const getEventByCode = (eventCode: string): Promise<Event> =>
   getData<Event>(`events/by-code/${eventCode}`, withAuthenticationHeader());
 
-export const createEvents = (event: NewEvent): Promise<Event> =>
+export const createEvent = (event: NewEvent): Promise<Event> =>
   postData<Event>("events", withAuthenticationHeader(), event);
 
 export const loginToEvent = (
