@@ -62,7 +62,9 @@
         </v-text>
         <v-card-actions>
           <v-row justify="end">
-            <v-btn color="primary" type="submit">Speichern</v-btn>
+            <v-btn color="primary" :loading="loading" type="submit"
+              >Speichern</v-btn
+            >
           </v-row>
         </v-card-actions>
       </form>
@@ -80,10 +82,13 @@ import { getSettings, updateSettings, Settings } from "../../services/settings";
 @Component({})
 export default class EditSettings extends Vue {
   settings: Settings = {} as Settings;
+  loading: boolean = false;
 
   saveSettings(settings: Settings) {
-    console.log(settings, this.settings);
-    updateSettings(settings);
+    this.loading = true;
+    updateSettings(settings).then(() => {
+      this.loading = false;
+    });
   }
 
   mounted() {
