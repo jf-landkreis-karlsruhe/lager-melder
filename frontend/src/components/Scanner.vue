@@ -22,9 +22,7 @@
             </div>
 
             <div class="d-flex justify-space-between">
-              <v-flex grow="true" v-if="isScanning">
-                ...Scanning...
-              </v-flex>
+              <v-flex grow="true" v-if="isScanning"> ...Scanning... </v-flex>
               <v-flex shrink="true">
                 <v-btn
                   @click="toggleScanning"
@@ -60,7 +58,7 @@
                 />
                 <v-btn
                   :disabled="!manualAttendeeCodeValid"
-                  @click="manualCodeSubmit"
+                  type="submit"
                   small
                   outlined
                 >
