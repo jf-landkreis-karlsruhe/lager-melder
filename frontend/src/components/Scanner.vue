@@ -4,79 +4,104 @@
       <h1>🏕 Event: {{ eventName || "Anstehendes Event" }}</h1>
       <v-row justify="center">
         <transition name="fade" mode="out-in">
-          <div v-show="isScanning">
-            <label class="camera-selection">
-              <span>📸 Kamera: </span>
-
-              <select
-                id="deviceSelection"
-                name="input-stream_constraints"
-                class="camera-select"
-                @change="cameraChanged"
-              >
-                <option value="">--Select your camera--</option>
-              </select>
-            </label>
-            <div id="scanner" class="scanner"></div>
-
-            <form
-              @submit="
-                e => {
-                  e.preventDefault();
-                  submitEvent(e);
-                }
-              "
-            >
-              <label>
-                Manuelle Eingabe:
-                <input name="code_fallback" type="text" class="code_fallback" />
+          <div>
+            <div v-show="isScanning">
+              <label class="camera-selection">
+                <span>📸 Kamera</span>
+                <select
+                  id="deviceSelection"
+                  name="input-stream_constraints"
+                  class="camera-select"
+                  @change="cameraChanged"
+                >
+                  <option value="">--Select your camera--</option>
+                </select>
               </label>
-            </form>
+
+              <div id="scanner" class="scanner"></div>
+            </div>
+
+            <div class="d-flex justify-space-between">
+              <v-flex grow="true" v-if="isScanning">
+                ...Scanning...
+              </v-flex>
+              <v-flex shrink="true">
+                <v-btn
+                  @click="toggleScanning"
+                  color="primary"
+                  type="button"
+                  x-small
+                  outlined
+                >
+                  <span v-if="isScanning"
+                    ><v-icon medium>mdi-stop</v-icon> Stop Scanner</span
+                  >
+                  <span v-else
+                    ><v-icon medium>mdi-play</v-icon> Start Scanner</span
+                  >
+                </v-btn>
+              </v-flex>
+            </div>
+
+            <v-form
+              ref="manualAttendeeCodeForm"
+              v-model="manualAttendeeCodeValid"
+              @submit.prevent="manualCodeSubmit"
+              class="manual-code-form d-flex justify-center mt-6"
+            >
+              <v-row class="manual-code-row align-center">
+                <v-text-field
+                  v-model="manualAttendeeCode"
+                  label="Manuelle Eingabe"
+                  :hide-details="false"
+                  hint="8 Zeichen benötigt"
+                  :rules="manualCodeInputRules"
+                  class="manual-code-input mr-3"
+                />
+                <v-btn
+                  :disabled="!manualAttendeeCodeValid"
+                  @click="manualCodeSubmit"
+                  small
+                  outlined
+                >
+                  Abschicken
+                </v-btn>
+              </v-row>
+            </v-form>
           </div>
         </transition>
       </v-row>
 
+      <transition name="slide-fade" mode="out-in">
+        <v-alert
+          class="attandee-code-success"
+          :key="attendeeAddedSentence"
+          :value="!!attendeeAddedSentence"
+          type="success"
+        >
+          {{ attendeeAddedSentence }}
+        </v-alert>
+      </transition>
+
       <v-row justify="center">
-        <form v-on:submit.prevent="() => {}">
-          <p v-if="isScanning" class="scanning-label">...Scanning</p>
-
-          <transition name="slide-fade" mode="out-in">
-            <v-alert
-              :key="attendeeCode"
-              class="attandee-code-alert"
-              :value="!!attendeeCode"
-              type="success"
-            >
-              {{ attendeeAddedSentence }}
-            </v-alert>
-          </transition>
-
-          <div class="errors">
-            <v-alert
-              class="network-error"
-              :value="!!networkError"
-              type="error"
-              transition="slide-y-transition"
-            >
-              {{ networkError }}
-            </v-alert>
-            <v-alert
-              class="scanner-error"
-              v-if="scannerError"
-              type="error"
-              transition="slide-y-transition"
-            >
-              {{ scannerError }}
-            </v-alert>
-          </div>
-
-          <v-btn @click="toggleScanning" color="primary" type="button">
-            <span v-if="isScanning"
-              ><v-icon medium>mdi-stop</v-icon> Stop Scanner</span
-            >
-            <span v-else><v-icon medium>mdi-play</v-icon> Start Scanner</span>
-          </v-btn>
-        </form>
+        <div class="errors">
+          <v-alert
+            class="network-error"
+            :value="!!networkError"
+            type="error"
+            transition="slide-y-transition"
+          >
+            {{ networkError }}
+          </v-alert>
+          <v-alert
+            class="scanner-error"
+            v-if="scannerError"
+            type="error"
+            transition="slide-y-transition"
+          >
+            {{ scannerError }}
+          </v-alert>
+        </div>
       </v-row>
     </v-container>
   </div>
@@ -98,9 +123,19 @@ export default class ScannerComponent extends Vue {
   previousAttandeeCode: string = "";
   attendeeAddedSentence: string = "";
 
+  manualAttendeeCode: string = "";
+  manualAttendeeCodeValid = false;
+
   isScanning: boolean = true;
   scannerError: string = "";
   networkError: string = "";
+
+  private get manualCodeInputRules() {
+    return [
+      (value: string) => !!value || "Required.",
+      (value: string) => isValidTestCode(value) || "Min 8 characters"
+    ];
+  }
 
   private getQuaggaConfig(deviceId?: string, inputStreamTarget = "#scanner") {
     return {
@@ -147,22 +182,32 @@ export default class ScannerComponent extends Vue {
 
     if (this.attendeeCode !== this.previousAttandeeCode) {
       this.previousAttandeeCode = this.attendeeCode;
-      const attendeeRes = await this.submitEvent(this.attendeeCode);
-
-      if (attendeeRes) {
-        this.attendeeAddedSentence = `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`;
-      }
+      this.submitEvent(this.attendeeCode);
     }
   }
 
+  protected manualCodeSubmit() {
+    const manualCodeForm = this.$refs.manualAttendeeCodeForm as any;
+    const manualCode = this.manualAttendeeCode;
+    manualCodeForm.validate();
+    this.submitEvent(manualCode);
+    manualCodeForm.reset();
+    (document?.activeElement as any)?.blur();
+  }
+
   protected async submitEvent(attendeeCode: string) {
-    console.log("submit code", attendeeCode);
     if (!isValidTestCode(attendeeCode)) {
       return;
     }
-    return loginToEvent(this.eventCode, attendeeCode).catch(reason => {
-      this.networkError = JSON.stringify(reason);
-    });
+    const attendeeRes = await loginToEvent(this.eventCode, attendeeCode).catch(
+      reason => {
+        this.networkError = JSON.stringify(reason);
+      }
+    );
+    console.log(attendeeRes);
+    if (attendeeRes) {
+      this.attendeeAddedSentence = `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`;
+    }
   }
 
   async mounted() {
@@ -240,6 +285,7 @@ export default class ScannerComponent extends Vue {
 
 .scanner-root {
   margin-bottom: 2rem;
+  position: relative;
 }
 
 .scanner {
@@ -275,10 +321,6 @@ export default class ScannerComponent extends Vue {
     height: auto;
   }
 }
-.scanning-label {
-  text-align: center;
-  margin-bottom: 24px;
-}
 
 .camera-selection {
   display: flex;
@@ -294,17 +336,22 @@ export default class ScannerComponent extends Vue {
   }
 }
 
-.code_fallback {
-  border: 1px solid gray;
-  min-width: 250px;
-  height: 30px;
+.manual-code-form {
+  .manual-code-row {
+    max-width: 300px;
+  }
 }
 
-.attandee-code-alert,
+.attandee-code-success,
 .network-error,
 .scanner-error {
   max-width: 100%;
   min-width: 300px;
+}
+.attandee-code-success {
+  position: absolute;
+  top: 30px;
+  right: 40px;
 }
 
 /* animations */
