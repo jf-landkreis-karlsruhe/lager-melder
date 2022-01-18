@@ -7,28 +7,31 @@ import de.kordondev.attendee.core.security.AuthorityService
 import org.springframework.stereotype.Service
 
 @Service
-class MailService (
+class MailService(
     private val authorityService: AuthorityService,
     private val departmentService: DepartmentService,
     private val attendeeService: AttendeeService,
-    private val mailSenderService: MailSenderService
+    private val mailSenderService: MailSenderService,
+    private val settingsService: SettingsService
 ) {
     fun sendReminderMail(sendTo: SendTo): Number {
         authorityService.isAdmin()
+        val settings = settingsService.getSettings()
         return departmentService.getDepartments()
-                .filter { filterDepartmentsBy(it, sendTo) }
-                .map { mailSenderService.sendReminderMail(it.leaderEMail, it.leaderName) }
-                .filter { it }
-                .count()
+            .filter { filterDepartmentsBy(it, sendTo) }
+            .map { mailSenderService.sendReminderMail(it.leaderEMail, it.leaderName, settings) }
+            .filter { it }
+            .count()
     }
 
     fun sendRegistrationFinishedMail(sendTo: SendTo): Number {
         authorityService.isAdmin()
+        val settings = settingsService.getSettings()
         return departmentService.getDepartments()
-                .filter { filterDepartmentsBy(it, sendTo) }
-                .map { mailSenderService.sendRegistrationFinishedMail(it.leaderEMail, it.leaderName) }
-                .filter { it }
-                .count()
+            .filter { filterDepartmentsBy(it, sendTo) }
+            .map { mailSenderService.sendRegistrationFinishedMail(it.leaderEMail, it.leaderName, settings) }
+            .filter { it }
+            .count()
     }
 
     private fun filterDepartmentsBy(department: Department, sendTo: SendTo): Boolean {
@@ -37,10 +40,10 @@ class MailService (
         }
         val attendeeList = attendeeService.getAttendeesForDepartment(department)
         if (sendTo == SendTo.DEPARTMENTS_WITH_ATTENDEES) {
-            return attendeeList.count() > 0
+            return attendeeList.isNotEmpty()
         }
         if (sendTo == SendTo.DEPARTMENTS_WITHOUT_ATTENDEES) {
-            return attendeeList.count() == 0
+            return attendeeList.isEmpty()
         }
         return false
     }

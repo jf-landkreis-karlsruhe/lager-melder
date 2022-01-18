@@ -17,7 +17,8 @@ import org.springframework.stereotype.Service
 @Service
 class AttendeeService(
     private val attendeeRepository: AttendeeRepository,
-    private val authorityService: AuthorityService
+    private val authorityService: AuthorityService,
+    private val settingsService: SettingsService
 ) {
     fun getAttendees(): Iterable<Attendee> {
         return attendeeRepository.findAll()
@@ -35,6 +36,7 @@ class AttendeeService(
 
     fun createAttendee(attendee: NewAttendee): Attendee {
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        settingsService.canAttendeesBeEdited()
         checkFirstNameAndLastNameAreUnique(attendee)
         val code = PasswordGenerator.generateCode()
         return attendeeRepository
@@ -43,6 +45,7 @@ class AttendeeService(
     }
 
     fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
+        settingsService.canAttendeesBeEdited()
         checkFirstNameAndLastNameAreUnique(attendee)
         return attendeeRepository.findByIdOrNull(id)
             ?.let {
@@ -57,6 +60,7 @@ class AttendeeService(
     }
 
     fun deleteAttendee(id: Long) {
+        settingsService.canAttendeesBeEdited()
         attendeeRepository.findByIdOrNull(id)
             ?.let {
                 authorityService.hasAuthority(

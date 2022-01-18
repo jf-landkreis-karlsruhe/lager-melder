@@ -10,6 +10,9 @@
       <span v-if="hasAdministrationRole()">
         | <router-link to="/overview">Übersicht</router-link>
       </span>
+      <span v-if="hasAdministrationRole()">
+        | <router-link to="/einstellungen">Einstellungen</router-link>
+      </span>
     </div>
   </header>
 </template>
