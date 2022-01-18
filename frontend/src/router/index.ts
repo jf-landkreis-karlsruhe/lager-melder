@@ -38,6 +38,16 @@ const routes: Array<RouteConfig> = [
     path: "/feuerwehr",
     name: "Meine Feuerwehr",
     component: () => import("../components/ListDepartment.vue")
+  },
+  {
+    path: "/scanner/:eventCode",
+    name: "Scanner",
+    component: () => import("../components/Scanner.vue")
+  },
+  {
+    path: "/events/",
+    name: "Events",
+    component: () => import("../components/EventsConfiguration.vue")
   }
 ];
 

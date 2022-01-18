@@ -40,9 +40,7 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn text @click="closeModal">
-                    Schließen
-                  </v-btn>
+                  <v-btn text @click="closeModal"> Schließen </v-btn>
                   <v-btn
                     color="primary"
                     v-if="!emailSent"
@@ -59,9 +57,7 @@
             <span v-if="saved">
               <v-icon medium>mdi-check</v-icon> Gespeichert
             </span>
-            <span v-if="!saved">
-              Speichern
-            </span>
+            <span v-if="!saved"> Speichern </span>
           </v-btn>
         </v-row>
       </v-container>
@@ -130,8 +126,4 @@ export default class EditDepartment extends Vue {
 }
 </script>
 
-<style scoped>
-.underline {
-  text-decoration: underline;
-}
-</style>
+<style scoped></style>

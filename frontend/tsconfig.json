@@ -12,6 +12,7 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "types": ["webpack-env", "vuetify"],
+    "typeRoots": ["./types"],
     "paths": {
       "@/*": ["src/*"]
     },

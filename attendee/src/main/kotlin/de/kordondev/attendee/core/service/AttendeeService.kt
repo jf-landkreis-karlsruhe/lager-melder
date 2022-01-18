@@ -8,6 +8,7 @@ import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
 import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.security.AuthorityService
+import de.kordondev.attendee.core.security.PasswordGenerator
 import de.kordondev.attendee.exception.NotFoundException
 import de.kordondev.attendee.exception.UniqueException
 import org.springframework.data.repository.findByIdOrNull
@@ -35,25 +36,35 @@ class AttendeeService(
     fun createAttendee(attendee: NewAttendee): Attendee {
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         checkFirstNameAndLastNameAreUnique(attendee)
+        val code = PasswordGenerator.generateCode()
         return attendeeRepository
-            .save(AttendeeEntry.of(attendee))
+            .save(AttendeeEntry.of(attendee, code))
             .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
     }
 
     fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
-        authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         checkFirstNameAndLastNameAreUnique(attendee)
-        return attendeeRepository
-            .save(AttendeeEntry.of(attendee, id))
-            .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
+        return attendeeRepository.findByIdOrNull(id)
+            ?.let {
+                authorityService.hasAuthority(
+                    AttendeeEntry.to(it),
+                    listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
+                )
+                attendeeRepository.save(AttendeeEntry.of(attendee, it.code, it.id))
+            }
+            ?.let { AttendeeEntry.to(it) }
+            ?: createAttendee(attendee)
     }
 
     fun deleteAttendee(id: Long) {
         attendeeRepository.findByIdOrNull(id)
-            ?.let { AttendeeEntry.to(it) }
-            ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
-            ?.let { AttendeeEntry.of(it) }
-            ?.let { attendeeRepository.delete(it) }
+            ?.let {
+                authorityService.hasAuthority(
+                    AttendeeEntry.to(it),
+                    listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
+                )
+                attendeeRepository.delete(it)
+            }
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
 
@@ -62,6 +73,12 @@ class AttendeeService(
             .findByDepartment(DepartmentEntry.of(department))
             .map { attendee -> AttendeeEntry.to(attendee) }
             .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
+    }
+
+    fun getAttendeeByCode(code: String): Attendee {
+        return attendeeRepository.findByCode(code)
+            ?.let { AttendeeEntry.to(it) }
+            ?: throw NotFoundException("No Attendee for code $code found")
     }
 
     private fun checkFirstNameAndLastNameAreUnique(attendee: NewAttendee) {

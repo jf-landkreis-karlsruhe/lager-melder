@@ -12,7 +12,7 @@ data class RestAttendeeRequest(
     @field:NotNull(message = "firstName cannot be missing")
     @field:NotBlank(message = "firstName cannot be blank")
     val firstName: String,
-    @field:NotNull(message = "lastName cannot be missign")
+    @field:NotNull(message = "lastName cannot be missing")
     @field:NotBlank(message = "lastName cannot be blank")
     val lastName: String,
     @field:NotNull(message = "departmentId missing")

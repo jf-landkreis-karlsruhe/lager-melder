@@ -6,9 +6,12 @@ import org.springframework.data.repository.CrudRepository
 
 interface AttendeeRepository : CrudRepository<AttendeeEntry, Long> {
     fun findByDepartment(department: DepartmentEntry): List<AttendeeEntry>
+
     fun findByDepartmentAndFirstNameAndLastName(
         department: DepartmentEntry,
         firstName: String,
         lastName: String
     ): AttendeeEntry?
+
+    fun findByCode(code: String): AttendeeEntry?
 }

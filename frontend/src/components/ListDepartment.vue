@@ -35,9 +35,7 @@
             <div v-if="passwordSuccess">
               <v-icon medium>mdi-check</v-icon> geändert
             </div>
-            <div v-if="!passwordSuccess">
-              Password ändern
-            </div>
+            <div v-if="!passwordSuccess">Password ändern</div>
           </v-btn>
         </v-row>
       </v-container>
@@ -161,8 +159,4 @@ export default class ListDepartment extends Vue {
 }
 </script>
 
-<style scoped>
-.underline {
-  text-decoration: underline;
-}
-</style>
+<style scoped></style>

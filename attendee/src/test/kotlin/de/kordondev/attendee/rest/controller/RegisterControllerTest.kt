@@ -1,20 +1,19 @@
 package de.kordondev.attendee.rest.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import de.kordondev.attendee.core.persistence.entry.Roles
-import de.kordondev.attendee.rest.model.request.RestDepartmentWithUserRequest
+import de.kordondev.attendee.core.security.SecurityConstants.ROLE_PREFIX
+import de.kordondev.attendee.helper.Entities
+import de.kordondev.attendee.helper.WebTestHelper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
-import java.nio.charset.Charset
 import javax.transaction.Transactional
 
 @Transactional
@@ -24,12 +23,7 @@ class RegisterControllerTest(val context: WebApplicationContext) {
     lateinit var restMockMvc: MockMvc
 
     @Autowired
-    lateinit var objectMapper: ObjectMapper
-    val CONTENT_TYPE_JSON = MediaType(
-        MediaType.APPLICATION_JSON.type,
-        MediaType.APPLICATION_JSON.subtype,
-        Charset.forName("utf8")
-    )
+    lateinit var webTestHelper: WebTestHelper
 
     @BeforeEach
     fun setUp() {
@@ -37,18 +31,13 @@ class RegisterControllerTest(val context: WebApplicationContext) {
     }
 
     @Test
-    @WithMockUser(authorities = [Roles.SPECIALIZED_FIELD_DIRECTOR])
+    @WithMockUser(authorities = [ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun addDepartmentAndUser() {
-        val departmentWithUserRequest = RestDepartmentWithUserRequest(
-            username = "username",
-            departmentName = "department",
-            leaderName = "leaderName",
-            leaderEMail = "leader@department.de"
-        )
-
+        val departmentWithUserRequest = Entities.restDepartmentWithUserRequest()
 
         restMockMvc.perform(
-            post("/register").contentType(CONTENT_TYPE_JSON).content(toJSON(departmentWithUserRequest))
+            post("/register").contentType(WebTestHelper.CONTENT_TYPE_JSON)
+                .content(webTestHelper.toJSON(departmentWithUserRequest))
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.userId").isNotEmpty)
@@ -62,7 +51,4 @@ class RegisterControllerTest(val context: WebApplicationContext) {
             .andExpect(MockMvcResultMatchers.jsonPath("$.leaderEMail").value(departmentWithUserRequest.leaderEMail))
     }
 
-    fun toJSON(inputObject: Any?): ByteArray {
-        return objectMapper.writeValueAsBytes(inputObject)
-    }
 }

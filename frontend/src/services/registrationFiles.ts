@@ -1,10 +1,6 @@
 import { fetchData } from "../helper/fetch";
 import { withAuthenticationHeader } from "./authentication";
-
-export interface FileReponse {
-  data: Blob;
-  fileName: string;
-}
+import { FileReponse } from "./filesHelper";
 
 export const getYouthPlan = (
   departmentId: string,

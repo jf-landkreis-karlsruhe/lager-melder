@@ -3,6 +3,9 @@ import App from "./App.vue";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
 
+import "./assets/global.css";
+import "./assets/normalize.css";
+
 Vue.config.productionTip = false;
 
 new Vue({

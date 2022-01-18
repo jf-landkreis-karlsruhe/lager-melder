@@ -3,6 +3,10 @@ version: '3.6'
 services:
   database:
     image: "mysql"
+    # Target platform containers for this service will run on, using the os[/arch[/variant]] syntax
+    # https://docs.docker.com/compose/compose-file/compose-file-v2/#platform
+    platform: linux/x86_64
+    container_name: lm-mysql
     ports:
       - "3306:3306"
     environment:
@@ -12,3 +16,23 @@ services:
       - MYSQL_ROOT_PASSWORD=secRET
     expose:
       - '3306'
+  backend:
+    image: openjdk
+    container_name: lm-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - MYSQL_HOST=database
+    depends_on:
+      - "database"
+    volumes:
+      - "..:/app/:rw"
+    command: sh -c "cd /app && ./mvnw install && ./mvnw spring-boot:run"
+  frontend:
+    image: "node:lts-alpine"
+    container_name: lm-frontend
+    ports:
+      - "9000:9000"
+    volumes:
+      - "../../frontend/:/app/:rw"
+    command: sh -c "cd /app && yarn install && yarn serve"

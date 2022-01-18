@@ -68,8 +68,4 @@ export default class RegistrationFiles extends Vue {
 }
 </script>
 
-<style scoped>
-.underline {
-  text-decoration: underline;
-}
-</style>
+<style scoped></style>

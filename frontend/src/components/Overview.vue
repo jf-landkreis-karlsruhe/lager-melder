@@ -1,6 +1,11 @@
 <template>
   <div v-if="hasAdministrationRole()">
     <Distribution :attendees="attendees" />
+    <h1>Lagerausweise</h1>
+    <p>
+      Hier können alle Lagerausweise heruntergeladen werden: herunterladen
+      <button class="underline" @click="downloadBatchesPDF">Download</button>
+    </p>
     <h1>Teilnehmer</h1>
     <div>
       <v-text-field
@@ -67,6 +72,8 @@ import AttendeesTable from "./AttendeesTable.vue";
 import { youthLeaderAttendees, youthAttendees } from "../helper/filterHelper";
 
 import { hasAdministrationRole } from "../services/authentication";
+import { getBatches } from "../services/adminFiles";
+import { showFile } from "../services/filesHelper";
 
 interface DepartmentWithAttendees {
   department: Department;
@@ -108,6 +115,10 @@ export default class AttendeesRegistration extends Vue {
           registration.youthLeader.length > 0
       );
   }
+
+  downloadBatchesPDF = () => {
+    getBatches().then(fileData => showFile(fileData.data, fileData.fileName));
+  };
 
   mounted() {
     getAttendees().then(attendees => {
