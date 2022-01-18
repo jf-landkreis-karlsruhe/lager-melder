@@ -12,7 +12,7 @@ import { Component } from "vue-property-decorator";
 import EditSettings from "../components/settings/EditSettings.vue";
 
 @Component({
-  components: { EditSettings },
+  components: { EditSettings }
 })
 export default class SettingsView extends Vue {}
 </script>
