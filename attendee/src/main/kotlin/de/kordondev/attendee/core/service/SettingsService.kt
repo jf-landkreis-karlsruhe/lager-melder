@@ -26,10 +26,10 @@ class SettingsService(
             return saveSettings(
                 Settings(
                     id = 1,
-                    registrationEnd = Instant.now().plus(365L, ChronoUnit.DAYS),
+                    registrationEnd = Instant.now().plus(30, ChronoUnit.DAYS),
                     hostCity = "Austragungsort",
-                    eventStart = LocalDate.now().plusDays(1),
-                    eventEnd = LocalDate.now().plusDays(6),
+                    eventStart = LocalDate.now().plusDays(60),
+                    eventEnd = LocalDate.now().plusDays(65),
                     eventName = "",
                     eventAddress = "",
                     organizer = "",
