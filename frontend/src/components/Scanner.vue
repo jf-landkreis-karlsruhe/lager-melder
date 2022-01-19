@@ -21,7 +21,13 @@
               <div id="scanner" class="scanner"></div>
             </div>
 
-            <div class="d-flex justify-space-between">
+            <div
+              class="d-flex"
+              :class="{
+                'justify-space-between': isScanning,
+                'justify-center': !isScanning
+              }"
+            >
               <v-flex grow="true" v-if="isScanning"> ...Scanning... </v-flex>
               <v-flex shrink="true">
                 <v-btn
@@ -76,6 +82,7 @@
           :key="attendeeAddedSentence"
           :value="!!attendeeAddedSentence"
           type="success"
+          dismissible
         >
           {{ attendeeAddedSentence }}
         </v-alert>
@@ -88,6 +95,7 @@
             :value="!!networkError"
             type="error"
             transition="slide-y-transition"
+            dismissible
           >
             {{ networkError }}
           </v-alert>
@@ -96,6 +104,7 @@
             v-if="scannerError"
             type="error"
             transition="slide-y-transition"
+            dismissible
           >
             {{ scannerError }}
           </v-alert>
@@ -110,7 +119,7 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import Quagga from "quagga"; // ES6
 import { getEventByCode, loginToEvent } from "../services/event";
-import { isValidTestCode } from "@/assets/config";
+import { isValidTestCode } from "../assets/config";
 
 @Component({ name: "ScannerComponent" })
 export default class ScannerComponent extends Vue {
@@ -131,7 +140,7 @@ export default class ScannerComponent extends Vue {
   private get manualCodeInputRules() {
     return [
       (value: string) => !!value || "Required.",
-      (value: string) => isValidTestCode(value) || "Min 8 characters"
+      (value: string) => isValidTestCode(value) || "8 Zeichen benötigt"
     ];
   }
 
@@ -250,7 +259,7 @@ export default class ScannerComponent extends Vue {
 
     return Quagga.CameraAccess.enumerateVideoDevices().then((devices: any) => {
       function pruneText(text: string) {
-        return text.length > 30 ? text.substr(0, 30) : text;
+        return text?.length > 30 ? text.substr(0, 30) : text;
       }
       const $deviceSelection = document.getElementById("deviceSelection");
 
@@ -282,7 +291,7 @@ export default class ScannerComponent extends Vue {
 }
 
 .scanner-root {
-  margin-bottom: 2rem;
+  margin-bottom: 8rem;
   position: relative;
 }
 
@@ -348,8 +357,9 @@ export default class ScannerComponent extends Vue {
 }
 .attandee-code-success {
   position: absolute;
-  top: 30px;
-  right: 40px;
+  bottom: 0;
+  right: 12px;
+  transform: translateY(100%);
 }
 
 /* animations */
