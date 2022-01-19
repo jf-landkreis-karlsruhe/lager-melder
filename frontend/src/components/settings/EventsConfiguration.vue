@@ -1,10 +1,10 @@
 <template>
-  <v-container>
-    <h1>Events</h1>
-    <h2>Event erstellen</h2>
+  <v-card>
+    <h2>Events</h2>
+    <h3>Event erstellen</h3>
     <form v-on:submit.prevent="createEventInternal()">
       <v-text-field v-model="eventName" label="Titel des Event" required />
-      <v-row justify="end">
+      <v-row class="v-row" justify="end">
         <v-btn color="primary" :loading="loadingEventId === '0'" type="submit">
           <span>Erstellen</span>
         </v-btn>
@@ -23,7 +23,7 @@
       </v-btn>
     </p>
 
-    <h2>Event verwalten</h2>
+    <h3>Event verwalten</h3>
     <div class="flex-row flex-center">
       <v-card class="card event-card">
         <div class="flex-row event" v-for="event in events" :key="event.id">
@@ -77,7 +77,7 @@
         />
       </v-card>
     </div>
-  </v-container>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -89,10 +89,10 @@ import {
   // eslint-disable-next-line no-unused-vars
   Event,
   deleteEvent,
-  updateEvent
-} from "../services/event";
-import { getEventCodes } from "../services/adminFiles";
-import { showFile } from "../services/filesHelper";
+  updateEvent,
+} from "../../services/event";
+import { getEventCodes } from "../../services/adminFiles";
+import { showFile } from "../../services/filesHelper";
 
 @Component({ name: "EventsConfiguration" })
 export default class EventsConfiguration extends Vue {
@@ -104,7 +104,7 @@ export default class EventsConfiguration extends Vue {
   loadingDownload: boolean = false;
 
   mounted() {
-    getEvents().then(data => (this.events = data));
+    getEvents().then((data) => (this.events = data));
   }
 
   addToEditing(event: Event) {
@@ -119,7 +119,7 @@ export default class EventsConfiguration extends Vue {
         this.loadingEventId = "";
         return getEvents();
       })
-      .then(data => (this.events = data));
+      .then((data) => (this.events = data));
   }
 
   saveEvent(event: Event) {
@@ -140,12 +140,12 @@ export default class EventsConfiguration extends Vue {
       .then(() => {
         return getEvents();
       })
-      .then(data => (this.events = data));
+      .then((data) => (this.events = data));
   }
 
   downloadEventsPDF = () => {
     this.loadingDownload = true;
-    getEventCodes().then(fileData => {
+    getEventCodes().then((fileData) => {
       showFile(fileData.data, fileData.fileName);
       this.loadingDownload = false;
     });
@@ -156,6 +156,9 @@ export default class EventsConfiguration extends Vue {
 <style scoped>
 .flex-row {
   display: flex;
+}
+.v-row {
+  padding: 0 14px;
 }
 .flex-grow {
   flex: 1 1 auto;
@@ -168,10 +171,5 @@ export default class EventsConfiguration extends Vue {
 }
 .event-card {
   flex: 0 1 800px;
-}
-.card {
-  padding: 14px;
-  margin-bottom: 30px;
-  max-width: 800px;
 }
 </style>
