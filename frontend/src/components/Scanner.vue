@@ -24,7 +24,7 @@
               class="d-flex"
               :class="{
                 'justify-space-between': isScanning,
-                'justify-center': !isScanning
+                'justify-center': !isScanning,
               }"
             >
               <v-flex grow="true" v-if="isScanning"> ...Scanning... </v-flex>
@@ -120,18 +120,18 @@ export default class ScannerComponent extends Vue {
           // facingMode: "environment",
           deviceId: deviceId,
           width: 640,
-          height: 480
-        }
+          height: 480,
+        },
       },
       decoder: {
-        readers: ["code_128_reader"]
+        readers: ["code_128_reader"],
         // debug: {
         //   drawBoundingBox: true,
         //   showFrequency: true,
         //   drawScanline: true,
         //   showPattern: true,
         // },
-      }
+      },
     };
   }
 

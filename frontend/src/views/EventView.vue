@@ -69,7 +69,7 @@ export default class ScannerComponent extends Vue {
   private get manualCodeInputRules() {
     return [
       (value: string) => !!value || "Required.",
-      (value: string) => isValidTestCode(value) || "8 Zeichen benötigt"
+      (value: string) => isValidTestCode(value) || "8 Zeichen benötigt",
     ];
   }
 
@@ -78,7 +78,7 @@ export default class ScannerComponent extends Vue {
       return;
     }
     const attendeeRes = await loginToEvent(this.eventCode, attendeeCode).catch(
-      reason => {
+      (reason) => {
         this.networkError = JSON.stringify(reason);
       }
     );
