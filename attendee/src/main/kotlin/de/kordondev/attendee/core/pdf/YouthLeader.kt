@@ -1,26 +1,24 @@
 package de.kordondev.attendee.core.pdf
 
 import de.kordondev.attendee.core.model.Attendee
+import de.kordondev.attendee.core.model.Settings
+import de.kordondev.attendee.core.pdf.PDFHelper.Companion.germanDate
 import de.kordondev.attendee.core.persistence.entry.AttendeeRole
+import de.kordondev.attendee.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import org.apache.pdfbox.pdmodel.interactive.form.PDField
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 
 @Service
 class YouthLeader(
-        val resourceLoader: ResourceLoader,
-        val pdfHelper: PDFHelper,
-        @Value("\${data.kreiszeltlager.from}") private val eventStart: String,
-        @Value("\${data.kreiszeltlager.to}") private val eventEnd: String,
-        @Value("\${data.kreiszeltlager.year}") private val dataYear: String,
-        @Value("\${data.kreiszeltlager.organisationAddress}") private val dataOrganisationAddress: String,
-        @Value("\${data.kreiszeltlager.listYouthLeader.moneyProYouthLeader}") private val dataMoneyProYouthLeader: String
+    val resourceLoader: ResourceLoader,
+    val pdfHelper: PDFHelper,
+    private val settingsService: SettingsService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(YouthLeader::class.java)
 
@@ -40,6 +38,7 @@ class YouthLeader(
 
     fun createYouthLeaderPdf(attendees: List<Attendee>): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/youthLeader.pdf")
+        val settings = settingsService.getSettings()
 
         val youthLeaders = attendees.filter { it.role == AttendeeRole.YOUTH_LEADER }
         logger.info("youthLeaders ${youthLeaders.size}")
@@ -56,7 +55,7 @@ class YouthLeader(
             } else {
                 youthLeaders.subList(i, i + ATTENDEES_ON_PAGE)
             }
-            fields.addAll(fillPage(pdfDocument, attendeesForPage, TABLE_ROW_START, page))
+            fields.addAll(fillPage(pdfDocument, attendeesForPage, TABLE_ROW_START, page, settings))
             result.addPage(pdfDocument.getPage(0))
             page++
         }
@@ -69,28 +68,50 @@ class YouthLeader(
     }
 
 
-    fun fillPage(pdfDocument: PDDocument, attendees: List<Attendee>, cellIds: List<Int>, page: Int): MutableList<PDField> {
+    fun fillPage(
+        pdfDocument: PDDocument,
+        attendees: List<Attendee>,
+        cellIds: List<Int>,
+        page: Int,
+        settings: Settings
+    ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
 
-        pdfHelper.fillField(form, YEAR, dataYear, page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, MONEY_PRO_YOUTH_LEADER, dataMoneyProYouthLeader, page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, ORGANISATION_ADDRESS, dataOrganisationAddress, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, YEAR, settings.eventStart.year.toString(), page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, MONEY_PRO_YOUTH_LEADER, settings.moneyPerYouthLoader, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, ORGANISATION_ADDRESS, settings.organisationAddress, page)?.let { fields.add(it) }
         // pdfHelper.fillField(form, SELECT_HEIMFREIZEIT_ZELTLAGER, dataYear, page)?.let { fields.add(it) }
 
         for (i in attendees.indices) {
-            fields.addAll(fillAttendeeInForm(attendees[i], form, cellIds[i], page))
+            fields.addAll(fillAttendeeInForm(attendees[i], form, cellIds[i], page, settings))
         }
         return fields
     }
 
-    fun fillAttendeeInForm(attendee: Attendee, form: PDAcroForm, cellId: Int, page: Int): List<PDField> {
+    fun fillAttendeeInForm(
+        attendee: Attendee,
+        form: PDAcroForm,
+        cellId: Int,
+        page: Int,
+        settings: Settings
+    ): List<PDField> {
         val fields = mutableListOf<PDField>()
-        val startDateCell = if (cellId == 1) { "$START_DATE$cellId" } else { "${START_DATE}_$cellId" }
+        val startDateCell = if (cellId == 1) {
+            "$START_DATE$cellId"
+        } else {
+            "${START_DATE}_$cellId"
+        }
         pdfHelper.fillField(form, "$COUNT$cellId", "${(page - 1) * 5 + cellId}", page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, "$NAME_AND_BIRTHDAY$cellId", "${attendee.lastName}, ${attendee.firstName}, ${attendee.birthday}", page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, startDateCell, eventStart, page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, "$END_DATE$cellId", eventEnd, page)?.let { fields.add(it) }
+        pdfHelper.fillField(
+            form,
+            "$NAME_AND_BIRTHDAY$cellId",
+            "${attendee.lastName}, ${attendee.firstName}, ${attendee.birthday}",
+            page
+        )?.let { fields.add(it) }
+        pdfHelper.fillField(form, startDateCell, settings.eventStart.format(germanDate), page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, "$END_DATE$cellId", settings.eventStart.format(germanDate), page)
+            ?.let { fields.add(it) }
         pdfHelper.fillField(form, "$DURATION$cellId", "$DAYS_OF_EVENT", page)?.let { fields.add(it) }
         return fields
     }

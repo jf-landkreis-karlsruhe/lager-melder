@@ -1,7 +1,10 @@
 package de.kordondev.attendee.core.service
 
 import de.kordondev.attendee.core.mail.MailSenderService
-import de.kordondev.attendee.core.model.*
+import de.kordondev.attendee.core.model.Department
+import de.kordondev.attendee.core.model.NewUser
+import de.kordondev.attendee.core.model.Settings
+import de.kordondev.attendee.core.model.User
 import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
 import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.entry.UserEntry
@@ -21,7 +24,8 @@ class UserService(
     private val userRepository: UserRepository,
     private val authorityService: AuthorityService,
     private val mailSenderService: MailSenderService,
-    private val bCryptPasswordEncoder: BCryptPasswordEncoder
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+    private val settingsService: SettingsService
 ) {
 
     fun getMe(): User {
@@ -59,11 +63,12 @@ class UserService(
             .findOneByUserName(user.userName)
             ?.let { throw ResourceAlreadyExistsException("Username already exists") }
         val userWithEncryptedPassword = user.copy(passWord = bCryptPasswordEncoder.encode(user.passWord))
+        val settings = settingsService.getSettings()
         return userRepository
             .save(UserEntry.of(userWithEncryptedPassword))
             .let { it.copy(passWord = "") }
             .let { savedUser -> UserEntry.to(savedUser) }
-            .also { sendEmail(it, user.passWord) }
+            .also { sendEmail(it, user.passWord, settings) }
     }
 
     fun saveUpdatePassword(userToChange: User): User {
@@ -79,17 +84,19 @@ class UserService(
     fun updatePasswordAndSendEmail(user: User): User {
         authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         val newPassword = PasswordGenerator.generatePassword()
+        val settings = settingsService.getSettings()
         return saveUpdatePassword(user.copy(passWord = newPassword))
-            .also { sendEmail(it, newPassword) }
+            .also { sendEmail(it, newPassword, settings) }
     }
 
-    private fun sendEmail(user: User, password: String) {
+    private fun sendEmail(user: User, password: String, settings: Settings) {
         authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         mailSenderService.sendRegistrationMail(
             to = user.department.leaderEMail,
             leaderName = user.department.leaderName,
             username = user.userName,
-            password = password
+            password = password,
+            settings
         )
     }
 }

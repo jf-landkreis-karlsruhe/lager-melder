@@ -22,9 +22,7 @@
           <span v-if="created">
             <v-icon medium>mdi-check</v-icon> Erstellt
           </span>
-          <span v-if="!created">
-            Erstellen
-          </span>
+          <span v-if="!created"> Erstellen </span>
         </v-btn>
       </v-row>
     </form>
@@ -93,8 +91,4 @@ export default class AddDepartment extends Vue {
 }
 </script>
 
-<style scoped>
-.underline {
-  text-decoration: underline;
-}
-</style>
+<style scoped></style>

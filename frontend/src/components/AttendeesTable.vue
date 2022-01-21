@@ -1,9 +1,9 @@
 <template>
   <section>
-    <v-card class="card">
+    <v-card>
       <v-card-title>
         <v-row justify="space-between">
-          <h1 class="headline">{{ headlineText }}</h1>
+          <h1>{{ headlineText }}</h1>
           <div class="additional-information">
             Anzahl {{ headlineText }}: {{ attendeesWithNew.length - 1 }}
           </div>
@@ -46,7 +46,7 @@
             </div>
           </template>
           <template v-slot:item.tShirtSize="{ item }">
-            <div style="max-width: 190px;">
+            <div style="max-width: 190px">
               <div v-if="!editingAttendeeIds.includes(item.id)">
                 {{ tShirtSizeText(item.tShirtSize) }}
               </div>
@@ -117,9 +117,7 @@
               </div>
               <div v-if="editingAttendeeIds.includes(item.id)">
                 <button type="sumbit" :form="createFormName(item)">
-                  <v-icon medium class="mr-2">
-                    mdi-content-save
-                  </v-icon>
+                  <v-icon medium class="mr-2"> mdi-content-save </v-icon>
                 </button>
               </div>
               <span
@@ -273,16 +271,9 @@ export default class AttendeesTable extends Vue {
 </script>
 
 <style scoped>
-.card {
-  padding: 14px;
-  margin-bottom: 30px;
-}
 .additional-information {
   font-size: 16px;
   color: rgba(0, 0, 0, 0.6);
-}
-.headline {
-  margin: 14px 0;
 }
 .actions {
   width: 56px;

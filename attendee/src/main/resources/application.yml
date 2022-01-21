@@ -28,23 +28,3 @@ application:
   admin:
     password: password
   corsOrigins: http://localhost:9000, http://lagermelder.kordondev.de
-
-data:
-  kreiszeltlager:
-    hostCity: Karlsbad
-    from: 06.07.2020
-    to: 11.07.2020
-    registrationDeadline: 20.05.2020
-    year: 2020
-    organisationAddress: "Aaahahnan \n\
-      next Line\n\
-      last  line"
-    listBW:
-      eventAddress: bbb
-    listKa:
-      location: Karlsbad Hautstraße 4
-      organisation: Karlsbader
-      from: 06.07.20
-      to: 11.07.20
-    listYouthLeader:
-      moneyProYouthLeader: 8,99
