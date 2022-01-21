@@ -74,6 +74,18 @@
           </div>
         </transition>
       </v-row>
+
+      <transition name="slide-fade" mode="out-in">
+        <v-alert
+          class="scanner-error"
+          :value="!!scannerError"
+          type="error"
+          transition="slide-y-transition"
+          dismissible
+        >
+          {{ scannerError }}
+        </v-alert>
+      </transition>
     </v-container>
   </div>
 </template>
@@ -92,15 +104,16 @@ export default class ScannerComponent extends Vue {
   manualCodeValid = false;
 
   isScanning: boolean = true;
+  scannerError: string = "";
 
   @Prop()
   private readonly manualCodeHint: string | undefined;
 
-  @Prop({ required: true })
+  @Prop({ default: () => [] })
   private readonly manualCodeInputRules!: () => string[];
 
-  @Emit("scannerError")
-  public scannerError(error: any): void {
+  @Emit("onScannerError")
+  public onScannerError(error: any): void {
     return error;
   }
 
@@ -175,14 +188,14 @@ export default class ScannerComponent extends Vue {
   stopQuagga() {
     Quagga.stop();
     this.code = "";
-    this.scannerError("");
+    this.onScannerError("");
   }
 
   initQuagga(config: any) {
     Quagga.init(config, (err: any) => {
       if (err) {
         console.error(err);
-        this.scannerError(err);
+        this.onScannerError(err);
         return;
       }
       console.log("Initialization finished. Ready to start");
@@ -233,6 +246,8 @@ export default class ScannerComponent extends Vue {
 }
 
 .scanner-root {
+  margin-bottom: 3rem;
+
   .scanner {
     position: relative;
     overflow: hidden;
@@ -255,7 +270,7 @@ export default class ScannerComponent extends Vue {
       height: 5px;
       background-color: white;
       box-shadow: 0 0 35px 5px white;
-      animation: scan 3s ease-in-out infinite;
+      animation: scan 3s linear infinite;
       opacity: 0.5;
     }
 
@@ -296,18 +311,6 @@ export default class ScannerComponent extends Vue {
     to {
       margin-top: 100%;
     }
-  }
-
-  // fade
-  .fade-enter-active {
-    transition: all 2s ease;
-  }
-  .fade-leave-active {
-    transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1);
-  }
-  .fade-enter,
-  .fade-leave-to {
-    opacity: 0;
   }
 }
 </style>

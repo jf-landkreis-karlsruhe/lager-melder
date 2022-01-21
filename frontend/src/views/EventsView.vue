@@ -7,7 +7,6 @@
           manualCodeHint="8 Zeichen benötigt"
           :manualCodeInputRules="manualCodeInputRules"
           @submitCode="submitEvent($event)"
-          @scannerError="scannerError = $event"
         />
       </v-row>
 
@@ -35,15 +34,6 @@
           >
             {{ networkError }}
           </v-alert>
-          <v-alert
-            class="scanner-error"
-            :value="!!scannerError"
-            type="error"
-            transition="slide-y-transition"
-            dismissible
-          >
-            {{ scannerError }}
-          </v-alert>
         </div>
       </v-row>
     </v-container>
@@ -56,14 +46,12 @@ import { getEventByCode, loginToEvent } from "../services/event";
 import { isValidTestCode } from "../assets/config";
 import Scanner from "../components/Scanner.vue";
 
-@Component({ name: "ScannerComponent", components: { Scanner } })
-export default class ScannerComponent extends Vue {
+@Component({ name: "EventsView", components: { Scanner } })
+export default class EventsView extends Vue {
   eventCode: string = "";
   eventName: string = "";
 
   attendeeAddedSentence: string = "";
-
-  scannerError: string = "";
   networkError: string = "";
 
   private get manualCodeInputRules() {
@@ -107,8 +95,7 @@ export default class ScannerComponent extends Vue {
 }
 
 .attandee-code-success,
-.network-error,
-.scanner-error {
+.network-error {
   max-width: 100%;
   min-width: 300px;
 }
@@ -117,20 +104,5 @@ export default class ScannerComponent extends Vue {
   bottom: 0;
   right: 12px;
   transform: translateY(100%);
-}
-
-/* animations */
-
-// slide-fade
-.slide-fade-enter-active {
-  transition: all 0.25s ease;
-}
-.slide-fade-leave-active {
-  transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1);
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active for <2.1.8 */ {
-  transform: translateX(100%);
-  opacity: 0;
 }
 </style>

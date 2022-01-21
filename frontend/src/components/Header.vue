@@ -5,6 +5,7 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/login">Login</router-link> |
       <router-link to="/teilnehmer">Teilnehmer</router-link> |
+      <router-link to="/pcr-tests">PCR Test</router-link> |
       <router-link to="/files">Anmeldeunterlagen</router-link> |
       <router-link to="/feuerwehr">Meine Feuerwehr</router-link>
       <span v-if="hasAdministrationRole()">
