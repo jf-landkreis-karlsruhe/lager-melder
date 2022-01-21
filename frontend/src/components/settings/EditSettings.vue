@@ -92,7 +92,7 @@ export default class EditSettings extends Vue {
   }
 
   mounted() {
-    getSettings().then(settings => {
+    getSettings().then((settings) => {
       this.settings = settings;
     });
   }

@@ -4,9 +4,9 @@ export const getData = <T>(relativeUrl: string, headers: HeadersInit) => {
   return fetchData(relativeUrl, {
     headers: {
       "Content-Type": "application/json",
-      ...headers
-    }
-  }).then(res => res.json() as Promise<T>);
+      ...headers,
+    },
+  }).then((res) => res.json() as Promise<T>);
 };
 
 export const postData = <T>(
@@ -18,10 +18,10 @@ export const postData = <T>(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      ...headers
+      ...headers,
     },
-    body: JSON.stringify(body)
-  }).then(res => res.json() as Promise<T>);
+    body: JSON.stringify(body),
+  }).then((res) => res.json() as Promise<T>);
 };
 
 export const putData = <T>(
@@ -33,10 +33,10 @@ export const putData = <T>(
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      ...headers
+      ...headers,
     },
-    body: JSON.stringify(body)
-  }).then(res => res.json() as Promise<T>);
+    body: JSON.stringify(body),
+  }).then((res) => res.json() as Promise<T>);
 };
 
 export const deleteData = (relativeUrl: string, headers: HeadersInit) => {
@@ -44,13 +44,13 @@ export const deleteData = (relativeUrl: string, headers: HeadersInit) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      ...headers
-    }
+      ...headers,
+    },
   });
 };
 
 export const fetchData = (relativeUrl: string, config: RequestInit) => {
-  return fetch(`${BASE_URL}/${relativeUrl}`, config).then(res => {
+  return fetch(`${BASE_URL}/${relativeUrl}`, config).then((res) => {
     if (!res.ok) {
       throw res;
     }

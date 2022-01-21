@@ -33,7 +33,7 @@ export const deleteAttendee = (id: string) =>
 
 export enum AttendeeRole {
   YOUTH = "YOUTH",
-  YOUTH_LEADER = "YOUTH_LEADER"
+  YOUTH_LEADER = "YOUTH_LEADER",
 }
 
 export enum Food {
@@ -42,7 +42,7 @@ export enum Food {
   ALLERGY = "ALLERGY",
   VEGETARIAN = "VEGETARIAN",
   VEGAN = "VEGAN",
-  MUSLIM = "MUSLIM"
+  MUSLIM = "MUSLIM",
 }
 
 export enum TShirtSize {
@@ -58,7 +58,7 @@ export enum TShirtSize {
   XXL = "XXL",
   XXXL = "XXXL",
   XXXXL = "XXXXL",
-  XXXXXL = "XXXXXL"
+  XXXXXL = "XXXXXL",
 }
 
 export interface NewAttendee {

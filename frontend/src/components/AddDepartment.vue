@@ -35,17 +35,18 @@ import { Component, Prop } from "vue-property-decorator";
 
 import {
   // eslint-disable-next-line no-unused-vars
-  Department
+  Department,
 } from "../services/department";
 
 import {
   // eslint-disable-next-line no-unused-vars
   User,
-  registerNewDepartmentAndUser
+  registerNewDepartmentAndUser,
 } from "../services/user";
 
 @Component({})
 export default class AddDepartment extends Vue {
+  // eslint-disable-next-line no-unused-vars
   @Prop() onDepartmentCreated!: (department: Department) => void;
 
   departmentName = "";
@@ -65,17 +66,17 @@ export default class AddDepartment extends Vue {
       departmentName: this.departmentName,
       leaderName: this.leaderName,
       leaderEMail: this.leaderMail,
-      username: this.username
+      username: this.username,
     };
     registerNewDepartmentAndUser(departmentWithUserReguest)
-      .then(departmentWithUser => {
+      .then((departmentWithUser) => {
         this.loading = false;
         this.created = true;
         this.onDepartmentCreated({
           id: departmentWithUser.departmentId,
           name: departmentWithUser.departmentName,
           leaderName: departmentWithUser.leaderName,
-          leaderEMail: departmentWithUser.leaderEMail
+          leaderEMail: departmentWithUser.leaderEMail,
         });
         this.departmentName = "";
         this.leaderName = "";

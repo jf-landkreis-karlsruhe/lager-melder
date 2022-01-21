@@ -14,12 +14,14 @@ export interface Settings {
 }
 
 export const getSettings = () =>
-  getData<Settings>(`settings`, withAuthenticationHeader()).then(settings => ({
-    ...settings,
-    registrationEnd: new Date(settings.registrationEnd)
-      .toISOString()
-      .split("T")[0]
-  }));
+  getData<Settings>(`settings`, withAuthenticationHeader()).then(
+    (settings) => ({
+      ...settings,
+      registrationEnd: new Date(settings.registrationEnd)
+        .toISOString()
+        .split("T")[0],
+    })
+  );
 
 export const updateSettings = (settings: Settings) => {
   const registrationEndDate = new Date(settings.registrationEnd);
@@ -29,6 +31,6 @@ export const updateSettings = (settings: Settings) => {
   registrationEndDate.toISOString();
   return putData<Settings>(`settings`, withAuthenticationHeader(), {
     ...settings,
-    registrationEnd: registrationEndDate
+    registrationEnd: registrationEndDate,
   });
 };

@@ -23,7 +23,7 @@ import { Component } from "vue-property-decorator";
 import {
   getTokenData,
   AuthenticationChangedEvent,
-  hasAdministrationRole
+  hasAdministrationRole,
 } from "../services/authentication";
 
 @Component({})
