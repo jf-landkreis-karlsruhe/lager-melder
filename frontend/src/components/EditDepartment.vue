@@ -72,14 +72,14 @@ import { Component, Prop } from "vue-property-decorator";
 import {
   // eslint-disable-next-line no-unused-vars
   Department,
-  updateDepartment
+  updateDepartment,
 } from "../services/department";
 
 import {
   // eslint-disable-next-line no-unused-vars
   User,
   sendRegistrationMail,
-  userForDepartment
+  userForDepartment,
 } from "../services/user";
 
 @Component({})
@@ -120,7 +120,7 @@ export default class EditDepartment extends Vue {
 
   mounted() {
     userForDepartment(this.department.id)
-      .then(user => (this.user = user))
+      .then((user) => (this.user = user))
       .catch(() => (this.error = true));
   }
 }

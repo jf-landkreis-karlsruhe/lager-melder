@@ -30,7 +30,7 @@ export const createUser = (departmentId: string, username: string) =>
   postData<User>(`users`, withAuthenticationHeader(), {
     departmentId,
     username,
-    role: "USER"
+    role: "USER",
   });
 
 export interface DepartmentWithUserRequest {

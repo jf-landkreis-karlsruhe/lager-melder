@@ -5,13 +5,13 @@ import { FileReponse } from "./filesHelper";
 export const getBatches = (): Promise<FileReponse> => {
   return fetchData(`admin-files/batches`, {
     headers: {
-      ...withAuthenticationHeader()
-    }
+      ...withAuthenticationHeader(),
+    },
   })
-    .then(r => r.blob())
-    .then(blob => ({
+    .then((r) => r.blob())
+    .then((blob) => ({
       data: blob,
-      fileName: `lagerausweise.pdf`
+      fileName: `lagerausweise.pdf`,
     }));
 };
 
@@ -20,13 +20,13 @@ export const getEventCodes = (): Promise<FileReponse> => {
     `admin-files/events?frontendBaseUrl=${encodeURI(window.location.hostname)}`,
     {
       headers: {
-        ...withAuthenticationHeader()
-      }
+        ...withAuthenticationHeader(),
+      },
     }
   )
-    .then(r => r.blob())
-    .then(blob => ({
+    .then((r) => r.blob())
+    .then((blob) => ({
       data: blob,
-      fileName: `events.pdf`
+      fileName: `events.pdf`,
     }));
 };

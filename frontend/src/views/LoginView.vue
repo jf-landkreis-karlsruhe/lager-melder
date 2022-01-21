@@ -9,7 +9,7 @@ import { Component } from "vue-property-decorator";
 import Login from "../components/Login.vue";
 
 @Component({
-  components: { Login }
+  components: { Login },
 })
 export default class LoginView extends Vue {}
 </script>

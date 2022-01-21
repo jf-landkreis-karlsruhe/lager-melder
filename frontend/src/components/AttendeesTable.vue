@@ -123,7 +123,7 @@
               <span
                 v-if="
                   !deletingAttendees.includes(item.id) &&
-                    item.id !== newAttendeeId
+                  item.id !== newAttendeeId
                 "
               >
                 <v-icon medium @click.prevent="deleteAttendee(item)">
@@ -160,7 +160,7 @@ import {
   TShirtSize,
   // eslint-disable-next-line no-unused-vars
   AttendeeRole,
-  createAttendee
+  createAttendee,
 } from "../services/attendee";
 
 import { deleteAttendee } from "../services/attendee";
@@ -175,6 +175,7 @@ export default class AttendeesTable extends Vue {
   @Prop() headlineText!: string;
   @Prop() role!: AttendeeRole;
   @Prop() departmentId!: string;
+  // eslint-disable-next-line no-unused-vars
   @Prop() attendeesChanged!: (change: number) => void;
 
   newAttendees: Attendee[] = [];
@@ -189,7 +190,7 @@ export default class AttendeesTable extends Vue {
     { text: "TShirt Größe", value: "tShirtSize" },
     { text: "Geburtsdatum", value: "birthday" },
     { text: "Anmerkung", value: "additionalInformation" },
-    { text: "", value: "actions", sortable: false }
+    { text: "", value: "actions", sortable: false },
   ];
 
   deleteAttendee = (attendee: Attendee) => {
@@ -212,7 +213,7 @@ export default class AttendeesTable extends Vue {
     }
 
     if (attendee.id === this.newAttendeeId) {
-      createAttendee(attendee).then(attendee => {
+      createAttendee(attendee).then((attendee) => {
         this.newAttendees.push(attendee);
         this.attendeesChanged(1);
       });
@@ -231,16 +232,16 @@ export default class AttendeesTable extends Vue {
     `form-${this.departmentId}-${this.headlineText}-${attendee.id}`;
 
   get tShirtSizes(): { value: TShirtSize; text: string }[] {
-    return Object.values(TShirtSize).map(value => ({
+    return Object.values(TShirtSize).map((value) => ({
       value,
-      text: this.tShirtSizeText(value)
+      text: this.tShirtSizeText(value),
     }));
   }
 
   get foods(): { value: Food; text: string }[] {
-    return Object.values(Food).map(value => ({
+    return Object.values(Food).map((value) => ({
       value,
-      text: this.foodText(value)
+      text: this.foodText(value),
     }));
   }
 
@@ -251,7 +252,7 @@ export default class AttendeesTable extends Vue {
   get attendeesWithNew(): AttendeeWithValidation[] {
     return this.attendees
       .concat(this.newAttendees)
-      .filter(attendee => !this.deletedAttendeeIds.includes(attendee.id))
+      .filter((attendee) => !this.deletedAttendeeIds.includes(attendee.id))
       .concat([
         {
           id: this.newAttendeeId,
@@ -262,10 +263,10 @@ export default class AttendeesTable extends Vue {
           tShirtSize: "" as TShirtSize,
           additionalInformation: "",
           role: this.role,
-          departmentId: this.departmentId
-        }
+          departmentId: this.departmentId,
+        },
       ])
-      .map(attendee => ({ ...attendee, tShirtSizeError: false }));
+      .map((attendee) => ({ ...attendee, tShirtSizeError: false }));
   }
 }
 </script>

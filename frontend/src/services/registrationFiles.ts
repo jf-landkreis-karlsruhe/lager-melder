@@ -8,13 +8,13 @@ export const getYouthPlan = (
 ): Promise<FileReponse> => {
   return fetchData(`registrationFiles/youthPlan/${departmentId}`, {
     headers: {
-      ...withAuthenticationHeader()
-    }
+      ...withAuthenticationHeader(),
+    },
   })
-    .then(r => r.blob())
-    .then(blob => ({
+    .then((r) => r.blob())
+    .then((blob) => ({
       data: blob,
-      fileName: `paedagogischeBetreuer-${departmentName}.pdf`
+      fileName: `paedagogischeBetreuer-${departmentName}.pdf`,
     }));
 };
 
@@ -24,13 +24,13 @@ export const getAttendeesKarlsruhe = (
 ): Promise<FileReponse> => {
   return fetchData(`registrationFiles/attendeesKarlsruhe/${departmentId}`, {
     headers: {
-      ...withAuthenticationHeader()
-    }
+      ...withAuthenticationHeader(),
+    },
   })
-    .then(r => r.blob())
-    .then(blob => ({
+    .then((r) => r.blob())
+    .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteKarlsruhe-${departmentName}.pdf`
+      fileName: `teilnehmerlisteKarlsruhe-${departmentName}.pdf`,
     }));
 };
 
@@ -40,13 +40,13 @@ export const getAttendeesBW = (
 ): Promise<FileReponse> => {
   return fetchData(`registrationFiles/attendeesBW/${departmentId}`, {
     headers: {
-      ...withAuthenticationHeader()
-    }
+      ...withAuthenticationHeader(),
+    },
   })
-    .then(r => r.blob())
-    .then(blob => ({
+    .then((r) => r.blob())
+    .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteBW-${departmentName}.pdf`
+      fileName: `teilnehmerlisteBW-${departmentName}.pdf`,
     }));
 };
 
@@ -56,12 +56,12 @@ export const getAttendeesCommunal = (
 ): Promise<FileReponse> => {
   return fetchData(`registrationFiles/attendeesCommunal/${departmentId}`, {
     headers: {
-      ...withAuthenticationHeader()
-    }
+      ...withAuthenticationHeader(),
+    },
   })
-    .then(r => r.blob())
-    .then(blob => ({
+    .then((r) => r.blob())
+    .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteKommandant-${departmentName}.pdf`
+      fileName: `teilnehmerlisteKommandant-${departmentName}.pdf`,
     }));
 };

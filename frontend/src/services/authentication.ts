@@ -6,7 +6,7 @@ export enum Roles {
   UNAUTHORIZED = "UNAUTHORIZED",
   USER = "USER",
   ADMIN = "ADMIN",
-  SPECIALIZED_FIELD_DIRECTOR = "SPECIALIZED_FIELD_DIRECTOR"
+  SPECIALIZED_FIELD_DIRECTOR = "SPECIALIZED_FIELD_DIRECTOR",
 }
 
 export interface JWT {
@@ -24,15 +24,15 @@ export const login = (username: string, password: string) => {
     {},
     {
       username,
-      password
+      password,
     }
   )
-    .then(res => res.Authorization)
+    .then((res) => res.Authorization)
     .then((jwt: any) => {
       saveJWT(jwt);
       return jwt;
     })
-    .then(response => {
+    .then((response) => {
       const loggoutEvent = new CustomEvent(AuthenticationChangedEvent);
       window && window.dispatchEvent(loggoutEvent);
       return decodeJWT(response);
@@ -77,7 +77,7 @@ const decodeJWT = (jwt: string): JWT => {
   const jsonPayload = decodeURIComponent(
     atob(base64)
       .split("")
-      .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+      .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
       .join("")
   );
   return JSON.parse(jsonPayload);
@@ -88,7 +88,7 @@ const saveJWT = (jwt: JWT) => {
 };
 
 export const withAuthenticationHeader = () => ({
-  Authorization: getToken()
+  Authorization: getToken(),
 });
 
 export interface AuthorizationResponse {

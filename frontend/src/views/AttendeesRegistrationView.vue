@@ -8,7 +8,7 @@ import AttendeesRegistration from "../components/AttendeesRegistration.vue";
 export default {
   name: "AttendeesRegistrationView",
   components: {
-    AttendeesRegistration
-  }
+    AttendeesRegistration,
+  },
 };
 </script>

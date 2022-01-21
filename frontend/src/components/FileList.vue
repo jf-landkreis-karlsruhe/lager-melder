@@ -36,7 +36,7 @@ import {
   getAttendeesBW,
   getAttendeesCommunal,
   getAttendeesKarlsruhe,
-  getYouthPlan
+  getYouthPlan,
 } from "../services/registrationFiles";
 import { showFile } from "../services/filesHelper";
 
@@ -46,29 +46,27 @@ export default class RegistrationFiles extends Vue {
   @Prop() departmentName!: string;
 
   downloadYouthPlan = () => {
-    getYouthPlan(this.departmentId, this.departmentName).then(fileData =>
+    getYouthPlan(this.departmentId, this.departmentName).then((fileData) =>
       showFile(fileData.data, fileData.fileName)
     );
   };
 
   downloadAttendeesKarlsruhe = () => {
-    getAttendeesKarlsruhe(
-      this.departmentId,
-      this.departmentName
-    ).then(fileData => showFile(fileData.data, fileData.fileName));
+    getAttendeesKarlsruhe(this.departmentId, this.departmentName).then(
+      (fileData) => showFile(fileData.data, fileData.fileName)
+    );
   };
 
   downloadAttendeesBW = () => {
-    getAttendeesBW(this.departmentId, this.departmentName).then(fileData =>
+    getAttendeesBW(this.departmentId, this.departmentName).then((fileData) =>
       showFile(fileData.data, fileData.fileName)
     );
   };
 
   downloadAttendeesCommunal = () => {
-    getAttendeesCommunal(
-      this.departmentId,
-      this.departmentName
-    ).then(fileData => showFile(fileData.data, fileData.fileName));
+    getAttendeesCommunal(this.departmentId, this.departmentName).then(
+      (fileData) => showFile(fileData.data, fileData.fileName)
+    );
   };
 }
 </script>

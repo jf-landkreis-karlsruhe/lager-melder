@@ -6,9 +6,9 @@ export const youthLeaderAttendees = (
   filterInput: string
 ): Attendee[] => {
   return attendees
-    .filter(attendee => attendee.departmentId === departmentId)
-    .filter(attendee => attendee.role === AttendeeRole.YOUTH_LEADER)
-    .filter(attendees => filterByFilterInput(attendees, filterInput));
+    .filter((attendee) => attendee.departmentId === departmentId)
+    .filter((attendee) => attendee.role === AttendeeRole.YOUTH_LEADER)
+    .filter((attendees) => filterByFilterInput(attendees, filterInput));
 };
 
 export const youthAttendees = (
@@ -17,9 +17,9 @@ export const youthAttendees = (
   filterInput: string
 ): Attendee[] => {
   return attendees
-    .filter(attendee => attendee.departmentId === departmentId)
-    .filter(attendee => attendee.role === AttendeeRole.YOUTH)
-    .filter(attendees => filterByFilterInput(attendees, filterInput));
+    .filter((attendee) => attendee.departmentId === departmentId)
+    .filter((attendee) => attendee.role === AttendeeRole.YOUTH)
+    .filter((attendees) => filterByFilterInput(attendees, filterInput));
 };
 
 export const filterByFilterInput = (
@@ -42,7 +42,7 @@ export const FoodSortOrder = [
   Food.ALLERGY,
   Food.VEGETARIAN,
   Food.VEGAN,
-  Food.NONE
+  Food.NONE,
 ];
 
 export const TShirtSizeSortOrder = [
@@ -58,5 +58,5 @@ export const TShirtSizeSortOrder = [
   TShirtSize.XXL,
   TShirtSize.XXXL,
   TShirtSize.XXXXL,
-  TShirtSize.XXXXXL
+  TShirtSize.XXXXXL,
 ];

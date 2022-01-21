@@ -21,7 +21,7 @@ import {
   // eslint-disable-next-line no-unused-vars
   Food,
   // eslint-disable-next-line no-unused-vars
-  TShirtSize
+  TShirtSize,
 } from "../services/attendee";
 
 import { foodText, tShirtSizeText } from "../helper/displayText";
@@ -42,9 +42,11 @@ export default class Header extends Vue {
 
   get tShirtDistribution() {
     return this.attendees
-      .map(attendee => attendee.tShirtSize)
+      .map((attendee) => attendee.tShirtSize)
       .reduce((acc: TShirtDestribution[], value: TShirtSize) => {
-        const tShirtInDistrubution = acc.find(tShirt => tShirt.name === value);
+        const tShirtInDistrubution = acc.find(
+          (tShirt) => tShirt.name === value
+        );
         if (tShirtInDistrubution) {
           tShirtInDistrubution.count += 1;
           return acc;
@@ -56,17 +58,17 @@ export default class Header extends Vue {
           TShirtSizeSortOrder.indexOf(distributionA.name) -
           TShirtSizeSortOrder.indexOf(distributionB.name)
       )
-      .map(distribution => ({
+      .map((distribution) => ({
         name: tShirtSizeText(distribution.name),
-        count: distribution.count
+        count: distribution.count,
       }));
   }
 
   get foodDistribution() {
     return this.attendees
-      .map(attendee => attendee.food)
+      .map((attendee) => attendee.food)
       .reduce((acc: FoodDestribution[], value: Food) => {
-        const foodInDistrubution = acc.find(food => food.name === value);
+        const foodInDistrubution = acc.find((food) => food.name === value);
         if (foodInDistrubution) {
           foodInDistrubution.count += 1;
           return acc;
@@ -78,9 +80,9 @@ export default class Header extends Vue {
           FoodSortOrder.indexOf(distributionA.name) -
           FoodSortOrder.indexOf(distributionB.name)
       )
-      .map(distribution => ({
+      .map((distribution) => ({
         name: foodText(distribution.name),
-        count: distribution.count
+        count: distribution.count,
       }));
   }
 }

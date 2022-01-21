@@ -131,7 +131,7 @@ export default class ScannerComponent extends Vue {
   private get manualCodeInputRules() {
     return [
       (value: string) => !!value || "Required.",
-      (value: string) => isValidTestCode(value) || "Min 8 characters"
+      (value: string) => isValidTestCode(value) || "Min 8 characters",
     ];
   }
 
@@ -146,18 +146,18 @@ export default class ScannerComponent extends Vue {
           // facingMode: "environment",
           deviceId: deviceId,
           width: 640,
-          height: 480
-        }
+          height: 480,
+        },
       },
       decoder: {
-        readers: ["code_128_reader"]
+        readers: ["code_128_reader"],
         // debug: {
         //   drawBoundingBox: true,
         //   showFrequency: true,
         //   drawScanline: true,
         //   showPattern: true,
         // },
-      }
+      },
     };
   }
 
@@ -198,7 +198,7 @@ export default class ScannerComponent extends Vue {
       return;
     }
     const attendeeRes = await loginToEvent(this.eventCode, attendeeCode).catch(
-      reason => {
+      (reason) => {
         this.networkError = JSON.stringify(reason);
       }
     );
@@ -210,7 +210,7 @@ export default class ScannerComponent extends Vue {
 
   async mounted() {
     this.eventCode = this.$route.params.eventCode;
-    getEventByCode(this.eventCode).then(event => {
+    getEventByCode(this.eventCode).then((event) => {
       this.eventName = event.name;
     });
     this.initCameraSelection();

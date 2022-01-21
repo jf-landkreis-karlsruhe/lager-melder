@@ -36,11 +36,11 @@ import {
   // eslint-disable-next-line no-unused-vars
   Department,
   getDepartments,
-  getMyDepartment
+  getMyDepartment,
 } from "../services/department";
 
 @Component({
-  components: { FileList }
+  components: { FileList },
 })
 export default class RegistrationFiles extends Vue {
   departmentId: string = "";
@@ -50,7 +50,7 @@ export default class RegistrationFiles extends Vue {
   hasAdministrationRole = hasAdministrationRole;
   mounted() {
     getMyDepartment()
-      .then(department => {
+      .then((department) => {
         this.departmentName = department.name;
         this.departmentId = department.id;
       })
@@ -59,9 +59,9 @@ export default class RegistrationFiles extends Vue {
           return getDepartments();
         }
       })
-      .then(departments => {
+      .then((departments) => {
         this.departments = departments?.filter(
-          department => department.id !== this.departmentId
+          (department) => department.id !== this.departmentId
         );
       });
   }

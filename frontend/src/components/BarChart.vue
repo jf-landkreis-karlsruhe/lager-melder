@@ -13,19 +13,19 @@ export default Vue.extend({
   name: "BarChart",
   props: {
     rawData: Array as PropType<ChartData[]>,
-    chartLabel: String
+    chartLabel: String,
   },
-  data: function() {
+  data: function () {
     return {
       chartdata: {
-        labels: this.rawData.map(data => data.name),
+        labels: this.rawData.map((data) => data.name),
         datasets: [
           {
             label: this.chartLabel,
-            data: this.rawData.map(data => data.count),
-            backgroundColor: "#f87979"
-          }
-        ]
+            data: this.rawData.map((data) => data.count),
+            backgroundColor: "#f87979",
+          },
+        ],
       },
       options: {
         responsive: true,
@@ -34,16 +34,16 @@ export default Vue.extend({
           yAxes: [
             {
               ticks: {
-                beginAtZero: true
-              }
-            }
-          ]
-        }
-      }
+                beginAtZero: true,
+              },
+            },
+          ],
+        },
+      },
     };
   },
-  mounted: function() {
+  mounted: function () {
     (this as any).renderChart(this.chartdata, this.options);
-  }
+  },
 });
 </script>
