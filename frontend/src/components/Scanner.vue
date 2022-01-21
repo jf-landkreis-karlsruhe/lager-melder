@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-container class="scanner-root">
-      <h1>🏕 Event: {{ eventName || "Anstehendes Event" }}</h1>
       <v-row justify="center">
         <transition name="fade" mode="out-in">
           <div>
@@ -21,7 +20,13 @@
               <div id="scanner" class="scanner"></div>
             </div>
 
-            <div class="d-flex justify-space-between">
+            <div
+              class="d-flex"
+              :class="{
+                'justify-space-between': isScanning,
+                'justify-center': !isScanning,
+              }"
+            >
               <v-flex grow="true" v-if="isScanning"> ...Scanning... </v-flex>
               <v-flex shrink="true">
                 <v-btn
@@ -42,22 +47,22 @@
             </div>
 
             <v-form
-              ref="manualAttendeeCodeForm"
-              v-model="manualAttendeeCodeValid"
+              ref="manualCodeForm"
+              v-model="manualCodeValid"
               @submit.prevent="manualCodeSubmit"
               class="manual-code-form d-flex justify-center mt-6"
             >
               <v-row class="manual-code-row align-center">
                 <v-text-field
-                  v-model="manualAttendeeCode"
+                  v-model="manualCode"
                   label="Manuelle Eingabe"
                   :hide-details="false"
-                  hint="8 Zeichen benötigt"
+                  :hint="manualCodeHint"
                   :rules="manualCodeInputRules"
                   class="manual-code-input mr-3"
                 />
                 <v-btn
-                  :disabled="!manualAttendeeCodeValid"
+                  :disabled="!manualCodeValid"
                   type="submit"
                   small
                   outlined
@@ -69,70 +74,39 @@
           </div>
         </transition>
       </v-row>
-
-      <transition name="slide-fade" mode="out-in">
-        <v-alert
-          class="attandee-code-success"
-          :key="attendeeAddedSentence"
-          :value="!!attendeeAddedSentence"
-          type="success"
-        >
-          {{ attendeeAddedSentence }}
-        </v-alert>
-      </transition>
-
-      <v-row justify="center">
-        <div class="errors">
-          <v-alert
-            class="network-error"
-            :value="!!networkError"
-            type="error"
-            transition="slide-y-transition"
-          >
-            {{ networkError }}
-          </v-alert>
-          <v-alert
-            class="scanner-error"
-            v-if="scannerError"
-            type="error"
-            transition="slide-y-transition"
-          >
-            {{ scannerError }}
-          </v-alert>
-        </div>
-      </v-row>
     </v-container>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Vue, Component, Prop, Emit } from "vue-property-decorator";
 import Quagga from "quagga"; // ES6
-import { getEventByCode, loginToEvent } from "../services/event";
-import { isValidTestCode } from "@/assets/config";
+import { isValidTestCode } from "../assets/config";
 
 @Component({ name: "ScannerComponent" })
 export default class ScannerComponent extends Vue {
-  eventCode: string = "";
-  eventName: string = "";
+  code: string = "";
+  previousCode: string = "";
 
-  attendeeCode: string = "";
-  previousAttandeeCode: string = "";
-  attendeeAddedSentence: string = "";
-
-  manualAttendeeCode: string = "";
-  manualAttendeeCodeValid = false;
+  manualCode: string = "";
+  manualCodeValid = false;
 
   isScanning: boolean = true;
-  scannerError: string = "";
-  networkError: string = "";
 
-  private get manualCodeInputRules() {
-    return [
-      (value: string) => !!value || "Required.",
-      (value: string) => isValidTestCode(value) || "Min 8 characters",
-    ];
+  @Prop()
+  private readonly manualCodeHint: string | undefined;
+
+  @Prop({ required: true })
+  private readonly manualCodeInputRules!: () => string[];
+
+  @Emit("scannerError")
+  public scannerError(error: any): void {
+    return error;
+  }
+
+  @Emit("submitCode")
+  public submitCode(code: string) {
+    return code;
   }
 
   private getQuaggaConfig(deviceId?: string, inputStreamTarget = "#scanner") {
@@ -176,59 +150,39 @@ export default class ScannerComponent extends Vue {
     if (!isValidTestCode(detectedCode)) {
       return;
     }
-    this.attendeeCode = detectedCode;
+    this.code = detectedCode;
 
-    if (this.attendeeCode !== this.previousAttandeeCode) {
-      this.previousAttandeeCode = this.attendeeCode;
-      this.submitEvent(this.attendeeCode);
+    if (this.code !== this.previousCode) {
+      this.previousCode = this.code;
+      this.submitCode(this.code);
     }
   }
 
   protected manualCodeSubmit() {
-    const manualCodeForm = this.$refs.manualAttendeeCodeForm as any;
-    const manualCode = this.manualAttendeeCode;
+    const manualCodeForm = this.$refs.manualCodeForm as any;
+    const manualCode = this.manualCode;
     manualCodeForm.validate();
-    this.submitEvent(manualCode);
+    this.submitCode(manualCode);
     manualCodeForm.reset();
     (document?.activeElement as any)?.blur();
   }
 
-  protected async submitEvent(attendeeCode: string) {
-    if (!isValidTestCode(attendeeCode)) {
-      return;
-    }
-    const attendeeRes = await loginToEvent(this.eventCode, attendeeCode).catch(
-      (reason) => {
-        this.networkError = JSON.stringify(reason);
-      }
-    );
-    console.log(attendeeRes);
-    if (attendeeRes) {
-      this.attendeeAddedSentence = `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`;
-    }
-  }
-
   async mounted() {
-    this.eventCode = this.$route.params.eventCode;
-    getEventByCode(this.eventCode).then((event) => {
-      this.eventName = event.name;
-    });
     this.initCameraSelection();
     this.initQuagga(this.getQuaggaConfig());
   }
 
   stopQuagga() {
     Quagga.stop();
-    this.attendeeCode = "";
-    this.networkError = "";
-    this.scannerError = "";
+    this.code = "";
+    this.scannerError("");
   }
 
   initQuagga(config: any) {
     Quagga.init(config, (err: any) => {
       if (err) {
-        console.log(err);
-        this.scannerError = err;
+        console.error(err);
+        this.scannerError(err);
         return;
       }
       console.log("Initialization finished. Ready to start");
@@ -250,7 +204,7 @@ export default class ScannerComponent extends Vue {
 
     return Quagga.CameraAccess.enumerateVideoDevices().then((devices: any) => {
       function pruneText(text: string) {
-        return text.length > 30 ? text.substr(0, 30) : text;
+        return text?.length > 30 ? text.substr(0, 30) : text;
       }
       const $deviceSelection = document.getElementById("deviceSelection");
 
@@ -277,114 +231,83 @@ export default class ScannerComponent extends Vue {
 * {
   box-sizing: border-box;
 }
-.underline {
-  text-decoration: underline;
-}
 
 .scanner-root {
-  margin-bottom: 2rem;
-  position: relative;
-}
+  .scanner {
+    position: relative;
+    overflow: hidden;
+    width: 640px;
+    max-width: 100%;
+    height: 480px;
+    max-height: 100%;
+    margin-bottom: 6px;
 
-.scanner {
-  position: relative;
-  overflow: hidden;
-  width: 640px;
-  max-width: 100%;
-  height: 480px;
-  max-height: 100%;
-  margin-bottom: 6px;
+    // scan-effect-animation
+    &::after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 99;
+      width: 100%;
+      height: 5px;
+      background-color: white;
+      box-shadow: 0 0 35px 5px white;
+      animation: scan 3s ease-in-out infinite;
+      opacity: 0.5;
+    }
 
-  // scan-effect-animation
-  &::after {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 99;
-    width: 100%;
-    height: 5px;
-    background-color: white;
-    box-shadow: 0 0 35px 5px white;
-    animation: scan 3s ease-in-out infinite;
-    opacity: 0.5;
+    // todo: figure out why this does not work
+    .drawingBuffer {
+      position: absolute;
+      width: 10px !important;
+      height: auto;
+    }
   }
 
-  // todo: figure out why this does not work
-  .drawingBuffer {
-    position: absolute;
-    width: 10px !important;
-    height: auto;
+  .camera-selection {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+
+    .camera-select {
+      font-weight: bold;
+      border: 1px solid gray;
+      margin: 0 0 0 6px;
+      padding: 6px;
+    }
   }
-}
 
-.camera-selection {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-bottom: 12px;
-
-  .camera-select {
-    font-weight: bold;
-    border: 1px solid gray;
-    margin: 0 0 0 6px;
-    padding: 6px;
+  .manual-code-form {
+    .manual-code-row {
+      max-width: 300px;
+    }
   }
-}
 
-.manual-code-form {
-  .manual-code-row {
-    max-width: 300px;
+  /* animations */
+  // scan-effect
+  @keyframes scan {
+    from {
+      margin-top: -20px;
+    }
+    to {
+      margin-top: 100%;
+    }
   }
-}
 
-.attandee-code-success,
-.network-error,
-.scanner-error {
-  max-width: 100%;
-  min-width: 300px;
-}
-.attandee-code-success {
-  position: absolute;
-  top: 30px;
-  right: 40px;
-}
-
-/* animations */
-// scan-effect
-@keyframes scan {
-  from {
-    margin-top: -20px;
+  // fade
+  .fade-enter-active {
+    transition: all 2s ease;
   }
-  to {
-    margin-top: 100%;
+  .fade-leave-active {
+    transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1);
   }
-}
-
-// fade
-.fade-enter-active {
-  transition: all 2s ease;
-}
-.fade-leave-active {
-  transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1);
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-// slide-fade
-.slide-fade-enter-active {
-  transition: all 0.25s ease;
-}
-.slide-fade-leave-active {
-  transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1);
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active for <2.1.8 */ {
-  transform: translateX(100%);
-  opacity: 0;
+  .fade-enter,
+  .fade-leave-to {
+    opacity: 0;
+  }
 }
 </style>
