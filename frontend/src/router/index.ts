@@ -40,9 +40,9 @@ const routes: Array<RouteConfig> = [
     component: () => import("../components/ListDepartment.vue")
   },
   {
-    path: "/scanner/:eventCode",
-    name: "Scanner",
-    component: () => import("../components/Scanner.vue")
+    path: "/events/:eventCode",
+    name: "Events",
+    component: () => import("../views/EventView.vue")
   },
   {
     path: "/einstellungen",
