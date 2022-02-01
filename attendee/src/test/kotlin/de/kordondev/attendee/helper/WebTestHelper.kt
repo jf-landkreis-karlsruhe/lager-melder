@@ -8,6 +8,9 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.nio.charset.Charset
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @Service
 class WebTestHelper(
@@ -48,5 +51,11 @@ class WebTestHelper(
 
     fun get(url: String): MockHttpServletRequestBuilder {
         return MockMvcRequestBuilders.get(url).contentType(CONTENT_TYPE_JSON)
+    }
+
+    fun formatDate(date: ZonedDateTime): String {
+        val utcDate = ZonedDateTime.ofInstant(date.toInstant(), ZoneId.of("UTC"))
+        return utcDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"))
+
     }
 }

@@ -8,6 +8,7 @@ import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.entry.TShirtSize
 import de.kordondev.attendee.rest.model.request.*
+import java.time.ZonedDateTime
 
 
 class Entities() {
@@ -78,7 +79,19 @@ class Entities() {
         fun event(): RestEventRequest {
             return RestEventRequest("event")
         }
+
+        fun restPCRTestSeriesRequest(
+            pcrTestCodes: List<String> = listOf(
+                "testcode1",
+                "testcode2"
+            )
+        ): RestPCRTestSeriesRequest {
+            return RestPCRTestSeriesRequest(
+                name = "test series",
+                start = ZonedDateTime.now(),
+                end = ZonedDateTime.now().plusDays(1),
+                testCodes = pcrTestCodes
+            )
+        }
     }
-
-
 }

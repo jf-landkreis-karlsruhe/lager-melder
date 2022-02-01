@@ -1,11 +1,11 @@
 package de.kordondev.attendee.core.service
 
 import de.kordondev.attendee.core.model.*
-import de.kordondev.attendee.core.persistence.EventRepository
 import de.kordondev.attendee.core.persistence.entry.AttendeeInEventEntry
 import de.kordondev.attendee.core.persistence.entry.EventEntry
 import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.repository.AttendeeInEventRepository
+import de.kordondev.attendee.core.persistence.repository.EventRepository
 import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.core.security.PasswordGenerator
 import de.kordondev.attendee.exception.NotFoundException

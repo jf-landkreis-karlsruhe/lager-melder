@@ -38,7 +38,7 @@ data class AttendeeEntry(
 
     @ManyToOne
     @JoinColumn(name = "department")
-    val department: DepartmentEntry
+    val department: DepartmentEntry,
 ) {
     companion object {
         fun of(attendee: Attendee): AttendeeEntry {
@@ -52,7 +52,7 @@ data class AttendeeEntry(
                 tShirtSize = attendee.tShirtSize,
                 additionalInformation = attendee.additionalInformation,
                 role = attendee.role,
-                code = attendee.code
+                code = attendee.code,
             )
         }
 

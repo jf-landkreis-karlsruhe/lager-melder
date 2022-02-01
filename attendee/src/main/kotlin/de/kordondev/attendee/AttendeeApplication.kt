@@ -1,9 +1,9 @@
 package de.kordondev.attendee
 
-import de.kordondev.attendee.core.persistence.EventRepository
 import de.kordondev.attendee.core.persistence.entry.*
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.persistence.repository.DepartmentRepository
+import de.kordondev.attendee.core.persistence.repository.EventRepository
 import de.kordondev.attendee.core.persistence.repository.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
