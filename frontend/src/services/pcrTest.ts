@@ -6,7 +6,7 @@ export interface PcrTest {
   code: string;
   start: Date;
   end: Date;
-  testedAttendees: Set<PcrAttendee>;
+  testedAttendees: PcrAttendee[];
 }
 
 export interface PcrAttendee {
@@ -18,7 +18,7 @@ export interface PcrAttendee {
 }
 
 export const getPcrPool = (testCode: string): Promise<PcrTest> => {
-  return getData(`pcr-tests/by-code/{testCode}`, withAuthenticationHeader());
+  return getData(`pcr-tests/by-code/${testCode}`, withAuthenticationHeader());
 };
 
 export const addAttendeeToPcrPool = (
