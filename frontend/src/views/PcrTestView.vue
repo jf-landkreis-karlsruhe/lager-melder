@@ -122,20 +122,17 @@ export default class PcrTestView extends Vue {
   protected async removeAttendeeFromPcrPool(
     attendeeCode: string
   ): Promise<void> {
-    const attendeeRes = await removeAttendeeFromPool(
-      this.pcrPoolId,
-      attendeeCode
-    ).catch((reason) => {
-      this.networkError = JSON.stringify(reason);
-    });
-    console.log(attendeeRes);
-    if (attendeeRes) {
-      this.successMessage = `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich vom Pool '${this.pcrPoolId}' entfernt.`;
-      this.attendees.splice(
-        this.attendees.findIndex((v) => v.id === attendeeRes.id),
-        1
-      );
-    }
+    removeAttendeeFromPool(this.pcrPoolId, attendeeCode)
+      .then(() => {
+        const deletedAttendees = this.attendees.splice(
+          this.attendees.findIndex((v) => v.attendeeCode === attendeeCode),
+          1
+        );
+        this.successMessage = `${deletedAttendees[0].attendeeFirstName} ${deletedAttendees[0].attendeeLastName} wurde erfolgreich vom Pool '${this.pcrPoolId}' entfernt.`;
+      })
+      .catch((reason) => {
+        this.networkError = JSON.stringify(reason);
+      });
   }
 
   async mounted() {

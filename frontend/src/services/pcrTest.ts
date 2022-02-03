@@ -1,47 +1,43 @@
-import { getData, postData, putData, deleteData } from "../helper/fetch";
-import { withAuthenticationHeader, getTokenData } from "./authentication";
+import { getData, postData, deleteData } from "../helper/fetch";
+import { withAuthenticationHeader } from "./authentication";
 
-export interface PcrAttendee {
-  id: string;
-  attendeeFirstName: string;
-  attendeeLastName: string;
-  pcrPoolId: string;
-  time: string;
+export interface PcrTest {
+  id: number;
+  code: string;
+  start: Date;
+  end: Date;
+  testedAttendees: Set<PcrAttendee>;
 }
 
+export interface PcrAttendee {
+  attendeeCode: string;
+  testCode: string;
+  departmentName: string;
+  attendeeFirstName: string;
+  attendeeLastName: string;
+}
+
+export const getPcrPool = (testCode: string): Promise<PcrTest> => {
+  return getData(`pcr-tests/by-code/{testCode}`, withAuthenticationHeader());
+};
+
 export const addAttendeeToPcrPool = (
-  poolId: string,
+  testCode: string,
   attendeeCode: string
 ): Promise<PcrAttendee> => {
-  // todo: replace mock with fetch request
-  const attendeeResMock = {
-    id: attendeeCode,
-    attendeeFirstName: "dan",
-    attendeeLastName: "theman",
-    pcrPoolId: poolId,
-    time: "2022-01-22",
-  };
-  return new Promise((res) => res(attendeeResMock));
-
-  // return postData<PcrAttendee>(
-  //   `pcr-tests/${poolId}/${attendeeCode}`,
-  //   withAuthenticationHeader(),
-  //   {}
-  // );
+  return postData<PcrAttendee>(
+    `pcr-tests/by-code/${testCode}/${attendeeCode}`,
+    withAuthenticationHeader(),
+    {}
+  );
 };
 
 export const removeAttendeeFromPool = (
-  poolId: string,
+  poolCode: string,
   attendeeCode: string
-): Promise<PcrAttendee> => {
-  const attendeeResMock = {
-    id: attendeeCode,
-    attendeeFirstName: "dan",
-    attendeeLastName: "theman",
-    pcrPoolId: poolId,
-    time: "2022-01-22",
-  };
-  return new Promise((res) => res(attendeeResMock));
-  // TODO: use fetch
-  // deleteData(`pcr-tests/${poolId}/${attendeeCode}`, withAuthenticationHeader());
+): Promise<Response> => {
+  return deleteData(
+    `pcr-tests/${poolCode}/${attendeeCode}`,
+    withAuthenticationHeader()
+  );
 };
