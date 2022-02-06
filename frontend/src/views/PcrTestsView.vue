@@ -3,6 +3,14 @@
     <v-container class="pcr-tests-root">
       <h1>Scanne einen Code für einen PCR Test</h1>
       <v-row justify="center">
+        <div class="explanation-image">
+          <img
+            src="https://www.swr.de/swraktuell/baden-wuerttemberg/1635481852699,pcr-test-symbolbild-100~_v-16x9@2dL_-6c42aff4e68b43c7868c3240d3ebfa29867457da.jpg"
+            width="320px"
+            height="auto"
+          />
+          <p>Scanne hier den Code des Pool Röhrchens ab.</p>
+        </div>
         <Scanner
           class="scanner"
           manualCodeHint="Mindestens X Zeichen"
@@ -30,6 +38,10 @@ export default class PcrTestsView extends Vue {
 
 <style scoped lang="scss">
 .pcr-tests-root {
+  .explanation-image {
+    margin-bottom: 1rem;
+  }
+
   .scanner {
     margin-bottom: 2rem;
   }
