@@ -4,6 +4,7 @@ import de.kordondev.attendee.core.persistence.entry.AttendeeEntry
 import de.kordondev.attendee.core.persistence.entry.PCRTestEntry
 import de.kordondev.attendee.core.persistence.entry.PCRTestSeriesEntry
 import de.kordondev.attendee.core.persistence.repository.PCRTestRepository
+import de.kordondev.attendee.exception.ExistingDependencyException
 import de.kordondev.attendee.exception.NotFoundException
 import org.springframework.stereotype.Service
 
@@ -24,42 +25,59 @@ class PCRTestService(
             ?: throw NotFoundException("PCRTest not found for code $code")
     }
 
-    /* fun getPCRTestForCode(code: String): PCRTest {
-         return pcrTestRepository.findByCode(code)
-             ?.let { PCRTestEntry.to(it) }
-             ?: throw NotFoundException("PCRTest not found for code $code")
-     }
+    fun checkExistenceOfCodes(codes: List<String>) {
+        val pcrTestsWithCode = pcrTestRepository.findAllByCodeIn(codes)
+        if (pcrTestsWithCode.isNotEmpty()) {
+            throw ExistingDependencyException(
+                "Die folgenden Codes sind bereits für einen andere Testreihe registriert: ${
+                    pcrTestWithSeries(pcrTestsWithCode)
+                }"
+            )
+        }
+    }
 
-     fun getPCRTest(id: Long): PCRTest {
-         return pcrTestRepository.findByIdOrNull(id)
-             ?.let { PCRTestEntry.to(it) }
-             ?: throw NotFoundException("PCRTest not found for id $id")
-     }
+    private fun pcrTestWithSeries(tests: Set<PCRTestEntry>): String {
+        return tests
+            .map { "${it.code} (${it.pcrTestSeries.name}) " }.toList().joinToString(separator = ", ")
+    }
 
-     fun getPCRTests(): List<PCRTest> {
-         return pcrTestRepository.findAll()
-             .map { PCRTestEntry.to(it) }
-     }
 
-     fun updatePCRTest(pcrTest: PCRTest): PCRTest {
-         return pcrTestRepository.save(PCRTestEntry.of(pcrTest))
-             .let { PCRTestEntry.to(it) }
-     }*/
+/* fun getPCRTestForCode(code: String): PCRTest {
+     return pcrTestRepository.findByCode(code)
+         ?.let { PCRTestEntry.to(it) }
+         ?: throw NotFoundException("PCRTest not found for code $code")
+ }
 
-    /*fun savePCRTests(pcrTestSeries: PCRTestSeries, pcrTestCodes: List<String>): List<PCRTest> {
-        val newPcrTests = pcrTestCodes
-            .map {
-                PCRTest(
-                    id = 0,
-                    code = it,
-                    testedAttendees = mutableSetOf(),
-                    pcrTestSeries = pcrTestSeries
-                )
-            }
-            .map { PCRTestEntry.of(it) }
-        return pcrTestRepository.saveAll(newPcrTests)
-            .map { PCRTestEntry.to(it) }
-    }*/
+ fun getPCRTest(id: Long): PCRTest {
+     return pcrTestRepository.findByIdOrNull(id)
+         ?.let { PCRTestEntry.to(it) }
+         ?: throw NotFoundException("PCRTest not found for id $id")
+ }
+
+ fun getPCRTests(): List<PCRTest> {
+     return pcrTestRepository.findAll()
+         .map { PCRTestEntry.to(it) }
+ }
+
+ fun updatePCRTest(pcrTest: PCRTest): PCRTest {
+     return pcrTestRepository.save(PCRTestEntry.of(pcrTest))
+         .let { PCRTestEntry.to(it) }
+ }*/
+
+/*fun savePCRTests(pcrTestSeries: PCRTestSeries, pcrTestCodes: List<String>): List<PCRTest> {
+    val newPcrTests = pcrTestCodes
+        .map {
+            PCRTest(
+                id = 0,
+                code = it,
+                testedAttendees = mutableSetOf(),
+                pcrTestSeries = pcrTestSeries
+            )
+        }
+        .map { PCRTestEntry.of(it) }
+    return pcrTestRepository.saveAll(newPcrTests)
+        .map { PCRTestEntry.to(it) }
+}*/
 
     fun addPcrTestsToSeries(pcrTestSeries: PCRTestSeriesEntry, testCodes: List<String>) {
         val pcrTests = testCodes.map {

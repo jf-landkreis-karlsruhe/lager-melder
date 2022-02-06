@@ -11,7 +11,7 @@ data class PCRTestSeriesEntry(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     val name: String,
 
     @Column(name = "start")

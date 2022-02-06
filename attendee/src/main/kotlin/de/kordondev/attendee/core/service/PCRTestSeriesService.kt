@@ -15,6 +15,7 @@ class PCRTestSeriesService(
 ) {
     fun createPcrTestSeries(pcrTestSeries: RestPCRTestSeriesRequest): RestPCRTestSeries {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        pcrTestService.checkExistenceOfCodes(pcrTestSeries.testCodes)
         val pcrTestSeriesEntry = pcrTestSeriesRepository.save(RestPCRTestSeriesRequest.toEntry(pcrTestSeries))
         pcrTestService.addPcrTestsToSeries(pcrTestSeriesEntry, pcrTestSeries.testCodes);
         return pcrTestSeriesEntry.let { RestPCRTestSeries.ofEntry(it) }

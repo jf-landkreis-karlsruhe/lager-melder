@@ -11,7 +11,7 @@ data class PCRTestEntry(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @Column(name = "code")
+    @Column(name = "code", unique = true)
     val code: String,
 
     @ManyToMany(fetch = FetchType.LAZY)
