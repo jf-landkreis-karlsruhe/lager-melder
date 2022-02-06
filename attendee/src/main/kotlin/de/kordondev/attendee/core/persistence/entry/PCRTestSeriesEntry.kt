@@ -1,8 +1,5 @@
 package de.kordondev.attendee.core.persistence.entry
 
-import de.kordondev.attendee.core.model.NewPCRTestSeries
-import de.kordondev.attendee.core.model.PCRTest
-import de.kordondev.attendee.core.model.PCRTestSeries
 import java.time.ZonedDateTime
 import javax.persistence.*
 
@@ -24,9 +21,23 @@ data class PCRTestSeriesEntry(
     val end: ZonedDateTime,
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "pcrTestSeries")
-    var tests: Set<PCRTestEntry>
+    var tests: Set<PCRTestEntry> = setOf()
 ) {
+    override fun hashCode(): Int {
+        return id.toInt()
+    }
+
+    override fun toString(): String {
+        return "$id $name $start $end"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return this.toString() == other.toString()
+    }
+
+
     companion object {
+        /*
         fun of(pcrTestSeries: PCRTestSeries): PCRTestSeriesEntry {
             return PCRTestSeriesEntry(
                 id = pcrTestSeries.id,
@@ -50,7 +61,7 @@ data class PCRTestSeriesEntry(
                     id = 0,
                     code = it,
                     testedAttendees = mutableSetOf(),
-                    pcrTestSeries = to(pcrTestSeriesEntry)
+                    pcrTestSeriesId = pcrTestSeriesEntry.id,
                 )
             }.map { PCRTestEntry.of(it) }
                 .toSet()
@@ -65,6 +76,6 @@ data class PCRTestSeriesEntry(
                 end = pcrTestSeries.end,
                 tests = pcrTestSeries.tests.map { PCRTestEntry.to(it) }
             )
-        }
+        }*/
     }
 }

@@ -1,7 +1,6 @@
 package de.kordondev.attendee.rest.model
 
-import de.kordondev.attendee.core.model.PCRTest
-import de.kordondev.attendee.core.model.PCRTestSeries
+import de.kordondev.attendee.core.persistence.entry.PCRTestSeriesEntry
 import java.time.ZonedDateTime
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
@@ -23,7 +22,17 @@ data class RestPCRTestSeries(
     val testCodes: List<String>
 ) {
     companion object {
-        fun of(pcrTestSeries: PCRTestSeries): RestPCRTestSeries {
+        /*fun of(pcrTestSeries: PCRTestSeries): RestPCRTestSeries {
+            return RestPCRTestSeries(
+                id = pcrTestSeries.id,
+                name = pcrTestSeries.name,
+                start = pcrTestSeries.start,
+                end = pcrTestSeries.end,
+                testCodes = pcrTestSeries.tests.map { it.code }
+            );
+        }*/
+
+        fun ofEntry(pcrTestSeries: PCRTestSeriesEntry): RestPCRTestSeries {
             return RestPCRTestSeries(
                 id = pcrTestSeries.id,
                 name = pcrTestSeries.name,
@@ -33,7 +42,8 @@ data class RestPCRTestSeries(
             );
         }
 
-        fun to(pcrTestSeries: RestPCRTestSeries, pcrTests: Set<PCRTest>): PCRTestSeries {
+
+        /*fun to(pcrTestSeries: RestPCRTestSeries, pcrTests: Set<PCRTest>): PCRTestSeries {
             return PCRTestSeries(
                 id = pcrTestSeries.id,
                 name = pcrTestSeries.name,
@@ -41,6 +51,6 @@ data class RestPCRTestSeries(
                 end = pcrTestSeries.end,
                 tests = pcrTests.toList()
             )
-        }
+        }*/
     }
 }

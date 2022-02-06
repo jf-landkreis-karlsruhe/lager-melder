@@ -3,7 +3,10 @@ package de.kordondev.attendee.rest.controller
 import de.kordondev.attendee.core.service.PCRTestService
 import de.kordondev.attendee.rest.model.RestPCRTest
 import de.kordondev.attendee.rest.model.RestPCRTestAttendee
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class PCRTestController(
@@ -14,8 +17,16 @@ class PCRTestController(
     fun getPCRTestByCode(
         @PathVariable(required = true) code: String
     ): RestPCRTest {
-        return pcrTestService.getPCRTestForCode(code)
-            .let { RestPCRTest.of(it) }
+        return pcrTestService.getPCRTestForCode2(code)
+            .let {
+                RestPCRTest(
+                    id = it.id,
+                    code = it.code,
+                    testedAttendees = listOf(),
+                    start = it.pcrTestSeries.start,
+                    end = it.pcrTestSeries.end
+                )
+            }
     }
 
     @PostMapping("/prc-tests/by-code/{testCode}/{attendeeCode}")
@@ -27,11 +38,11 @@ class PCRTestController(
             .let { RestPCRTestAttendee.of(it, testCode) }
     }
 
-    @DeleteMapping("/prc-tests/by-code/{testCode}/{attendeeCode}")
+    /*@DeleteMapping("/prc-tests/by-code/{testCode}/{attendeeCode}")
     fun deleteAttendeeToPCRTestByCode(
         @PathVariable(required = true) testCode: String,
         @PathVariable(required = true) attendeeCode: String
     ) {
         pcrTestService.deleteAttendeeToPCRTest(testCode, attendeeCode)
-    }
+    }*/
 }

@@ -1,6 +1,6 @@
 package de.kordondev.attendee.core.persistence.entry
 
-import de.kordondev.attendee.core.model.PCRTest
+import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
 @Entity
@@ -16,29 +16,44 @@ data class PCRTestEntry(
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "tested_attendee_id")
-    val testedAttendees: Set<AttendeeEntry>,
+    var testedAttendees: MutableSet<AttendeeEntry>,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JsonIgnore
     @JoinColumn(name = "pcr_test_series_id")
     val pcrTestSeries: PCRTestSeriesEntry
 ) {
-    companion object {
-        fun of(pcrTest: PCRTest): PCRTestEntry {
-            return PCRTestEntry(
-                id = pcrTest.id,
-                code = pcrTest.code,
-                testedAttendees = pcrTest.testedAttendees.map { AttendeeEntry.of(it) }.toSet(),
-                pcrTestSeries = PCRTestSeriesEntry.of(pcrTest.pcrTestSeries)
-            )
-        }
 
-        fun to(pcrTest: PCRTestEntry): PCRTest {
-            return PCRTest(
-                id = pcrTest.id,
-                code = pcrTest.code,
-                testedAttendees = pcrTest.testedAttendees.map { AttendeeEntry.to(it) }.toMutableSet(),
-                pcrTestSeries = PCRTestSeriesEntry.to(pcrTest.pcrTestSeries)
-            )
-        }
+    override fun hashCode(): Int {
+        return id.toInt()
+    }
+
+    override fun toString(): String {
+        return "$id $code"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return this.toString() == other.toString()
+    }
+
+    companion object {
+        /* fun of(pcrTest: PCRTest): PCRTestEntry {
+             return PCRTestEntry(
+                 id = pcrTest.id,
+                 code = pcrTest.code,
+                 testedAttendees = pcrTest.testedAttendees.map { AttendeeEntry.of(it) }.toSet(),
+                 pcrTestSeries = pcrTest.pcrTestSeries
+             )
+         }
+
+         fun to(pcrTest: PCRTestEntry): PCRTest {
+             return PCRTest(
+                 id = pcrTest.id,
+                 code = pcrTest.code,
+                 testedAttendees = pcrTest.testedAttendees.map { AttendeeEntry.to(it) }.toMutableSet(),
+                 pcrTestSeries = pcrTest.pcrTestSeries,
+             )
+         }
+         */
     }
 }

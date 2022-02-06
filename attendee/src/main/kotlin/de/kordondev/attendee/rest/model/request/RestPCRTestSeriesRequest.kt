@@ -1,6 +1,7 @@
 package de.kordondev.attendee.rest.model.request
 
 import de.kordondev.attendee.core.model.NewPCRTestSeries
+import de.kordondev.attendee.core.persistence.entry.PCRTestSeriesEntry
 import java.time.ZonedDateTime
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
@@ -26,6 +27,16 @@ data class RestPCRTestSeriesRequest(
                 start = pcrTestSeries.start,
                 end = pcrTestSeries.end,
                 testCodes = pcrTestSeries.testCodes
+            )
+        }
+
+        fun toEntry(pcrTestSeries: RestPCRTestSeriesRequest): PCRTestSeriesEntry {
+            return PCRTestSeriesEntry(
+                id = 0,
+                name = pcrTestSeries.name,
+                start = pcrTestSeries.start,
+                end = pcrTestSeries.end,
+                tests = setOf()
             )
         }
     }
