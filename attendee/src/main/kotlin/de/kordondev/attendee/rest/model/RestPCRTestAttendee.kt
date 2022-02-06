@@ -1,6 +1,6 @@
 package de.kordondev.attendee.rest.model
 
-import de.kordondev.attendee.core.model.Attendee
+import de.kordondev.attendee.core.persistence.entry.AttendeeEntry
 
 data class RestPCRTestAttendee(
     val attendeeCode: String,
@@ -10,7 +10,7 @@ data class RestPCRTestAttendee(
     val departmentName: String
 ) {
     companion object {
-        fun of(attendee: Attendee, pcrTestCode: String): RestPCRTestAttendee {
+        fun of(attendee: AttendeeEntry, pcrTestCode: String): RestPCRTestAttendee {
             return RestPCRTestAttendee(
                 testCode = pcrTestCode,
                 attendeeFirstName = attendee.firstName,

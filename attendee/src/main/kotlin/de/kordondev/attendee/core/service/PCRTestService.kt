@@ -1,6 +1,5 @@
 package de.kordondev.attendee.core.service
 
-import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.persistence.entry.AttendeeEntry
 import de.kordondev.attendee.core.persistence.entry.PCRTestEntry
 import de.kordondev.attendee.core.persistence.entry.PCRTestSeriesEntry
@@ -83,19 +82,19 @@ class PCRTestService(
         )
     } */
 
-    fun addAttendeeToPCRTest(pcrTestCode: String, attendeeCode: String): Attendee {
+    fun addAttendeeToPCRTest(pcrTestCode: String, attendeeCode: String): AttendeeEntry {
         val pcrTest = getPCRTestForCode2(pcrTestCode)
         val attendee = attendeeService.getAttendeeByCode(attendeeCode)
         pcrTest.testedAttendees.add(AttendeeEntry.of(attendee))
         pcrTestRepository.save(pcrTest)
-        return attendee
+        return AttendeeEntry.of(attendee)
     }
-    /*
 
-     fun deleteAttendeeToPCRTest(pcrTestCode: String, attendeeCode: String) {
-         val pcrTest = getPCRTestForCode(pcrTestCode)
-         val attendee = attendeeService.getAttendeeByCode(attendeeCode)
-         pcrTest.testedAttendees.remove(attendee)
-         pcrTestRepository.save(PCRTestEntry.of(pcrTest))
-     }*/
+    fun deleteAttendeeToPCRTest(pcrTestCode: String, attendeeCode: String) {
+        val pcrTest = getPCRTestForCode2(pcrTestCode)
+        val attendee = attendeeService.getAttendeeByCode(attendeeCode)
+        val attendeeEntry = AttendeeEntry.of(attendee)
+        pcrTest.testedAttendees.remove(attendeeEntry)
+        pcrTestRepository.save(pcrTest)
+    }
 }

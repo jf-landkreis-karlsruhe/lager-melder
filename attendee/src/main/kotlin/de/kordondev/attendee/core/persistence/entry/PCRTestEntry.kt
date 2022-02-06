@@ -14,8 +14,12 @@ data class PCRTestEntry(
     @Column(name = "code")
     val code: String,
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tested_attendee_id")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "attendee_pcr_test",
+        joinColumns = [JoinColumn(name = "attendee_id")],
+        inverseJoinColumns = [JoinColumn(name = "pcr_test_id")]
+    )
     var testedAttendees: MutableSet<AttendeeEntry>,
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])

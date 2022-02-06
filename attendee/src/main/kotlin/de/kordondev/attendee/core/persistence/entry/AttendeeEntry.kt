@@ -5,7 +5,7 @@ import de.kordondev.attendee.core.model.NewAttendee
 import javax.persistence.*
 
 @Entity
-@Table(name = "Attendee")
+@Table(name = "attendees")
 data class AttendeeEntry(
 
     @Id
