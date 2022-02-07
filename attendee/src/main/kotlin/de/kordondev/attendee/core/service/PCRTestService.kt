@@ -21,12 +21,12 @@ class PCRTestService(
     }*/
 
     fun getPCRTestForCode2(code: String): PCRTestEntry {
-        return pcrTestRepository.findByCode(code)
+        return pcrTestRepository.findByCodeAndTrashedIsFalse(code)
             ?: throw NotFoundException("PCRTest not found for code $code")
     }
 
     fun checkExistenceOfCodes(codes: List<String>) {
-        val pcrTestsWithCode = pcrTestRepository.findAllByCodeIn(codes)
+        val pcrTestsWithCode = pcrTestRepository.findAllByCodeInAndTrashedIsFalse(codes)
         if (pcrTestsWithCode.isNotEmpty()) {
             throw ExistingDependencyException(
                 "Die folgenden Codes sind bereits für einen andere Testreihe registriert: ${
@@ -41,6 +41,14 @@ class PCRTestService(
             .map { "${it.code} (${it.pcrTestSeries.name}) " }.toList().joinToString(separator = ", ")
     }
 
+
+    fun deleteAll(pcrTests: List<PCRTestEntry>) {
+        pcrTests.map {
+            it.trashed = true;
+            // it.pcrTestSeries = null
+        }
+        pcrTestRepository.saveAll(pcrTests)
+    }
 
 /* fun getPCRTestForCode(code: String): PCRTest {
      return pcrTestRepository.findByCode(code)
@@ -79,17 +87,18 @@ class PCRTestService(
         .map { PCRTestEntry.to(it) }
 }*/
 
-    fun addPcrTestsToSeries(pcrTestSeries: PCRTestSeriesEntry, testCodes: List<String>) {
+    fun addPcrTestsToSeries(pcrTestSeries: PCRTestSeriesEntry, testCodes: List<String>): MutableSet<PCRTestEntry> {
         val pcrTests = testCodes.map {
             PCRTestEntry(
                 id = 0,
                 code = it,
                 testedAttendees = mutableSetOf(),
-                pcrTestSeries = pcrTestSeries
+                pcrTestSeries = pcrTestSeries,
+                trashed = false
             )
         }
 
-        pcrTestSeries.tests = pcrTestRepository.saveAll(pcrTests).toSet()
+        return pcrTestRepository.saveAll(pcrTests).toMutableSet()
     }
 
 /*

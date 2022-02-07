@@ -4,9 +4,7 @@ import de.kordondev.attendee.core.service.PCRTestSeriesService
 import de.kordondev.attendee.core.service.PCRTestService
 import de.kordondev.attendee.rest.model.RestPCRTestSeries
 import de.kordondev.attendee.rest.model.request.RestPCRTestSeriesRequest
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
@@ -23,17 +21,14 @@ class PCRTestSeriesController(
             .createPcrTestSeries(pcrTestSeries)
     }
 
-    /* @PutMapping("/pcr-test-series/{id}")
-     fun savePcrTestSeries(
-         @PathVariable(required = true) id: Long,
-         @RequestBody(required = true) @Valid pcrTestSeries: RestPCRTestSeries
-     ): RestPCRTestSeries {
-         // TODO: change pcr Tests?
-         val pcrTests = pcrTestService.getPCRTestsForSeries(id)
-         return pcrTestSeriesService
-             .savePcrTestSeries(id, RestPCRTestSeries.to(pcrTestSeries, pcrTests))
-             .let { RestPCRTestSeries.of(it) }
-     }
+    @PutMapping("/pcr-test-series/{id}")
+    fun savePcrTestSeries(
+        @PathVariable(required = true) id: Long,
+        @RequestBody(required = true) @Valid pcrTestSeries: RestPCRTestSeries
+    ): RestPCRTestSeries {
+        return pcrTestSeriesService.savePcrTestSeries(id, pcrTestSeries)
+    }
+    /*
 
          @GetMapping("/pcr-test-series")
          fun getAllPCRTestSeries(): List<RestPCRTestSeries> {

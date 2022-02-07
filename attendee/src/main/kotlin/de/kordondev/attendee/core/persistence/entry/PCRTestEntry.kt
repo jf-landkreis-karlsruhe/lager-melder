@@ -14,6 +14,9 @@ data class PCRTestEntry(
     @Column(name = "code", unique = true)
     val code: String,
 
+    @Column(name = "trashed")
+    var trashed: Boolean,
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "attendee_pcr_test",
