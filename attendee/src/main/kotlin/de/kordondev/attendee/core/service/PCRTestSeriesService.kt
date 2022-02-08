@@ -3,10 +3,13 @@ package de.kordondev.attendee.core.service
 import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.repository.PCRTestSeriesRepository
 import de.kordondev.attendee.core.security.AuthorityService
+import de.kordondev.attendee.exception.BadRequestException
+import de.kordondev.attendee.exception.NotFoundException
 import de.kordondev.attendee.rest.model.RestPCRTestSeries
 import de.kordondev.attendee.rest.model.request.RestPCRTestSeriesRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.time.ZonedDateTime
 
 @Service
 class PCRTestSeriesService(
@@ -16,6 +19,7 @@ class PCRTestSeriesService(
 ) {
     fun createPcrTestSeries(pcrTestSeries: RestPCRTestSeriesRequest): RestPCRTestSeries {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        isStartBeforeEnd(pcrTestSeries.start, pcrTestSeries.end)
         pcrTestService.checkExistenceOfCodes(pcrTestSeries.testCodes)
         val pcrTestSeriesEntry = pcrTestSeriesRepository.save(RestPCRTestSeriesRequest.toEntry(pcrTestSeries))
         pcrTestSeriesEntry.tests = pcrTestService.addPcrTestsToSeries(pcrTestSeriesEntry, pcrTestSeries.testCodes)
@@ -24,6 +28,7 @@ class PCRTestSeriesService(
 
     fun savePcrTestSeries(id: Long, pcrTestSeries: RestPCRTestSeries): RestPCRTestSeries {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        isStartBeforeEnd(pcrTestSeries.start, pcrTestSeries.end)
         return pcrTestSeriesRepository.findByIdOrNull(id)
             ?.let { currentPcrTestSeries ->
                 val currentPcrTestCodes = currentPcrTestSeries.tests.map { it.code }
@@ -47,25 +52,31 @@ class PCRTestSeriesService(
             }
             ?: createPcrTestSeries(RestPCRTestSeriesRequest.of(pcrTestSeries))
     }
-/*
-    fun getPcrTestSeries(id: Long): PCRTestSeries {
+
+    fun getPcrTestSeries(id: Long): RestPCRTestSeries {
         return pcrTestSeriesRepository.findByIdOrNull(id)
-            ?.let { PCRTestSeriesEntry.to(it) }
+            ?.let { RestPCRTestSeries.ofEntry(it) }
             ?: throw NotFoundException("PCRTestSeries does not exist with id $id")
     }
 
-    fun getAllPcrTestSeries(): List<PCRTestSeries> {
+    fun getAllPcrTestSeries(): List<RestPCRTestSeries> {
         return pcrTestSeriesRepository.findAll()
-            .map { PCRTestSeriesEntry.to(it) }
+            .map { RestPCRTestSeries.ofEntry(it) }
     }
 
     fun deletePcrTestSeries(id: Long) {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
 
-        val pcrTestSeries = pcrTestSeriesRepository.findByIdOrNull(id) ?: return;
-        if (pcrTestSeries.tests.isNotEmpty()) {
-            throw ExistingDependencyException("Tests for pcrTestSeries $id exist. Delete them first.")
+        pcrTestSeriesRepository.findByIdOrNull(id)
+            ?.let {
+                pcrTestService.deleteAll(it.tests)
+                pcrTestSeriesRepository.delete(it)
+            }
+    }
+
+    private fun isStartBeforeEnd(start: ZonedDateTime, end: ZonedDateTime) {
+        if (end.isBefore(start)) {
+            throw BadRequestException("Start muss vor dem Ende sein.")
         }
-        pcrTestSeriesRepository.delete(pcrTestSeries);
-    }*/
+    }
 }

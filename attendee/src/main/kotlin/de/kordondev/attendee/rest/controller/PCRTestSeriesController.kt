@@ -28,26 +28,23 @@ class PCRTestSeriesController(
     ): RestPCRTestSeries {
         return pcrTestSeriesService.savePcrTestSeries(id, pcrTestSeries)
     }
-    /*
 
-         @GetMapping("/pcr-test-series")
-         fun getAllPCRTestSeries(): List<RestPCRTestSeries> {
-             return pcrTestSeriesService.getAllPcrTestSeries()
-                 .map { RestPCRTestSeries.of(it) }
-         }
+    @GetMapping("/pcr-test-series")
+    fun getAllPCRTestSeries(): List<RestPCRTestSeries> {
+        return pcrTestSeriesService.getAllPcrTestSeries()
+    }
 
-         @GetMapping("/pcr-test-series/{id}")
-         fun getPCRTestSeries(
-             @PathVariable(required = true) id: Long
-         ): RestPCRTestSeries {
-             return pcrTestSeriesService.getPcrTestSeries(id)
-                 .let { RestPCRTestSeries.of(it) }
-         }
+    @GetMapping("/pcr-test-series/{id}")
+    fun getPCRTestSeries(
+        @PathVariable(required = true) id: Long
+    ): RestPCRTestSeries {
+        return pcrTestSeriesService.getPcrTestSeries(id)
+    }
+
     @DeleteMapping("/pcr-test-series/{id}")
     fun deletePCRTestSeries(
         @PathVariable(required = true) id: Long
     ) {
         pcrTestSeriesService.deletePcrTestSeries(id)
     }
-     */
 }

@@ -42,10 +42,9 @@ class PCRTestService(
     }
 
 
-    fun deleteAll(pcrTests: List<PCRTestEntry>) {
+    fun deleteAll(pcrTests: Iterable<PCRTestEntry>) {
         pcrTests.map {
             it.trashed = true;
-            // it.pcrTestSeries = null
         }
         pcrTestRepository.saveAll(pcrTests)
     }
@@ -89,16 +88,20 @@ class PCRTestService(
 
     fun addPcrTestsToSeries(pcrTestSeries: PCRTestSeriesEntry, testCodes: List<String>): MutableSet<PCRTestEntry> {
         val pcrTests = testCodes.map {
-            PCRTestEntry(
+            reactivateOrCreatePcrTest(pcrTestSeries, it)
+        }
+        return pcrTestRepository.saveAll(pcrTests).toMutableSet()
+    }
+
+    fun reactivateOrCreatePcrTest(pcrTestSeries: PCRTestSeriesEntry, testCode: String): PCRTestEntry {
+        return pcrTestRepository.findByCodeAndTrashedIsTrue(testCode)
+            ?: PCRTestEntry(
                 id = 0,
-                code = it,
+                code = testCode,
                 testedAttendees = mutableSetOf(),
                 pcrTestSeries = pcrTestSeries,
                 trashed = false
             )
-        }
-
-        return pcrTestRepository.saveAll(pcrTests).toMutableSet()
     }
 
 /*
