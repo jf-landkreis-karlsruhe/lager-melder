@@ -20,7 +20,7 @@ class PCRTestService(
             .toSet()
     }*/
 
-    fun getPCRTestForCode2(code: String): PCRTestEntry {
+    fun getPCRTestForCode(code: String): PCRTestEntry {
         return pcrTestRepository.findByCodeAndTrashedIsFalse(code)
             ?: throw NotFoundException("PCRTest not found for code $code")
     }
@@ -113,15 +113,20 @@ class PCRTestService(
     } */
 
     fun addAttendeeToPCRTest(pcrTestCode: String, attendeeCode: String): AttendeeEntry {
-        val pcrTest = getPCRTestForCode2(pcrTestCode)
+        val pcrTest = getPCRTestForCode(pcrTestCode)
         val attendee = attendeeService.getAttendeeByCode(attendeeCode)
+        pcrTestRepository.findByTestedAttendeesIdAndPcrTestSeriesId(attendee.id, pcrTest.pcrTestSeries.id)
+            ?.let { oldPcrTest ->
+                oldPcrTest.testedAttendees = oldPcrTest.testedAttendees.filter { it.id != attendee.id }.toMutableSet()
+                pcrTestRepository.save(oldPcrTest)
+            }
         pcrTest.testedAttendees.add(AttendeeEntry.of(attendee))
         pcrTestRepository.save(pcrTest)
         return AttendeeEntry.of(attendee)
     }
 
     fun deleteAttendeeToPCRTest(pcrTestCode: String, attendeeCode: String) {
-        val pcrTest = getPCRTestForCode2(pcrTestCode)
+        val pcrTest = getPCRTestForCode(pcrTestCode)
         val attendee = attendeeService.getAttendeeByCode(attendeeCode)
         val attendeeEntry = AttendeeEntry.of(attendee)
         pcrTest.testedAttendees.remove(attendeeEntry)

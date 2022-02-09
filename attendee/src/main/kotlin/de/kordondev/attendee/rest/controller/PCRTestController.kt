@@ -14,7 +14,7 @@ class PCRTestController(
     fun getPCRTestByCode(
         @PathVariable(required = true) code: String
     ): RestPCRTest {
-        return pcrTestService.getPCRTestForCode2(code)
+        return pcrTestService.getPCRTestForCode(code)
             .let {
                 RestPCRTest(
                     id = it.id,

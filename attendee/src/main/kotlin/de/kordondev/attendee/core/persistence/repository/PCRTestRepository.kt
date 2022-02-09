@@ -8,4 +8,5 @@ interface PCRTestRepository : CrudRepository<PCRTestEntry, Long> {
     fun findByCodeAndTrashedIsFalse(code: String): PCRTestEntry?
     fun findByCodeAndTrashedIsTrue(code: String): PCRTestEntry?
     fun findAllByCodeInAndTrashedIsFalse(code: List<String>): Set<PCRTestEntry>
+    fun findByTestedAttendeesIdAndPcrTestSeriesId(attendeeId: Long, pcrTestSeriesId: Long): PCRTestEntry?
 }
