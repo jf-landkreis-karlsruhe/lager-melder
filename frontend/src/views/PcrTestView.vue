@@ -96,7 +96,7 @@
                 </v-list-item-content>
 
                 <v-list-item-action>
-                  <v-btn icon>
+                  <v-btn icon v-if="isInDateRange">
                     <v-icon
                       color="grey lighten-1"
                       @click="removeAttendeeFromPcrPool"
