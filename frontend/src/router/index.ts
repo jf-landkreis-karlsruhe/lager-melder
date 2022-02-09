@@ -46,7 +46,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/pcr-tests",
-    name: "PCR Test",
+    name: "PCR Tests",
     component: () => import("../views/PcrTestsView.vue"),
   },
   {

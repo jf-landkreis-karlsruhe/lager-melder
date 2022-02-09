@@ -24,18 +24,34 @@
           Scanne einen Code um einen Teilnehmer zum PCR Pool hinzuzufügen.
         </h1>
         <v-row justify="center">
-          <div class="explanation-image">
-            <img
-              src="https://i.pinimg.com/originals/f3/c1/cd/f3c1cdcc492cfc5d31be66093adcd33f.jpg"
-              width="320px"
-              height="auto"
-            />
-            <p>Scanne hier den Code jedes Teilnehmers ab.</p>
-          </div>
+          <v-row justify="center">
+            <div
+              class="my-8 d-flex flex-column align-center"
+              v-if="isInDateRange"
+            >
+              <img
+                src="https://i.pinimg.com/originals/f3/c1/cd/f3c1cdcc492cfc5d31be66093adcd33f.jpg"
+                width="45%"
+                height="auto"
+                class="mb-4"
+              />
+              <p>Scanne hier den Code jedes Teilnehmers ab.</p>
+            </div>
+            <div class="my-8 d-flex flex-column align-center" v-else>
+              <img
+                src="https://images.unsplash.com/photo-1502907997294-84206b78f31b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2338&q=80"
+                width="65%"
+                height="auto"
+                class="mb-4"
+              />
+              <p>Leider kannst du keine Änderungen mehr vornehmen.</p>
+            </div>
+          </v-row>
           <Scanner
             class="scanner"
             manualCodeHint="Mindestens Y Zeichen"
             @submitCode="addAttendeeToPcrPool"
+            v-if="isInDateRange"
           />
         </v-row>
         <v-row justify="center">
@@ -113,21 +129,37 @@ import { isValidTestCode } from "@/assets/config";
 import { Vue, Component } from "vue-property-decorator";
 import Scanner from "../components/Scanner.vue";
 import {
+  getPcrPool,
   addAttendeeToPcrPool,
   removeAttendeeFromPool,
   PcrAttendee,
+  PcrTest,
 } from "../services/pcrTest";
 
 @Component({ name: "PcrTestView", components: { Scanner } })
 export default class PcrTestView extends Vue {
-  private attendees: PcrAttendee[] = [];
-  private successMessage: string = "";
   private pcrPoolId: string = "";
+  private pcrTest: PcrTest | undefined = undefined;
+  private successMessage: string = "";
   private networkError: string = "";
   private trashIndex = "";
   $refs!: {
     attendeeListRef: HTMLDivElement;
   };
+
+  protected get attendees(): PcrAttendee[] {
+    return this.pcrTest?.testedAttendees ?? [];
+  }
+  protected get isInDateRange(): boolean {
+    if (!this.pcrTest) return false;
+
+    const currentDate = new Date();
+    const { start, end } = this.pcrTest;
+    if (currentDate > start && currentDate < end) {
+      return true;
+    }
+    return false;
+  }
 
   protected async addAttendeeToPcrPool(attendeeCode: string): Promise<void> {
     /// TODO: verify validation of scanned code
@@ -140,6 +172,7 @@ export default class PcrTestView extends Vue {
     ).catch((reason) => {
       this.networkError = JSON.stringify(reason);
     });
+
     console.log(attendeeRes);
     if (attendeeRes) {
       this.successMessage = `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`;
@@ -148,27 +181,36 @@ export default class PcrTestView extends Vue {
       this.$vuetify.goTo(this.$refs.attendeeListRef, {
         easing: "easeInOutCubic",
       });
+      await this.refetchData();
     }
   }
 
   protected async removeAttendeeFromPcrPool(
     attendeeCode: string
   ): Promise<void> {
-    removeAttendeeFromPool(this.pcrPoolId, attendeeCode)
-      .then(() => {
-        const deletedAttendees = this.attendees.splice(
-          this.attendees.findIndex((v) => v.attendeeCode === attendeeCode),
-          1
-        );
-        this.successMessage = `${deletedAttendees[0].attendeeFirstName} ${deletedAttendees[0].attendeeLastName} wurde erfolgreich vom Pool '${this.pcrPoolId}' entfernt.`;
-      })
-      .catch((reason) => {
+    await removeAttendeeFromPool(this.pcrPoolId, attendeeCode).catch(
+      (reason) => {
         this.networkError = JSON.stringify(reason);
-      });
+      }
+    );
+
+    const deletedAttendees = this.attendees.splice(
+      this.attendees.findIndex((v) => v.attendeeCode === attendeeCode),
+      1
+    );
+    this.successMessage = `${deletedAttendees[0].attendeeFirstName} ${deletedAttendees[0].attendeeLastName} wurde erfolgreich vom Pool '${this.pcrPoolId}' entfernt.`;
+
+    await this.refetchData();
   }
 
-  async mounted() {
+  async created() {
     this.pcrPoolId = this.$route.params.poolId;
+    await this.refetchData();
+  }
+
+  async refetchData() {
+    const pcrTestData = await getPcrPool(this.pcrPoolId);
+    this.pcrTest = pcrTestData;
   }
 
   protected isValidPoolId(poolId: string): boolean {
@@ -191,10 +233,6 @@ export default class PcrTestView extends Vue {
       padding: 0.5rem;
       color: #1976d2;
     }
-  }
-
-  .explanation-image {
-    margin-bottom: 1rem;
   }
 
   .scanner {
