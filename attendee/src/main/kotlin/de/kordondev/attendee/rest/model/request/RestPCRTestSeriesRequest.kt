@@ -15,7 +15,6 @@ data class RestPCRTestSeriesRequest(
     @NotNull
     val start: ZonedDateTime,
 
-    // TODO: After start
     @NotNull
     val end: ZonedDateTime,
 

@@ -6,7 +6,11 @@ import de.kordondev.attendee.core.persistence.entry.PCRTestSeriesEntry
 import de.kordondev.attendee.core.persistence.repository.PCRTestRepository
 import de.kordondev.attendee.exception.ExistingDependencyException
 import de.kordondev.attendee.exception.NotFoundException
+import de.kordondev.attendee.exception.WrongTimeException
 import org.springframework.stereotype.Service
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Service
 class PCRTestService(
@@ -114,6 +118,7 @@ class PCRTestService(
 
     fun addAttendeeToPCRTest(pcrTestCode: String, attendeeCode: String): AttendeeEntry {
         val pcrTest = getPCRTestForCode(pcrTestCode)
+        canPcrTestSeriesBeEdited(pcrTest.pcrTestSeries)
         val attendee = attendeeService.getAttendeeByCode(attendeeCode)
         pcrTestRepository.findByTestedAttendeesIdAndPcrTestSeriesId(attendee.id, pcrTest.pcrTestSeries.id)
             ?.let { oldPcrTest ->
@@ -131,5 +136,21 @@ class PCRTestService(
         val attendeeEntry = AttendeeEntry.of(attendee)
         pcrTest.testedAttendees.remove(attendeeEntry)
         pcrTestRepository.save(pcrTest)
+    }
+
+    var germanTimeDate = DateTimeFormatter.ofPattern("mm:HH dd.MM.yyyy", Locale.GERMANY)
+    fun canPcrTestSeriesBeEdited(pcrTestSeries: PCRTestSeriesEntry) {
+        val start = pcrTestSeries.start
+        val end = pcrTestSeries.end
+        val now = ZonedDateTime.now()
+        if (now.isAfter(end) || now.isBefore(start)) {
+            throw WrongTimeException(
+                "Pcrtest kann nur zwischen ${start.format(germanTimeDate)} und ${
+                    end.format(
+                        germanTimeDate
+                    )
+                } geändert werden."
+            )
+        }
     }
 }
