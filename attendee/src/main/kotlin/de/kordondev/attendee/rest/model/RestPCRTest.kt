@@ -8,16 +8,4 @@ data class RestPCRTest(
     val start: ZonedDateTime,
     val end: ZonedDateTime,
     val testedAttendees: List<RestPCRTestAttendee>
-) {
-    companion object {
-        /*fun of(pcrTest: PCRTest): RestPCRTest {
-            return RestPCRTest(
-                id = pcrTest.id,
-                code = pcrTest.code,
-                testedAttendees = pcrTest.testedAttendees.map { RestPCRTestAttendee.of(it, pcrTest.code) },
-                start = pcrTest.pcrTestSeries.start,
-                end = pcrTest.pcrTestSeries.end
-            )
-        }*/
-    }
-}
+)

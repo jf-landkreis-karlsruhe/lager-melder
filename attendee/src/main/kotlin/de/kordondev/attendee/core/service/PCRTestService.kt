@@ -17,13 +17,6 @@ class PCRTestService(
     val pcrTestRepository: PCRTestRepository,
     val attendeeService: AttendeeService
 ) {
-
-    /*fun getPCRTestsForSeries(pcrTestSeriesId: Long): Set<PCRTest> {
-        return pcrTestRepository.findAllByPcrTestSeriesId(pcrTestSeriesId)
-            .map { PCRTestEntry.to(it) }
-            .toSet()
-    }*/
-
     fun getPCRTestForCode(code: String): PCRTestEntry {
         return pcrTestRepository.findByCodeAndTrashedIsFalse(code)
             ?: throw NotFoundException("PCRTest not found for code $code")
@@ -53,43 +46,6 @@ class PCRTestService(
         pcrTestRepository.saveAll(pcrTests)
     }
 
-/* fun getPCRTestForCode(code: String): PCRTest {
-     return pcrTestRepository.findByCode(code)
-         ?.let { PCRTestEntry.to(it) }
-         ?: throw NotFoundException("PCRTest not found for code $code")
- }
-
- fun getPCRTest(id: Long): PCRTest {
-     return pcrTestRepository.findByIdOrNull(id)
-         ?.let { PCRTestEntry.to(it) }
-         ?: throw NotFoundException("PCRTest not found for id $id")
- }
-
- fun getPCRTests(): List<PCRTest> {
-     return pcrTestRepository.findAll()
-         .map { PCRTestEntry.to(it) }
- }
-
- fun updatePCRTest(pcrTest: PCRTest): PCRTest {
-     return pcrTestRepository.save(PCRTestEntry.of(pcrTest))
-         .let { PCRTestEntry.to(it) }
- }*/
-
-/*fun savePCRTests(pcrTestSeries: PCRTestSeries, pcrTestCodes: List<String>): List<PCRTest> {
-    val newPcrTests = pcrTestCodes
-        .map {
-            PCRTest(
-                id = 0,
-                code = it,
-                testedAttendees = mutableSetOf(),
-                pcrTestSeries = pcrTestSeries
-            )
-        }
-        .map { PCRTestEntry.of(it) }
-    return pcrTestRepository.saveAll(newPcrTests)
-        .map { PCRTestEntry.to(it) }
-}*/
-
     fun addPcrTestsToSeries(pcrTestSeries: PCRTestSeriesEntry, testCodes: List<String>): MutableSet<PCRTestEntry> {
         val pcrTests = testCodes.map {
             reactivateOrCreatePcrTest(pcrTestSeries, it)
@@ -107,14 +63,6 @@ class PCRTestService(
                 trashed = false
             )
     }
-
-/*
-    // TODO: called by pcrtestSeries create and update
-    fun deletePCRTestsForPCRTestSeries(pcrTestSeries: PCRTestSeries) {
-        pcrTestRepository.deleteAll(
-            pcrTestSeries.tests.map { PCRTestEntry.of(it) }
-        )
-    } */
 
     fun addAttendeeToPCRTest(pcrTestCode: String, attendeeCode: String): AttendeeEntry {
         val pcrTest = getPCRTestForCode(pcrTestCode)

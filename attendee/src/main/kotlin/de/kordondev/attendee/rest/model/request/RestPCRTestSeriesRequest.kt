@@ -1,6 +1,5 @@
 package de.kordondev.attendee.rest.model.request
 
-import de.kordondev.attendee.core.model.NewPCRTestSeries
 import de.kordondev.attendee.core.persistence.entry.PCRTestSeriesEntry
 import de.kordondev.attendee.rest.model.RestPCRTestSeries
 import java.time.ZonedDateTime
@@ -21,15 +20,6 @@ data class RestPCRTestSeriesRequest(
     val testCodes: List<String>
 ) {
     companion object {
-        fun to(pcrTestSeries: RestPCRTestSeriesRequest): NewPCRTestSeries {
-            return NewPCRTestSeries(
-                name = pcrTestSeries.name,
-                start = pcrTestSeries.start,
-                end = pcrTestSeries.end,
-                testCodes = pcrTestSeries.testCodes
-            )
-        }
-
         fun of(pcrTestSeries: RestPCRTestSeries): RestPCRTestSeriesRequest {
             return RestPCRTestSeriesRequest(
                 name = pcrTestSeries.name,

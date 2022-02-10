@@ -42,25 +42,4 @@ data class PCRTestEntry(
     override fun equals(other: Any?): Boolean {
         return this.toString() == other.toString()
     }
-
-    companion object {
-        /* fun of(pcrTest: PCRTest): PCRTestEntry {
-             return PCRTestEntry(
-                 id = pcrTest.id,
-                 code = pcrTest.code,
-                 testedAttendees = pcrTest.testedAttendees.map { AttendeeEntry.of(it) }.toSet(),
-                 pcrTestSeries = pcrTest.pcrTestSeries
-             )
-         }
-
-         fun to(pcrTest: PCRTestEntry): PCRTest {
-             return PCRTest(
-                 id = pcrTest.id,
-                 code = pcrTest.code,
-                 testedAttendees = pcrTest.testedAttendees.map { AttendeeEntry.to(it) }.toMutableSet(),
-                 pcrTestSeries = pcrTest.pcrTestSeries,
-             )
-         }
-         */
-    }
 }

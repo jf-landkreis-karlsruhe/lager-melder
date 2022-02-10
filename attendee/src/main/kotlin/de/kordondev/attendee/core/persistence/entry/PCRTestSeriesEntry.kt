@@ -41,48 +41,4 @@ data class PCRTestSeriesEntry(
         this.start = pcrTestSeriesEntry.start
         this.end = pcrTestSeriesEntry.end
     }
-
-    companion object {
-
-        /*
-        fun of(pcrTestSeries: PCRTestSeries): PCRTestSeriesEntry {
-            return PCRTestSeriesEntry(
-                id = pcrTestSeries.id,
-                name = pcrTestSeries.name,
-                start = pcrTestSeries.start,
-                end = pcrTestSeries.end,
-                tests = pcrTestSeries.tests.map { PCRTestEntry.of(it) }.toSet()
-            )
-        }
-
-        fun of(pcrTestSeries: NewPCRTestSeries): PCRTestSeriesEntry {
-            val pcrTestSeriesEntry = PCRTestSeriesEntry(
-                id = 0,
-                name = pcrTestSeries.name,
-                start = pcrTestSeries.start,
-                end = pcrTestSeries.end,
-                tests = mutableSetOf()
-            )
-            pcrTestSeriesEntry.tests = pcrTestSeries.testCodes.map {
-                PCRTest(
-                    id = 0,
-                    code = it,
-                    testedAttendees = mutableSetOf(),
-                    pcrTestSeriesId = pcrTestSeriesEntry.id,
-                )
-            }.map { PCRTestEntry.of(it) }
-                .toSet()
-            return pcrTestSeriesEntry
-        }
-
-        fun to(pcrTestSeries: PCRTestSeriesEntry): PCRTestSeries {
-            return PCRTestSeries(
-                id = pcrTestSeries.id,
-                name = pcrTestSeries.name,
-                start = pcrTestSeries.start,
-                end = pcrTestSeries.end,
-                tests = pcrTestSeries.tests.map { PCRTestEntry.to(it) }
-            )
-        }*/
-    }
 }
