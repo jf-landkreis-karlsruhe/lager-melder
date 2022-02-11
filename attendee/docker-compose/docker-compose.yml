@@ -3,9 +3,6 @@ version: '3.6'
 services:
   database:
     image: "mysql"
-    # Target platform containers for this service will run on, using the os[/arch[/variant]] syntax
-    # https://docs.docker.com/compose/compose-file/compose-file-v2/#platform
-    platform: linux/x86_64
     container_name: lm-mysql
     ports:
       - "3306:3306"
