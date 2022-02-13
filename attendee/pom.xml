@@ -170,11 +170,8 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>2.3.0</version>
                 <configuration>
-                    <from>
-                        <image>openjdk:alpine</image>
-                    </from>
                     <to>
-                        <image>registry.hub.docker.com/kordondev/lager-melder</image>
+                        <image>registry.hub.docker.com/kordondev/lager-melder-backend</image>
                     </to>
                     <allowInsecureRegistries>false</allowInsecureRegistries>
                 </configuration>

@@ -26,6 +26,10 @@ cd attendee
 For the first time you might need to add rights: `chmod 577 ./run.sh` <br/>
 Then just: `./run.sh`
 
+## Build with Tag
+* `git tag -a deploy -m"deploy" -f`
+* `git push --tags --force`
+
 ## Example Data
 See https://github.com/KordonDev/lager-melder/blob/master/attendee/src/main/kotlin/de/kordondev/attendee/AttendeeApplication.kt
 

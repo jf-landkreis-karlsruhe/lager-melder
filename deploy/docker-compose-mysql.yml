@@ -1,0 +1,15 @@
+version: '3.6'
+
+services:
+  database:
+    image: "mysql"
+    container_name: lm-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=attendee
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+      - MYSQL_ROOT_PASSWORD=secRET
+    expose:
+      - '3306'

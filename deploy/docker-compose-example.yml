@@ -1,0 +1,15 @@
+version: '3.6'
+
+services:
+  backend:
+    image: kordondev/lager-melder-backend
+    container_name: lm-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - MYSQL_HOST=database
+  frontend:
+    image: kordondev/lager-melder-frontend
+    container_name: lm-frontend
+    ports:
+      - "1080:80"
