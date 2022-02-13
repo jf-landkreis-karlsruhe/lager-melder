@@ -27,7 +27,7 @@ data class RestPCRTestSeries(
                 name = pcrTestSeries.name,
                 start = pcrTestSeries.start,
                 end = pcrTestSeries.end,
-                testCodes = pcrTestSeries.tests.map { it.code }
+                testCodes = pcrTestSeries.tests.filter { !it.trashed }.map { it.code }
             );
         }
     }

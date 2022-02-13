@@ -10,6 +10,7 @@ import de.kordondev.attendee.rest.model.request.RestPCRTestSeriesRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
+import javax.transaction.Transactional
 
 @Service
 class PCRTestSeriesService(
@@ -17,6 +18,7 @@ class PCRTestSeriesService(
     private val pcrTestService: PCRTestService,
     private val authorityService: AuthorityService
 ) {
+    @Transactional
     fun createPcrTestSeries(pcrTestSeries: RestPCRTestSeriesRequest): RestPCRTestSeries {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         isStartBeforeEnd(pcrTestSeries.start, pcrTestSeries.end)
@@ -26,6 +28,7 @@ class PCRTestSeriesService(
         return pcrTestSeriesEntry.let { RestPCRTestSeries.ofEntry(it) }
     }
 
+    @Transactional
     fun savePcrTestSeries(id: Long, pcrTestSeries: RestPCRTestSeries): RestPCRTestSeries {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         isStartBeforeEnd(pcrTestSeries.start, pcrTestSeries.end)
@@ -64,6 +67,7 @@ class PCRTestSeriesService(
             .map { RestPCRTestSeries.ofEntry(it) }
     }
 
+    @Transactional
     fun deletePcrTestSeries(id: Long) {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
 

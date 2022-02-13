@@ -43,14 +43,14 @@ class PCRTestService(
         pcrTests.map {
             it.trashed = true;
         }
-        pcrTestRepository.saveAll(pcrTests)
     }
 
     fun addPcrTestsToSeries(pcrTestSeries: PCRTestSeriesEntry, testCodes: List<String>): MutableSet<PCRTestEntry> {
         val pcrTests = testCodes.map {
             reactivateOrCreatePcrTest(pcrTestSeries, it)
         }
-        return pcrTestRepository.saveAll(pcrTests).toMutableSet()
+        return pcrTests.toMutableSet()
+        //return pcrTestRepository.saveAll(pcrTests).toMutableSet()
     }
 
     fun reactivateOrCreatePcrTest(pcrTestSeries: PCRTestSeriesEntry, testCode: String): PCRTestEntry {

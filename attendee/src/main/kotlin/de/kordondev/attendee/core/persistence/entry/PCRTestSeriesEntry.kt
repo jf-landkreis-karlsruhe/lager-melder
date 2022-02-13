@@ -21,7 +21,11 @@ data class PCRTestSeriesEntry(
     @Column(name = "end")
     var end: ZonedDateTime,
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pcrTestSeries")
+    @OneToMany(
+        fetch = FetchType.LAZY,
+        mappedBy = "pcrTestSeries",
+        cascade = [CascadeType.PERSIST, CascadeType.MERGE]
+    )
     var tests: MutableSet<PCRTestEntry> = mutableSetOf()
 ) {
     override fun hashCode(): Int {
