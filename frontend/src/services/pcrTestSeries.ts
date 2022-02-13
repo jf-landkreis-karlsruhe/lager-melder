@@ -13,18 +13,18 @@ export interface PcrTestSeries extends PcrTestSeriesRequest {
 }
 
 export const getPcrPoolSeries = (id: string): Promise<PcrTestSeries> => {
-  return getData(`pcr-tests-series/${id}`, withAuthenticationHeader());
+  return getData(`pcr-test-series/${id}`, withAuthenticationHeader());
 };
 
 export const getAllPcrPoolSeries = (): Promise<PcrTestSeries[]> => {
-  return getData(`pcr-tests-series/`, withAuthenticationHeader());
+  return getData(`pcr-test-series/`, withAuthenticationHeader());
 };
 
 export const createPcrPoolSeries = (
   newPcrPoolSeries: PcrTestSeriesRequest
 ): Promise<PcrTestSeries> => {
   return postData<PcrTestSeries>(
-    `pcr-tests-series`,
+    `pcr-test-series`,
     withAuthenticationHeader(),
     newPcrPoolSeries
   );
@@ -34,12 +34,12 @@ export const updatePcrPoolSeries = (
   pcrPoolSeries: PcrTestSeries
 ): Promise<PcrTestSeries> => {
   return putData<PcrTestSeries>(
-    `pcr-tests-series/${pcrPoolSeries.id}`,
+    `pcr-test-series/${pcrPoolSeries.id}`,
     withAuthenticationHeader(),
     pcrPoolSeries
   );
 };
 
 export const deletePcrPoolSeries = (id: string): Promise<Response> => {
-  return deleteData(`pcr-tests-series/${id}}`, withAuthenticationHeader());
+  return deleteData(`pcr-test-series/${id}`, withAuthenticationHeader());
 };

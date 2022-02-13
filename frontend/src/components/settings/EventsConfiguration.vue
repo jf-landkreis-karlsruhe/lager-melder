@@ -135,7 +135,7 @@ export default class EventsConfiguration extends Vue {
   }
 
   createFormName(event: Event) {
-    return `form-${event.id}`;
+    return `form-event-${event.id}`;
   }
 
   deleteEventInteral(id: string) {

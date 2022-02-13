@@ -119,8 +119,8 @@ export default class PcrTestsConfiguration extends Vue {
     await createPcrPoolSeries({
       name: this.pcrTestName,
       start: new Date(),
-      end: new Date(),
-      testCodes: [],
+      end: new Date("2023-01-01"),
+      testCodes: ["test1234", "test9876"],
     });
     this.pcrTestName = "";
     this.loadingPcrTestId = "";
@@ -144,7 +144,7 @@ export default class PcrTestsConfiguration extends Vue {
   }
 
   createFormName(pcrTestSeries: PcrTestSeries) {
-    return `form-${pcrTestSeries.id}`;
+    return `form-pcr-test-${pcrTestSeries.id}`;
   }
 }
 </script>
