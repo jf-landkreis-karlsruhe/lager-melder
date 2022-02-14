@@ -1,6 +1,7 @@
 package de.kordondev.attendee.core.persistence.entry
 
 import de.kordondev.attendee.rest.model.RestPCRTestSeries
+import org.hibernate.Hibernate
 import java.time.ZonedDateTime
 import javax.persistence.*
 
@@ -28,16 +29,9 @@ data class PCRTestSeriesEntry(
     )
     var tests: MutableSet<PCRTestEntry> = mutableSetOf()
 ) {
-    override fun hashCode(): Int {
-        return id.toInt()
-    }
 
     override fun toString(): String {
         return "$id $name $start $end"
-    }
-
-    override fun equals(other: Any?): Boolean {
-        return this.toString() == other.toString()
     }
 
     fun update(pcrTestSeriesEntry: RestPCRTestSeries) {
@@ -45,4 +39,14 @@ data class PCRTestSeriesEntry(
         this.start = pcrTestSeriesEntry.start
         this.end = pcrTestSeriesEntry.end
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as PCRTestSeriesEntry
+
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
 }

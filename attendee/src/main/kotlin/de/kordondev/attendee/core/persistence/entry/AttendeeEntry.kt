@@ -2,6 +2,7 @@ package de.kordondev.attendee.core.persistence.entry
 
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.NewAttendee
+import org.hibernate.Hibernate
 import javax.persistence.*
 
 @Entity
@@ -84,7 +85,28 @@ data class AttendeeEntry(
             )
         }
 
+        override fun equals(other: Any?): Boolean {
+            return super.equals(other)
+        }
+
+        override fun hashCode(): Int {
+            return super.hashCode()
+        }
+
+        override fun toString(): String {
+            return super.toString()
+        }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as AttendeeEntry
+
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
 }
 
 

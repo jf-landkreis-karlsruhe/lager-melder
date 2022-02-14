@@ -1,6 +1,7 @@
 package de.kordondev.attendee.core.persistence.entry
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.hibernate.Hibernate
 import javax.persistence.*
 
 @Entity
@@ -31,15 +32,18 @@ data class PCRTestEntry(
     val pcrTestSeries: PCRTestSeriesEntry
 ) {
 
-    override fun hashCode(): Int {
-        return id.toInt()
-    }
-
     override fun toString(): String {
         return "$id $code"
     }
 
     override fun equals(other: Any?): Boolean {
-        return this.toString() == other.toString()
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as PCRTestEntry
+
+        return id != null && id == other.id
     }
+
+    override fun hashCode(): Int = javaClass.hashCode()
+
 }
