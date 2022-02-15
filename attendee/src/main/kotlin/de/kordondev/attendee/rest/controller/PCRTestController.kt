@@ -15,15 +15,7 @@ class PCRTestController(
         @PathVariable(required = true) code: String
     ): RestPCRTest {
         return pcrTestService.getPCRTestForCode(code)
-            .let {
-                RestPCRTest(
-                    id = it.id,
-                    code = it.code,
-                    testedAttendees = it.testedAttendees.map { att -> RestPCRTestAttendee.of(att, it.code) },
-                    start = it.pcrTestSeries.start,
-                    end = it.pcrTestSeries.end
-                )
-            }
+            .let { RestPCRTest.fromEntity(it) }
     }
 
     @PostMapping("/pcr-tests/by-code/{testCode}/{attendeeCode}")
