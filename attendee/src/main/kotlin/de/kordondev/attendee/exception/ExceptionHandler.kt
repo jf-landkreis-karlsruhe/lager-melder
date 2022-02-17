@@ -49,7 +49,8 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         return exceptionToBody(ex, HttpStatus.NOT_FOUND, ex.key)
     }
 
-    data class ErrorResponse(val message: String?, val fieldName: String?, val key: String)
+    data class ErrorResponse(val key: String, val messages: List<ErrorMessage>)
+    data class ErrorMessage(val message: String?, val fieldName: String?)
 
     override fun handleMethodArgumentNotValid(
         ex: MethodArgumentNotValidException,
@@ -57,14 +58,21 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatus,
         request: WebRequest
     ): ResponseEntity<Any> {
-        val body: List<ErrorResponse> = ex.bindingResult
-            .fieldErrors.mapNotNull { ErrorResponse(it.defaultMessage, it.field, ErrorConstants.VALIDATION_ERROR) }
-        logger.error("${HttpStatus.BAD_REQUEST}: $body")
-        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
+        val messages: List<ErrorMessage> = ex.bindingResult
+            .fieldErrors.mapNotNull { ErrorMessage(it.defaultMessage, it.field) }
+        return exceptionResponse(
+            messages,
+            HttpStatus.BAD_REQUEST,
+            ErrorConstants.VALIDATION_ERROR
+        ) as ResponseEntity<Any>
     }
 
     fun exceptionToBody(ex: RuntimeException, status: HttpStatus, key: String): ResponseEntity<ErrorResponse> {
-        logger.error("$status - $key: $ex")
-        return ResponseEntity(ErrorResponse(ex.message, null, key), HttpStatus.BAD_REQUEST)
+        return exceptionResponse(listOf(ErrorMessage(ex.message, null)), status, key);
+    }
+
+    fun exceptionResponse(message: List<ErrorMessage>, status: HttpStatus, key: String): ResponseEntity<ErrorResponse> {
+        logger.error("$status - $key: $message")
+        return ResponseEntity(ErrorResponse(key, message), status)
     }
 }
