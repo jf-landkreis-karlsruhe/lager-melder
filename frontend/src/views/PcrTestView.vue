@@ -2,23 +2,25 @@
   <div>
     <v-container class="pcr-test-root">
       <!-- PCR TEST ID DOES NOT EXIST  -->
-      <v-col v-if="!isValidPoolId(pcrPoolId)" justify="center" class="sorry">
-        <v-row justify="center">
-          <h1 class="sorry-title">
-            Sorry, die angegebene PCR-Pool-Nummer exisitert nicht.
-          </h1>
-          <img
-            src="https://images.unsplash.com/photo-1504667290505-eee11f23905a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80"
-            width="65%"
-            height="auto"
-          />
-        </v-row>
-        <v-row justify="center">
-          <div class="back-button">
-            <router-link to="/pcr-tests" tag="a">Zurück</router-link>
-          </div>
-        </v-row>
-      </v-col>
+      <v-row v-if="!isValidPoolId(pcrPoolId)">
+        <v-col justify="center" class="sorry">
+          <v-row justify="center">
+            <h1 class="sorry-title">
+              Sorry, die angegebene PCR-Pool-Nummer exisitert nicht.
+            </h1>
+            <img
+              src="https://images.unsplash.com/photo-1504667290505-eee11f23905a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80"
+              width="65%"
+              height="auto"
+            />
+          </v-row>
+          <v-row justify="center">
+            <div class="back-button">
+              <router-link to="/pcr-tests" tag="a">Zurück</router-link>
+            </div>
+          </v-row>
+        </v-col>
+      </v-row>
 
       <v-row justify="center" v-if="isValidPoolId(pcrPoolId)">
         {{ pcrTest }}

@@ -30,7 +30,7 @@ export const addAttendeeToPcrPool = (
   //   testCode,
   //   attendeeFirstName: "dan",
   //   attendeeLastName: "theman",
-  //   departmentName: 'ettlingen',
+  //   departmentName: "ettlingen",
   // };
   // return new Promise((res) => res(attendeeResMock));
   return postData<PcrAttendee>(
