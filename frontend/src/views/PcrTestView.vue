@@ -8,8 +8,9 @@
             <h1 class="sorry-title">
               Sorry, die angegebene PCR-Pool-Nummer exisitert nicht.
             </h1>
+            <!-- image from: https://pixabay.com/de/illustrations/elefant-karikatur-charakter-zoo-2375697/ -->
             <img
-              src="https://images.unsplash.com/photo-1504667290505-eee11f23905a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80"
+              src="https://cdn.pixabay.com/photo/2017/06/05/23/36/elephant-2375697_1280.png"
               width="65%"
               height="auto"
             />
@@ -26,8 +27,9 @@
       <v-row justify="center" v-if="isValidPoolId(pcrPoolId) && !isInDateRange">
         <v-col class="my-8" align="center">
           <h1>PCR Test Gültigkeit abgelaufen.</h1>
+          <!-- image from: https://www.maxpixel.net/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860 -->
           <img
-            src="https://images.unsplash.com/photo-1502907997294-84206b78f31b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2338&q=80"
+            src="https://www.maxpixel.net/static/photo/1x/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860.png"
             width="45%"
             height="auto"
             class="mb-4"
@@ -36,6 +38,11 @@
             Das Datum des Tests liegt außerhalb der Gültigkeit. <br />
             Leider kannst du keine Änderungen mehr vornehmen.
           </p>
+          <v-row justify="center">
+            <div class="back-button">
+              <router-link to="/pcr-tests" tag="a">Zurück</router-link>
+            </div>
+          </v-row>
         </v-col>
       </v-row>
 
@@ -187,7 +194,7 @@ export default class PcrTestView extends Vue {
   }
 
   protected get showNetworkError(): boolean {
-    return this.networkError.length > 0;
+    return this.isValidPoolId(this.pcrPoolId) && this.networkError.length > 0;
   }
 
   protected async addAttendeeToPcrPool(attendeeCode: string): Promise<void> {
