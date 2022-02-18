@@ -41,7 +41,7 @@
 
       <!-- PCR TEST ID DOES EXIST  -->
       <v-row v-if="isValidPoolId(pcrPoolId) && isInDateRange">
-        <v-col justify="center">
+        <v-row justify="center">
           <div class="my-8 d-flex flex-column align-center">
             <h1>
               Scanne einen Code um einen Teilnehmer zum PCR Pool hinzuzufügen.
@@ -60,26 +60,24 @@
             manualCodeHint="Mindestens Y Zeichen"
             @submitCode="addAttendeeToPcrPool"
           />
-        </v-col>
-
-        <!-- SUCCESS MESSAGE -->
-        <v-row justify="center">
-          <transition name="slide-fade" mode="out-in">
-            <v-alert
-              transition="slide-y-reverse-transition"
-              class="attandee-code-success"
-              :key="successMessage"
-              v-if="!!successMessage"
-              v-model="successMessage"
-              type="success"
-              dismissible
-            >
-              {{ successMessage }}
-            </v-alert>
-          </transition>
         </v-row>
 
-        <div ref="attendeeListRef">
+        <!-- SUCCESS MESSAGE -->
+        <transition name="slide-fade" mode="out-in">
+          <v-alert
+            transition="slide-y-reverse-transition"
+            class="attandee-code-success"
+            :key="successMessage"
+            v-if="!!successMessage"
+            v-model="successMessage"
+            type="success"
+            dismissible
+          >
+            {{ successMessage }}
+          </v-alert>
+        </transition>
+
+        <v-row ref="attendeeListRef">
           <v-row justify="center" v-if="attendees.length > 0">
             <v-list subheader two-line class="attendee-list">
               <v-subheader inset>Teilnehmer</v-subheader>
@@ -127,7 +125,7 @@
               </v-list-item>
             </v-list>
           </v-row>
-        </div>
+        </v-row>
       </v-row>
 
       <!-- NETWORK ERROR -->
@@ -135,7 +133,7 @@
         <transition name="slide-fade" mode="out-in">
           <v-alert
             transition="slide-y-reverse-transition"
-            class="attandee-code-success"
+            class="attandee-code-error"
             :key="networkError"
             v-if="showNetworkError"
             v-model="showNetworkError"
@@ -152,7 +150,7 @@
 
 <script lang="ts">
 import { isValidTestCode } from "@/assets/config";
-import { Vue, Component, Watch } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 import Scanner from "../components/Scanner.vue";
 import {
   getPcrPool,
@@ -165,7 +163,7 @@ import {
 @Component({ name: "PcrTestView", components: { Scanner } })
 export default class PcrTestView extends Vue {
   private pcrPoolId: string = "";
-  private pcrTest: PcrTest | undefined = undefined;
+  private pcrTest: PcrTest | null = null;
   private successMessage: string = "";
   private networkError: string = "";
   private trashIndex = "";
@@ -177,13 +175,7 @@ export default class PcrTestView extends Vue {
     return this.pcrTest?.testedAttendees ?? [];
   }
 
-  @Watch("pcrTest")
-  pcrTestChanged(newV: PcrTest) {
-    console.log(newV, this.pcrTest);
-  }
-
   protected get isInDateRange(): boolean {
-    console.log("is in range", this.pcrTest);
     if (!this.pcrTest) return false;
 
     const currentDate = new Date();
@@ -210,7 +202,6 @@ export default class PcrTestView extends Vue {
       this.networkError = JSON.stringify(reason);
     });
 
-    console.log(attendeeRes);
     if (attendeeRes) {
       this.successMessage = `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`;
       this.attendees.push(attendeeRes);
@@ -240,21 +231,21 @@ export default class PcrTestView extends Vue {
     await this.refetchData();
   }
 
-  async created() {
+  public async created(): Promise<void> {
     this.pcrPoolId = this.$route.params.poolId;
-    await this.refetchData();
+    this.pcrTest = await this.refetchData();
   }
 
-  async refetchData() {
+  private async refetchData(): Promise<PcrTest | null> {
     const pcrTestData = await getPcrPool(this.pcrPoolId).catch(
       (e: Response) => {
         const urlObj = new URL(e.url);
         this.networkError = `URL: ${urlObj.pathname}, Status: ${e.status}, Reason: ${e.type}`;
       }
     );
-    if (pcrTestData) {
-      this.pcrTest = pcrTestData;
-    }
+    if (!pcrTestData) return null;
+
+    return pcrTestData;
   }
 
   protected isValidPoolId(poolId: string): boolean {
@@ -287,7 +278,8 @@ export default class PcrTestView extends Vue {
     margin-bottom: 2rem;
   }
 
-  .attandee-code-success {
+  .attandee-code-success,
+  .attandee-code-error {
     position: fixed;
     bottom: 1.5rem;
     right: 1.5rem;

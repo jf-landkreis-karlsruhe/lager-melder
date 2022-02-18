@@ -1,12 +1,17 @@
 import { getData, postData, deleteData } from "../helper/fetch";
 import { withAuthenticationHeader } from "./authentication";
 
-export interface PcrTest {
+export interface PcrTestResponse {
   id: number;
   code: string;
+  start: string;
+  end: string;
+  testedAttendees: PcrAttendee[];
+}
+
+export interface PcrTest extends Omit<PcrTestResponse, 'start' | 'end'> {
   start: Date;
   end: Date;
-  testedAttendees: PcrAttendee[];
 }
 
 export interface PcrAttendee {
@@ -17,8 +22,10 @@ export interface PcrAttendee {
   attendeeLastName: string;
 }
 
-export const getPcrPool = (testCode: string): Promise<PcrTest> => {
-  return getData(`pcr-tests/by-code/${testCode}`, withAuthenticationHeader());
+export const getPcrPool = async (testCode: string): Promise<PcrTest> => {
+  const data = await getData<PcrTestResponse>(`pcr-tests/by-code/${testCode}`, withAuthenticationHeader());
+  const pcrTest = {...data, start: new Date(data.start), end: new Date(data.end)};
+  return pcrTest;
 };
 
 export const addAttendeeToPcrPool = (

@@ -1,15 +1,17 @@
 import { getData, postData, deleteData, putData } from "../helper/fetch";
 import { withAuthenticationHeader } from "./authentication";
 
-export interface PcrTestSeriesRequest {
+export interface PcrTestSeriesResponse {
   name: string;
-  start: Date;
-  end: Date;
+  start: string;
+  end: string;
   testCodes: string[];
 }
 
-export interface PcrTestSeries extends PcrTestSeriesRequest {
+export interface PcrTestSeries extends Omit<PcrTestSeriesResponse, 'start' | 'end'> {
   id: string;
+  start: Date;
+  end: Date;
 }
 
 export const getPcrPoolSeries = (id: string): Promise<PcrTestSeries> => {
@@ -21,7 +23,7 @@ export const getAllPcrPoolSeries = (): Promise<PcrTestSeries[]> => {
 };
 
 export const createPcrPoolSeries = (
-  newPcrPoolSeries: PcrTestSeriesRequest
+  newPcrPoolSeries: PcrTestSeriesResponse
 ): Promise<PcrTestSeries> => {
   return postData<PcrTestSeries>(
     `pcr-test-series`,

@@ -13,21 +13,21 @@
         label="PCR Test Serie Testcodes als Kommaseparierte Liste"
         required
       />
-      <v-row justify="space-around" class="px-12">
-        <v-col class="d-flex flex-column mx-12">
+      <div justify="space-around" class="px-md-12 d-flex flex-wrap">
+        <v-col class="d-flex flex-column px-lg-12">
           <label for="pcr-start-date">Startdatum</label>
           <v-date-picker
             id="pcr-start-date"
             v-model="newStartDate"
           ></v-date-picker>
         </v-col>
-        <v-col class="d-flex flex-column mx-12">
+        <v-col class="d-flex flex-column px-lg-12">
           <label for="pcr-end-date">Endedatum</label>
           <v-date-picker id="pcr-end-date" v-model="newEndDate"></v-date-picker>
         </v-col>
-      </v-row>
+      </div>
 
-      <v-row class="v-row" justify="end">
+      <v-row class="v-row mb-8" justify="end">
         <v-btn
           color="primary"
           :loading="loadingPcrTestId === '0'"
@@ -164,8 +164,8 @@ export default class PcrTestsConfiguration extends Vue {
     this.loadingPcrTestId = "0";
     await createPcrPoolSeries({
       name: this.newPcrTestName,
-      start: new Date(this.newStartDate),
-      end: new Date(this.newEndDate),
+      start: new Date(this.newStartDate).toDateString(),
+      end: new Date(this.newEndDate).toDateString(),
       testCodes: this.newPcrTestCodesArray,
     });
     this.newPcrTestName = "";
