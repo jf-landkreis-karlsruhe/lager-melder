@@ -1,6 +1,6 @@
 package de.kordondev.attendee
 
-import de.kordondev.attendee.core.persistence.entry.*
+import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.persistence.repository.DepartmentRepository
 import de.kordondev.attendee.core.persistence.repository.EventRepository
@@ -28,57 +28,12 @@ class AttendeeApplication {
         @Value("\${application.admin.password}") adminPassword: String
     ) = ApplicationRunner {
         logger.info("Initializing database")
-        val departments = departmentRepository.findAll().toList()
-
-        if (departments.isEmpty()) {
-
-            val adminDepartment = DepartmentEntry(
-                name = "Admin",
-                leaderName = "KordonDev",
-                leaderEMail = "KordonDev@mail.ka"
-            )
-            departmentRepository.save(adminDepartment)
-
-            userRepository.saveAll(
-                listOf(
-                    UserEntry(
-                        role = Roles.ADMIN,
-                        userName = "admin",
-                        passWord = BCryptPasswordEncoder().encode(adminPassword),
-                        department = adminDepartment
-                    )
-                )
-            )
-
-            eventRepository.save(EventEntry(name = "Test event 001", code = "event001", trashed = false))
-            eventRepository.save(EventEntry(name = "Test event 002", code = "event002", trashed = false))
-            attendeeRepository.saveAll(
-                listOf(
-                    AttendeeEntry(
-                        firstName = "first1",
-                        lastName = "last1",
-                        birthday = "20-09-2005",
-                        food = Food.MEAT,
-                        tShirtSize = TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-                        additionalInformation = "",
-                        role = AttendeeRole.YOUTH,
-                        department = adminDepartment,
-                        code = "att-0001",
-                    ),
-                    AttendeeEntry(
-                        firstName = "first2",
-                        lastName = "last2",
-                        birthday = "20-09-2006",
-                        food = Food.VEGAN,
-                        tShirtSize = TShirtSize.M,
-                        additionalInformation = "m",
-                        role = AttendeeRole.YOUTH_LEADER,
-                        department = adminDepartment,
-                        code = "att-0002",
-                    )
-                )
-            )
-        }
+        val adminDepartment = DepartmentEntry(
+            name = "Admin",
+            leaderName = "KordonDev",
+            leaderEMail = "KordonDev@mail.ka"
+        )
+        departmentRepository.save(adminDepartment)
     }
 
 
