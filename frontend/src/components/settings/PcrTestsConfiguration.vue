@@ -4,10 +4,29 @@
     <h3>PCR Test Serie erstellen</h3>
     <form v-on:submit.prevent="createPcrTestSeriesInternal()">
       <v-text-field
-        v-model="pcrTestName"
+        v-model="newPcrTestName"
         label="Titel der PCR Test Serie"
         required
       />
+      <v-text-field
+        v-model="newPcrTestCodes"
+        label="PCR Test Serie Testcodes als Kommaseparierte Liste"
+        required
+      />
+      <v-row justify="space-around" class="px-12">
+        <v-col class="d-flex flex-column mx-12">
+          <label for="pcr-start-date">Startdatum</label>
+          <v-date-picker
+            id="pcr-start-date"
+            v-model="newStartDate"
+          ></v-date-picker>
+        </v-col>
+        <v-col class="d-flex flex-column mx-12">
+          <label for="pcr-end-date">Endedatum</label>
+          <v-date-picker id="pcr-end-date" v-model="newEndDate"></v-date-picker>
+        </v-col>
+      </v-row>
+
       <v-row class="v-row" justify="end">
         <v-btn
           color="primary"
@@ -21,18 +40,24 @@
 
     <h3>PCR Test Serien verwalten</h3>
     <div class="flex-row flex-center">
-      <v-card class="card event-card mt-6">
+      <v-card class="card pcr-test-card mt-6">
         <p v-if="!pcrTests || pcrTests.length === 0" class="mb-0">
           ℹ️ Keine PCR Test Serien vorhanden.
         </p>
         <div
-          class="flex-row event"
+          class="flex-row"
           v-for="pcrTestSeries in pcrTests"
           :key="pcrTestSeries.id"
         >
-          <div class="flex-row flex-grow">
+          <div class="flex-row flex-grow mb-4">
             <div v-if="!editingPcrTestIds.includes(pcrTestSeries.id)">
-              {{ pcrTestSeries.name }}
+              <span class="mr-4">Name: "{{ pcrTestSeries.name }}"</span>
+              <span class="mr-4"
+                >Testcodes: {{ pcrTestSeries.testCodes.join(", ") }}</span
+              >
+              <span class="date-range">
+                Von {{ startHumanReadable }} bis {{ endHumanReadable }}
+              </span>
             </div>
             <div v-if="editingPcrTestIds.includes(pcrTestSeries.id)">
               <v-text-field
@@ -97,12 +122,21 @@ import {
   PcrTestSeries,
 } from "../../services/pcrTestSeries";
 
+const getTodayIsoString = (): string => {
+  return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .substr(0, 10);
+};
+
 @Component({ name: "PcrTestsConfiguration" })
 export default class PcrTestsConfiguration extends Vue {
-  pcrTestName: string = "";
+  newPcrTestName: string = "";
+  newPcrTestCodes: string = "";
+  newStartDate: string = getTodayIsoString();
+  newEndDate: string = getTodayIsoString();
+
   pcrTests: PcrTestSeries[] = [];
   editingPcrTestIds: string[] = [];
-
   loadingPcrTestId: string = "";
 
   async mounted() {
@@ -114,16 +148,30 @@ export default class PcrTestsConfiguration extends Vue {
     this.editingPcrTestIds.push(pcrTestSeries.id);
   }
 
+  private get newPcrTestCodesArray(): string[] {
+    return this.newPcrTestCodes.replaceAll(" ", "").split(",");
+  }
+
+  private get startHumanReadable(): string {
+    return new Date(this.newStartDate).toLocaleDateString();
+  }
+
+  private get endHumanReadable(): string {
+    return new Date(this.newEndDate).toLocaleDateString();
+  }
+
   async createPcrTestSeriesInternal() {
     this.loadingPcrTestId = "0";
     await createPcrPoolSeries({
-      name: this.pcrTestName,
-      start: new Date(),
-      end: new Date("2023-01-01"),
-      testCodes: ["test1234", "test9876"],
+      name: this.newPcrTestName,
+      start: new Date(this.newStartDate),
+      end: new Date(this.newEndDate),
+      testCodes: this.newPcrTestCodesArray,
     });
-    this.pcrTestName = "";
-    this.loadingPcrTestId = "";
+    this.newPcrTestName = "";
+    this.newStartDate = getTodayIsoString();
+    this.newEndDate = getTodayIsoString();
+    (this.newPcrTestCodes = ""), (this.loadingPcrTestId = "");
 
     const poolData = await getAllPcrPoolSeries();
     this.pcrTests = poolData;
@@ -162,10 +210,11 @@ export default class PcrTestsConfiguration extends Vue {
 .flex-center {
   justify-content: center;
 }
-.event {
-  margin-bottom: 12px;
-}
-.event-card {
+.pcr-test-card {
   flex: 0 1 800px;
+}
+
+.date-range {
+  font-size: 0.7rem;
 }
 </style>
