@@ -2,49 +2,25 @@
   <div>
     <v-container class="pcr-test-root">
       <!-- PCR TEST ID DOES NOT EXIST  -->
-      <v-row v-if="!isValidPoolId(pcrPoolId)" justify="center">
-        <v-col justify="center" class="sorry">
-          <v-row justify="center">
-            <h1 class="sorry-title">
-              Sorry, die angegebene PCR-Pool-Nummer exisitert nicht.
-            </h1>
-            <!-- image from: https://pixabay.com/de/illustrations/elefant-karikatur-charakter-zoo-2375697/ -->
-            <img
-              src="https://cdn.pixabay.com/photo/2017/06/05/23/36/elephant-2375697_1280.png"
-              width="65%"
-              height="auto"
-            />
-          </v-row>
-          <v-row justify="center">
-            <div class="back-button">
-              <router-link to="/pcr-tests" tag="a">Zurück</router-link>
-            </div>
-          </v-row>
-        </v-col>
-      </v-row>
+      <!-- image from: https://pixabay.com/de/illustrations/elefant-karikatur-charakter-zoo-2375697/ -->
+      <Sorry
+        v-if="!isValidPoolId(pcrPoolId)"
+        title="Sorry, die angegebene PCR-Pool-Nummer exisitert nicht."
+        image-url="https://cdn.pixabay.com/photo/2017/06/05/23/36/elephant-2375697_1280.png"
+        cta-url="/pcr-tests"
+        cta-label="Zurück"
+      />
 
       <!-- PCR TEST IS OUT OF RANGE  -->
-      <v-row justify="center" v-if="isValidPoolId(pcrPoolId) && !isInDateRange">
-        <v-col class="my-8" align="center">
-          <h1>PCR Test Gültigkeit abgelaufen.</h1>
-          <!-- image from: https://www.maxpixel.net/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860 -->
-          <img
-            src="https://www.maxpixel.net/static/photo/1x/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860.png"
-            width="45%"
-            height="auto"
-            class="mb-4"
-          />
-          <p class="desc">
-            Das Datum des Tests liegt außerhalb der Gültigkeit. <br />
-            Leider kannst du keine Änderungen mehr vornehmen.
-          </p>
-          <v-row justify="center">
-            <div class="back-button">
-              <router-link to="/pcr-tests" tag="a">Zurück</router-link>
-            </div>
-          </v-row>
-        </v-col>
-      </v-row>
+      <!-- image from: https://www.maxpixel.net/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860 -->
+      <Sorry
+        v-if="isValidPoolId(pcrPoolId) && !isInDateRange"
+        title="PCR Test Gültigkeit abgelaufen."
+        image-url="https://www.maxpixel.net/static/photo/1x/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860.png"
+        description="Das Datum des Tests liegt außerhalb der Gültigkeit.<br />Leider kannst du keine Änderungen mehr vornehmen."
+        cta-url="/pcr-tests"
+        cta-label="Zurück"
+      />
 
       <!-- PCR TEST ID DOES EXIST  -->
       <v-row v-if="isValidPoolId(pcrPoolId) && isInDateRange">
@@ -166,8 +142,9 @@ import {
   PcrAttendee,
   PcrTest,
 } from "../services/pcrTest";
+import Sorry from "../components/Sorry.vue";
 
-@Component({ name: "PcrTestView", components: { Scanner } })
+@Component({ name: "PcrTestView", components: { Scanner, Sorry } })
 export default class PcrTestView extends Vue {
   private pcrPoolId: string = "";
   private pcrTest: PcrTest | null = null;
@@ -194,7 +171,11 @@ export default class PcrTestView extends Vue {
   }
 
   protected get showNetworkError(): boolean {
-    return this.isValidPoolId(this.pcrPoolId) && this.networkError.length > 0;
+    return (
+      this.isValidPoolId(this.pcrPoolId) &&
+      this.isInDateRange &&
+      this.networkError.length > 0
+    );
   }
 
   protected async addAttendeeToPcrPool(attendeeCode: string): Promise<void> {
@@ -265,21 +246,6 @@ export default class PcrTestView extends Vue {
 .pcr-test-root {
   position: relative;
   margin-bottom: 5rem;
-
-  .sorry {
-    .sorry-title {
-      font-size: 2rem;
-    }
-    .back-button {
-      margin-top: 1rem;
-      padding: 0.5rem;
-      color: #1976d2;
-    }
-  }
-
-  .desc {
-    text-align: center;
-  }
 
   .scanner {
     margin-bottom: 2rem;

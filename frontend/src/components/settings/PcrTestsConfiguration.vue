@@ -13,19 +13,26 @@
         label="PCR Test Serie Testcodes als Kommaseparierte Liste"
         required
       />
-      <div justify="space-around" class="px-md-12 d-flex flex-wrap">
-        <v-col class="d-flex flex-column px-lg-12">
-          <label for="pcr-start-date">Startdatum</label>
-          <v-date-picker
-            id="pcr-start-date"
-            v-model="newStartDate"
-          ></v-date-picker>
+      <v-row justify="center" align="center" class="d-flex flex-wrap">
+        <v-col>
+          <DateAndTime
+            :date="newStartDate"
+            @dateChanged="newStartDate = $event"
+            label="Startdatum"
+            :time="newStartTime"
+            @timeChanged="newStartTime = $event"
+          />
         </v-col>
-        <v-col class="d-flex flex-column px-lg-12">
-          <label for="pcr-end-date">Endedatum</label>
-          <v-date-picker id="pcr-end-date" v-model="newEndDate"></v-date-picker>
+        <v-col>
+          <DateAndTime
+            :date="newEndDate"
+            @dateChanged="newEndDate = $event"
+            label="Enddatum"
+            :time="newEndTime"
+            @timeChanged="newEndTime = $event"
+          />
         </v-col>
-      </div>
+      </v-row>
 
       <v-row class="v-row mb-8" justify="end">
         <v-btn
@@ -56,7 +63,8 @@
                 >Testcodes: {{ pcrTestSeries.testCodes.join(", ") }}</span
               >
               <span class="date-range">
-                Von {{ startHumanReadable }} bis {{ endHumanReadable }}
+                Von {{ dateHumanReadable(pcrTestSeries.start) }} bis
+                {{ dateHumanReadable(pcrTestSeries.end) }}
               </span>
             </div>
             <div v-if="editingPcrTestIds.includes(pcrTestSeries.id)">
@@ -121,6 +129,7 @@ import {
   updatePcrPoolSeries,
   PcrTestSeries,
 } from "../../services/pcrTestSeries";
+import DateAndTime from "../DateAndTime.vue";
 
 const getTodayIsoString = (): string => {
   return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -128,16 +137,20 @@ const getTodayIsoString = (): string => {
     .substr(0, 10);
 };
 
-@Component({ name: "PcrTestsConfiguration" })
+@Component({ name: "PcrTestsConfiguration", components: { DateAndTime } })
 export default class PcrTestsConfiguration extends Vue {
-  newPcrTestName: string = "";
-  newPcrTestCodes: string = "";
-  newStartDate: string = getTodayIsoString();
-  newEndDate: string = getTodayIsoString();
+  private newPcrTestName: string = "";
+  private newPcrTestCodes: string = "";
+  private newStartDate: string = getTodayIsoString();
+  private newStartTime: string = "12:00";
+  private showNewStartTime: boolean = false;
+  private newEndDate: string = getTodayIsoString();
+  private newEndTime: string = "18:00";
+  private showNewEndTime: boolean = false;
 
-  pcrTests: PcrTestSeries[] = [];
-  editingPcrTestIds: string[] = [];
-  loadingPcrTestId: string = "";
+  private pcrTests: PcrTestSeries[] = [];
+  private editingPcrTestIds: string[] = [];
+  private loadingPcrTestId: string = "";
 
   async mounted() {
     const data = await getAllPcrPoolSeries();
@@ -152,29 +165,47 @@ export default class PcrTestsConfiguration extends Vue {
     return this.newPcrTestCodes.replaceAll(" ", "").split(",");
   }
 
-  private get startHumanReadable(): string {
-    return new Date(this.newStartDate).toLocaleDateString();
+  private dateHumanReadable(date: Date): string {
+    return new Date(date).toLocaleString("de-DE", {
+      weekday: "long",
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+    });
   }
 
-  private get endHumanReadable(): string {
-    return new Date(this.newEndDate).toLocaleDateString();
+  private dateAndTimeAsIsoString(date: string, time: string): string {
+    const d = new Date(date);
+    const [startHours, startMinutes] = time.split(":");
+    d.setHours(Number(startHours), Number(startMinutes)); // startTime is e.g. 12:00
+    console.log("hours", Number(startHours), startMinutes);
+    return d.toISOString();
   }
 
   async createPcrTestSeriesInternal() {
     this.loadingPcrTestId = "0";
     await createPcrPoolSeries({
       name: this.newPcrTestName,
-      start: new Date(this.newStartDate).toDateString(),
-      end: new Date(this.newEndDate).toDateString(),
+      start: this.dateAndTimeAsIsoString(this.newStartDate, this.newStartTime),
+      end: this.dateAndTimeAsIsoString(this.newEndDate, this.newEndTime),
       testCodes: this.newPcrTestCodesArray,
     });
-    this.newPcrTestName = "";
-    this.newStartDate = getTodayIsoString();
-    this.newEndDate = getTodayIsoString();
-    (this.newPcrTestCodes = ""), (this.loadingPcrTestId = "");
+    this.setToDefaultFormValues();
 
     const poolData = await getAllPcrPoolSeries();
     this.pcrTests = poolData;
+  }
+
+  protected setToDefaultFormValues() {
+    this.newPcrTestName = "";
+    this.newStartTime = "12:00";
+    this.newStartDate = getTodayIsoString();
+    this.newEndDate = getTodayIsoString();
+    this.newEndTime = "18:00";
+    this.showNewStartTime = false;
+    this.showNewEndTime = false;
+    this.newPcrTestCodes = "";
+    this.loadingPcrTestId = "";
   }
 
   async savePcrTestSeries(pcrTestSeries: PcrTestSeries) {
