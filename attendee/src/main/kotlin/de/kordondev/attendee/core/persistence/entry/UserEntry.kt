@@ -5,19 +5,24 @@ import de.kordondev.attendee.core.model.User
 import javax.persistence.*
 
 @Entity
-@Table(name = "User")
+@Table(name = "users")
 data class UserEntry(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
+    @Column(name = "role")
     val role: String = Roles.USER,
+
+    @Column(name = "username")
     val userName: String,
+
+    @Column(name = "password")
     val passWord: String,
 
     @ManyToOne
-    @JoinColumn(name = "department")
+    @JoinColumn(name = "department_id")
     val department: DepartmentEntry
 ) {
     companion object {

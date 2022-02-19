@@ -5,7 +5,7 @@ import de.kordondev.attendee.core.model.NewDepartment
 import javax.persistence.*
 
 @Entity
-@Table(name = "Department")
+@Table(name = "departments")
 data class DepartmentEntry (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,10 +14,10 @@ data class DepartmentEntry (
         @Column(name = "name")
         val name: String,
 
-        @Column(name = "leaderName")
+        @Column(name = "leader_name")
         val leaderName: String,
 
-        @Column(name = "leaderEMail")
+        @Column(name = "leader_email")
         val leaderEMail: String
 ) {
         companion object {

@@ -14,10 +14,10 @@ data class AttendeeEntry(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @Column(name = "firstName")
+    @Column(name = "first_name")
     val firstName: String,
 
-    @Column(name = "lastName")
+    @Column(name = "last_name")
     val lastName: String,
 
     @Column(name = "birthday")
@@ -39,8 +39,8 @@ data class AttendeeEntry(
     val role: AttendeeRole,
 
     @ManyToOne
-    @JoinColumn(name = "department")
-    val department: DepartmentEntry,
+    @JoinColumn(name = "department_id")
+    val department: DepartmentEntry
 ) {
     companion object {
         fun of(attendee: Attendee): AttendeeEntry {

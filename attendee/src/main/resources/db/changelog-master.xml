@@ -3,6 +3,10 @@
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
-    <include file="classpath:db/add-attendee-table.xml"/>
+
+    <include file="classpath:db/add-attendees-users-departments.xml"/>
+    <include file="classpath:db/add-settings.xml"/>
+    <include file="classpath:db/add-events.xml"/>
+    <include file="classpath:db/add-pcr-tests.xml"/>
 
 </databaseChangeLog>
