@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <changeSet id="202202200" author="kordon" context="dev">
+        <loadData tableName="departments" separator=";" file="db/mocks/department.csv"/>
+        <loadData tableName="users" separator=";" file="db/mocks/user.csv"/>
+        <loadData tableName="attendees" separator=";" file="db/mocks/attendees.csv"/>
+        <loadData tableName="events" separator=";" file="db/mocks/event.csv"/>
+        <loadData tableName="pcr_test_series" separator=";" file="db/mocks/pcr-test-series.csv"/>
+        <loadData tableName="pcr_tests" separator=";" file="db/mocks/pcr-tests.csv"/>
+    </changeSet>
+</databaseChangeLog>

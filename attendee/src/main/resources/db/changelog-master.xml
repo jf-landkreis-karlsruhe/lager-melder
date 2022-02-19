@@ -8,5 +8,6 @@
     <include file="classpath:db/add-settings.xml"/>
     <include file="classpath:db/add-events.xml"/>
     <include file="classpath:db/add-pcr-tests.xml"/>
+    <include file="classpath:db/add-mock-data.xml"/>
 
 </databaseChangeLog>
