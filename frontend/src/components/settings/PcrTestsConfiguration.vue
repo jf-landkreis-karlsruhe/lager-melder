@@ -63,8 +63,8 @@
                 >Testcodes: {{ pcrTestSeries.testCodes.join(", ") }}</span
               >
               <span class="date-range">
-                Von {{ dateHumanReadable(pcrTestSeries.start) }} bis
-                {{ dateHumanReadable(pcrTestSeries.end) }}
+                Von {{ dateLocalized(pcrTestSeries.start) }} bis
+                {{ dateLocalized(pcrTestSeries.end) }}
               </span>
             </div>
             <div v-if="editingPcrTestIds.includes(pcrTestSeries.id)">
@@ -130,6 +130,7 @@ import {
   PcrTestSeries,
 } from "../../services/pcrTestSeries";
 import DateAndTime from "../DateAndTime.vue";
+import { dateLocalized } from "../../helper/displayDate";
 
 const getTodayIsoString = (): string => {
   return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -143,10 +144,8 @@ export default class PcrTestsConfiguration extends Vue {
   private newPcrTestCodes: string = "";
   private newStartDate: string = getTodayIsoString();
   private newStartTime: string = "12:00";
-  private showNewStartTime: boolean = false;
   private newEndDate: string = getTodayIsoString();
   private newEndTime: string = "18:00";
-  private showNewEndTime: boolean = false;
 
   private pcrTests: PcrTestSeries[] = [];
   private editingPcrTestIds: string[] = [];
@@ -165,20 +164,10 @@ export default class PcrTestsConfiguration extends Vue {
     return this.newPcrTestCodes.replaceAll(" ", "").split(",");
   }
 
-  private dateHumanReadable(date: Date): string {
-    return new Date(date).toLocaleString("de-DE", {
-      weekday: "long",
-      day: "numeric",
-      month: "numeric",
-      year: "numeric",
-    });
-  }
-
   private dateAndTimeAsIsoString(date: string, time: string): string {
     const d = new Date(date);
     const [startHours, startMinutes] = time.split(":");
     d.setHours(Number(startHours), Number(startMinutes)); // startTime is e.g. 12:00
-    console.log("hours", Number(startHours), startMinutes);
     return d.toISOString();
   }
 
@@ -202,8 +191,6 @@ export default class PcrTestsConfiguration extends Vue {
     this.newStartDate = getTodayIsoString();
     this.newEndDate = getTodayIsoString();
     this.newEndTime = "18:00";
-    this.showNewStartTime = false;
-    this.showNewEndTime = false;
     this.newPcrTestCodes = "";
     this.loadingPcrTestId = "";
   }
@@ -224,6 +211,10 @@ export default class PcrTestsConfiguration extends Vue {
 
   createFormName(pcrTestSeries: PcrTestSeries) {
     return `form-pcr-test-${pcrTestSeries.id}`;
+  }
+
+  private dateLocalized(date: Date) {
+    return dateLocalized(date);
   }
 }
 </script>

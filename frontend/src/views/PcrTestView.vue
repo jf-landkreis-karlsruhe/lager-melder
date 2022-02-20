@@ -30,8 +30,10 @@
               Scanne einen Code um einen Teilnehmer zum PCR Pool hinzuzufügen.
             </h1>
             <img
-              src="https://i.pinimg.com/originals/f3/c1/cd/f3c1cdcc492cfc5d31be66093adcd33f.jpg"
-              width="45%"
+              src="../assets/Zeltlager-Ausweis-Beispiel.png"
+              alt="Beispiel eines Teilnehmer-Ausweises"
+              title="Beispiel eines Teilnehmer-Ausweises"
+              width="40%"
               height="auto"
               class="mb-4"
             />
@@ -51,8 +53,8 @@
             transition="slide-y-reverse-transition"
             class="attandee-code-success"
             :key="successMessage"
-            v-if="!!successMessage"
-            v-model="successMessage"
+            v-if="showSuccessMessage"
+            v-model="showSuccessMessage"
             type="success"
             dismissible
           >
@@ -86,10 +88,13 @@
                 </v-list-item-content>
 
                 <v-list-item-action>
-                  <v-btn icon v-if="isInDateRange">
+                  <v-btn
+                    icon
+                    v-if="isInDateRange"
+                    @click="removeAttendeeFromPcrPool(attendee.attendeeCode)"
+                  >
                     <v-icon
                       color="grey lighten-1"
-                      @click="removeAttendeeFromPcrPool"
                       @mouseover="trashIndex = attendee.attendeeCode"
                       v-show="trashIndex !== attendee.attendeeCode"
                     >
@@ -97,7 +102,6 @@
                     </v-icon>
                     <v-icon
                       color="grey lighten-1"
-                      @click="removeAttendeeFromPcrPool"
                       @mouseleave="trashIndex = ''"
                       v-show="trashIndex === attendee.attendeeCode"
                     >
@@ -133,7 +137,7 @@
 
 <script lang="ts">
 import { isValidTestCode } from "@/assets/config";
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Watch } from "vue-property-decorator";
 import Scanner from "../components/Scanner.vue";
 import {
   getPcrPool,
@@ -149,7 +153,9 @@ export default class PcrTestView extends Vue {
   private pcrPoolId: string = "";
   private pcrTest: PcrTest | null = null;
   private successMessage: string = "";
+  private showSuccessMessage: boolean = false;
   private networkError: string = "";
+  private showNetworkError: boolean = false;
   private trashIndex = "";
   $refs!: {
     attendeeListRef: HTMLDivElement;
@@ -170,12 +176,17 @@ export default class PcrTestView extends Vue {
     return false;
   }
 
-  protected get showNetworkError(): boolean {
-    return (
+  @Watch("networkError")
+  protected networkErrorChanged(): void {
+    this.showNetworkError =
       this.isValidPoolId(this.pcrPoolId) &&
       this.isInDateRange &&
-      this.networkError.length > 0
-    );
+      this.networkError.length > 0;
+  }
+
+  @Watch("successMessage")
+  protected successMessageChanged() {
+    this.showSuccessMessage = this.successMessage.length > 0;
   }
 
   protected async addAttendeeToPcrPool(attendeeCode: string): Promise<void> {
@@ -204,19 +215,20 @@ export default class PcrTestView extends Vue {
   protected async removeAttendeeFromPcrPool(
     attendeeCode: string
   ): Promise<void> {
-    await removeAttendeeFromPool(this.pcrPoolId, attendeeCode).catch(
-      (reason) => {
-        this.networkError = JSON.stringify(reason);
-      }
-    );
+    try {
+      await removeAttendeeFromPool(this.pcrPoolId, attendeeCode);
+      const deletedAttendees = this.attendees.splice(
+        this.attendees.findIndex((v) => v.attendeeCode === attendeeCode),
+        1
+      );
+      this.successMessage = `${deletedAttendees[0].attendeeFirstName} ${deletedAttendees[0].attendeeLastName} wurde erfolgreich vom Pool '${this.pcrPoolId}' entfernt.`;
 
-    const deletedAttendees = this.attendees.splice(
-      this.attendees.findIndex((v) => v.attendeeCode === attendeeCode),
-      1
-    );
-    this.successMessage = `${deletedAttendees[0].attendeeFirstName} ${deletedAttendees[0].attendeeLastName} wurde erfolgreich vom Pool '${this.pcrPoolId}' entfernt.`;
-
-    await this.refetchData();
+      await this.refetchData();
+    } catch (e) {
+      const error: Response = e as unknown as Response;
+      const urlObj = new URL(error.url);
+      this.networkError = `URL: ${urlObj.pathname}, Status: ${error.status}, Reason: ${error.type}`;
+    }
   }
 
   public async created(): Promise<void> {

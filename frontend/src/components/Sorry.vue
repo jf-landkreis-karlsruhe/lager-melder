@@ -4,7 +4,7 @@
       <h1 class="sorry-title">
         {{ title }}
       </h1>
-      <img :src="imageUrl" width="40%" height="auto" class="mb-4" />
+      <img :src="imageUrl" width="30%" height="auto" class="mb-4" />
       <p v-if="description" class="desc" v-html="description"></p>
       <v-row justify="center">
         <div class="back-button">
