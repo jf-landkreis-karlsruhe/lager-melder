@@ -3,6 +3,7 @@ package de.kordondev.attendee.core.persistence.entry
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.NewAttendee
 import org.hibernate.Hibernate
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -106,7 +107,9 @@ data class AttendeeEntry(
         return id != null && id == other.id
     }
 
-    override fun hashCode(): Int = javaClass.hashCode()
+    override fun hashCode(): Int {
+        return Objects.hash(firstName, lastName, code)
+    }
 }
 
 

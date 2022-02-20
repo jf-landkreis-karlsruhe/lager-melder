@@ -2,6 +2,7 @@ package de.kordondev.attendee.core.persistence.entry
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.Hibernate
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -44,6 +45,8 @@ data class PCRTestEntry(
         return id != null && id == other.id
     }
 
-    override fun hashCode(): Int = javaClass.hashCode()
+    override fun hashCode(): Int {
+        return Objects.hash(this.code)
+    }
 
 }
