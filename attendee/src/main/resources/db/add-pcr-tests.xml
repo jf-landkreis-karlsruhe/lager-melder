@@ -9,7 +9,7 @@
     <changeSet id="202202193" author="kordon">
         <createTable tableName="pcr_test_series">
             <column name="id" type="bigint">
-                <constraints primaryKey="true" nullable="false" />
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="end" type="datetime(6)">
                 <constraints nullable="false"/>
@@ -21,18 +21,15 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addAutoIncrement tableName="pcr_test_series" columnName="id" columnDataType="bigint" startWith="10" incrementBy="1"/>
-
-        <createIndex indexName="unique_pcr_test_series_name" tableName="pcr_test_series" >
-            <column name="name" />
-        </createIndex>
+        <addAutoIncrement tableName="pcr_test_series" columnName="id" columnDataType="bigint" startWith="10"
+                          incrementBy="1"/>
     </changeSet>
 
 
     <changeSet id="202202194" author="kordon">
         <createTable tableName="pcr_tests">
             <column name="id" type="bigint">
-                <constraints primaryKey="true" nullable="false" />
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="code" type="varchar(255)">
                 <constraints nullable="false"/>
@@ -46,18 +43,22 @@
         </createTable>
         <addAutoIncrement tableName="pcr_tests" columnName="id" columnDataType="bigint" startWith="10" incrementBy="1"/>
 
-        <addForeignKeyConstraint baseTableName="pcr_tests" baseColumnNames="pcr_test_series_id" constraintName="pcr_tests_pcr_test_series_constraint"
+        <addForeignKeyConstraint baseTableName="pcr_tests" baseColumnNames="pcr_test_series_id"
+                                 constraintName="pcr_tests_pcr_test_series_constraint"
                                  referencedTableName="pcr_test_series" referencedColumnNames="id"/>
-        <createIndex indexName="unique_pcr_tests_code_pcr_test_series_id" tableName="pcr_tests" >
-            <column name="code" />
-            <column name="pcr_test_series_id" />
+        <createIndex indexName="unique_pcr_tests_code_pcr_test_series_id" tableName="pcr_tests" unique="true">
+            <column name="code"/>
+            <column name="pcr_test_series_id"/>
+        </createIndex>
+        <createIndex indexName="unique_pcr_tests_code" tableName="pcr_tests" unique="true">
+            <column name="code"/>
         </createIndex>
     </changeSet>
 
     <changeSet id="202202195" author="kordon">
         <createTable tableName="attendee_pcr_test">
             <column name="attendee_id" type="bigint">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="pcr_test_id" type="bigint">
                 <constraints nullable="false"/>
@@ -67,10 +68,12 @@
         <addPrimaryKey
                 tableName="attendee_pcr_test"
                 constraintName="primary_attendee_pcr_test"
-                columnNames="attendee_id, pcr_test_id" />
-        <addForeignKeyConstraint baseTableName="attendee_pcr_test" baseColumnNames="attendee_id" constraintName="attendee_pcr_test_attendee_id_constraint"
+                columnNames="attendee_id, pcr_test_id"/>
+        <addForeignKeyConstraint baseTableName="attendee_pcr_test" baseColumnNames="attendee_id"
+                                 constraintName="attendee_pcr_test_attendee_id_constraint"
                                  referencedTableName="attendees" referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="attendee_pcr_test" baseColumnNames="pcr_test_id" constraintName="attendee_pcr_test_pcr_test_id_constraint"
+        <addForeignKeyConstraint baseTableName="attendee_pcr_test" baseColumnNames="pcr_test_id"
+                                 constraintName="attendee_pcr_test_pcr_test_id_constraint"
                                  referencedTableName="pcr_tests" referencedColumnNames="id"/>
     </changeSet>
 

@@ -1,9 +1,9 @@
 package de.kordondev.attendee
 
 import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
-import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
+import de.kordondev.attendee.core.persistence.entry.Roles
+import de.kordondev.attendee.core.persistence.entry.UserEntry
 import de.kordondev.attendee.core.persistence.repository.DepartmentRepository
-import de.kordondev.attendee.core.persistence.repository.EventRepository
 import de.kordondev.attendee.core.persistence.repository.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -21,19 +21,39 @@ class AttendeeApplication {
 
     @Bean
     fun init(
-        attendeeRepository: AttendeeRepository,
         departmentRepository: DepartmentRepository,
         userRepository: UserRepository,
-        eventRepository: EventRepository,
         @Value("\${application.admin.password}") adminPassword: String
     ) = ApplicationRunner {
         logger.info("Initializing database")
+        val adminUsername = "admin"
+        userRepository.findOneByUserName(adminUsername)
+            ?: createAdmin(departmentRepository, userRepository, adminUsername, adminPassword)
+    }
+
+    fun createAdmin(
+        departmentRepository: DepartmentRepository,
+        userRepository: UserRepository,
+        adminUsername: String,
+        adminPassword: String
+    ) {
         val adminDepartment = DepartmentEntry(
-            name = "Admin",
+            name = "admin",
             leaderName = "KordonDev",
             leaderEMail = "KordonDev@mail.ka"
         )
         departmentRepository.save(adminDepartment)
+
+        userRepository.saveAll(
+            listOf(
+                UserEntry(
+                    role = Roles.ADMIN,
+                    userName = adminUsername,
+                    passWord = BCryptPasswordEncoder().encode(adminPassword),
+                    department = adminDepartment
+                )
+            )
+        )
     }
 
 
