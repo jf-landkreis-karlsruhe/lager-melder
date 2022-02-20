@@ -6,7 +6,9 @@
         <v-col align="center" class="my-8">
           <div class="explanation-image">
             <img
-              src="https://www.swr.de/swraktuell/baden-wuerttemberg/1635481852699,pcr-test-symbolbild-100~_v-16x9@2dL_-6c42aff4e68b43c7868c3240d3ebfa29867457da.jpg"
+              src="https://images.unsplash.com/photo-1582719366950-f23838e207e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+              alt="PCR Test Sammelröhrchen"
+              title="PCR Test Sammelröhrchen"
               width="45%"
               height="auto"
             />
