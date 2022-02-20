@@ -4,7 +4,7 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/attendee
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/lager_melder
     username: user
     password: pass
   liquibase:
