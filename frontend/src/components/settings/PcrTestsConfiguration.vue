@@ -6,14 +6,16 @@
       <v-text-field
         v-model="newPcrTestName"
         label="Titel der PCR Test Serie"
+        :rules="nameRules"
         required
       />
       <v-text-field
         v-model="newPcrTestCodes"
+        :rules="testCodeRules"
         label="PCR Test Serie Testcodes als Kommaseparierte Liste"
         required
       />
-      <v-row justify="center" align="center" class="d-flex flex-wrap">
+      <v-row justify="center" align="center" class="d-flex flex-wrap mt-2">
         <v-col>
           <DateAndTime
             :date="newStartDate"
@@ -131,6 +133,7 @@ import {
 } from "../../services/pcrTestSeries";
 import DateAndTime from "../DateAndTime.vue";
 import { dateLocalized } from "../../helper/displayDate";
+import { isValidTestCode } from "@/assets/config";
 
 const getTodayIsoString = (): string => {
   return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -162,6 +165,25 @@ export default class PcrTestsConfiguration extends Vue {
 
   private get newPcrTestCodesArray(): string[] {
     return this.newPcrTestCodes.replaceAll(" ", "").split(",");
+  }
+
+  private get nameRules() {
+    const nameValid = (v: string) =>
+      isValidTestCode(v) || "Code-Länge ist nicht valide.";
+    return [nameValid];
+  }
+
+  private get testCodeRules() {
+    const codesValid = (codes: string) => {
+      // v is e.g. 'pcrtest1, pcrtest2,pcrtest5'
+      const codesArray = codes.split(",").map((code) => code.trim());
+      const allCodesValid = codesArray.every((code) => isValidTestCode(code));
+      return (
+        allCodesValid || "Mindestens ein Testcode hat eine invalide Länge."
+      );
+    };
+
+    return [codesValid];
   }
 
   private dateAndTimeAsIsoString(date: string, time: string): string {
