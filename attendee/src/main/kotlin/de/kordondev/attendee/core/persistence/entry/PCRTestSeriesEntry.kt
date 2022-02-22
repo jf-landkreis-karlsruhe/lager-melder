@@ -22,6 +22,9 @@ data class PCRTestSeriesEntry(
     @Column(name = "end")
     var end: ZonedDateTime,
 
+    @Column(name = "trashed")
+    var trashed: Boolean,
+
     @OneToMany(
         fetch = FetchType.LAZY,
         mappedBy = "pcrTestSeries",

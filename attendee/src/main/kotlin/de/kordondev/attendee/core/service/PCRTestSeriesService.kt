@@ -7,7 +7,6 @@ import de.kordondev.attendee.exception.BadRequestException
 import de.kordondev.attendee.exception.NotFoundException
 import de.kordondev.attendee.rest.model.RestPCRTestSeries
 import de.kordondev.attendee.rest.model.request.RestPCRTestSeriesRequest
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
 import javax.transaction.Transactional
@@ -22,17 +21,27 @@ class PCRTestSeriesService(
     fun createPcrTestSeries(pcrTestSeries: RestPCRTestSeriesRequest): RestPCRTestSeries {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         isStartBeforeEnd(pcrTestSeries.start, pcrTestSeries.end)
-        pcrTestService.checkExistenceOfCodes(pcrTestSeries.testCodes)
-        val pcrTestSeriesEntry = pcrTestSeriesRepository.save(RestPCRTestSeriesRequest.toEntry(pcrTestSeries))
-        pcrTestSeriesEntry.tests = pcrTestService.addPcrTestsToSeries(pcrTestSeriesEntry, pcrTestSeries.testCodes)
-        return pcrTestSeriesEntry.let { RestPCRTestSeries.ofEntry(it) }
+
+        return pcrTestSeriesRepository.findByNameAndTrashedIsTrue(pcrTestSeries.name)
+            ?.let { savePcrTestSeries(it.id, RestPCRTestSeries.ofRequest(pcrTestSeries, it.id), true) }
+            ?: run {
+                pcrTestService.checkExistenceOfCodes(pcrTestSeries.testCodes)
+                val pcrTestSeriesEntry = pcrTestSeriesRepository.save(RestPCRTestSeriesRequest.toEntry(pcrTestSeries))
+                pcrTestSeriesEntry.tests =
+                    pcrTestService.addPcrTestsToSeries(pcrTestSeriesEntry, pcrTestSeries.testCodes)
+                return pcrTestSeriesEntry.let { RestPCRTestSeries.ofEntry(it) }
+            }
     }
 
     @Transactional
-    fun savePcrTestSeries(id: Long, pcrTestSeries: RestPCRTestSeries): RestPCRTestSeries {
+    fun savePcrTestSeries(
+        id: Long,
+        pcrTestSeries: RestPCRTestSeries,
+        changeTrashed: Boolean = false
+    ): RestPCRTestSeries {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         isStartBeforeEnd(pcrTestSeries.start, pcrTestSeries.end)
-        return pcrTestSeriesRepository.findByIdOrNull(id)
+        return pcrTestSeriesRepository.findByIdAndTrashedIs(id, changeTrashed)
             ?.let { currentPcrTestSeries ->
                 val currentPcrTestCodes = currentPcrTestSeries.tests.map { it.code }
 
@@ -50,6 +59,7 @@ class PCRTestSeriesService(
                     )
                 )
                 pcrTestService.deleteAll(pcrTestsToDelete)
+                currentPcrTestSeries.trashed = false
                 return pcrTestSeriesRepository.save(currentPcrTestSeries)
                     .let { RestPCRTestSeries.ofEntry(it) }
             }
@@ -57,13 +67,13 @@ class PCRTestSeriesService(
     }
 
     fun getPcrTestSeries(id: Long): RestPCRTestSeries {
-        return pcrTestSeriesRepository.findByIdOrNull(id)
+        return pcrTestSeriesRepository.findByIdAndTrashedIsFalse(id)
             ?.let { RestPCRTestSeries.ofEntry(it) }
             ?: throw NotFoundException("PCRTestSeries does not exist with id $id")
     }
 
     fun getAllPcrTestSeries(): List<RestPCRTestSeries> {
-        return pcrTestSeriesRepository.findAll()
+        return pcrTestSeriesRepository.findAllByTrashedIsFalse()
             .map { RestPCRTestSeries.ofEntry(it) }
     }
 
@@ -71,10 +81,10 @@ class PCRTestSeriesService(
     fun deletePcrTestSeries(id: Long) {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
 
-        pcrTestSeriesRepository.findByIdOrNull(id)
+        pcrTestSeriesRepository.findByIdAndTrashedIsFalse(id)
             ?.let {
                 pcrTestService.deleteAll(it.tests)
-                pcrTestSeriesRepository.delete(it)
+                it.trashed = true
             }
     }
 

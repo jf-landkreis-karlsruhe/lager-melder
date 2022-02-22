@@ -35,7 +35,8 @@ data class RestPCRTestSeriesRequest(
                 name = pcrTestSeries.name,
                 start = pcrTestSeries.start,
                 end = pcrTestSeries.end,
-                tests = mutableSetOf()
+                tests = mutableSetOf(),
+                trashed = false
             )
         }
     }

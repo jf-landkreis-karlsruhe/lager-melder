@@ -1,6 +1,7 @@
 package de.kordondev.attendee.rest.model
 
 import de.kordondev.attendee.core.persistence.entry.PCRTestSeriesEntry
+import de.kordondev.attendee.rest.model.request.RestPCRTestSeriesRequest
 import java.time.ZonedDateTime
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
@@ -29,6 +30,17 @@ data class RestPCRTestSeries(
                 end = pcrTestSeries.end,
                 testCodes = pcrTestSeries.tests.filter { !it.trashed }.map { it.code }
             );
+        }
+
+        fun ofRequest(pcrTestSeries: RestPCRTestSeriesRequest, id: Long): RestPCRTestSeries {
+            return RestPCRTestSeries(
+                id = id,
+                name = pcrTestSeries.name,
+                start = pcrTestSeries.start,
+                end = pcrTestSeries.end,
+                testCodes = pcrTestSeries.testCodes
+            );
+
         }
     }
 }
