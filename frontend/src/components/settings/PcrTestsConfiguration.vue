@@ -9,7 +9,7 @@
         :rules="nameRules"
         required
       />
-      <v-text-field
+      <v-textarea
         v-model="newPcrTestCodes"
         :rules="testCodeRules"
         label="PCR Test Serie Testcodes als Kommaseparierte Liste"
@@ -176,7 +176,7 @@ export default class PcrTestsConfiguration extends Vue {
   private get testCodeRules() {
     const codesValid = (codes: string) => {
       // v is e.g. 'pcrtest1, pcrtest2,pcrtest5'
-      const codesArray = codes.split(",").map((code) => code.trim());
+      const codesArray = codes.split(/[\n,]+/).map((code) => code.trim());
       const allCodesValid = codesArray.every((code) => isValidTestCode(code));
       return (
         allCodesValid || "Mindestens ein Testcode hat eine invalide Länge."
