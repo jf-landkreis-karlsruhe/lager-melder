@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-container class="pcr-tests-root">
-      <h1>Scanne einen Code für einen PCR Test</h1>
       <v-row justify="center">
-        <v-col align="center" class="my-8">
+        <h1>PCR Pool Test starten</h1>
+        <v-col align="center" class="mb-8">
           <div class="explanation-image">
             <img
               src="https://images.unsplash.com/photo-1582719366950-f23838e207e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"

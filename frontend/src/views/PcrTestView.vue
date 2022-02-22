@@ -4,9 +4,10 @@
       <!-- PCR TEST ID DOES NOT EXIST  -->
       <!-- image from: https://pixabay.com/de/illustrations/elefant-karikatur-charakter-zoo-2375697/ -->
       <Sorry
-        v-if="!isValidPoolId(pcrPoolId)"
+        v-if="!loading && !isValidPoolId(pcrPoolId)"
         title="Sorry, die angegebene PCR-Pool-Nummer exisitert nicht."
         image-url="https://cdn.pixabay.com/photo/2017/06/05/23/36/elephant-2375697_1280.png"
+        description="Möglicherweise hat auch der Code nicht die richtige Länge."
         cta-url="/pcr-tests"
         cta-label="Zurück"
       />
@@ -14,7 +15,7 @@
       <!-- PCR TEST IS OUT OF RANGE  -->
       <!-- image from: https://www.maxpixel.net/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860 -->
       <Sorry
-        v-if="isValidPoolId(pcrPoolId) && !isInDateRange"
+        v-if="!loading && isValidPoolId(pcrPoolId) && !isInDateRange"
         title="PCR Test Gültigkeit abgelaufen."
         image-url="https://www.maxpixel.net/static/photo/1x/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860.png"
         description="Das Datum des Tests liegt außerhalb der Gültigkeit.<br />Leider kannst du keine Änderungen mehr vornehmen."
@@ -23,12 +24,10 @@
       />
 
       <!-- PCR TEST ID DOES EXIST  -->
-      <v-row v-if="isValidPoolId(pcrPoolId) && isInDateRange">
+      <v-row v-if="!loading && isValidPoolId(pcrPoolId) && isInDateRange">
         <v-row justify="center">
-          <div class="my-8 d-flex flex-column align-center">
-            <h1>
-              Scanne einen Code um einen Teilnehmer zum PCR Pool hinzuzufügen.
-            </h1>
+          <h1>Teilnehmer zum PCR Pool hinzuzufügen.</h1>
+          <div class="mb-8 d-flex flex-column align-center">
             <img
               src="../assets/Zeltlager-Ausweis-Beispiel.png"
               alt="Beispiel eines Teilnehmer-Ausweises"
@@ -157,6 +156,8 @@ export default class PcrTestView extends Vue {
   private networkError: string = "";
   private showNetworkError: boolean = false;
   private trashIndex = "";
+
+  private loading: boolean = false;
   $refs!: {
     attendeeListRef: HTMLDivElement;
   };
@@ -237,12 +238,15 @@ export default class PcrTestView extends Vue {
   }
 
   private async refetchData(): Promise<PcrTest | null> {
+    this.loading = true;
     const pcrTestData = await getPcrPool(this.pcrPoolId).catch(
       (e: Response) => {
+        this.loading = false;
         const urlObj = new URL(e.url);
         this.networkError = `URL: ${urlObj.pathname}, Status: ${e.status}, Reason: ${e.type}`;
       }
     );
+    this.loading = false;
     if (!pcrTestData) return null;
 
     return pcrTestData;
