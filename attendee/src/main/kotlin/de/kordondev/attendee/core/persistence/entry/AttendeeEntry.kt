@@ -2,10 +2,12 @@ package de.kordondev.attendee.core.persistence.entry
 
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.NewAttendee
+import org.hibernate.Hibernate
+import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "Attendee")
+@Table(name = "attendees")
 data class AttendeeEntry(
 
     @Id
@@ -38,7 +40,7 @@ data class AttendeeEntry(
 
     @ManyToOne
     @JoinColumn(name = "department")
-    val department: DepartmentEntry
+    val department: DepartmentEntry,
 ) {
     companion object {
         fun of(attendee: Attendee): AttendeeEntry {
@@ -52,7 +54,7 @@ data class AttendeeEntry(
                 tShirtSize = attendee.tShirtSize,
                 additionalInformation = attendee.additionalInformation,
                 role = attendee.role,
-                code = attendee.code
+                code = attendee.code,
             )
         }
 
@@ -84,6 +86,29 @@ data class AttendeeEntry(
             )
         }
 
+        override fun equals(other: Any?): Boolean {
+            return super.equals(other)
+        }
+
+        override fun hashCode(): Int {
+            return super.hashCode()
+        }
+
+        override fun toString(): String {
+            return super.toString()
+        }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as AttendeeEntry
+
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return Objects.hash(code)
     }
 }
 

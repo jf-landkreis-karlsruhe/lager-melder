@@ -1,0 +1,12 @@
+{
+  "eslint.codeActionsOnSave.mode": "all",
+  "editor.formatOnSave": true,
+  "[vue]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "octref.vetur",
+  },
+  "[ts]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": null
+  }
+}

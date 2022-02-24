@@ -39,14 +39,14 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         return exceptionToBody(ex, HttpStatus.BAD_REQUEST, ex.key)
     }
 
-    @ExceptionHandler(EndOfRegistrationExceededException::class)
-    fun handleEndOfRegistrationExceededException(ex: EndOfRegistrationExceededException): ResponseEntity<ErrorResponse> {
-        return exceptionToBody(ex, HttpStatus.BAD_REQUEST, ex.key)
-    }
-
     @ExceptionHandler(NotFoundException::class)
     fun handleNotFoundException(ex: NotFoundException): ResponseEntity<ErrorResponse> {
         return exceptionToBody(ex, HttpStatus.NOT_FOUND, ex.key)
+    }
+
+    @ExceptionHandler(WrongTimeException::class)
+    fun handleWrongTimeException(ex: WrongTimeException): ResponseEntity<ErrorResponse> {
+        return exceptionToBody(ex, HttpStatus.BAD_REQUEST, ex.key)
     }
 
     data class ErrorResponse(val key: String, val messages: List<ErrorMessage>)

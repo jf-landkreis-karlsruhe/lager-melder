@@ -1,4 +1,4 @@
-package de.kordondev.attendee.core.persistence
+package de.kordondev.attendee.core.persistence.repository
 
 import de.kordondev.attendee.core.persistence.entry.EventEntry
 import org.springframework.data.repository.CrudRepository

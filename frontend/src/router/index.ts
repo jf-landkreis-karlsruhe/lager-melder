@@ -42,7 +42,17 @@ const routes: Array<RouteConfig> = [
   {
     path: "/events/:eventCode",
     name: "Events",
-    component: () => import("../views/EventView.vue"),
+    component: () => import("../views/EventsView.vue"),
+  },
+  {
+    path: "/pcr-tests",
+    name: "PCR Tests",
+    component: () => import("../views/PcrTestsView.vue"),
+  },
+  {
+    path: "/pcr-tests/:poolId",
+    name: "PCR Test Pool",
+    component: () => import("../views/PcrTestView.vue"),
   },
   {
     path: "/einstellungen",

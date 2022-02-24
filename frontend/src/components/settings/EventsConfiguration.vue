@@ -25,7 +25,10 @@
 
     <h3>Event verwalten</h3>
     <div class="flex-row flex-center">
-      <v-card class="card event-card">
+      <v-card class="card event-card mt-6">
+        <p v-if="!events || events.length === 0" class="mb-0">
+          ℹ️ Keine Events vorhanden.
+        </p>
         <div class="flex-row event" v-for="event in events" :key="event.id">
           <div class="flex-row flex-grow">
             <div v-if="!editingEventIds.includes(event.id)">
@@ -132,7 +135,7 @@ export default class EventsConfiguration extends Vue {
   }
 
   createFormName(event: Event) {
-    return `form-${event.id}`;
+    return `form-event-${event.id}`;
   }
 
   deleteEventInteral(id: string) {
