@@ -32,14 +32,6 @@ export const addAttendeeToPcrPool = (
   testCode: string,
   attendeeCode: string
 ): Promise<PcrAttendee> => {
-  // const attendeeResMock = {
-  //   attendeeCode,
-  //   testCode,
-  //   attendeeFirstName: "dan",
-  //   attendeeLastName: "theman",
-  //   departmentName: "ettlingen",
-  // };
-  // return new Promise((res) => res(attendeeResMock));
   return postData<PcrAttendee>(
     `pcr-tests/by-code/${testCode}/${attendeeCode}`,
     withAuthenticationHeader(),

@@ -32,7 +32,6 @@ import Scanner from "../components/Scanner.vue";
 @Component({ name: "PcrTestsView", components: { Scanner } })
 export default class PcrTestsView extends Vue {
   protected goToPcrTestPool(poolId: string) {
-    // TODO: verify if valid poolId
     if (window) {
       window.location.href = window.location.href + `/${poolId}`;
     }

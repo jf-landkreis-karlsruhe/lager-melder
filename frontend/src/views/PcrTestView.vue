@@ -191,10 +191,6 @@ export default class PcrTestView extends Vue {
   }
 
   protected async addAttendeeToPcrPool(attendeeCode: string): Promise<void> {
-    /// TODO: verify validation of scanned code
-    // if (!isValidTestCode(attendeeCode)) {
-    //   return;
-    // }
     const attendeeRes = await addAttendeeToPcrPool(
       this.pcrPoolId,
       attendeeCode

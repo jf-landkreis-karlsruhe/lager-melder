@@ -50,7 +50,6 @@ class PCRTestService(
             reactivateOrCreatePcrTest(pcrTestSeries, it)
         }
         return pcrTests.toMutableSet()
-        //return pcrTestRepository.saveAll(pcrTests).toMutableSet()
     }
 
     fun reactivateOrCreatePcrTest(pcrTestSeries: PCRTestSeriesEntry, testCode: String): PCRTestEntry {

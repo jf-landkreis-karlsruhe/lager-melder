@@ -108,7 +108,7 @@ data class AttendeeEntry(
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(firstName, lastName, code)
+        return Objects.hash(code)
     }
 }
 
