@@ -2,8 +2,8 @@
   <div>
     <v-container class="pcr-tests-root">
       <v-row justify="center">
-        <h1>PCR Pool Test starten</h1>
         <v-col align="center" class="mb-8">
+          <h1 class="header">PCR Pool Test starten</h1>
           <div class="explanation-image">
             <img
               src="https://images.unsplash.com/photo-1582719366950-f23838e207e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
@@ -41,6 +41,9 @@ export default class PcrTestsView extends Vue {
 
 <style scoped lang="scss">
 .pcr-tests-root {
+  .header {
+    text-align: left;
+  }
   .scanner {
     margin-bottom: 2rem;
   }
