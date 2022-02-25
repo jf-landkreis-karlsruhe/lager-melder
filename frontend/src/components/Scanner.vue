@@ -62,7 +62,7 @@
                   class="manual-code-input mr-3"
                 />
                 <v-btn
-                  :disabled="!manualCodeValid"
+                  :disabled="!manualCode || !manualCodeValid"
                   type="submit"
                   small
                   outlined
@@ -165,7 +165,7 @@ export default class ScannerComponent extends Vue {
     }
     this.code = detectedCode;
 
-    if (this.code !== this.previousCode) {
+    if (this.code && this.code !== this.previousCode) {
       this.previousCode = this.code;
       this.submitCode(this.code);
     }

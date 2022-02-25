@@ -8,7 +8,8 @@ export interface PcrTestSeriesResponse {
   testCodes: string[];
 }
 
-export interface PcrTestSeries extends Omit<PcrTestSeriesResponse, 'start' | 'end'> {
+export interface PcrTestSeries
+  extends Omit<PcrTestSeriesResponse, "start" | "end"> {
   id: string;
   start: Date;
   end: Date;

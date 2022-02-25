@@ -25,9 +25,9 @@
 
       <!-- PCR TEST ID DOES EXIST  -->
       <v-row v-if="!loading && isValidPoolId(pcrPoolId) && isInDateRange">
-        <v-row justify="center">
-          <h1>Teilnehmer zum PCR Pool hinzuzufügen.</h1>
-          <div class="mb-8 d-flex flex-column align-center">
+        <h1 class="header mb-8">Teilnehmer zum PCR Pool hinzuzufügen.</h1>
+        <v-col justify="center" align="center">
+          <div class="mb-8">
             <img
               src="../assets/Zeltlager-Ausweis-Beispiel.png"
               alt="Beispiel eines Teilnehmer-Ausweises"
@@ -44,91 +44,59 @@
             manualCodeHint="Mindestens Y Zeichen"
             @submitCode="addAttendeeToPcrPool"
           />
-        </v-row>
 
-        <!-- SUCCESS MESSAGE -->
-        <transition name="slide-fade" mode="out-in">
-          <v-alert
-            transition="slide-y-reverse-transition"
-            class="attandee-code-success"
-            :key="successMessage"
-            v-if="showSuccessMessage"
-            v-model="showSuccessMessage"
-            type="success"
-            dismissible
-          >
-            {{ successMessage }}
-          </v-alert>
-        </transition>
+          <v-row ref="attendeeListRef">
+            <v-row justify="center" v-if="attendees.length > 0">
+              <v-list subheader two-line class="attendee-list">
+                <v-subheader inset>Teilnehmer</v-subheader>
 
-        <v-row ref="attendeeListRef">
-          <v-row justify="center" v-if="attendees.length > 0">
-            <v-list subheader two-line class="attendee-list">
-              <v-subheader inset>Teilnehmer</v-subheader>
+                <v-list-item
+                  v-for="attendee in attendees"
+                  :key="attendee.attendeeCode"
+                >
+                  <v-list-item-avatar>
+                    <v-icon class="grey lighten-1" dark> mdi-account </v-icon>
+                  </v-list-item-avatar>
 
-              <v-list-item
-                v-for="attendee in attendees"
-                :key="attendee.attendeeCode"
-              >
-                <v-list-item-avatar>
-                  <v-icon class="grey lighten-1" dark> mdi-account </v-icon>
-                </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      v-text="
+                        `${attendee.attendeeFirstName} ${attendee.attendeeLastName}`
+                      "
+                    ></v-list-item-title>
 
-                <v-list-item-content>
-                  <v-list-item-title
-                    v-text="
-                      `${attendee.attendeeFirstName} ${attendee.attendeeLastName}`
-                    "
-                  ></v-list-item-title>
+                    <v-list-item-subtitle
+                      v-text="attendee.departmentName"
+                    ></v-list-item-subtitle>
+                  </v-list-item-content>
 
-                  <v-list-item-subtitle
-                    v-text="attendee.departmentName"
-                  ></v-list-item-subtitle>
-                </v-list-item-content>
-
-                <v-list-item-action>
-                  <v-btn
-                    icon
-                    v-if="isInDateRange"
-                    @click="removeAttendeeFromPcrPool(attendee.attendeeCode)"
-                  >
-                    <v-icon
-                      color="grey lighten-1"
-                      @mouseover="trashIndex = attendee.attendeeCode"
-                      v-show="trashIndex !== attendee.attendeeCode"
+                  <v-list-item-action>
+                    <v-btn
+                      icon
+                      v-if="isInDateRange"
+                      @click="removeAttendeeFromPcrPool(attendee.attendeeCode)"
                     >
-                      mdi-delete
-                    </v-icon>
-                    <v-icon
-                      color="grey lighten-1"
-                      @mouseleave="trashIndex = ''"
-                      v-show="trashIndex === attendee.attendeeCode"
-                    >
-                      mdi-delete-empty
-                    </v-icon>
-                  </v-btn>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list>
+                      <v-icon
+                        color="grey lighten-1"
+                        @mouseover="trashIndex = attendee.attendeeCode"
+                        v-show="trashIndex !== attendee.attendeeCode"
+                      >
+                        mdi-delete
+                      </v-icon>
+                      <v-icon
+                        color="grey lighten-1"
+                        @mouseleave="trashIndex = ''"
+                        v-show="trashIndex === attendee.attendeeCode"
+                      >
+                        mdi-delete-empty
+                      </v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+                </v-list-item>
+              </v-list>
+            </v-row>
           </v-row>
-        </v-row>
-      </v-row>
-
-      <!-- NETWORK ERROR -->
-      <v-row justify="center">
-        <transition name="slide-fade" mode="out-in">
-          <v-alert
-            transition="slide-y-reverse-transition"
-            class="attandee-code-error"
-            :key="networkError"
-            v-if="showNetworkError"
-            v-model="showNetworkError"
-            type="error"
-            dismissible
-          >
-            {{ networkError }}
-          </v-alert>
-        </transition>
+        </v-col>
       </v-row>
     </v-container>
   </div>
@@ -136,7 +104,7 @@
 
 <script lang="ts">
 import { isValidTestCode } from "@/assets/config";
-import { Vue, Component, Watch } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 import Scanner from "../components/Scanner.vue";
 import {
   getPcrPool,
@@ -151,10 +119,6 @@ import Sorry from "../components/Sorry.vue";
 export default class PcrTestView extends Vue {
   private pcrPoolId: string = "";
   private pcrTest: PcrTest | null = null;
-  private successMessage: string = "";
-  private showSuccessMessage: boolean = false;
-  private networkError: string = "";
-  private showNetworkError: boolean = false;
   private trashIndex = "";
 
   private loading: boolean = false;
@@ -177,29 +141,28 @@ export default class PcrTestView extends Vue {
     return false;
   }
 
-  @Watch("networkError")
-  protected networkErrorChanged(): void {
-    this.showNetworkError =
-      this.isValidPoolId(this.pcrPoolId) &&
-      this.isInDateRange &&
-      this.networkError.length > 0;
-  }
-
-  @Watch("successMessage")
-  protected successMessageChanged() {
-    this.showSuccessMessage = this.successMessage.length > 0;
+  private isAttendeeCodeInList(attendeeCode: string): boolean {
+    return (
+      this.pcrTest?.testedAttendees
+        .map((att) => att.attendeeCode)
+        .includes(attendeeCode) ?? false
+    );
   }
 
   protected async addAttendeeToPcrPool(attendeeCode: string): Promise<void> {
+    if (this.isAttendeeCodeInList(attendeeCode)) {
+      return;
+    }
+
     const attendeeRes = await addAttendeeToPcrPool(
       this.pcrPoolId,
       attendeeCode
-    ).catch((reason) => {
-      this.networkError = JSON.stringify(reason);
-    });
+    );
 
     if (attendeeRes) {
-      this.successMessage = `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`;
+      this.$toast.success(
+        `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`
+      );
       this.attendees.push(attendeeRes);
       // scroll to new element
       this.$vuetify.goTo(this.$refs.attendeeListRef, {
@@ -212,19 +175,18 @@ export default class PcrTestView extends Vue {
   protected async removeAttendeeFromPcrPool(
     attendeeCode: string
   ): Promise<void> {
-    try {
-      await removeAttendeeFromPool(this.pcrPoolId, attendeeCode);
+    const res = await removeAttendeeFromPool(this.pcrPoolId, attendeeCode);
+
+    if (res?.ok) {
       const deletedAttendees = this.attendees.splice(
         this.attendees.findIndex((v) => v.attendeeCode === attendeeCode),
         1
       );
-      this.successMessage = `${deletedAttendees[0].attendeeFirstName} ${deletedAttendees[0].attendeeLastName} wurde erfolgreich vom Pool '${this.pcrPoolId}' entfernt.`;
+      this.$toast.info(
+        `${deletedAttendees[0].attendeeFirstName} ${deletedAttendees[0].attendeeLastName} wurde entfernt.`
+      );
 
       await this.refetchData();
-    } catch (e) {
-      const error: Response = e as unknown as Response;
-      const urlObj = new URL(error.url);
-      this.networkError = `URL: ${urlObj.pathname}, Status: ${error.status}, Reason: ${error.type}`;
     }
   }
 
@@ -235,13 +197,7 @@ export default class PcrTestView extends Vue {
 
   private async refetchData(): Promise<PcrTest | null> {
     this.loading = true;
-    const pcrTestData = await getPcrPool(this.pcrPoolId).catch(
-      (e: Response) => {
-        this.loading = false;
-        const urlObj = new URL(e.url);
-        this.networkError = `URL: ${urlObj.pathname}, Status: ${e.status}, Reason: ${e.type}`;
-      }
-    );
+    const pcrTestData = await getPcrPool(this.pcrPoolId);
     this.loading = false;
     if (!pcrTestData) return null;
 
@@ -259,17 +215,12 @@ export default class PcrTestView extends Vue {
   position: relative;
   margin-bottom: 5rem;
 
-  .scanner {
-    margin-bottom: 2rem;
+  .header {
+    text-align: left;
   }
 
-  .attandee-code-success,
-  .attandee-code-error {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    max-width: 100%;
-    z-index: 99;
+  .scanner {
+    margin-bottom: 2rem;
   }
 
   .attendee-list {
