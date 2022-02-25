@@ -1,3 +1,3 @@
-id;start;end;name
-1;2022-02-04 22:51:00.384;2022-02-05 22:51:00.384;Vor dem Zeltlager
-2;2022-02-15 22:51:00.384;2022-07-05 22:51:00.384;Während dem Zeltlager
+id;start;end;name;trashed
+1;2022-02-04 22:51:00.384;2022-02-05 22:51:00.384;Vor dem Zeltlager;false
+2;2022-02-15 22:51:00.384;2022-07-05 22:51:00.384;Während dem Zeltlager;false

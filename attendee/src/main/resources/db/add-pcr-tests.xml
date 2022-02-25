@@ -20,6 +20,9 @@
             <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="trashed" type="bit(1)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <addAutoIncrement tableName="pcr_test_series" columnName="id" columnDataType="bigint" startWith="10"
                           incrementBy="1"/>
