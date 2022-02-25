@@ -1,9 +1,9 @@
 package de.kordondev.attendee
 
-import de.kordondev.attendee.core.persistence.entry.*
-import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
+import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
+import de.kordondev.attendee.core.persistence.entry.Roles
+import de.kordondev.attendee.core.persistence.entry.UserEntry
 import de.kordondev.attendee.core.persistence.repository.DepartmentRepository
-import de.kordondev.attendee.core.persistence.repository.EventRepository
 import de.kordondev.attendee.core.persistence.repository.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -21,64 +21,39 @@ class AttendeeApplication {
 
     @Bean
     fun init(
-        attendeeRepository: AttendeeRepository,
         departmentRepository: DepartmentRepository,
         userRepository: UserRepository,
-        eventRepository: EventRepository,
         @Value("\${application.admin.password}") adminPassword: String
     ) = ApplicationRunner {
         logger.info("Initializing database")
-        val departments = departmentRepository.findAll().toList()
+        val adminUsername = "admin"
+        userRepository.findOneByUserName(adminUsername)
+            ?: createAdmin(departmentRepository, userRepository, adminUsername, adminPassword)
+    }
 
-        if (departments.isEmpty()) {
+    fun createAdmin(
+        departmentRepository: DepartmentRepository,
+        userRepository: UserRepository,
+        adminUsername: String,
+        adminPassword: String
+    ) {
+        val adminDepartment = DepartmentEntry(
+            name = "admin",
+            leaderName = "KordonDev",
+            leaderEMail = "KordonDev@mail.ka"
+        )
+        departmentRepository.save(adminDepartment)
 
-            val adminDepartment = DepartmentEntry(
-                name = "Admin",
-                leaderName = "KordonDev",
-                leaderEMail = "KordonDev@mail.ka"
-            )
-            departmentRepository.save(adminDepartment)
-
-            userRepository.saveAll(
-                listOf(
-                    UserEntry(
-                        role = Roles.ADMIN,
-                        userName = "admin",
-                        passWord = BCryptPasswordEncoder().encode(adminPassword),
-                        department = adminDepartment
-                    )
+        userRepository.saveAll(
+            listOf(
+                UserEntry(
+                    role = Roles.ADMIN,
+                    userName = adminUsername,
+                    passWord = BCryptPasswordEncoder().encode(adminPassword),
+                    department = adminDepartment
                 )
             )
-
-            eventRepository.save(EventEntry(name = "Test event 001", code = "event001", trashed = false))
-            eventRepository.save(EventEntry(name = "Test event 002", code = "event002", trashed = false))
-            attendeeRepository.saveAll(
-                listOf(
-                    AttendeeEntry(
-                        firstName = "first1",
-                        lastName = "last1",
-                        birthday = "20-09-2005",
-                        food = Food.MEAT,
-                        tShirtSize = TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
-                        additionalInformation = "",
-                        role = AttendeeRole.YOUTH,
-                        department = adminDepartment,
-                        code = "att-0001",
-                    ),
-                    AttendeeEntry(
-                        firstName = "first2",
-                        lastName = "last2",
-                        birthday = "20-09-2006",
-                        food = Food.VEGAN,
-                        tShirtSize = TShirtSize.M,
-                        additionalInformation = "m",
-                        role = AttendeeRole.YOUTH_LEADER,
-                        department = adminDepartment,
-                        code = "att-0002",
-                    )
-                )
-            )
-        }
+        )
     }
 
 

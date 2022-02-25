@@ -1,0 +1,4 @@
+id;role;username;password;department_id
+1;ADMIN;karlsbad;$2a$12$8p7JLOCCP/GnpiN5PZjq7uYLVMGtK/S6tjmEswXeOmwCUxGp2Llxu;1
+2;USER;ettlingen;$2a$12$QESPBEuOsr/23l.k8nTI3udqewXv2EJ/MdEV79Db5orD8ZHvRWGoW;2
+3;SPECIALIZED_FIELD_DIRECTOR;lkkarlsruhe;$2a$12$To7fwD7B25FqsElpuB1dsOzLMvmZsKvYjn5z8tl0drJCBmfx/osxK;3

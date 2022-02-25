@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle"/>
+    <changeSet id="202202180" author="kordon">
+        <createTable tableName="attendees">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="additional_information" type="varchar(255)"/>
+            <column name="birthday" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="food" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="t_shirt_size" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="department_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addAutoIncrement tableName="attendees" columnName="id" columnDataType="bigint" startWith="10" incrementBy="1"/>
+        <createIndex indexName="unique_attendees_department_id_first_last_name" tableName="attendees" unique="true">
+            <column name="first_name"/>
+            <column name="last_name"/>
+            <column name="department_id"/>
+        </createIndex>
+        <createIndex indexName="unique_attendees_code" tableName="attendees" unique="true">
+            <column name="code"/>
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet id="202202181" author="kordon">
+        <createTable tableName="departments">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="leader_email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="leader_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addAutoIncrement tableName="departments" columnName="id" columnDataType="bigint" startWith="10"
+                          incrementBy="1"/>
+
+        <addForeignKeyConstraint baseTableName="attendees" baseColumnNames="department_id"
+                                 constraintName="attendees_department_id_constraint"
+                                 referencedTableName="departments" referencedColumnNames="id"/>
+        <createIndex indexName="unique_departments_name_leader_email" tableName="departments" unique="true">
+            <column name="name"/>
+            <column name="leader_email"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="202202182" author="kordon">
+        <createTable tableName="users">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="department_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addAutoIncrement tableName="users" columnName="id" columnDataType="bigint" startWith="10" incrementBy="1"/>
+        <addForeignKeyConstraint baseTableName="users" baseColumnNames="department_id"
+                                 constraintName="user_department_id_constraint"
+                                 referencedTableName="departments" referencedColumnNames="id"/>
+        <createIndex indexName="unique_users_username" tableName="users" unique="true">
+            <column name="username"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

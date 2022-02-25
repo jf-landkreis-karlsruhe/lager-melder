@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <include file="classpath:db/add-attendees-users-departments.xml"/>
+    <include file="classpath:db/add-settings.xml"/>
+    <include file="classpath:db/add-events.xml"/>
+    <include file="classpath:db/add-pcr-tests.xml"/>
+    <include file="classpath:db/add-mock-data.xml"/>
+
+</databaseChangeLog>

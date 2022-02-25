@@ -5,7 +5,7 @@ import de.kordondev.attendee.core.model.NewEvent
 import javax.persistence.*
 
 @Entity
-@Table
+@Table(name = "events")
 data class EventEntry(
 
     @Id

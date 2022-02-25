@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle"/>
+
+    <changeSet id="202202190" author="kordon">
+        <createTable tableName="settings">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="event_address" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_start" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_end" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="host_city" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="money_per_youth_loader" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_address" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organizer" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="registration_end" type="datetime(6)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addAutoIncrement tableName="settings" columnName="id" columnDataType="bigint" startWith="10" incrementBy="0"/>
+    </changeSet>
+
+</databaseChangeLog>

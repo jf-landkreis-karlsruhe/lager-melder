@@ -44,7 +44,7 @@ export const removeAttendeeFromPool = (
   attendeeCode: string
 ): Promise<Response> => {
   return deleteData(
-    `pcr-tests/${poolCode}/${attendeeCode}`,
+    `pcr-tests/by-code/${poolCode}/${attendeeCode}`,
     withAuthenticationHeader()
   );
 };

@@ -22,8 +22,8 @@ data class PCRTestEntry(
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "attendee_pcr_test",
-        joinColumns = [JoinColumn(name = "attendee_id")],
-        inverseJoinColumns = [JoinColumn(name = "pcr_test_id")]
+        joinColumns = [JoinColumn(name = "pcr_test_id")],
+        inverseJoinColumns = [JoinColumn(name = "attendee_id")]
     )
     var testedAttendees: MutableSet<AttendeeEntry>,
 
