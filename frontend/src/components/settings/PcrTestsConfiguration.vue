@@ -60,14 +60,16 @@
         >
           <div class="flex-row flex-grow mb-4">
             <div v-if="!editingPcrTestIds.includes(pcrTestSeries.id)">
+              <div>
               <span class="mr-4">Name: "{{ pcrTestSeries.name }}"</span>
-              <span class="mr-4"
-                >Testcodes: {{ pcrTestSeries.testCodes.join(", ") }}</span
-              >
               <span class="date-range">
-                Von {{ dateLocalized(pcrTestSeries.start) }} bis
-                {{ dateLocalized(pcrTestSeries.end) }}
+                Von {{ dateLocalized(pcrTestSeries.start) }} Uhr bis
+                {{ dateLocalized(pcrTestSeries.end) }} Uhr
               </span>
+              </div>
+              <div>
+                Testcodes: {{ pcrTestSeries.testCodes.join(", ") }}
+              </div>
             </div>
             <div v-if="editingPcrTestIds.includes(pcrTestSeries.id)">
               <v-text-field
@@ -77,6 +79,33 @@
                 required
                 :form="createFormName(pcrTestSeries)"
               />
+              <v-textarea
+                v-model="pcrTestSeries.testCodes"
+                :rules="testCodeRules"
+                label="PCR Test Serie Testcodes als Kommaseparierte Liste"
+                required
+              />
+              <v-row justify="center" align="center" class="d-flex flex-wrap mt-2">
+                <v-col>
+                  <DateAndTime
+                    :date="pcrTestSeries.start"
+                    @dateChanged="pcrTestSeries.start = $event"
+                    label="Startdatum"
+                    :time="pcrTestSeries.start"
+                    @timeChanged="pcrTestSeries.start = $event"
+                  />
+                </v-col>
+                <v-col>
+                  <DateAndTime
+                    :date="pcrTestSeries.end"
+                    @dateChanged="pcrTestSeries.end = $event"
+                    label="Enddatum"
+                    :time="pcrTestSeries.end"
+                    @timeChanged="pcrTestSeries.end = $event"
+                  />
+                </v-col>
+              </v-row>
+              <hr>
             </div>
           </div>
 
@@ -132,8 +161,9 @@ import {
   PcrTestSeries,
 } from "../../services/pcrTestSeries";
 import DateAndTime from "../DateAndTime.vue";
-import { dateLocalized } from "../../helper/displayDate";
+import { dateTimeLocalized } from "../../helper/displayDate";
 import { isValidTestCode } from "@/assets/config";
+import {dateAndTimeAsIsoString} from "../../helper/date";
 
 const getTodayIsoString = (): string => {
   return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -186,19 +216,13 @@ export default class PcrTestsConfiguration extends Vue {
     return [codesValid];
   }
 
-  private dateAndTimeAsIsoString(date: string, time: string): string {
-    const d = new Date(date);
-    const [startHours, startMinutes] = time.split(":");
-    d.setHours(Number(startHours), Number(startMinutes)); // startTime is e.g. 12:00
-    return d.toISOString();
-  }
 
   async createPcrTestSeriesInternal() {
     this.loadingPcrTestId = "0";
     await createPcrPoolSeries({
       name: this.newPcrTestName,
-      start: this.dateAndTimeAsIsoString(this.newStartDate, this.newStartTime),
-      end: this.dateAndTimeAsIsoString(this.newEndDate, this.newEndTime),
+      start: dateAndTimeAsIsoString(this.newStartDate, this.newStartTime),
+      end: dateAndTimeAsIsoString(this.newEndDate, this.newEndTime),
       testCodes: this.newPcrTestCodesArray,
     });
     this.setToDefaultFormValues();
@@ -236,7 +260,7 @@ export default class PcrTestsConfiguration extends Vue {
   }
 
   private dateLocalized(date: Date) {
-    return dateLocalized(date);
+    return dateTimeLocalized(date);
   }
 }
 </script>
