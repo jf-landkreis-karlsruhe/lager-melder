@@ -35,6 +35,8 @@ class SpringSecurityConfig(
             .antMatchers("/pcr-test-series/**").authenticated()
             .antMatchers("/pcr-tests/**").authenticated()
             .antMatchers("/register").authenticated()
+            .antMatchers("/actuator/health").permitAll()
+            .antMatchers("/actuator/health/**").authenticated()
             .antMatchers(("/login")).permitAll()
             .and()
             .addFilter(JWTAuthenticationFilter(authenticationManager(), userRepository))

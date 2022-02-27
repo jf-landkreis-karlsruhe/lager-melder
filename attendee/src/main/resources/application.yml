@@ -19,6 +19,10 @@ spring:
     username: u
     password: p
 
+management:
+  health:
+    mail:
+      enabled: false
 server:
   error:
     include-message: always
