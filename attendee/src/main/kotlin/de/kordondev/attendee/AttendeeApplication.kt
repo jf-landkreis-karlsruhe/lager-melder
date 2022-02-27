@@ -23,19 +23,19 @@ class AttendeeApplication {
     fun init(
         departmentRepository: DepartmentRepository,
         userRepository: UserRepository,
-        @Value("\${application.admin.password}") adminPassword: String
+        @Value("\${application.admin.passwordHash}") adminHash: String
     ) = ApplicationRunner {
         logger.info("Initializing database")
         val adminUsername = "admin"
         userRepository.findOneByUserName(adminUsername)
-            ?: createAdmin(departmentRepository, userRepository, adminUsername, adminPassword)
+            ?: createAdmin(departmentRepository, userRepository, adminUsername, adminHash)
     }
 
     fun createAdmin(
         departmentRepository: DepartmentRepository,
         userRepository: UserRepository,
         adminUsername: String,
-        adminPassword: String
+        adminHash: String
     ) {
         val adminDepartment = DepartmentEntry(
             name = "admin",
@@ -49,7 +49,7 @@ class AttendeeApplication {
                 UserEntry(
                     role = Roles.ADMIN,
                     userName = adminUsername,
-                    passWord = BCryptPasswordEncoder().encode(adminPassword),
+                    passWord = adminHash,
                     department = adminDepartment
                 )
             )

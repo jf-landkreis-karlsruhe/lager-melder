@@ -32,5 +32,5 @@ application:
   mail:
     send: false
   admin:
-    password: password
+    passwordHash: $2a$12$3B.Ct9RY4FxjO/qrHZGe4uHN1IsGnh.cezLNcbE8/K0eXDHoGK59q
   corsOrigins: http://localhost:9000, http://lagermelder.kordondev.de
