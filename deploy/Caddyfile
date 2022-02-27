@@ -1,0 +1,9 @@
+lager-melder.localhost {
+    handle /actuator* {
+        reverse_proxy localhost:8080
+    }
+    handle {
+        reverse_proxy localhost:9000
+    }
+}
+
