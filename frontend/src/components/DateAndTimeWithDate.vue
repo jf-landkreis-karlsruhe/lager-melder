@@ -1,25 +1,27 @@
 <template>
   <DateAndTime
+    :showTime="showTime"
+    :label="label"
+    :hint="hint"
     :date="dateOnly"
     @dateChanged="dateChangedInteral"
-    label="Enddatum"
     :time="timeOnly"
-    @timeChanged="pcrTestSeries.end = $event"
+    @timeChanged="timeChangedInteral"
   />
 </template>
 
 <script lang="ts">
 import { Vue, Prop, Component, Emit } from "vue-property-decorator";
-import { dateLocalized } from "../helper/displayDate";
 import { dateAndTimeAsIsoString, dateIsoString, timeIsoString } from "../helper/date";
+import DateAndTime from './DateAndTime.vue'
 
 
-@Component({ name: "DateAndTime" })
-export default class DateAndTime extends Vue {
+@Component({ name: "DateAndTimeWithDate", components: { DateAndTime }})
+export default class DateAndTimeWithDate extends Vue {
   private showTime: boolean = false;
 
   @Prop({ required: true })
-  private readonly date!: Date;
+  private readonly dateTime!: Date;
 
   @Prop({ required: false })
   private readonly label: string | undefined;
@@ -28,26 +30,26 @@ export default class DateAndTime extends Vue {
   private readonly hint: string | undefined;
 
   @Emit("changed")
-  protected dateChanged(newDate: Date) {
+  protected changed(newDate: Date) {
     return newDate;
   }
 
   get dateOnly(): string {
-    return dateIsoString(this.date);
+    return dateIsoString(this.dateTime);
   }
 
   get timeOnly(): string {
-    return timeIsoString(this.date);
+    return timeIsoString(this.dateTime);
   }
 
   private dateChangedInteral(newDate: string) {
-    dateAndTimeAsIsoString(newDate, this.timeOnly)
-    this.dateChanged(new Date(newDate))
+    this.changed(new Date(dateAndTimeAsIsoString(newDate, this.timeOnly)))
   }
 
-  private get dateLocalized() {
-    return dateLocalized(this.date);
+  private timeChangedInteral(newTime: string) {
+    this.changed(new Date(dateAndTimeAsIsoString(this.dateOnly, newTime)))
   }
+
 }
 </script>
 

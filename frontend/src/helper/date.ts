@@ -6,26 +6,13 @@ export function dateAndTimeAsIsoString(date: string, time: string): string {
 }
 
 export function dateIsoString(date: Date): string {
-  return new Date(
-    date.getMilliseconds() - new Date().getTimezoneOffset() * 60000
-  )
+  return new Date(date.getTime() - new Date().getTimezoneOffset() * 60000)
     .toISOString()
-    .substr(0, 10)
+    .substring(0, 10)
 }
 
-export function dateFromIsoString(dateTime: string): string {
-  return new Date(
-    new Date(dateTime).getMilliseconds() -
-      new Date().getTimezoneOffset() * 60000
-  )
+export function timeIsoString(date: Date): string {
+  return new Date(date.getTime() - new Date().getTimezoneOffset() * 60000)
     .toISOString()
-    .substr(11, 16)
-}
-
-export function timeFromIsoString(date: Date): string {
-  return new Date(
-    date.getMilliseconds() - new Date().getTimezoneOffset() * 60000
-  )
-    .toISOString()
-    .substr(11, 16)
+    .substring(11, 16)
 }

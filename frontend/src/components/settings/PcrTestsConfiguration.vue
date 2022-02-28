@@ -6,32 +6,26 @@
       <v-text-field
         v-model="newPcrTestName"
         label="Titel der PCR Test Serie"
-        :rules="nameRules"
         required
       />
       <v-textarea
         v-model="newPcrTestCodes"
-        :rules="testCodeRules"
         label="PCR Test Serie Testcodes als Kommaseparierte Liste"
         required
       />
       <v-row justify="center" align="center" class="d-flex flex-wrap mt-2">
         <v-col>
-          <DateAndTime
-            :date="newStartDate"
-            @dateChanged="newStartDate = $event"
+          <DateAndTimeWithDate
+            :dateTime="newStart"
+            @changed="newStart = $event"
             label="Startdatum"
-            :time="newStartTime"
-            @timeChanged="newStartTime = $event"
           />
         </v-col>
         <v-col>
-          <DateAndTime
-            :date="newEndDate"
-            @dateChanged="newEndDate = $event"
+          <DateAndTimeWithDate
+            :dateTime="newEnd"
+            @changed="newEnd = $event"
             label="Enddatum"
-            :time="newEndTime"
-            @timeChanged="newEndTime = $event"
           />
         </v-col>
       </v-row>
@@ -81,27 +75,22 @@
               />
               <v-textarea
                 v-model="pcrTestSeries.testCodes"
-                :rules="testCodeRules"
                 label="PCR Test Serie Testcodes als Kommaseparierte Liste"
                 required
               />
               <v-row justify="center" align="center" class="d-flex flex-wrap mt-2">
                 <v-col>
-                  <DateAndTime
-                    :date="pcrTestSeries.start"
-                    @dateChanged="pcrTestSeries.start = $event"
+                  <DateAndTimeWithDate
+                    :dateTime="pcrTestSeries.start"
+                    @changed="pcrTestSeries.start = $event"
                     label="Startdatum"
-                    :time="pcrTestSeries.start"
-                    @timeChanged="pcrTestSeries.start = $event"
                   />
                 </v-col>
                 <v-col>
-                  <DateAndTime
-                    :date="pcrTestSeries.end"
-                    @dateChanged="pcrTestSeries.end = $event"
+                  <DateAndTimeWithDate
+                    :dateTime="pcrTestSeries.end"
+                    @changed="pcrTestSeries.end = $event"
                     label="Enddatum"
-                    :time="pcrTestSeries.end"
-                    @timeChanged="pcrTestSeries.end = $event"
                   />
                 </v-col>
               </v-row>
@@ -160,25 +149,15 @@ import {
   updatePcrPoolSeries,
   PcrTestSeries,
 } from "../../services/pcrTestSeries";
-import DateAndTime from "../DateAndTime.vue";
+import DateAndTimeWithDate from "../DateAndTimeWithDate.vue";
 import { dateTimeLocalized } from "../../helper/displayDate";
-import { isValidTestCode } from "@/assets/config";
-import {dateAndTimeAsIsoString} from "../../helper/date";
 
-const getTodayIsoString = (): string => {
-  return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-    .toISOString()
-    .substr(0, 10);
-};
-
-@Component({ name: "PcrTestsConfiguration", components: { DateAndTime } })
+@Component({ name: "PcrTestsConfiguration", components: { DateAndTimeWithDate } })
 export default class PcrTestsConfiguration extends Vue {
   private newPcrTestName: string = "";
   private newPcrTestCodes: string = "";
-  private newStartDate: string = getTodayIsoString();
-  private newStartTime: string = "12:00";
-  private newEndDate: string = getTodayIsoString();
-  private newEndTime: string = "18:00";
+  private newStart: Date = new Date();
+  private newEnd: Date = new Date();
 
   private pcrTests: PcrTestSeries[] = [];
   private editingPcrTestIds: string[] = [];
@@ -194,35 +173,15 @@ export default class PcrTestsConfiguration extends Vue {
   }
 
   private get newPcrTestCodesArray(): string[] {
-    return this.newPcrTestCodes.replaceAll(" ", "").split(",");
+    return this.newPcrTestCodes.replaceAll(" ", "").split(/[\n,]+/);
   }
-
-  private get nameRules() {
-    const nameValid = (v: string) =>
-      isValidTestCode(v) || "Code-Länge ist nicht valide.";
-    return [nameValid];
-  }
-
-  private get testCodeRules() {
-    const codesValid = (codes: string) => {
-      // v is e.g. 'pcrtest1, pcrtest2,pcrtest5'
-      const codesArray = codes.split(/[\n,]+/).map((code) => code.trim());
-      const allCodesValid = codesArray.every((code) => isValidTestCode(code));
-      return (
-        allCodesValid || "Mindestens ein Testcode hat eine invalide Länge."
-      );
-    };
-
-    return [codesValid];
-  }
-
 
   async createPcrTestSeriesInternal() {
     this.loadingPcrTestId = "0";
     await createPcrPoolSeries({
       name: this.newPcrTestName,
-      start: dateAndTimeAsIsoString(this.newStartDate, this.newStartTime),
-      end: dateAndTimeAsIsoString(this.newEndDate, this.newEndTime),
+      start: this.newStart,
+      end: this.newEnd,
       testCodes: this.newPcrTestCodesArray,
     });
     this.setToDefaultFormValues();
@@ -233,10 +192,8 @@ export default class PcrTestsConfiguration extends Vue {
 
   protected setToDefaultFormValues() {
     this.newPcrTestName = "";
-    this.newStartTime = "12:00";
-    this.newStartDate = getTodayIsoString();
-    this.newEndDate = getTodayIsoString();
-    this.newEndTime = "18:00";
+    this.newStart = new Date();
+    this.newEnd = new Date();
     this.newPcrTestCodes = "";
     this.loadingPcrTestId = "";
   }
