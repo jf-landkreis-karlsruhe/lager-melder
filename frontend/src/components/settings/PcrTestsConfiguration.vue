@@ -6,12 +6,10 @@
       <v-text-field
         v-model="newPcrTestName"
         label="Titel der PCR Test Serie"
-        :rules="nameRules"
         required
       />
       <v-textarea
         v-model="newPcrTestCodes"
-        :rules="testCodeRules"
         label="PCR Test Serie Testcodes als Kommaseparierte Liste"
         required
       />
@@ -59,7 +57,7 @@
           :key="pcrTestSeries.id"
         >
           <div class="flex-row flex-grow mb-4">
-            <div v-if="!editingPcrTestIds.includes(pcrTestSeries.id)">
+            <div v-if="!isOpenForEditing(pcrTestSeries.id)">
               <span class="mr-4">Name: "{{ pcrTestSeries.name }}"</span>
               <span class="mr-4"
                 >Testcodes: {{ pcrTestSeries.testCodes.join(", ") }}</span
@@ -69,7 +67,7 @@
                 {{ dateLocalized(pcrTestSeries.end) }}
               </span>
             </div>
-            <div v-if="editingPcrTestIds.includes(pcrTestSeries.id)">
+            <div v-if="isOpenForEditing(pcrTestSeries.id)">
               <v-text-field
                 type="text"
                 v-model="pcrTestSeries.name"
@@ -77,21 +75,60 @@
                 required
                 :form="createFormName(pcrTestSeries)"
               />
+              <v-textarea
+                v-model="pcrTestSeries.testCodes"
+                label="PCR Test Serie Testcodes als Kommaseparierte Liste"
+                required
+              />
+              <v-row
+                justify="center"
+                align="center"
+                class="d-flex flex-wrap mt-2"
+              >
+                <v-col>
+                  <DateAndTime
+                    :date="pcrTestSeries.start"
+                    @dateChanged="pcrTestSeries.start = $event"
+                    label="Startdatum"
+                    :time="getTimeFromDate(pcrTestSeries.start)"
+                    @timeChanged="
+                      pcrTestSeries.start = getDateFromDateWithTimeString(
+                        pcrTestSeries.start,
+                        $event
+                      )
+                    "
+                  />
+                </v-col>
+                <v-col>
+                  <DateAndTime
+                    :date="pcrTestSeries.end"
+                    @dateChanged="pcrTestSeries.end = $event"
+                    label="Enddatum"
+                    :time="getTimeFromDate(pcrTestSeries.end)"
+                    @timeChanged="
+                      pcrTestSeries.end = getDateFromDateWithTimeString(
+                        pcrTestSeries.end,
+                        $event
+                      )
+                    "
+                  />
+                </v-col>
+              </v-row>
             </div>
           </div>
 
           <div>
             <div class="flex-row">
-              <div v-if="!editingPcrTestIds.includes(pcrTestSeries.id)">
+              <div v-if="!isOpenForEditing(pcrTestSeries.id)">
                 <v-icon
                   medium
                   class="mr-2"
-                  @click.prevent="addToEditing(pcrTestSeries)"
+                  @click.prevent="addToEditing(pcrTestSeries.id)"
                 >
                   mdi-pencil
                 </v-icon>
               </div>
-              <div v-if="editingPcrTestIds.includes(pcrTestSeries.id)">
+              <div v-if="isOpenForEditing(pcrTestSeries.id)">
                 <v-btn
                   type="sumbit"
                   :loading="loadingPcrTestId === pcrTestSeries.id"
@@ -132,8 +169,11 @@ import {
   PcrTestSeries,
 } from "../../services/pcrTestSeries";
 import DateAndTime from "../DateAndTime.vue";
-import { dateLocalized } from "../../helper/displayDate";
-import { isValidTestCode } from "@/assets/config";
+import {
+  dateLocalized,
+  getTimeFromDate,
+  getDateFromDateWithTimeString,
+} from "../../helper/displayDate";
 
 const getTodayIsoString = (): string => {
   return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -159,31 +199,29 @@ export default class PcrTestsConfiguration extends Vue {
     this.pcrTests = data;
   }
 
-  addToEditing(pcrTestSeries: PcrTestSeries) {
-    this.editingPcrTestIds.push(pcrTestSeries.id);
-  }
-
   private get newPcrTestCodesArray(): string[] {
     return this.newPcrTestCodes.replaceAll(" ", "").split(",");
   }
 
-  private get nameRules() {
-    const nameValid = (v: string) =>
-      isValidTestCode(v) || "Code-Länge ist nicht valide.";
-    return [nameValid];
+  // private get testCodeRules() {
+  //   const codesValid = (codes: string) => {
+  //     // v is e.g. 'pcrtest1, pcrtest2,pcrtest5'
+  //     const codesArray = codes.split(/[\n,]+/).map((code) => code.trim());
+  //     const allCodesValid = codesArray.every((code) => isValidTestCode(code));
+  //     return (
+  //       allCodesValid || "Mindestens ein Testcode hat eine invalide Länge."
+  //     );
+  //   };
+
+  //   return [codesValid];
+  // }
+
+  addToEditing(pcrTestSeriesId: string) {
+    this.editingPcrTestIds.push(pcrTestSeriesId);
   }
 
-  private get testCodeRules() {
-    const codesValid = (codes: string) => {
-      // v is e.g. 'pcrtest1, pcrtest2,pcrtest5'
-      const codesArray = codes.split(/[\n,]+/).map((code) => code.trim());
-      const allCodesValid = codesArray.every((code) => isValidTestCode(code));
-      return (
-        allCodesValid || "Mindestens ein Testcode hat eine invalide Länge."
-      );
-    };
-
-    return [codesValid];
+  private isOpenForEditing(pcrTestSeriesId: string): boolean {
+    return this.editingPcrTestIds.includes(pcrTestSeriesId);
   }
 
   private dateAndTimeAsIsoString(date: string, time: string): string {
@@ -237,6 +275,14 @@ export default class PcrTestsConfiguration extends Vue {
 
   private dateLocalized(date: Date) {
     return dateLocalized(date);
+  }
+
+  private getTimeFromDate(date: Date): string {
+    return getTimeFromDate(date);
+  }
+
+  private getDateFromDateWithTimeString(date: Date, time: string): Date {
+    return getDateFromDateWithTimeString(date, time);
   }
 }
 </script>

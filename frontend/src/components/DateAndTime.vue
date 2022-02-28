@@ -19,7 +19,7 @@
           </v-icon>
         </template>
 
-        <v-card>
+        <v-card class="mb-0">
           <v-card-title class="text-h5 grey lighten-2">
             Uhrzeit am {{ dateLocalized }}
           </v-card-title>
@@ -37,7 +37,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="primary" text @click="showTime = false">
-              Schließen
+              Übernehmen
             </v-btn>
           </v-card-actions>
         </v-card>
