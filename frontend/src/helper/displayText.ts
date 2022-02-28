@@ -2,16 +2,16 @@ import { Food, TShirtSize } from "../services/attendee";
 
 export const tShirtSizeText = (tShirtSize: TShirtSize) => {
   switch (tShirtSize) {
-    case TShirtSize.ONE_HUNDRED_TWENTY_EIGHT:
-      return "128";
-    case TShirtSize.ONE_HUNDRED_FORTY:
-      return "140";
-    case TShirtSize.ONE_HUNDRED_FIFTY_TWO:
-      return "152";
-    case TShirtSize.ONE_HUNDRED_FIFTY_EIGHT:
-      return "158";
-    case TShirtSize.ONE_HUNDRED_SIXTY_FOUR:
+    case TShirtSize.S104110:
+      return "104/110";
+    case TShirtSize.S116128:
+      return "116/128";
+    case TShirtSize.S140152:
+      return "140/152";
+    case TShirtSize.S164:
       return "164";
+    case TShirtSize.S176:
+      return "176";
     case TShirtSize.S:
       return "S";
     case TShirtSize.M:
@@ -22,12 +22,12 @@ export const tShirtSizeText = (tShirtSize: TShirtSize) => {
       return "XL";
     case TShirtSize.XXL:
       return "XXL";
-    case TShirtSize.XXXL:
-      return "XXXL";
-    case TShirtSize.XXXXL:
-      return "XXXXL";
-    case TShirtSize.XXXXXL:
-      return "XXXXXL";
+    case TShirtSize.X3L:
+      return "3XL";
+    case TShirtSize.X4L:
+      return "4XL";
+    case TShirtSize.X5L:
+      return "5XL";
     default:
       return tShirtSize;
   }
