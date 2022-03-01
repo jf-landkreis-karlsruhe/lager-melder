@@ -3,7 +3,7 @@ lager-melder.localhost {
         reverse_proxy localhost:8080
     }
     handle {
-        reverse_proxy localhost:9000
+        reverse_proxy localhost:1080
     }
 }
 

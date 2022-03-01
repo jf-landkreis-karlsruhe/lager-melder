@@ -7,14 +7,17 @@ spring:
     url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/lager_melder
   liquibase:
     change-log: classpath:db/changelog-master.xml
+    contexts: prod
 
   mail:
     port: 25
     debug: false
     from: test@spam.com
-    host: h
-    username: u
-    password: p
+
+management:
+  health:
+    mail:
+      enabled: true
 
 server:
   error:
@@ -22,3 +25,8 @@ server:
     include-binding-errors: always
   servlet:
     context-path: /api
+
+application:
+  mail:
+    send: true
+  corsOrigins: http://localhost:9000
