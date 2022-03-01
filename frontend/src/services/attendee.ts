@@ -46,19 +46,19 @@ export enum Food {
 }
 
 export enum TShirtSize {
-  ONE_HUNDRED_TWENTY_EIGHT = "ONE_HUNDRED_TWENTY_EIGHT",
-  ONE_HUNDRED_FORTY = "ONE_HUNDRED_FORTY",
-  ONE_HUNDRED_FIFTY_TWO = "ONE_HUNDRED_FIFTY_TWO",
-  ONE_HUNDRED_FIFTY_EIGHT = "ONE_HUNDRED_FIFTY_EIGHT",
-  ONE_HUNDRED_SIXTY_FOUR = "ONE_HUNDRED_SIXTY_FOUR",
+  S104110 = "104/110",
+  S116128 = "116/128",
+  S140152 = "140/152",
+  S164 = "164",
+  S176 = "176",
   S = "S",
   M = "M",
   L = "L",
   XL = "XL",
   XXL = "XXL",
-  XXXL = "XXXL",
-  XXXXL = "XXXXL",
-  XXXXXL = "XXXXXL",
+  X3L = "3XL",
+  X4L = "4XL",
+  X5L = "5XL",
 }
 
 export interface NewAttendee {

@@ -1,6 +1,8 @@
 <template>
   <header>
-    <img alt="Zeltlager logo" class="hero-image" src="../assets/logo.png" />
+    <div class="d-flex justify-center align-center hero-image-container">
+      <img alt="Zeltlager logo" class="hero-image" src="../assets/logo2.jpg" />
+    </div>
     <div id="nav" v-if="loggedIn">
       <router-link to="/">Home</router-link> |
       <router-link to="/login">Login</router-link> |
@@ -64,8 +66,12 @@ export default class Header extends Vue {
 </script>
 
 <style scoped>
+.hero-image-container {
+  background: #2e6db2;
+}
 .hero-image {
-  width: 100%;
+  max-width: 100%;
+  max-height: 350px;
 }
 header {
   margin-bottom: 30px;

@@ -46,17 +46,17 @@ export const FoodSortOrder = [
 ];
 
 export const TShirtSizeSortOrder = [
-  TShirtSize.ONE_HUNDRED_TWENTY_EIGHT,
-  TShirtSize.ONE_HUNDRED_FORTY,
-  TShirtSize.ONE_HUNDRED_FIFTY_TWO,
-  TShirtSize.ONE_HUNDRED_FIFTY_EIGHT,
-  TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
+  TShirtSize.S104110,
+  TShirtSize.S116128,
+  TShirtSize.S140152,
+  TShirtSize.S164,
+  TShirtSize.S176,
   TShirtSize.S,
   TShirtSize.M,
   TShirtSize.L,
   TShirtSize.XL,
   TShirtSize.XXL,
-  TShirtSize.XXXL,
-  TShirtSize.XXXXL,
-  TShirtSize.XXXXXL,
+  TShirtSize.X3L,
+  TShirtSize.X4L,
+  TShirtSize.X5L,
 ];

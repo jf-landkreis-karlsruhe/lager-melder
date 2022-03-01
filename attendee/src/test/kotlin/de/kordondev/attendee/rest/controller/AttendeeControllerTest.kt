@@ -77,7 +77,7 @@ class AttendeeControllerTest(val context: WebApplicationContext) {
             departmentId = department.id,
             birthday = "05-09-2006",
             food = Food.VEGAN,
-            tShirtSize = TShirtSize.M,
+            tShirtSize = TShirtSize.M.toString(),
             additionalInformation = "no",
             role = AttendeeRole.YOUTH_LEADER
         )

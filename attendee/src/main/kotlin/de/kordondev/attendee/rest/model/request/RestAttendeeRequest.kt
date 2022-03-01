@@ -22,7 +22,7 @@ data class RestAttendeeRequest(
     @field:NotNull(message = "food is missing")
     val food: Food,
     @field:NotNull(message = "tShirtSize is missing")
-    val tShirtSize: TShirtSize,
+    val tShirtSize: String,
     val additionalInformation: String,
     @field:NotNull(message = "role is missing")
     val role: AttendeeRole
@@ -34,7 +34,7 @@ data class RestAttendeeRequest(
                 lastName = attendee.lastName,
                 birthday = attendee.birthday,
                 food = attendee.food,
-                tShirtSize = attendee.tShirtSize,
+                tShirtSize = TShirtSize.fromString(attendee.tShirtSize),
                 additionalInformation = attendee.additionalInformation,
                 role = attendee.role,
                 department = department
