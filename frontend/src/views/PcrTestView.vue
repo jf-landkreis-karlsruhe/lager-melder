@@ -4,7 +4,7 @@
       <!-- PCR TEST ID DOES NOT EXIST  -->
       <!-- image from: https://pixabay.com/de/illustrations/elefant-karikatur-charakter-zoo-2375697/ -->
       <Sorry
-        v-if="!loading && !isValidPoolId(pcrPoolId)"
+        v-if="!loading && isNotFoundError"
         title="Sorry, die angegebene PCR-Pool-Nummer exisitert nicht."
         image-url="https://cdn.pixabay.com/photo/2017/06/05/23/36/elephant-2375697_1280.png"
         description="Möglicherweise hat auch der Code nicht die richtige Länge."
@@ -15,7 +15,7 @@
       <!-- PCR TEST IS OUT OF RANGE  -->
       <!-- image from: https://www.maxpixel.net/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860 -->
       <Sorry
-        v-if="!loading && isValidPoolId(pcrPoolId) && !isInDateRange"
+        v-if="!loading && (isNotValidError || !isInDateRange)"
         title="PCR Test Gültigkeit abgelaufen."
         image-url="https://www.maxpixel.net/static/photo/1x/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860.png"
         description="Das Datum des Tests liegt außerhalb der Gültigkeit.<br />Leider kannst du keine Änderungen mehr vornehmen."
@@ -24,7 +24,7 @@
       />
 
       <!-- PCR TEST ID DOES EXIST  -->
-      <v-row v-if="!loading && isValidPoolId(pcrPoolId) && isInDateRange">
+      <v-row v-if="!loading && !error && isInDateRange">
         <h1 class="header mb-8">Teilnehmer zum PCR Pool hinzuzufügen.</h1>
         <v-col justify="center" align="center">
           <div class="mb-8">
@@ -103,7 +103,6 @@
 </template>
 
 <script lang="ts">
-import { isValidTestCode } from "@/assets/config";
 import { Vue, Component } from "vue-property-decorator";
 import Scanner from "../components/Scanner.vue";
 import {
@@ -114,13 +113,18 @@ import {
   PcrTest,
 } from "../services/pcrTest";
 import Sorry from "../components/Sorry.vue";
+import {
+  ErrorConstants,
+  ErrorResponse,
+  isErrorOfType,
+} from "../services/errorConstants";
 
 @Component({ name: "PcrTestView", components: { Scanner, Sorry } })
 export default class PcrTestView extends Vue {
   private pcrPoolId: string = "";
   private pcrTest: PcrTest | null = null;
   private trashIndex = "";
-
+  private error: ErrorResponse | null = null;
   private loading: boolean = false;
   $refs!: {
     attendeeListRef: HTMLDivElement;
@@ -160,9 +164,6 @@ export default class PcrTestView extends Vue {
     );
 
     if (attendeeRes) {
-      this.$toast.success(
-        `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`
-      );
       this.attendees.push(attendeeRes);
       // scroll to new element
       this.$vuetify.goTo(this.$refs.attendeeListRef, {
@@ -190,6 +191,14 @@ export default class PcrTestView extends Vue {
     }
   }
 
+  private get isNotFoundError() {
+    return isErrorOfType(ErrorConstants.NOT_FOUND_ERROR, this.error);
+  }
+
+  private get isNotValidError() {
+    return isErrorOfType(ErrorConstants.VALIDATION_ERROR, this.error);
+  }
+
   public async created(): Promise<void> {
     this.pcrPoolId = this.$route.params.poolId;
     this.pcrTest = await this.refetchData();
@@ -197,15 +206,13 @@ export default class PcrTestView extends Vue {
 
   private async refetchData(): Promise<PcrTest | null> {
     this.loading = true;
-    const pcrTestData = await getPcrPool(this.pcrPoolId);
+    const pcrTestData = await getPcrPool(this.pcrPoolId).catch(
+      (e) => (this.error = e)
+    );
     this.loading = false;
     if (!pcrTestData) return null;
 
     return pcrTestData;
-  }
-
-  protected isValidPoolId(poolId: string): boolean {
-    return isValidTestCode(poolId);
   }
 }
 </script>

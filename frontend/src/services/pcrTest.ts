@@ -33,7 +33,7 @@ export const getPcrPool = async (
     if (e.status >= 500) {
       toast.error("PCR Test Daten konnten nicht geladen werden.");
     }
-    return undefined;
+    throw e;
   });
   if (!data) return undefined;
   const pcrTest = {
@@ -52,10 +52,17 @@ export const addAttendeeToPcrPool = (
     `pcr-tests/by-code/${testCode}/${attendeeCode}`,
     withAuthenticationHeader(),
     {}
-  ).catch((e) => {
-    toast.error("Teilnehmer konnte nicht dem PCR Test zugeordnet werden.");
-    return undefined;
-  });
+  )
+    .then((attendeeRes) => {
+      toast.success(
+        `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`
+      );
+      return attendeeRes;
+    })
+    .catch((e) => {
+      toast.error("Teilnehmer konnte nicht dem PCR Test zugeordnet werden.");
+      throw e;
+    });
 };
 
 export const removeAttendeeFromPool = (
@@ -67,6 +74,6 @@ export const removeAttendeeFromPool = (
     withAuthenticationHeader()
   ).catch((e) => {
     toast.error("Teilnehmer konnte nicht von PCR Test entfernt werden.");
-    return undefined;
+    throw e;
   });
 };

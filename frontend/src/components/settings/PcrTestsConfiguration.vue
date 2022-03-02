@@ -75,45 +75,6 @@
                 required
                 :form="createFormName(pcrTestSeries)"
               />
-              <v-textarea
-                v-model="pcrTestSeries.testCodes"
-                label="PCR Test Serie Testcodes als Kommaseparierte Liste"
-                required
-              />
-              <v-row
-                justify="center"
-                align="center"
-                class="d-flex flex-wrap mt-2"
-              >
-                <v-col>
-                  <DateAndTime
-                    :date="pcrTestSeries.start"
-                    @dateChanged="pcrTestSeries.start = $event"
-                    label="Startdatum"
-                    :time="getTimeFromDate(pcrTestSeries.start)"
-                    @timeChanged="
-                      pcrTestSeries.start = getDateFromDateWithTimeString(
-                        pcrTestSeries.start,
-                        $event
-                      )
-                    "
-                  />
-                </v-col>
-                <v-col>
-                  <DateAndTime
-                    :date="pcrTestSeries.end"
-                    @dateChanged="pcrTestSeries.end = $event"
-                    label="Enddatum"
-                    :time="getTimeFromDate(pcrTestSeries.end)"
-                    @timeChanged="
-                      pcrTestSeries.end = getDateFromDateWithTimeString(
-                        pcrTestSeries.end,
-                        $event
-                      )
-                    "
-                  />
-                </v-col>
-              </v-row>
             </div>
           </div>
 
@@ -169,11 +130,7 @@ import {
   PcrTestSeries,
 } from "../../services/pcrTestSeries";
 import DateAndTime from "../DateAndTime.vue";
-import {
-  dateLocalized,
-  getTimeFromDate,
-  getDateFromDateWithTimeString,
-} from "../../helper/displayDate";
+import { dateLocalized } from "../../helper/displayDate";
 
 const getTodayIsoString = (): string => {
   return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -202,19 +159,6 @@ export default class PcrTestsConfiguration extends Vue {
   private get newPcrTestCodesArray(): string[] {
     return this.newPcrTestCodes.replaceAll(" ", "").split(",");
   }
-
-  // private get testCodeRules() {
-  //   const codesValid = (codes: string) => {
-  //     // v is e.g. 'pcrtest1, pcrtest2,pcrtest5'
-  //     const codesArray = codes.split(/[\n,]+/).map((code) => code.trim());
-  //     const allCodesValid = codesArray.every((code) => isValidTestCode(code));
-  //     return (
-  //       allCodesValid || "Mindestens ein Testcode hat eine invalide Länge."
-  //     );
-  //   };
-
-  //   return [codesValid];
-  // }
 
   addToEditing(pcrTestSeriesId: string) {
     this.editingPcrTestIds.push(pcrTestSeriesId);
@@ -275,14 +219,6 @@ export default class PcrTestsConfiguration extends Vue {
 
   private dateLocalized(date: Date) {
     return dateLocalized(date);
-  }
-
-  private getTimeFromDate(date: Date): string {
-    return getTimeFromDate(date);
-  }
-
-  private getDateFromDateWithTimeString(date: Date, time: string): Date {
-    return getDateFromDateWithTimeString(date, time);
   }
 }
 </script>

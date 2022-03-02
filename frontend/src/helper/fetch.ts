@@ -50,10 +50,15 @@ export const deleteData = (relativeUrl: string, headers: HeadersInit) => {
 };
 
 export const fetchData = (relativeUrl: string, config: RequestInit) => {
-  return fetch(`${BASE_URL}/${relativeUrl}`, config).then((res) => {
-    if (!res.ok) {
-      throw res;
-    }
-    return res;
-  });
+  return fetch(`${BASE_URL}/${relativeUrl}`, config)
+    .then((res) => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res;
+    })
+    .catch(async (err) => {
+      const errJson = await err.json();
+      throw errJson;
+    });
 };
