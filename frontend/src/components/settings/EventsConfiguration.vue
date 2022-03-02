@@ -65,9 +65,17 @@
                   <v-icon medium class="mr-2"> mdi-content-save </v-icon>
                 </v-btn>
               </div>
-              <v-icon medium @click.prevent="deleteEventInteral(event.id)">
+              <v-icon
+                medium
+                @click.prevent="deleteEventInteral(event.id)"
+                v-if="event.type === eventTypeLocation"
+              >
                 mdi-delete
               </v-icon>
+              <div
+                style="width: 24px; height: 24px"
+                v-if="event.type !== eventTypeLocation"
+              ></div>
             </div>
           </div>
         </div>
@@ -93,6 +101,7 @@ import {
   Event,
   deleteEvent,
   updateEvent,
+  EventType,
 } from "../../services/event";
 import { getEventCodes } from "../../services/adminFiles";
 import { showFile } from "../../services/filesHelper";
@@ -102,6 +111,7 @@ export default class EventsConfiguration extends Vue {
   eventName: string = "";
   events: Event[] = [];
   editingEventIds: string[] = [];
+  eventTypeLocation: EventType = EventType.LOCATION;
 
   loadingEventId: string = "";
   loadingDownload: boolean = false;
