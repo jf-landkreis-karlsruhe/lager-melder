@@ -1,0 +1,3 @@
+name;code;trashed;type
+Zeltlager betreten;zeltin01;0;GlobalEnter
+Zeltlager verlassen;zeltout2;0;GlobalLeave

@@ -18,16 +18,21 @@ data class EventEntry(
     @Column(name = "code")
     val code: String,
 
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    val type: EventType,
+
     @Column(name = "trashed")
     val trashed: Boolean
 ) {
     companion object {
-        fun of(event: NewEvent, code: String, id: Long = 0): EventEntry {
+        fun of(event: NewEvent, code: String, id: Long = 0, type: EventType = EventType.Location): EventEntry {
             return EventEntry(
                 id = id,
                 name = event.name,
                 code = code,
-                trashed = false
+                trashed = false,
+                type = type
             )
         }
 
@@ -36,7 +41,8 @@ data class EventEntry(
                 id = event.id,
                 name = event.name,
                 code = code,
-                trashed = event.trashed
+                trashed = event.trashed,
+                type = event.type
             )
         }
 
@@ -45,7 +51,8 @@ data class EventEntry(
                 id = eventEntry.id,
                 name = eventEntry.name,
                 code = eventEntry.code,
-                trashed = eventEntry.trashed
+                trashed = eventEntry.trashed,
+                type = eventEntry.type
             )
         }
     }

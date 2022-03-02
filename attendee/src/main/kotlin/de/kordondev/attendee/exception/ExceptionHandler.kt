@@ -34,6 +34,11 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         return exceptionToBody(ex, HttpStatus.BAD_REQUEST, ex.key)
     }
 
+    @ExceptionHandler(NotDeletableException::class)
+    fun handleNotDeletableException(ex: NotDeletableException): ResponseEntity<ErrorResponse> {
+        return exceptionToBody(ex, HttpStatus.BAD_REQUEST, ex.key)
+    }
+
     @ExceptionHandler(UniqueException::class)
     fun handleUniqueException(ex: UniqueException): ResponseEntity<ErrorResponse> {
         return exceptionToBody(ex, HttpStatus.BAD_REQUEST, ex.key)
