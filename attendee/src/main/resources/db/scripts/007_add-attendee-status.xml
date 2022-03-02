@@ -6,13 +6,10 @@
 
     <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle"/>
 
-    <changeSet id="202203010" author="kordon">
-        <addColumn tableName="events">
-            <column name="type" type="varchar(255)" defaultValue="Location"/>
+    <changeSet id="202203020" author="kordon">
+        <addColumn tableName="attendees">
+            <column name="status" type="varchar(255)"/>
         </addColumn>
-    </changeSet>
-    <changeSet id="202203011" author="kordon">
-        <loadData tableName="events" separator=";" file="db/data/global-events.csv"/>
     </changeSet>
 
 </databaseChangeLog>

@@ -16,7 +16,8 @@ data class RestAttendee(
     val tShirtSize: String,
     val additionalInformation: String,
     val role: AttendeeRole,
-    val code: String
+    val code: String,
+    val status: String
 ) {
     companion object {
         fun of(attendee: Attendee) = RestAttendee(
@@ -29,7 +30,8 @@ data class RestAttendee(
             additionalInformation = attendee.additionalInformation,
             role = attendee.role,
             departmentId = attendee.department.id,
-            code = attendee.code
+            code = attendee.code,
+            status = attendee.status.toString()
         )
     }
 }

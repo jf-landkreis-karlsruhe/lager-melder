@@ -28,7 +28,8 @@ class Entities() {
                 "",
                 AttendeeRole.YOUTH,
                 department(),
-                "code"
+                "code",
+                status = null
             )
         }
 
