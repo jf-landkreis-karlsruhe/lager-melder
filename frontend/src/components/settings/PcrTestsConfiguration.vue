@@ -15,14 +15,14 @@
       />
       <v-row justify="center" align="center" class="d-flex flex-wrap mt-2">
         <v-col>
-          <DateAndTimeWithDate
+          <DateAndTime
             :dateTime="newStart"
             @changed="newStart = $event"
             label="Startdatum"
           />
         </v-col>
         <v-col>
-          <DateAndTimeWithDate
+          <DateAndTime
             :dateTime="newEnd"
             @changed="newEnd = $event"
             label="Enddatum"
@@ -55,15 +55,13 @@
           <div class="flex-row flex-grow mb-4">
             <div v-if="!editingPcrTestIds.includes(pcrTestSeries.id)">
               <div>
-              <span class="mr-4">Name: "{{ pcrTestSeries.name }}"</span>
-              <span class="date-range">
-                Von {{ dateLocalized(pcrTestSeries.start) }} Uhr bis
-                {{ dateLocalized(pcrTestSeries.end) }} Uhr
-              </span>
+                <span class="mr-4">Name: "{{ pcrTestSeries.name }}"</span>
+                <span class="date-range">
+                  Von {{ dateLocalized(pcrTestSeries.start) }} Uhr bis
+                  {{ dateLocalized(pcrTestSeries.end) }} Uhr
+                </span>
               </div>
-              <div>
-                Testcodes: {{ pcrTestSeries.testCodes.join(", ") }}
-              </div>
+              <div>Testcodes: {{ pcrTestSeries.testCodes.join(", ") }}</div>
             </div>
             <div v-if="editingPcrTestIds.includes(pcrTestSeries.id)">
               <v-text-field
@@ -78,23 +76,27 @@
                 label="PCR Test Serie Testcodes als Kommaseparierte Liste"
                 required
               />
-              <v-row justify="center" align="center" class="d-flex flex-wrap mt-2">
+              <v-row
+                justify="center"
+                align="center"
+                class="d-flex flex-wrap mt-2"
+              >
                 <v-col>
-                  <DateAndTimeWithDate
+                  <DateAndTime
                     :dateTime="pcrTestSeries.start"
                     @changed="pcrTestSeries.start = $event"
                     label="Startdatum"
                   />
                 </v-col>
                 <v-col>
-                  <DateAndTimeWithDate
+                  <DateAndTime
                     :dateTime="pcrTestSeries.end"
                     @changed="pcrTestSeries.end = $event"
                     label="Enddatum"
                   />
                 </v-col>
               </v-row>
-              <hr>
+              <hr />
             </div>
           </div>
 
@@ -149,10 +151,10 @@ import {
   updatePcrPoolSeries,
   PcrTestSeries,
 } from "../../services/pcrTestSeries";
-import DateAndTimeWithDate from "../DateAndTimeWithDate.vue";
+import DateAndTime from "../DateAndTime.vue";
 import { dateTimeLocalized } from "../../helper/displayDate";
 
-@Component({ name: "PcrTestsConfiguration", components: { DateAndTimeWithDate } })
+@Component({ name: "PcrTestsConfiguration", components: { DateAndTime } })
 export default class PcrTestsConfiguration extends Vue {
   private newPcrTestName: string = "";
   private newPcrTestCodes: string = "";

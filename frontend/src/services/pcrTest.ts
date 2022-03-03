@@ -9,7 +9,7 @@ export interface PcrTestResponse {
   testedAttendees: PcrAttendee[];
 }
 
-export interface PcrTest extends Omit<PcrTestResponse, 'start' | 'end'> {
+export interface PcrTest extends Omit<PcrTestResponse, "start" | "end"> {
   start: Date;
   end: Date;
 }
@@ -23,8 +23,15 @@ export interface PcrAttendee {
 }
 
 export const getPcrPool = async (testCode: string): Promise<PcrTest> => {
-  const data = await getData<PcrTestResponse>(`pcr-tests/by-code/${testCode}`, withAuthenticationHeader());
-  const pcrTest = {...data, start: new Date(data.start), end: new Date(data.end)};
+  const data = await getData<PcrTestResponse>(
+    `pcr-tests/by-code/${testCode}`,
+    withAuthenticationHeader()
+  );
+  const pcrTest = {
+    ...data,
+    start: new Date(data.start),
+    end: new Date(data.end),
+  };
   return pcrTest;
 };
 
