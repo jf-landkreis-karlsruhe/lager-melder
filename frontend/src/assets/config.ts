@@ -1,4 +1,5 @@
-export const BASE_URL = process.env.VUE_APP_BACKEND_URL || `${window.location.origin}/api`;
+export const BASE_URL =
+  process.env.VUE_APP_BACKEND_URL || `${window.location.origin}/api`;
 export const CODE_LENGTH = 8;
 
 /**
