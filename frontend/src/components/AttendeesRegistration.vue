@@ -10,8 +10,9 @@
             label="Teilnehmerfilter"
           />
         </div>
-        <div class="department-count">
-          Anzahl Teilnehmer: {{ totalAttendeeCount }}
+        <div>
+          Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend:
+          {{ enteredAttendeesCount }})
         </div>
       </v-row>
     </v-container>
@@ -41,6 +42,7 @@ import {
   // eslint-disable-next-line no-unused-vars
   Attendee,
   AttendeeRole,
+  AttendeeStatus,
 } from "../services/attendee";
 
 // eslint-disable-next-line no-unused-vars
@@ -91,6 +93,12 @@ export default class AttendeesRegistration extends Vue {
       );
     }
     return true;
+  }
+
+  get enteredAttendeesCount(): number {
+    return this.attendees.filter(
+      (attendee) => attendee.status === AttendeeStatus.ENTERED
+    ).length;
   }
 
   mounted() {

@@ -6,7 +6,12 @@
       Hier können alle Lagerausweise heruntergeladen werden: herunterladen
       <button class="underline" @click="downloadBatchesPDF">Download</button>
     </p>
-    <h1>Teilnehmer</h1>
+    <div class="d-flex align-baseline">
+      <h1>Teilnehmer</h1>
+      <div class="department-count">
+        Anzahl: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})
+      </div>
+    </div>
     <div>
       <v-text-field
         prepend-icon="mdi-magnify"
@@ -60,6 +65,7 @@ import {
   Food,
   // eslint-disable-next-line no-unused-vars
   TShirtSize,
+  AttendeeStatus,
 } from "../services/attendee";
 
 import {
@@ -119,6 +125,16 @@ export default class AttendeesRegistration extends Vue {
   downloadBatchesPDF = () => {
     getBatches().then((fileData) => showFile(fileData.data, fileData.fileName));
   };
+
+  get totalAttendeeCount(): number {
+    return this.attendees.length;
+  }
+
+  get enteredAttendeesCount(): number {
+    return this.attendees.filter(
+      (attendee) => attendee.status === AttendeeStatus.ENTERED
+    ).length;
+  }
 
   mounted() {
     getAttendees().then((attendees) => {

@@ -5,7 +5,8 @@
         <v-row justify="space-between">
           <h1>{{ headlineText }}</h1>
           <div class="additional-information">
-            Anzahl {{ headlineText }}: {{ attendeesWithNew.length - 1 }}
+            Anzahl {{ headlineText }}:
+            {{ attendeesWithNew.length - 1 }} (Anwesend: {{ enteredAttendees }})
           </div>
         </v-row>
       </v-card-title>
@@ -17,6 +18,21 @@
           :disable-items-per-page="true"
           :hide-default-footer="true"
         >
+          <template v-slot:item.status="{ item }">
+            <div
+              v-if="item.status === attendeeStatusLeft"
+              title="Zeltlager verlassen"
+              class="left"
+            >
+              🏠
+            </div>
+            <div
+              v-if="item.status === attendeeStatusEntered"
+              title="Zeltlager betreten"
+            >
+              ⛺
+            </div>
+          </template>
           <template v-slot:item.firstName="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
               {{ item.firstName }}
@@ -150,7 +166,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { updateAttendee } from "../services/attendee";
+import { AttendeeStatus, updateAttendee } from "../services/attendee";
 import { tShirtSizeText, foodText, birthdayText } from "../helper/displayText";
 
 import {
@@ -184,6 +200,7 @@ export default class AttendeesTable extends Vue {
   deletingAttendees: string[] = [];
   editingAttendeeIds: string[] = [this.newAttendeeId];
   headers = [
+    { text: "", value: "status" },
     { text: "Vorname", value: "firstName" },
     { text: "Nachname", value: "lastName" },
     { text: "Essen", value: "food" },
@@ -192,6 +209,8 @@ export default class AttendeesTable extends Vue {
     { text: "Anmerkung", value: "additionalInformation" },
     { text: "", value: "actions", sortable: false },
   ];
+  attendeeStatusLeft = AttendeeStatus.LEFT;
+  attendeeStatusEntered = AttendeeStatus.ENTERED;
 
   deleteAttendee = (attendee: Attendee) => {
     this.deletingAttendees.push(attendee.id);
@@ -245,6 +264,12 @@ export default class AttendeesTable extends Vue {
     }));
   }
 
+  get enteredAttendees(): number {
+    return this.attendees.filter(
+      (attendee) => attendee.status === AttendeeStatus.ENTERED
+    ).length;
+  }
+
   birthdayText = birthdayText;
   foodText = foodText;
   tShirtSizeText = tShirtSizeText;
@@ -255,6 +280,7 @@ export default class AttendeesTable extends Vue {
       .filter((attendee) => !this.deletedAttendeeIds.includes(attendee.id))
       .concat([
         {
+          status: null,
           id: this.newAttendeeId,
           firstName: "",
           lastName: "",
@@ -278,5 +304,8 @@ export default class AttendeesTable extends Vue {
 }
 .actions {
   width: 56px;
+}
+.left {
+  background: red;
 }
 </style>
