@@ -17,12 +17,12 @@
           :disable-pagination="true"
           :disable-items-per-page="true"
           :hide-default-footer="true"
+          :item-class="statusClass"
         >
           <template v-slot:item.status="{ item }">
             <div
               v-if="item.status === attendeeStatusLeft"
               title="Zeltlager verlassen"
-              class="left"
             >
               🏠
             </div>
@@ -200,7 +200,7 @@ export default class AttendeesTable extends Vue {
   deletingAttendees: string[] = [];
   editingAttendeeIds: string[] = [this.newAttendeeId];
   headers = [
-    { text: "", value: "status" },
+    { text: "", value: "status", width: "20px" },
     { text: "Vorname", value: "firstName" },
     { text: "Nachname", value: "lastName" },
     { text: "Essen", value: "food" },
@@ -274,6 +274,16 @@ export default class AttendeesTable extends Vue {
   foodText = foodText;
   tShirtSizeText = tShirtSizeText;
 
+  statusClass(item: any): string {
+    if (item.status === AttendeeStatus.ENTERED) {
+      return "icon-first entered";
+    }
+    if (item.status === AttendeeStatus.LEFT) {
+      return "icon-first left";
+    }
+    return "icon-first";
+  }
+
   get attendeesWithNew(): AttendeeWithValidation[] {
     return this.attendees
       .concat(this.newAttendees)
@@ -305,7 +315,16 @@ export default class AttendeesTable extends Vue {
 .actions {
   width: 56px;
 }
-.left {
-  background: red;
+</style>
+<style>
+tr.left {
+  background-color: #ff000030;
+}
+tr.entered {
+  background-color: #00ff0030;
+}
+tr.icon-first > td:first-child,
+thead.v-data-table-header > tr > th {
+  padding: 0 8px !important;
 }
 </style>
