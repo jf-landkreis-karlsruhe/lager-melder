@@ -1,6 +1,6 @@
 first_name;last_name;birthday;food;t_shirt_size;code;role;department_id;additional_information
-Karl;Müller;1990-01-01;1;6;atten101;1;1;1
-Marie;Frei;2000-02-20;1;4;atten102;0;1;2
-Klaus;Kleber;2005-01-15;1;5;atten201;0;2;3
-Michi;Hai;1999-05-05;1;2;atten202;1;2;4
-Lara;Koch;2015-12-17;1;1;atten302;1;3;5
+Karl;Müller;1990-01-01;MUSLIM;S;atten101;YOUTH_LEADER;1;1
+Marie;Frei;2000-02-20;NONE;M;atten102;YOUTH;1;2
+Klaus;Kleber;2005-01-15;VEGETARIAN5;L;atten201;YOUTH;2;3
+Michi;Hai;1999-05-05;MEAT;164;atten202;YOUTH_LEADER;2;4
+Lara;Koch;2015-12-17;MEAT;104/110;atten302;YOUTH_LEADER;3;5
