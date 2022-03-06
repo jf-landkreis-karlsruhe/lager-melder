@@ -15,7 +15,9 @@
       <!-- PCR TEST IS OUT OF RANGE  -->
       <!-- image from: https://www.maxpixel.net/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860 -->
       <Sorry
-        v-if="!loading && (isNotValidError || !isInDateRange)"
+        v-if="
+          !loading && !isNotFoundError && (isNotValidError || !isInDateRange)
+        "
         title="PCR Test Gültigkeit abgelaufen."
         image-url="https://www.maxpixel.net/static/photo/1x/Gray-Mammal-Elephant-Worried-Cartoon-Trunk-311860.png"
         description="Das Datum des Tests liegt außerhalb der Gültigkeit.<br />Leider kannst du keine Änderungen mehr vornehmen."
@@ -191,11 +193,11 @@ export default class PcrTestView extends Vue {
     }
   }
 
-  private get isNotFoundError() {
+  private get isNotFoundError(): boolean {
     return isErrorOfType(ErrorConstants.NOT_FOUND_ERROR, this.error);
   }
 
-  private get isNotValidError() {
+  private get isNotValidError(): boolean {
     return isErrorOfType(ErrorConstants.VALIDATION_ERROR, this.error);
   }
 
