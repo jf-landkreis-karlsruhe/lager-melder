@@ -221,9 +221,12 @@ export default class PcrTestsConfiguration extends Vue {
   async savePcrTestSeries(pcrTestSeries: PcrTestSeries) {
     this.loadingPcrTestId = pcrTestSeries.id;
     // pcrTestSeries.testCodes are converted into string in textarea element
-    pcrTestSeries.testCodes = (pcrTestSeries.testCodes as unknown as string)
-      .replaceAll(" ", "")
-      .split(/[\n,]+/);
+    if (typeof pcrTestSeries.testCodes === "string") {
+      pcrTestSeries.testCodes = (pcrTestSeries.testCodes as unknown as string)
+        .replaceAll(" ", "")
+        .split(/[\n,]+/);
+    }
+
     const data = await updatePcrPoolSeries(pcrTestSeries).catch(() => {
       this.loadingPcrTestId = "";
     });

@@ -11,7 +11,7 @@ export enum ErrorConstants {
 
 export interface ErrorResponse {
   key: string;
-  messages: ErrorMessage;
+  messages: ErrorMessage[];
 }
 
 export interface ErrorMessage {

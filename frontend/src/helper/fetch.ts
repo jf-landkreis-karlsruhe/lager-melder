@@ -1,3 +1,4 @@
+import { ErrorResponse } from "@/services/errorConstants";
 import { BASE_URL } from "../assets/config";
 
 export const getData = <T>(relativeUrl: string, headers: HeadersInit) => {
@@ -57,8 +58,8 @@ export const fetchData = (relativeUrl: string, config: RequestInit) => {
       }
       return res;
     })
-    .catch(async (err) => {
-      const errJson = await err.json();
+    .catch(async (err: Response) => {
+      const errJson = (await err.json()) as ErrorResponse;
       throw errJson;
     });
 };

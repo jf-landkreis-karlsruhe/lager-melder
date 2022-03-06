@@ -1,6 +1,7 @@
 import { toast } from "@/plugins/toastification";
 import { getData, postData, deleteData, putData } from "../helper/fetch";
 import { withAuthenticationHeader } from "./authentication";
+import { ErrorResponse } from "./errorConstants";
 
 export interface PcrTestSeriesResponse {
   id: string;
@@ -26,14 +27,24 @@ export const getPcrPoolSeries = (id: string): Promise<PcrTestSeries> => {
   return getData<PcrTestSeriesResponse>(
     `pcr-test-series/${id}`,
     withAuthenticationHeader()
-  ).then(convertDates);
+  )
+    .then(convertDates)
+    .catch((e: ErrorResponse) => {
+      toast.error(e.messages[0].message);
+      throw e;
+    });
 };
 
 export const getAllPcrPoolSeries = (): Promise<PcrTestSeries[]> => {
   return getData<PcrTestSeriesResponse[]>(
     `pcr-test-series/`,
     withAuthenticationHeader()
-  ).then((pcrTestSeries) => pcrTestSeries.map(convertDates));
+  )
+    .then((pcrTestSeries) => pcrTestSeries.map(convertDates))
+    .catch((e: ErrorResponse) => {
+      toast.error(e.messages[0].message);
+      throw e;
+    });
 };
 
 export const createPcrPoolSeries = (
@@ -43,7 +54,12 @@ export const createPcrPoolSeries = (
     `pcr-test-series`,
     withAuthenticationHeader(),
     newPcrPoolSeries
-  ).then(convertDates);
+  )
+    .then(convertDates)
+    .catch((e: ErrorResponse) => {
+      toast.error(e.messages[0].message);
+      throw e;
+    });
 };
 
 export const updatePcrPoolSeries = async (
@@ -55,8 +71,10 @@ export const updatePcrPoolSeries = async (
     pcrPoolSeries
   )
     .then(convertDates)
-    .catch((e) => {
-      toast.error("PCR Serie konnte nicht aktualisiert werden.");
+    .catch((e: ErrorResponse) => {
+      toast.error(
+        e.messages[0].message ?? "PCR Serie konnte nicht aktualisiert werden."
+      );
       throw e;
     });
   if (!data) return undefined;
@@ -64,7 +82,12 @@ export const updatePcrPoolSeries = async (
 };
 
 export const deletePcrPoolSeries = (id: string): Promise<Response> => {
-  return deleteData(`pcr-test-series/${id}`, withAuthenticationHeader());
+  return deleteData(`pcr-test-series/${id}`, withAuthenticationHeader()).catch(
+    (e: ErrorResponse) => {
+      toast.error(e.messages[0].message);
+      throw e;
+    }
+  );
 };
 
 const convertDates = (pcrTestSeries: PcrTestSeriesResponse): PcrTestSeries => {

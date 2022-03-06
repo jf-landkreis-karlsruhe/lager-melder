@@ -1,6 +1,7 @@
 import { getData, postData, deleteData } from "../helper/fetch";
 import { withAuthenticationHeader } from "./authentication";
 import { toast } from "@/plugins/toastification";
+import { ErrorMessage, ErrorResponse } from "./errorConstants";
 
 export interface PcrTestResponse {
   id: number;
@@ -29,10 +30,7 @@ export const getPcrPool = async (
   const data = await getData<PcrTestResponse>(
     `pcr-tests/by-code/${testCode}`,
     withAuthenticationHeader()
-  ).catch((e: Response) => {
-    if (e.status >= 500) {
-      toast.error("PCR Test Daten konnten nicht geladen werden.");
-    }
+  ).catch((e: ErrorResponse) => {
     throw e;
   });
   if (!data) return undefined;
@@ -59,8 +57,11 @@ export const addAttendeeToPcrPool = (
       );
       return attendeeRes;
     })
-    .catch((e) => {
-      toast.error("Teilnehmer konnte nicht dem PCR Test zugeordnet werden.");
+    .catch((e: ErrorResponse) => {
+      toast.error(
+        e.messages[0].message ??
+          "Teilnehmer konnte nicht dem PCR Test zugeordnet werden."
+      );
       throw e;
     });
 };
@@ -72,8 +73,11 @@ export const removeAttendeeFromPool = (
   return deleteData(
     `pcr-tests/by-code/${poolCode}/${attendeeCode}`,
     withAuthenticationHeader()
-  ).catch((e) => {
-    toast.error("Teilnehmer konnte nicht von PCR Test entfernt werden.");
+  ).catch((e: ErrorResponse) => {
+    toast.error(
+      e.messages[0].message ??
+        "Teilnehmer konnte nicht von PCR Test entfernt werden."
+    );
     throw e;
   });
 };
