@@ -24,7 +24,7 @@ class Entities() {
                 "endee",
                 "20-09-2005",
                 Food.MEAT,
-                TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
+                TShirtSize.S164,
                 "",
                 AttendeeRole.YOUTH,
                 department(),
@@ -39,7 +39,7 @@ class Entities() {
                 departmentId = departmentId,
                 birthday = "05-09-2005",
                 food = Food.MEAT,
-                tShirtSize = TShirtSize.ONE_HUNDRED_SIXTY_FOUR,
+                tShirtSize = TShirtSize.S164.toString(),
                 additionalInformation = "n",
                 role = AttendeeRole.YOUTH
             )

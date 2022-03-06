@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    username: user
+    password: pass
+  liquibase:
+    contexts: dev
+
+management:
+  health:
+    mail:
+      enabled: false
+
+application:
+  mail:
+    send: false
+  admin:
+    passwordHash: $2a$12$3B.Ct9RY4FxjO/qrHZGe4uHN1IsGnh.cezLNcbE8/K0eXDHoGK59q
+  corsOrigins: http://localhost:9000, http://lagermelder.kordondev.de

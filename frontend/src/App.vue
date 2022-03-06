@@ -6,6 +6,7 @@
         <main>
           <router-view />
         </main>
+        <Footer />
       </div>
     </div>
   </v-app>
@@ -16,9 +17,10 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 import Header from "./components/Header.vue";
+import Footer from "./components/Footer.vue";
 
 @Component({
-  components: { Header },
+  components: { Header, Footer },
 })
 export default class App extends Vue {}
 </script>

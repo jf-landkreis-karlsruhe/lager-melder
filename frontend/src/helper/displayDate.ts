@@ -17,6 +17,26 @@ export const dateLocalized = (
 };
 
 /**
+ *
+ * @param date as Date
+ * @param locale default is de-DE
+ * @returns localized date in string format with time, e.g. "Samstag, 04.03.2022 10:00"
+ */
+export const dateTimeLocalized = (
+  date: Date | string,
+  locale = "de-DE"
+): string => {
+  return new Date(date).toLocaleString(locale, {
+    weekday: "long",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+/**
  * Returns time in string format
  * @param date as Date
  * @returns string, e.g. "18:24"

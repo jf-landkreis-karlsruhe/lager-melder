@@ -3,15 +3,15 @@
     <v-col sm="6">
       <v-text-field
         type="date"
-        :value="date"
-        @input="dateChanged"
+        :value="dateOnly"
+        @input="dateChangedInteral"
         :label="label"
         :hint="hint"
         class="mx-4"
       />
     </v-col>
     <v-col sm="6">
-      <span class="mr-4">{{ time }} Uhr</span>
+      <span class="mr-4">{{ timeOnly }} Uhr</span>
       <v-dialog v-model="showTime" width="450">
         <template v-slot:activator="{ on, attrs }">
           <v-icon v-bind="attrs" v-on="on" medium color="black">
@@ -26,8 +26,8 @@
 
           <v-card-text class="d-flex justify-center align-center">
             <v-time-picker
-              :value="time"
-              @input="timeChanged"
+              :value="timeOnly"
+              @input="timeChangedInteral"
               format="24hr"
             ></v-time-picker>
           </v-card-text>
@@ -49,16 +49,18 @@
 <script lang="ts">
 import { Vue, Prop, Component, Emit } from "vue-property-decorator";
 import { dateLocalized } from "../helper/displayDate";
+import {
+  dateAndTimeAsIsoString,
+  dateIsoString,
+  timeIsoString,
+} from "../helper/date";
 
 @Component({ name: "DateAndTime" })
 export default class DateAndTime extends Vue {
   private showTime: boolean = false;
 
   @Prop({ required: true })
-  private readonly date!: string;
-
-  @Prop({ required: true })
-  private readonly time!: string;
+  private readonly dateTime!: Date;
 
   @Prop({ required: false })
   private readonly label: string | undefined;
@@ -66,18 +68,29 @@ export default class DateAndTime extends Vue {
   @Prop({ required: false })
   private readonly hint: string | undefined;
 
-  @Emit("dateChanged")
-  protected dateChanged(newDate: string) {
+  @Emit("changed")
+  protected changed(newDate: Date) {
     return newDate;
   }
 
-  @Emit("timeChanged")
-  protected timeChanged(newTime: string) {
-    return newTime;
+  get dateOnly(): string {
+    return dateIsoString(this.dateTime);
+  }
+
+  get timeOnly(): string {
+    return timeIsoString(this.dateTime);
+  }
+
+  private dateChangedInteral(newDate: string) {
+    this.changed(new Date(dateAndTimeAsIsoString(newDate, this.timeOnly)));
+  }
+
+  private timeChangedInteral(newTime: string) {
+    this.changed(new Date(dateAndTimeAsIsoString(this.dateOnly, newTime)));
   }
 
   private get dateLocalized() {
-    return dateLocalized(this.date);
+    return dateLocalized(this.dateTime);
   }
 }
 </script>
