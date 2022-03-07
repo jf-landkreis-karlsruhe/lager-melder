@@ -1,13 +1,13 @@
 package de.kordondev.attendee.core.service
 
 import de.kordondev.attendee.core.model.*
-import de.kordondev.attendee.core.persistence.entry.AttendeeInEventEntry
-import de.kordondev.attendee.core.persistence.entry.EventEntry
-import de.kordondev.attendee.core.persistence.entry.Roles
+import de.kordondev.attendee.core.persistence.entry.*
 import de.kordondev.attendee.core.persistence.repository.AttendeeInEventRepository
+import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
 import de.kordondev.attendee.core.persistence.repository.EventRepository
 import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.core.security.PasswordGenerator
+import de.kordondev.attendee.exception.NotDeletableException
 import de.kordondev.attendee.exception.NotFoundException
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -17,7 +17,8 @@ class EventService(
     val attendeeService: AttendeeService,
     val authorityService: AuthorityService,
     val eventRepository: EventRepository,
-    val attendeeInEventRepository: AttendeeInEventRepository
+    val attendeeInEventRepository: AttendeeInEventRepository,
+    val attendeeRepository: AttendeeRepository
 ) {
     fun getEventByCode(code: String): Event {
         return eventRepository.findByCodeAndTrashedIsFalse(code)
@@ -46,7 +47,7 @@ class EventService(
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         return eventRepository.findByIdAndTrashedIsFalse(id)
             ?.let {
-                eventRepository.save(EventEntry.of(event, it.code, id))
+                eventRepository.save(EventEntry.of(event, it.code, id, it.type))
             }
             ?.let { EventEntry.to(it) }
             ?: createEvent(event)
@@ -54,7 +55,10 @@ class EventService(
 
     fun deleteEvent(id: Long) {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
-        getEvent(id)?.let {
+        getEvent(id).let {
+            if (it.type != EventType.Location) {
+                throw NotDeletableException("Das Event ${it.name} kann nicht gelöscht werden")
+            }
             val trashEvent = it.copy(trashed = true)
             eventRepository.save(EventEntry.of(trashEvent, trashEvent.code))
         }
@@ -65,6 +69,13 @@ class EventService(
         val event: Event = getEventByCode(eventCode)
         val attendee: Attendee = attendeeService.getAttendeeByCode(attendeeCode)
         val attendeeInEvent = NewAttendeeCodeInEventCode(attendeeCode, eventCode, Instant.now())
+        if (event.type == EventType.GlobalEnter) {
+            attendee.status = AttendeeStatus.ENTERED
+        }
+        if (event.type == EventType.GlobalLeave) {
+            attendee.status = AttendeeStatus.LEFT
+        }
+        attendeeRepository.save(AttendeeEntry.of(attendee, attendee.status))
         return attendeeInEventRepository.save(AttendeeInEventEntry.of(attendeeInEvent))
             .let { AttendeeInEvent(attendee.firstName, attendee.lastName, event.name, it.time) }
     }

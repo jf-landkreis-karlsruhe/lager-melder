@@ -5,10 +5,17 @@ export interface NewEvent {
   name: string;
 }
 
+export enum EventType {
+  GLOBAL_ENTER = "GlobalEnter",
+  GLOBAL_LEAVE = "GlobalLeave",
+  LOCATION = "Location",
+}
+
 export interface Event {
   name: string;
   id: string;
   code: string;
+  type: EventType;
 }
 
 export interface AttendeeResponse {

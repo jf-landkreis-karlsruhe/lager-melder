@@ -1,4 +1,4 @@
-import { Attendee, AttendeeRole, TShirtSize, Food } from "../services/attendee";
+import { Attendee, AttendeeRole, TShirtSize, Food, AttendeeStatus } from "../services/attendee";
 
 export const youthLeaderAttendees = (
   departmentId: string,
@@ -60,3 +60,7 @@ export const TShirtSizeSortOrder = [
   TShirtSize.X4L,
   TShirtSize.X5L,
 ];
+
+export const filterEnteredAttendees = (attendee: Attendee): boolean => {
+  return attendee.status === AttendeeStatus.ENTERED;
+};

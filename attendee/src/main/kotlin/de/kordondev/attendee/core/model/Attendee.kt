@@ -1,6 +1,7 @@
 package de.kordondev.attendee.core.model
 
 import de.kordondev.attendee.core.persistence.entry.AttendeeRole
+import de.kordondev.attendee.core.persistence.entry.AttendeeStatus
 import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.TShirtSize
 
@@ -25,6 +26,7 @@ data class Attendee(
     val additionalInformation: String,
     val role: AttendeeRole,
     val department: Department,
-    val code: String
+    val code: String,
+    var status: AttendeeStatus?
 )
 
