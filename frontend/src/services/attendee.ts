@@ -61,6 +61,11 @@ export enum TShirtSize {
   X5L = "5XL",
 }
 
+export enum AttendeeStatus {
+  ENTERED = "ENTERED",
+  LEFT = "LEFT",
+}
+
 export interface NewAttendee {
   firstName: string;
   lastName: string;
@@ -74,4 +79,5 @@ export interface NewAttendee {
 
 export interface Attendee extends NewAttendee {
   id: string;
+  status: AttendeeStatus | null;
 }

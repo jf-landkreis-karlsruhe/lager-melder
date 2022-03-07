@@ -24,9 +24,11 @@ data class AttendeeEntry(
     val birthday: String,
 
     @Column(name = "food")
+    @Enumerated(EnumType.STRING)
     val food: Food,
 
     @Column(name = "t_shirt_size")
+    @Enumerated(EnumType.STRING)
     val tShirtSize: TShirtSize,
 
     @Column(name = "additional_information")
@@ -36,14 +38,20 @@ data class AttendeeEntry(
     val code: String,
 
     @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     val role: AttendeeRole,
 
     @ManyToOne
     @JoinColumn(name = "department_id")
-    val department: DepartmentEntry
+    val department: DepartmentEntry,
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    val status: AttendeeStatus?
+
 ) {
     companion object {
-        fun of(attendee: Attendee): AttendeeEntry {
+        fun of(attendee: Attendee, status: AttendeeStatus?): AttendeeEntry {
             return AttendeeEntry(
                 id = attendee.id,
                 firstName = attendee.firstName,
@@ -55,6 +63,7 @@ data class AttendeeEntry(
                 additionalInformation = attendee.additionalInformation,
                 role = attendee.role,
                 code = attendee.code,
+                status = status
             )
         }
 
@@ -68,7 +77,8 @@ data class AttendeeEntry(
             tShirtSize = attendee.tShirtSize,
             additionalInformation = attendee.additionalInformation,
             role = attendee.role,
-            code = code
+            code = code,
+            status = null
         )
 
         fun to(attendeeEntry: AttendeeEntry): Attendee {
@@ -82,7 +92,8 @@ data class AttendeeEntry(
                 tShirtSize = attendeeEntry.tShirtSize,
                 additionalInformation = attendeeEntry.additionalInformation,
                 role = attendeeEntry.role,
-                code = attendeeEntry.code
+                code = attendeeEntry.code,
+                status = attendeeEntry.status
             )
         }
 

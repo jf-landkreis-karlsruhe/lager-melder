@@ -5,7 +5,8 @@
         <v-row justify="space-between">
           <h1>{{ headlineText }}</h1>
           <div class="additional-information">
-            Anzahl {{ headlineText }}: {{ attendeesWithNew.length - 1 }}
+            Anzahl {{ headlineText }}:
+            {{ attendeesWithNew.length - 1 }} (Anwesend: {{ enteredAttendees }})
           </div>
         </v-row>
       </v-card-title>
@@ -16,7 +17,22 @@
           :disable-pagination="true"
           :disable-items-per-page="true"
           :hide-default-footer="true"
+          :item-class="statusClass"
         >
+          <template v-slot:item.status="{ item }">
+            <div
+              v-if="item.status === attendeeStatusLeft"
+              title="Zeltlager verlassen"
+            >
+              🏠
+            </div>
+            <div
+              v-if="item.status === attendeeStatusEntered"
+              title="Zeltlager betreten"
+            >
+              ⛺
+            </div>
+          </template>
           <template v-slot:item.firstName="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
               {{ item.firstName }}
@@ -150,7 +166,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { updateAttendee } from "../services/attendee";
+import { AttendeeStatus, updateAttendee } from "../services/attendee";
 import { tShirtSizeText, foodText, birthdayText } from "../helper/displayText";
 
 import {
@@ -164,6 +180,7 @@ import {
 } from "../services/attendee";
 
 import { deleteAttendee } from "../services/attendee";
+import { filterEnteredAttendees } from "@/helper/filterHelper";
 
 interface AttendeeWithValidation extends Attendee {
   tShirtSizeError: boolean;
@@ -184,6 +201,7 @@ export default class AttendeesTable extends Vue {
   deletingAttendees: string[] = [];
   editingAttendeeIds: string[] = [this.newAttendeeId];
   headers = [
+    { text: "", value: "status" },
     { text: "Vorname", value: "firstName" },
     { text: "Nachname", value: "lastName" },
     { text: "Essen", value: "food" },
@@ -192,6 +210,8 @@ export default class AttendeesTable extends Vue {
     { text: "Anmerkung", value: "additionalInformation" },
     { text: "", value: "actions", sortable: false },
   ];
+  attendeeStatusLeft = AttendeeStatus.LEFT;
+  attendeeStatusEntered = AttendeeStatus.ENTERED;
 
   deleteAttendee = (attendee: Attendee) => {
     this.deletingAttendees.push(attendee.id);
@@ -245,9 +265,23 @@ export default class AttendeesTable extends Vue {
     }));
   }
 
+  get enteredAttendees(): number {
+    return this.attendees.filter(filterEnteredAttendees).length;
+  }
+
   birthdayText = birthdayText;
   foodText = foodText;
   tShirtSizeText = tShirtSizeText;
+
+  statusClass(item: any): string {
+    if (item.status === AttendeeStatus.ENTERED) {
+      return "icon-first entered";
+    }
+    if (item.status === AttendeeStatus.LEFT) {
+      return "icon-first left";
+    }
+    return "icon-first";
+  }
 
   get attendeesWithNew(): AttendeeWithValidation[] {
     return this.attendees
@@ -255,6 +289,7 @@ export default class AttendeesTable extends Vue {
       .filter((attendee) => !this.deletedAttendeeIds.includes(attendee.id))
       .concat([
         {
+          status: null,
           id: this.newAttendeeId,
           firstName: "",
           lastName: "",
@@ -278,5 +313,17 @@ export default class AttendeesTable extends Vue {
 }
 .actions {
   width: 56px;
+}
+</style>
+<style>
+tr.left {
+  background-color: #ff000030;
+}
+tr.entered {
+  background-color: #00ff0030;
+}
+tr.icon-first > td:first-child,
+thead.v-data-table-header > tr > th {
+  padding: 0 8px !important;
 }
 </style>

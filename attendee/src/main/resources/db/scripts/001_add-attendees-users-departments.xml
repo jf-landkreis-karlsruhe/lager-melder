@@ -17,7 +17,7 @@
             <column name="code" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="food" type="int">
+            <column name="food" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="first_name" type="varchar(255)">
@@ -26,10 +26,10 @@
             <column name="last_name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="role" type="int">
+            <column name="role" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="t_shirt_size" type="int">
+            <column name="t_shirt_size" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="department_id" type="bigint">
