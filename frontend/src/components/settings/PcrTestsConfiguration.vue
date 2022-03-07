@@ -48,7 +48,7 @@
           ℹ️ Keine PCR Test Serien vorhanden.
         </p>
         <div
-          class="flex-row"
+          class="flex-row bordered"
           v-for="pcrTestSeries in pcrTests"
           :key="pcrTestSeries.id"
         >
@@ -108,7 +108,6 @@
                   />
                 </v-col>
               </v-row>
-              <hr />
             </div>
           </div>
 
@@ -282,5 +281,9 @@ export default class PcrTestsConfiguration extends Vue {
   .edit-date-range {
     font-size: 0.75rem;
   }
+}
+.bordered {
+  padding-top: 12px;
+  border-bottom: 1px solid lightgray;
 }
 </style>

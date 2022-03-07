@@ -27,24 +27,14 @@ export const getPcrPoolSeries = (id: string): Promise<PcrTestSeries> => {
   return getData<PcrTestSeriesResponse>(
     `pcr-test-series/${id}`,
     withAuthenticationHeader()
-  )
-    .then(convertDates)
-    .catch((e: ErrorResponse) => {
-      toast.error(e.messages[0].message);
-      throw e;
-    });
+  ).then(convertDates);
 };
 
 export const getAllPcrPoolSeries = (): Promise<PcrTestSeries[]> => {
   return getData<PcrTestSeriesResponse[]>(
     `pcr-test-series/`,
     withAuthenticationHeader()
-  )
-    .then((pcrTestSeries) => pcrTestSeries.map(convertDates))
-    .catch((e: ErrorResponse) => {
-      toast.error(e.messages[0].message);
-      throw e;
-    });
+  ).then((pcrTestSeries) => pcrTestSeries.map(convertDates));
 };
 
 export const createPcrPoolSeries = (
@@ -54,12 +44,7 @@ export const createPcrPoolSeries = (
     `pcr-test-series`,
     withAuthenticationHeader(),
     newPcrPoolSeries
-  )
-    .then(convertDates)
-    .catch((e: ErrorResponse) => {
-      toast.error(e.messages[0].message);
-      throw e;
-    });
+  ).then(convertDates);
 };
 
 export const updatePcrPoolSeries = async (
@@ -69,25 +54,13 @@ export const updatePcrPoolSeries = async (
     `pcr-test-series/${pcrPoolSeries.id}`,
     withAuthenticationHeader(),
     pcrPoolSeries
-  )
-    .then(convertDates)
-    .catch((e: ErrorResponse) => {
-      toast.error(
-        e.messages[0].message ?? "PCR Serie konnte nicht aktualisiert werden."
-      );
-      throw e;
-    });
+  ).then(convertDates);
   if (!data) return undefined;
   return data;
 };
 
 export const deletePcrPoolSeries = (id: string): Promise<Response> => {
-  return deleteData(`pcr-test-series/${id}`, withAuthenticationHeader()).catch(
-    (e: ErrorResponse) => {
-      toast.error(e.messages[0].message);
-      throw e;
-    }
-  );
+  return deleteData(`pcr-test-series/${id}`, withAuthenticationHeader());
 };
 
 const convertDates = (pcrTestSeries: PcrTestSeriesResponse): PcrTestSeries => {

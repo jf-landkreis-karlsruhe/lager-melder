@@ -9,33 +9,6 @@
           @submitCode="submitEvent($event)"
         />
       </v-row>
-
-      <!-- Notifications. TODO: extract as general service -->
-      <transition name="slide-fade" mode="out-in">
-        <v-alert
-          class="attandee-code-success"
-          :key="attendeeAddedSentence"
-          v-if="attendeeAddedSentence"
-          type="success"
-          dismissible
-        >
-          {{ attendeeAddedSentence }}
-        </v-alert>
-      </transition>
-
-      <v-row justify="center">
-        <div class="errors">
-          <v-alert
-            class="network-error"
-            :value="!!networkError"
-            type="error"
-            transition="slide-y-transition"
-            dismissible
-          >
-            {{ networkError }}
-          </v-alert>
-        </div>
-      </v-row>
     </v-container>
   </div>
 </template>
@@ -51,9 +24,6 @@ export default class EventsView extends Vue {
   eventCode: string = "";
   eventName: string = "";
 
-  attendeeAddedSentence: string = "";
-  networkError: string = "";
-
   private get manualCodeInputRules() {
     return [
       (value: string) => !!value || "Required.",
@@ -65,14 +35,11 @@ export default class EventsView extends Vue {
     if (!isValidTestCode(attendeeCode)) {
       return;
     }
-    const attendeeRes = await loginToEvent(this.eventCode, attendeeCode).catch(
-      (reason) => {
-        this.networkError = JSON.stringify(reason);
-      }
-    );
-    console.log(attendeeRes);
+    const attendeeRes = await loginToEvent(this.eventCode, attendeeCode);
     if (attendeeRes) {
-      this.attendeeAddedSentence = `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`;
+      this.$toast.success(
+        `${this.eventName} von "${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName}".`
+      );
     }
   }
 
@@ -92,17 +59,5 @@ export default class EventsView extends Vue {
 .event-root {
   margin-bottom: 8rem;
   position: relative;
-}
-
-.attandee-code-success,
-.network-error {
-  max-width: 100%;
-  min-width: 300px;
-}
-.attandee-code-success {
-  position: absolute;
-  bottom: 0;
-  right: 12px;
-  transform: translateY(100%);
 }
 </style>

@@ -74,18 +74,6 @@
           </div>
         </transition>
       </v-row>
-
-      <transition name="slide-fade" mode="out-in">
-        <v-alert
-          class="scanner-error"
-          :value="!!scannerError"
-          type="error"
-          transition="slide-y-transition"
-          dismissible
-        >
-          {{ scannerError }}
-        </v-alert>
-      </transition>
     </v-container>
   </div>
 </template>
@@ -104,18 +92,12 @@ export default class ScannerComponent extends Vue {
   manualCodeValid = false;
 
   isScanning: boolean = true;
-  scannerError: string = "";
 
   @Prop()
   private readonly manualCodeHint: string | undefined;
 
   @Prop({ default: () => [] })
   private readonly manualCodeInputRules!: () => string[];
-
-  @Emit("onScannerError")
-  public onScannerError(error: any): void {
-    return error;
-  }
 
   @Emit("submitCode")
   public submitCode(code: string) {
@@ -188,14 +170,13 @@ export default class ScannerComponent extends Vue {
   stopQuagga() {
     Quagga.stop();
     this.code = "";
-    this.onScannerError("");
   }
 
   initQuagga(config: any) {
     Quagga.init(config, (err: any) => {
       if (err) {
         console.error(err);
-        this.onScannerError(err);
+        this.$toast(err);
         return;
       }
       console.log("Initialization finished. Ready to start");

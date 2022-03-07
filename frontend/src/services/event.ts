@@ -34,15 +34,17 @@ export const getEventByCode = (eventCode: string): Promise<Event> =>
 export const createEvent = (event: NewEvent): Promise<Event> =>
   postData<Event>("events", withAuthenticationHeader(), event);
 
-export const loginToEvent = (
+export const loginToEvent = async (
   eventCode: string,
   attendeeCode: string
-): Promise<AttendeeResponse> =>
-  postData<AttendeeResponse>(
+): Promise<AttendeeResponse> => {
+  const result = await postData<AttendeeResponse>(
     `events/by-code/${eventCode}/${attendeeCode}`,
     withAuthenticationHeader(),
     {}
   );
+  return result;
+};
 
 export const updateEvent = (event: Event) =>
   putData<Event>(`events/${event.id}`, withAuthenticationHeader(), event);

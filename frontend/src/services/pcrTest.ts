@@ -30,9 +30,7 @@ export const getPcrPool = async (
   const data = await getData<PcrTestResponse>(
     `pcr-tests/by-code/${testCode}`,
     withAuthenticationHeader()
-  ).catch((e: ErrorResponse) => {
-    throw e;
-  });
+  );
   if (!data) return undefined;
   const pcrTest = {
     ...data,
@@ -50,20 +48,12 @@ export const addAttendeeToPcrPool = (
     `pcr-tests/by-code/${testCode}/${attendeeCode}`,
     withAuthenticationHeader(),
     {}
-  )
-    .then((attendeeRes) => {
-      toast.success(
-        `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`
-      );
-      return attendeeRes;
-    })
-    .catch((e: ErrorResponse) => {
-      toast.error(
-        e.messages[0].message ??
-          "Teilnehmer konnte nicht dem PCR Test zugeordnet werden."
-      );
-      throw e;
-    });
+  ).then((attendeeRes) => {
+    toast.success(
+      `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`
+    );
+    return attendeeRes;
+  });
 };
 
 export const removeAttendeeFromPool = (
@@ -73,11 +63,5 @@ export const removeAttendeeFromPool = (
   return deleteData(
     `pcr-tests/by-code/${poolCode}/${attendeeCode}`,
     withAuthenticationHeader()
-  ).catch((e: ErrorResponse) => {
-    toast.error(
-      e.messages[0].message ??
-        "Teilnehmer konnte nicht von PCR Test entfernt werden."
-    );
-    throw e;
-  });
+  );
 };

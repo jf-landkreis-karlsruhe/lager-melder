@@ -21,9 +21,6 @@
       <v-alert v-if="showPasswordError" type="error">
         Die Passwörter sind nicht gleich.
       </v-alert>
-      <v-alert v-if="errorMessage.length > 0" type="error">
-        {{ errorMessage }}
-      </v-alert>
       <div></div>
       <v-container>
         <v-row justify="end">
@@ -88,7 +85,6 @@ export default class ListDepartment extends Vue {
   passwordSuccess = false;
   user: User = {} as User;
   showPasswordError = false;
-  errorMessage = "";
 
   hasAdministrationRole = hasAdministrationRole;
 
@@ -117,9 +113,9 @@ export default class ListDepartment extends Vue {
         setTimeout(() => (this.passwordSuccess = false), 2000);
       })
       .catch((error) => {
-        this.passwordLoading = false;
         console.log(error);
-        this.errorMessage = error;
+        this.passwordLoading = false;
+        this.$toast(error);
       });
   }
 
