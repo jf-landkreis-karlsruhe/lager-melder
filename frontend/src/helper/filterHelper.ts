@@ -1,4 +1,10 @@
-import { Attendee, AttendeeRole, TShirtSize, Food, AttendeeStatus } from "../services/attendee";
+import {
+  Attendee,
+  AttendeeRole,
+  TShirtSize,
+  Food,
+  AttendeeStatus,
+} from "../services/attendee";
 
 export const youthLeaderAttendees = (
   departmentId: string,

@@ -17,7 +17,9 @@ export const getBatches = (): Promise<FileReponse> => {
 
 export const getEventCodes = (): Promise<FileReponse> => {
   return fetchData(
-    `admin-files/events?frontendBaseUrl=${encodeURI(`${window.location.origin}/events`)}`,
+    `admin-files/events?frontendBaseUrl=${encodeURI(
+      `${window.location.origin}/events`
+    )}`,
     {
       headers: {
         ...withAuthenticationHeader(),

@@ -65,7 +65,6 @@ import {
   Food,
   // eslint-disable-next-line no-unused-vars
   TShirtSize,
-  AttendeeStatus,
 } from "../services/attendee";
 
 import {

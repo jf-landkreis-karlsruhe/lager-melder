@@ -39,10 +39,8 @@ import { Component } from "vue-property-decorator";
 
 import {
   getAttendeesForMyDepartment,
-  // eslint-disable-next-line no-unused-vars
   Attendee,
   AttendeeRole,
-  AttendeeStatus,
 } from "../services/attendee";
 
 // eslint-disable-next-line no-unused-vars
