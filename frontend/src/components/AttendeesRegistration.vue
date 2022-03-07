@@ -47,7 +47,11 @@ import {
 
 // eslint-disable-next-line no-unused-vars
 import { Department, getMyDepartment } from "../services/department";
-import { youthLeaderAttendees, youthAttendees } from "../helper/filterHelper";
+import {
+  youthLeaderAttendees,
+  youthAttendees,
+  filterEnteredAttendees,
+} from "../helper/filterHelper";
 
 import AttendeesTable from "./AttendeesTable.vue";
 
@@ -96,9 +100,7 @@ export default class AttendeesRegistration extends Vue {
   }
 
   get enteredAttendeesCount(): number {
-    return this.attendees.filter(
-      (attendee) => attendee.status === AttendeeStatus.ENTERED
-    ).length;
+    return this.attendees.filter(filterEnteredAttendees).length;
   }
 
   mounted() {

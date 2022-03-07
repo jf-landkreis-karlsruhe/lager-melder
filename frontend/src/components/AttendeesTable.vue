@@ -180,6 +180,7 @@ import {
 } from "../services/attendee";
 
 import { deleteAttendee } from "../services/attendee";
+import { filterEnteredAttendees } from "@/helper/filterHelper";
 
 interface AttendeeWithValidation extends Attendee {
   tShirtSizeError: boolean;
@@ -200,7 +201,7 @@ export default class AttendeesTable extends Vue {
   deletingAttendees: string[] = [];
   editingAttendeeIds: string[] = [this.newAttendeeId];
   headers = [
-    { text: "", value: "status", width: "20px" },
+    { text: "", value: "status" },
     { text: "Vorname", value: "firstName" },
     { text: "Nachname", value: "lastName" },
     { text: "Essen", value: "food" },
@@ -265,9 +266,7 @@ export default class AttendeesTable extends Vue {
   }
 
   get enteredAttendees(): number {
-    return this.attendees.filter(
-      (attendee) => attendee.status === AttendeeStatus.ENTERED
-    ).length;
+    return this.attendees.filter(filterEnteredAttendees).length;
   }
 
   birthdayText = birthdayText;

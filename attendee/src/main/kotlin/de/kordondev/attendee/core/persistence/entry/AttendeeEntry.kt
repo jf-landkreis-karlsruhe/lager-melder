@@ -24,9 +24,11 @@ data class AttendeeEntry(
     val birthday: String,
 
     @Column(name = "food")
+    @Enumerated(EnumType.STRING)
     val food: Food,
 
     @Column(name = "t_shirt_size")
+    @Enumerated(EnumType.STRING)
     val tShirtSize: TShirtSize,
 
     @Column(name = "additional_information")
@@ -36,6 +38,7 @@ data class AttendeeEntry(
     val code: String,
 
     @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     val role: AttendeeRole,
 
     @ManyToOne

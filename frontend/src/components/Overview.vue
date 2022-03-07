@@ -75,7 +75,11 @@ import {
 } from "../services/department";
 
 import AttendeesTable from "./AttendeesTable.vue";
-import { youthLeaderAttendees, youthAttendees } from "../helper/filterHelper";
+import {
+  youthLeaderAttendees,
+  youthAttendees,
+  filterEnteredAttendees,
+} from "../helper/filterHelper";
 
 import { hasAdministrationRole } from "../services/authentication";
 import { getBatches } from "../services/adminFiles";
@@ -131,9 +135,7 @@ export default class AttendeesRegistration extends Vue {
   }
 
   get enteredAttendeesCount(): number {
-    return this.attendees.filter(
-      (attendee) => attendee.status === AttendeeStatus.ENTERED
-    ).length;
+    return this.attendees.filter(filterEnteredAttendees).length;
   }
 
   mounted() {
