@@ -1,7 +1,6 @@
 import { getData, postData, deleteData } from "../helper/fetch";
 import { withAuthenticationHeader } from "./authentication";
 import { toast } from "@/plugins/toastification";
-import { ErrorMessage, ErrorResponse } from "./errorConstants";
 
 export interface PcrTestResponse {
   id: number;
@@ -50,7 +49,7 @@ export const addAttendeeToPcrPool = (
     {}
   ).then((attendeeRes) => {
     toast.success(
-      `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich hinzugefügt.`
+      `${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName} wurde erfolgreich zum Test hinzugefügt.`
     );
     return attendeeRes;
   });
