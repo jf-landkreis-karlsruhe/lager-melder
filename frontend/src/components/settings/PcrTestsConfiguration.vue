@@ -48,22 +48,34 @@
           ℹ️ Keine PCR Test Serien vorhanden.
         </p>
         <div
-          class="flex-row"
+          class="flex-row bordered"
           v-for="pcrTestSeries in pcrTests"
           :key="pcrTestSeries.id"
         >
           <div class="flex-row flex-grow mb-4">
-            <div v-if="!editingPcrTestIds.includes(pcrTestSeries.id)">
-              <div>
-                <span class="mr-4">Name: "{{ pcrTestSeries.name }}"</span>
-                <span class="date-range">
-                  Von {{ dateLocalized(pcrTestSeries.start) }} Uhr bis
-                  {{ dateLocalized(pcrTestSeries.end) }} Uhr
+            <div
+              v-if="!editingPcrTestIds.includes(pcrTestSeries.id)"
+              class="edit-tests"
+            >
+              <div class="mr-4 edit-name">
+                Name: <b>"{{ pcrTestSeries.name }}"</b>
+              </div>
+              <div class="edit-test-tags">
+                Testcodes:
+                <span
+                  class="edit-test-tag"
+                  v-for="code in pcrTestSeries.testCodes"
+                  :key="code"
+                >
+                  {{ code }}
                 </span>
               </div>
-              <div>Testcodes: {{ pcrTestSeries.testCodes.join(", ") }}</div>
+              <div class="edit-date-range">
+                Von {{ dateLocalized(pcrTestSeries.start) }} Uhr → bis
+                {{ dateLocalized(pcrTestSeries.end) }} Uhr
+              </div>
             </div>
-            <div v-if="editingPcrTestIds.includes(pcrTestSeries.id)">
+            <div v-if="isOpenForEditing(pcrTestSeries.id)">
               <v-text-field
                 type="text"
                 v-model="pcrTestSeries.name"
@@ -96,22 +108,21 @@
                   />
                 </v-col>
               </v-row>
-              <hr />
             </div>
           </div>
 
           <div>
             <div class="flex-row">
-              <div v-if="!editingPcrTestIds.includes(pcrTestSeries.id)">
+              <div v-if="!isOpenForEditing(pcrTestSeries.id)">
                 <v-icon
                   medium
                   class="mr-2"
-                  @click.prevent="addToEditing(pcrTestSeries)"
+                  @click.prevent="addToEditing(pcrTestSeries.id)"
                 >
                   mdi-pencil
                 </v-icon>
               </div>
-              <div v-if="editingPcrTestIds.includes(pcrTestSeries.id)">
+              <div v-if="isOpenForEditing(pcrTestSeries.id)">
                 <v-btn
                   type="sumbit"
                   :loading="loadingPcrTestId === pcrTestSeries.id"
@@ -170,12 +181,16 @@ export default class PcrTestsConfiguration extends Vue {
     this.pcrTests = data;
   }
 
-  addToEditing(pcrTestSeries: PcrTestSeries) {
-    this.editingPcrTestIds.push(pcrTestSeries.id);
-  }
-
   private get newPcrTestCodesArray(): string[] {
     return this.newPcrTestCodes.replaceAll(" ", "").split(/[\n,]+/);
+  }
+
+  addToEditing(pcrTestSeriesId: string) {
+    this.editingPcrTestIds.push(pcrTestSeriesId);
+  }
+
+  private isOpenForEditing(pcrTestSeriesId: string): boolean {
+    return this.editingPcrTestIds.includes(pcrTestSeriesId);
   }
 
   async createPcrTestSeriesInternal() {
@@ -185,6 +200,8 @@ export default class PcrTestsConfiguration extends Vue {
       start: this.newStart,
       end: this.newEnd,
       testCodes: this.newPcrTestCodesArray,
+    }).catch(() => {
+      this.setToDefaultFormValues();
     });
     this.setToDefaultFormValues();
 
@@ -202,7 +219,17 @@ export default class PcrTestsConfiguration extends Vue {
 
   async savePcrTestSeries(pcrTestSeries: PcrTestSeries) {
     this.loadingPcrTestId = pcrTestSeries.id;
-    const data = await updatePcrPoolSeries(pcrTestSeries);
+    // pcrTestSeries.testCodes are converted into string in textarea element
+    if (typeof pcrTestSeries.testCodes === "string") {
+      pcrTestSeries.testCodes = (pcrTestSeries.testCodes as unknown as string)
+        .replaceAll(" ", "")
+        .split(/[\n,]+/);
+    }
+
+    const data = await updatePcrPoolSeries(pcrTestSeries).catch(() => {
+      this.loadingPcrTestId = "";
+    });
+    if (!data) return;
     const index = this.editingPcrTestIds.indexOf(data.id);
     this.editingPcrTestIds.splice(index, 1);
     this.loadingPcrTestId = "";
@@ -224,7 +251,7 @@ export default class PcrTestsConfiguration extends Vue {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .flex-row {
   display: flex;
 }
@@ -241,7 +268,22 @@ export default class PcrTestsConfiguration extends Vue {
   flex: 0 1 800px;
 }
 
-.date-range {
-  font-size: 0.7rem;
+.edit-tests {
+  .edit-test-tags {
+    font-size: 0.9rem;
+  }
+  .edit-test-tag {
+    background-color: #ddd;
+    padding: 0px 16px;
+    margin: 0 4px;
+    border-radius: 16px;
+  }
+  .edit-date-range {
+    font-size: 0.75rem;
+  }
+}
+.bordered {
+  padding-top: 12px;
+  border-bottom: 1px solid lightgray;
 }
 </style>

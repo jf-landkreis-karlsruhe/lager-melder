@@ -16,6 +16,7 @@
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.5.3",
+    "vue-toastification": "^1.7.14",
     "vuetify": "^2.4.0"
   },
   "devDependencies": {

@@ -1,3 +1,5 @@
+import { toast } from "@/plugins/toastification";
+import { ErrorResponse } from "@/services/errorConstants";
 import { BASE_URL } from "../assets/config";
 
 export const getData = <T>(relativeUrl: string, headers: HeadersInit) => {
@@ -50,10 +52,28 @@ export const deleteData = (relativeUrl: string, headers: HeadersInit) => {
 };
 
 export const fetchData = (relativeUrl: string, config: RequestInit) => {
-  return fetch(`${BASE_URL}/${relativeUrl}`, config).then((res) => {
-    if (!res.ok) {
-      throw res;
-    }
-    return res;
-  });
+  return fetch(`${BASE_URL}/${relativeUrl}`, config)
+    .then((res) => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res;
+    })
+    .catch(async (err: Response) => {
+      const errObj = await err.json();
+      if (isValidatedErrorResponse(errObj)) {
+        toast.error(errObj.messages[0].message);
+      } else {
+        const httpRes: Response = errObj as Response;
+        const commonErrMsg = `Es ist leider etwas schief gegangen. (Code: ${httpRes.status})`;
+        toast.error(commonErrMsg);
+      }
+      throw errObj;
+    });
+};
+
+const isValidatedErrorResponse = (
+  err: Record<string, any>
+): err is ErrorResponse => {
+  return err.key && err.messages;
 };

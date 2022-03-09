@@ -14,9 +14,6 @@
         required
       />
       <v-text-field v-model="username" label="Benutzername" required />
-      <v-alert v-if="error" type="error">
-        Es gab einen Fehler beim erzeugen der Feuerwehr oder des Benutzers.
-      </v-alert>
       <v-row justify="end">
         <v-btn color="primary" :loading="loading" type="submit">
           <span v-if="created">
@@ -56,11 +53,9 @@ export default class AddDepartment extends Vue {
 
   loading: boolean = false;
   created: boolean = false;
-  error: boolean = false;
 
   addDepartmentAndUser() {
     this.loading = true;
-    this.error = false;
 
     const departmentWithUserReguest = {
       departmentName: this.departmentName,
@@ -86,7 +81,6 @@ export default class AddDepartment extends Vue {
       .catch((e: any) => {
         console.log("error", e);
         this.loading = false;
-        this.error = true;
       });
   }
 }

@@ -1,5 +1,7 @@
+import { toast } from "@/plugins/toastification";
 import { getData, postData, deleteData, putData } from "../helper/fetch";
 import { withAuthenticationHeader } from "./authentication";
+import { ErrorResponse } from "./errorConstants";
 
 export interface PcrTestSeriesResponse {
   id: string;
@@ -45,14 +47,16 @@ export const createPcrPoolSeries = (
   ).then(convertDates);
 };
 
-export const updatePcrPoolSeries = (
+export const updatePcrPoolSeries = async (
   pcrPoolSeries: PcrTestSeries
-): Promise<PcrTestSeries> => {
-  return putData<PcrTestSeriesResponse>(
+): Promise<PcrTestSeries | undefined> => {
+  const data = await putData<PcrTestSeriesResponse>(
     `pcr-test-series/${pcrPoolSeries.id}`,
     withAuthenticationHeader(),
     pcrPoolSeries
   ).then(convertDates);
+  if (!data) return undefined;
+  return data;
 };
 
 export const deletePcrPoolSeries = (id: string): Promise<Response> => {
