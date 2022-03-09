@@ -83,6 +83,8 @@ import { Vue, Component, Prop, Emit } from "vue-property-decorator";
 import Quagga from "quagga"; // ES6
 import { isValidTestCode } from "../assets/config";
 
+const CAMERA_DEVICE_ID_KEY = "cameraDeviceId";
+
 @Component({ name: "ScannerComponent" })
 export default class ScannerComponent extends Vue {
   code: string = "";
@@ -164,7 +166,9 @@ export default class ScannerComponent extends Vue {
 
   async mounted() {
     this.initCameraSelection();
-    this.initQuagga(this.getQuaggaConfig());
+    const storedCameraDeviceId =
+      localStorage.getItem(CAMERA_DEVICE_ID_KEY) || undefined;
+    this.initQuagga(this.getQuaggaConfig(storedCameraDeviceId));
   }
 
   stopQuagga() {
@@ -188,6 +192,7 @@ export default class ScannerComponent extends Vue {
   cameraChanged(e: any) {
     e.preventDefault();
     const cameraDeviceId = e.target.value;
+    localStorage.setItem(CAMERA_DEVICE_ID_KEY, cameraDeviceId);
 
     Quagga.stop();
     this.initQuagga(this.getQuaggaConfig(cameraDeviceId));
