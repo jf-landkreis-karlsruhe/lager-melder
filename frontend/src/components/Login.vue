@@ -47,8 +47,8 @@ import { login, isLoggedIn, logout } from "../services/authentication";
 
 @Component({})
 export default class Login extends Vue {
-  username = "admin";
-  password = "password";
+  username = "";
+  password = "";
   loggedIn = false;
 
   loginHandler() {
