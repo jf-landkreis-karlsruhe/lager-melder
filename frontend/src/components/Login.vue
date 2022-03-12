@@ -29,8 +29,11 @@
     <v-card v-if="loggedIn">
       <v-card-title>Eingeloggt</v-card-title>
       <v-card-text>
-        Du bist eingeloggt. Du kannst dich jetzt
-        <v-btn text @click="logout">ausloggen</v-btn>
+        Du bist eingeloggt.
+        <br />
+        <br />
+        Du kannst dich hier
+        <v-btn class="ml-2" rounded @click="logout">ausloggen</v-btn>
       </v-card-text>
     </v-card>
   </div>

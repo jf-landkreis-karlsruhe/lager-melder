@@ -1,5 +1,7 @@
 <template>
-  <div class="home">Home</div>
+  <div class="home">
+    <h1 class="text-center">Wilkommen beim Kreiszeltlager Bruchsal</h1>
+  </div>
 </template>
 
 <script>

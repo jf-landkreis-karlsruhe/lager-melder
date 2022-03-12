@@ -1,22 +1,45 @@
 <template>
   <header>
     <div class="d-flex justify-center align-center hero-image-container">
-      <img alt="Zeltlager logo" class="hero-image" src="../assets/logo2.jpg" />
+      <router-link to="/">
+        <img
+          alt="Zeltlager logo"
+          class="hero-image"
+          src="../assets/logo2.jpg"
+        />
+      </router-link>
     </div>
-    <div id="nav" v-if="loggedIn">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/teilnehmer">Teilnehmer</router-link> |
-      <router-link to="/pcr-tests">PCR Tests</router-link> |
-      <router-link to="/files">Anmeldeunterlagen</router-link> |
-      <router-link to="/feuerwehr">Meine Feuerwehr</router-link>
-      <span v-if="hasAdministrationRole()">
-        | <router-link to="/overview">Übersicht</router-link>
-      </span>
-      <span v-if="hasAdministrationRole()">
-        | <router-link to="/einstellungen">Einstellungen</router-link>
-      </span>
-    </div>
+    <nav id="nav" v-if="loggedIn">
+      <v-container fluid class="nav-bar">
+        <v-row justify="space-between align-center">
+          <ul class="pa-0 nav-list">
+            <li class="nav-item">
+              <router-link to="/teilnehmer">Teilnehmer</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/pcr-tests">PCR Tests</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/files">Anmeldeunterlagen</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/feuerwehr">Meine Feuerwehr</router-link>
+            </li>
+            <li class="nav-item admin" v-if="hasAdministrationRole()">
+              <router-link to="/overview"> Übersicht </router-link>
+            </li>
+            <li class="nav-item admin" v-if="hasAdministrationRole()">
+              <router-link to="/einstellungen"> Einstellungen </router-link>
+            </li>
+          </ul>
+
+          <router-link to="/login" class="account">
+            <v-icon medium color="blue darken-2"> mdi-account </v-icon>
+            <span class="account__link pl-1">Account</span>
+          </router-link>
+        </v-row>
+      </v-container>
+    </nav>
   </header>
 </template>
 
@@ -65,15 +88,62 @@ export default class Header extends Vue {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .hero-image-container {
-  background: #2e6db2;
+  background: #006fb7;
 }
 .hero-image {
   max-width: 100%;
-  max-height: 350px;
+  max-height: 200px;
+  margin-top: -30px;
 }
 header {
   margin-bottom: 30px;
+}
+.nav-bar {
+  margin-top: 12px;
+  font-weight: 500;
+  padding: 10px 24px;
+
+  .nav-list {
+    .nav-item {
+      display: inline-block;
+      background: #d3e9f8;
+      border-radius: 12px;
+      margin: 0 4px;
+      transition: padding 0.2s ease-in-out;
+
+      &:hover {
+        background: #95caee;
+        padding: 0px 8px;
+        border-radius: 16px;
+      }
+
+      &.admin {
+        background: #f3bebd;
+      }
+      a {
+        text-decoration: none;
+        color: #303030;
+        padding: 4px 8px;
+        border-radius: 16px;
+      }
+    }
+  }
+  .account {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.2 ease-in-out;
+
+    &:hover {
+      color: #0e569c;
+      font-weight: bold;
+    }
+
+    .account__link {
+      text-decoration: none;
+    }
+  }
 }
 </style>
