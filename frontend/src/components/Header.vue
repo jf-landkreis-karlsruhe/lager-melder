@@ -120,7 +120,11 @@ header {
       }
 
       &.admin {
-        background: #f3bebd;
+        background: #ffe760;
+
+        &:hover {
+          background: #ecd032;
+        }
       }
       a {
         text-decoration: none;
