@@ -7,6 +7,7 @@ export interface Settings {
   hostCity: string;
   eventStart: string;
   eventEnd: string;
+  eventName: string;
   eventAddress: string;
   organizer: string;
   organisationAddress: string; // multiline
