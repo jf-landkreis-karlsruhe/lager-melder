@@ -1,6 +1,6 @@
 <template>
-  <div class="mt-5 mb-10">
-    <h1>Auswahl</h1>
+  <div class="mt-16 mb-5">
+    <h1>Verteilung der Auswahl für Tshirts und Essen</h1>
     <div v-if="tShirtDistribution.length > 0">
       <BarChart chartLabel="TShirt" :rawData="tShirtDistribution" />
     </div>

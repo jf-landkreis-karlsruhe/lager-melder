@@ -1,7 +1,7 @@
 <template>
   <header>
     <div class="d-flex justify-center align-center hero-image-container">
-      <router-link to="/">
+      <router-link to="/teilnehmer">
         <img
           alt="Zeltlager logo"
           class="hero-image"
@@ -11,19 +11,19 @@
     </div>
     <nav id="nav" v-if="loggedIn">
       <v-container fluid class="nav-bar">
-        <v-row justify="space-between align-center">
-          <ul class="pa-0 nav-list">
+        <v-row justify="space-between align-center" class="nav-bar__row">
+          <ul class="pa-0 nav-bar__list">
             <li class="nav-item">
               <router-link to="/teilnehmer">Teilnehmer</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/pcr-tests">PCR Tests</router-link>
+              <router-link to="/feuerwehr">Meine Feuerwehr</router-link>
             </li>
             <li class="nav-item">
               <router-link to="/files">Anmeldeunterlagen</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/feuerwehr">Meine Feuerwehr</router-link>
+              <router-link to="/pcr-tests">PCR Tests</router-link>
             </li>
             <li class="nav-item admin" v-if="hasAdministrationRole()">
               <router-link to="/overview"> Übersicht </router-link>
@@ -89,64 +89,92 @@ export default class Header extends Vue {
 </script>
 
 <style scoped lang="scss">
-.hero-image-container {
-  background: #006fb7;
-}
-.hero-image {
-  max-width: 100%;
-  max-height: 200px;
-  margin-top: -30px;
-}
 header {
   margin-bottom: 30px;
-}
-.nav-bar {
-  margin-top: 12px;
-  font-weight: 500;
-  padding: 10px 24px;
 
-  .nav-list {
-    .nav-item {
-      display: inline-block;
-      background: #d3e9f8;
-      border-radius: 12px;
-      margin: 0 4px;
-      transition: padding 0.2s ease-in-out;
+  .hero-image-container {
+    background: #006fb7;
 
-      &:hover {
-        background: #95caee;
-        padding: 0px 8px;
-        border-radius: 16px;
-      }
-
-      &.admin {
-        background: #ffe760;
-
-        &:hover {
-          background: #ecd032;
-        }
-      }
-      a {
-        text-decoration: none;
-        color: #303030;
-        padding: 4px 8px;
-        border-radius: 16px;
-      }
+    .hero-image {
+      max-width: 100%;
+      max-height: 200px;
+      margin-top: -30px;
     }
   }
-  .account {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    transition: all 0.2 ease-in-out;
 
-    &:hover {
-      color: #0e569c;
-      font-weight: bold;
-    }
+  .nav-bar {
+    margin-top: 12px;
+    font-weight: 500;
+    padding: 10px 24px;
 
-    .account__link {
-      text-decoration: none;
+    .nav-bar__row {
+      gap: 12px;
+
+      .nav-bar__list {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+
+        .nav-item {
+          display: inline-block;
+          background: #d3e9f8;
+          border-radius: 12px;
+          transition: padding 0.2s ease-in-out;
+
+          &:hover,
+          &:active {
+            background: #95caee;
+            padding: 0px 8px;
+            border-radius: 16px;
+          }
+
+          &.admin {
+            background: #ffe760;
+
+            &:hover {
+              background: #ecd032;
+            }
+
+            .router-link-active {
+              background: #ecd032;
+            }
+          }
+
+          a {
+            text-decoration: none;
+            color: #303030;
+            padding: 0px 8px;
+            border-radius: 16px;
+
+            &.router-link-active {
+              background: #95caee;
+            }
+          }
+        }
+      }
+      .account {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+        margin-left: auto;
+
+        @media screen and (min-width: 768px) {
+          margin: unset;
+        }
+
+        &:hover,
+        &:active,
+        &.router-link-active {
+          color: #1976d2;
+          box-shadow: 0 3px 0 #1976d2;
+        }
+
+        .account__link {
+          text-decoration: none;
+        }
+      }
     }
   }
 }

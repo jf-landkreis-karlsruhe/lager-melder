@@ -32,7 +32,7 @@ export default class App extends Vue {}
   -moz-osx-font-smoothing: grayscale;
 
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(auto, 1000px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(auto, 1400px) minmax(0, 1fr);
 }
 
 .my-container {

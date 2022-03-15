@@ -1,154 +1,163 @@
 <template>
-  <v-card>
-    <h2>PCR Test Serien</h2>
-    <h3>PCR Test Serie erstellen</h3>
-    <form v-on:submit.prevent="createPcrTestSeriesInternal()">
-      <v-text-field
-        v-model="newPcrTestName"
-        label="Titel der PCR Test Serie"
-        required
-      />
-      <v-textarea
-        v-model="newPcrTestCodes"
-        label="PCR Test Serie Testcodes als Kommaseparierte Liste"
-        required
-      />
-      <v-row justify="center" align="center" class="d-flex flex-wrap mt-2">
-        <v-col>
-          <DateAndTime
-            :dateTime="newStart"
-            @changed="newStart = $event"
-            label="Startdatum"
+  <v-card class="mb-16">
+    <h2 class="ml-12">PCR Test Serien</h2>
+    <v-row justify="center">
+      <v-col cols="6">
+        <h3>PCR Test Serie erstellen</h3>
+        <form v-on:submit.prevent="createPcrTestSeriesInternal()">
+          <v-text-field
+            v-model="newPcrTestName"
+            label="Titel der PCR Test Serie"
+            required
           />
-        </v-col>
-        <v-col>
-          <DateAndTime
-            :dateTime="newEnd"
-            @changed="newEnd = $event"
-            label="Enddatum"
+          <v-textarea
+            v-model="newPcrTestCodes"
+            label="PCR Test Serie Testcodes als Kommaseparierte Liste"
+            required
           />
-        </v-col>
-      </v-row>
+          <v-row justify="center" align="center" class="d-flex flex-wrap mt-2">
+            <v-col cols="8">
+              <DateAndTime
+                :dateTime="newStart"
+                @changed="newStart = $event"
+                label="Startdatum"
+              />
+            </v-col>
+            <v-col cols="8">
+              <DateAndTime
+                :dateTime="newEnd"
+                @changed="newEnd = $event"
+                label="Enddatum"
+              />
+            </v-col>
+          </v-row>
 
-      <v-row class="v-row mb-8" justify="end">
-        <v-btn
-          color="primary"
-          :loading="loadingPcrTestId === '0'"
-          type="submit"
-        >
-          <span>Erstellen</span>
-        </v-btn>
-      </v-row>
-    </form>
-
-    <h3>PCR Test Serien verwalten</h3>
-    <div class="flex-row flex-center">
-      <v-card class="card pcr-test-card mt-6">
-        <p v-if="!pcrTests || pcrTests.length === 0" class="mb-0">
-          ℹ️ Keine PCR Test Serien vorhanden.
-        </p>
-        <div
-          class="flex-row bordered"
-          v-for="pcrTestSeries in pcrTests"
-          :key="pcrTestSeries.id"
-        >
-          <div class="flex-row flex-grow mb-4">
-            <div
-              v-if="!editingPcrTestIds.includes(pcrTestSeries.id)"
-              class="edit-tests"
+          <v-row class="v-row mb-8" justify="end">
+            <v-btn
+              color="primary"
+              :loading="loadingPcrTestId === '0'"
+              type="submit"
             >
-              <div class="mr-4 edit-name">
-                Name: <b>"{{ pcrTestSeries.name }}"</b>
-              </div>
-              <div class="edit-test-tags">
-                Testcodes:
-                <span
-                  class="edit-test-tag"
-                  v-for="code in pcrTestSeries.testCodes"
-                  :key="code"
-                >
-                  {{ code }}
-                </span>
-              </div>
-              <div class="edit-date-range">
-                Von {{ dateLocalized(pcrTestSeries.start) }} Uhr → bis
-                {{ dateLocalized(pcrTestSeries.end) }} Uhr
-              </div>
-            </div>
-            <div v-if="isOpenForEditing(pcrTestSeries.id)">
-              <v-text-field
-                type="text"
-                v-model="pcrTestSeries.name"
-                label="Titel der PCR Test Serie"
-                required
-                :form="createFormName(pcrTestSeries)"
-              />
-              <v-textarea
-                v-model="pcrTestSeries.testCodes"
-                label="PCR Test Serie Testcodes als Kommaseparierte Liste"
-                required
-              />
-              <v-row
-                justify="center"
-                align="center"
-                class="d-flex flex-wrap mt-2"
-              >
-                <v-col>
-                  <DateAndTime
-                    :dateTime="pcrTestSeries.start"
-                    @changed="pcrTestSeries.start = $event"
-                    label="Startdatum"
-                  />
-                </v-col>
-                <v-col>
-                  <DateAndTime
-                    :dateTime="pcrTestSeries.end"
-                    @changed="pcrTestSeries.end = $event"
-                    label="Enddatum"
-                  />
-                </v-col>
-              </v-row>
-            </div>
-          </div>
+              <span>Erstellen</span>
+            </v-btn>
+          </v-row>
+        </form>
 
-          <div>
-            <div class="flex-row">
-              <div v-if="!isOpenForEditing(pcrTestSeries.id)">
-                <v-icon
-                  medium
-                  class="mr-2"
-                  @click.prevent="addToEditing(pcrTestSeries.id)"
+        <h3>PCR Test Serien verwalten</h3>
+        <div class="flex-row flex-center">
+          <v-card class="card pcr-test-card mt-6">
+            <p v-if="!pcrTests || pcrTests.length === 0" class="mb-0">
+              ℹ️ Keine PCR Test Serien vorhanden.
+            </p>
+            <div
+              class="flex-row bordered"
+              v-for="pcrTestSeries in pcrTests"
+              :key="pcrTestSeries.id"
+            >
+              <div class="flex-row flex-grow mb-4">
+                <div
+                  v-if="!editingPcrTestIds.includes(pcrTestSeries.id)"
+                  class="edit-tests"
                 >
-                  mdi-pencil
-                </v-icon>
+                  <div class="mr-4 edit-name">
+                    Name: <b>"{{ pcrTestSeries.name }}"</b>
+                  </div>
+                  <div class="edit-test-tags">
+                    Testcodes:
+                    <span
+                      class="edit-test-tag"
+                      v-for="code in pcrTestSeries.testCodes"
+                      :key="code"
+                    >
+                      {{ code }}
+                    </span>
+                  </div>
+                  <div class="edit-date-range">
+                    Von {{ dateLocalized(pcrTestSeries.start) }} Uhr → bis
+                    {{ dateLocalized(pcrTestSeries.end) }} Uhr
+                  </div>
+                </div>
+                <div v-if="isOpenForEditing(pcrTestSeries.id)">
+                  <v-text-field
+                    type="text"
+                    v-model="pcrTestSeries.name"
+                    label="Titel der PCR Test Serie"
+                    required
+                    :form="createFormName(pcrTestSeries)"
+                  />
+                  <v-textarea
+                    v-model="pcrTestSeries.testCodes"
+                    label="PCR Test Serie Testcodes als Kommaseparierte Liste"
+                    required
+                    rows="4"
+                  />
+                  <v-row
+                    justify="center"
+                    align="center"
+                    class="d-flex flex-wrap mt-2"
+                  >
+                    <DateAndTime
+                      :dateTime="pcrTestSeries.start"
+                      @changed="pcrTestSeries.start = $event"
+                      label="Startdatum"
+                    />
+                  </v-row>
+                  <v-row
+                    justify="center"
+                    align="center"
+                    class="d-flex flex-wrap mt-2"
+                  >
+                    <DateAndTime
+                      :dateTime="pcrTestSeries.end"
+                      @changed="pcrTestSeries.end = $event"
+                      label="Enddatum"
+                    />
+                  </v-row>
+                </div>
               </div>
-              <div v-if="isOpenForEditing(pcrTestSeries.id)">
-                <v-btn
-                  type="sumbit"
-                  :loading="loadingPcrTestId === pcrTestSeries.id"
-                  :form="createFormName(pcrTestSeries)"
-                >
-                  <v-icon medium class="mr-2"> mdi-content-save </v-icon>
-                </v-btn>
+
+              <div>
+                <div class="flex-row">
+                  <div v-if="!isOpenForEditing(pcrTestSeries.id)">
+                    <v-icon
+                      medium
+                      class="mr-2"
+                      @click.prevent="addToEditing(pcrTestSeries.id)"
+                    >
+                      mdi-pencil
+                    </v-icon>
+                  </div>
+                  <div v-if="isOpenForEditing(pcrTestSeries.id)">
+                    <v-btn
+                      type="sumbit"
+                      :loading="loadingPcrTestId === pcrTestSeries.id"
+                      :form="createFormName(pcrTestSeries)"
+                    >
+                      <v-icon medium class="mr-2"> mdi-content-save </v-icon>
+                    </v-btn>
+                  </div>
+                  <v-icon
+                    medium
+                    @click.prevent="
+                      deletePcrTestSeriesInteral(pcrTestSeries.id)
+                    "
+                  >
+                    mdi-delete
+                  </v-icon>
+                </div>
               </div>
-              <v-icon
-                medium
-                @click.prevent="deletePcrTestSeriesInteral(pcrTestSeries.id)"
-              >
-                mdi-delete
-              </v-icon>
             </div>
-          </div>
+
+            <form
+              v-for="pcrTestSeries in pcrTests"
+              :key="'form-' + pcrTestSeries.id"
+              :id="createFormName(pcrTestSeries)"
+              v-on:submit.prevent="savePcrTestSeries(pcrTestSeries)"
+            />
+          </v-card>
         </div>
-
-        <form
-          v-for="pcrTestSeries in pcrTests"
-          :key="'form-' + pcrTestSeries.id"
-          :id="createFormName(pcrTestSeries)"
-          v-on:submit.prevent="savePcrTestSeries(pcrTestSeries)"
-        />
-      </v-card>
-    </div>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 

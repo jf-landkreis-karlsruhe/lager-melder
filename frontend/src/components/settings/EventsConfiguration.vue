@@ -1,93 +1,101 @@
 <template>
-  <v-card>
-    <h2>Events</h2>
-    <h3>Event erstellen</h3>
-    <form v-on:submit.prevent="createEventInternal()">
-      <v-text-field v-model="eventName" label="Titel des Event" required />
-      <v-row class="v-row" justify="end">
-        <v-btn color="primary" :loading="loadingEventId === '0'" type="submit">
-          <span>Erstellen</span>
-        </v-btn>
-      </v-row>
-    </form>
+  <v-card class="mb-16">
+    <h2 class="ml-12">Events</h2>
+    <v-row justify="center">
+      <v-col cols="6">
+        <h3>Event erstellen</h3>
+        <form v-on:submit.prevent="createEventInternal()">
+          <v-text-field v-model="eventName" label="Titel des Event" required />
+          <v-row class="v-row" justify="end">
+            <v-btn
+              color="primary"
+              :loading="loadingEventId === '0'"
+              type="submit"
+            >
+              <span>Erstellen</span>
+            </v-btn>
+          </v-row>
+        </form>
 
-    <h2>Event QR Codes</h2>
-    <p>
-      Die QR Codes für alle Events herrunterladen.
-      <v-btn
-        class="underline"
-        :loading="loadingDownload"
-        @click="downloadEventsPDF"
-      >
-        Download
-      </v-btn>
-    </p>
-
-    <h3>Event verwalten</h3>
-    <div class="flex-row flex-center">
-      <v-card class="card event-card mt-6">
-        <p v-if="!events || events.length === 0" class="mb-0">
-          ℹ️ Keine Events vorhanden.
+        <h2>Event QR Codes</h2>
+        <p>
+          Die QR Codes für alle Events herrunterladen.
+          <v-btn
+            class="underline"
+            :loading="loadingDownload"
+            @click="downloadEventsPDF"
+          >
+            Download
+          </v-btn>
         </p>
-        <div class="flex-row event" v-for="event in events" :key="event.id">
-          <div class="flex-row flex-grow">
-            <div v-if="!editingEventIds.includes(event.id)">
-              {{ event.name }}
-            </div>
-            <div v-if="editingEventIds.includes(event.id)">
-              <v-text-field
-                type="text"
-                v-model="event.name"
-                label="Titel des Event"
-                required
-                :form="createFormName(event)"
-              />
-            </div>
-          </div>
 
-          <div>
-            <div class="flex-row">
-              <div v-if="!editingEventIds.includes(event.id)">
-                <v-icon
-                  medium
-                  class="mr-2"
-                  @click.prevent="addToEditing(event)"
-                >
-                  mdi-pencil
-                </v-icon>
+        <h3>Event verwalten</h3>
+        <div class="flex-row flex-center">
+          <v-card class="card event-card mt-6">
+            <p v-if="!events || events.length === 0" class="mb-0">
+              ℹ️ Keine Events vorhanden.
+            </p>
+            <div class="flex-row event" v-for="event in events" :key="event.id">
+              <div class="flex-row flex-grow">
+                <div v-if="!editingEventIds.includes(event.id)">
+                  {{ event.name }}
+                </div>
+                <div v-if="editingEventIds.includes(event.id)">
+                  <v-text-field
+                    type="text"
+                    v-model="event.name"
+                    label="Titel des Event"
+                    required
+                    :form="createFormName(event)"
+                  />
+                </div>
               </div>
-              <div v-if="editingEventIds.includes(event.id)">
-                <v-btn
-                  type="sumbit"
-                  :loading="loadingEventId === event.id"
-                  :form="createFormName(event)"
-                >
-                  <v-icon medium class="mr-2"> mdi-content-save </v-icon>
-                </v-btn>
+
+              <div>
+                <div class="flex-row">
+                  <div v-if="!editingEventIds.includes(event.id)">
+                    <v-icon
+                      medium
+                      class="mr-2"
+                      @click.prevent="addToEditing(event)"
+                    >
+                      mdi-pencil
+                    </v-icon>
+                  </div>
+                  <div v-if="editingEventIds.includes(event.id)">
+                    <v-btn
+                      type="sumbit"
+                      :loading="loadingEventId === event.id"
+                      :form="createFormName(event)"
+                    >
+                      <v-icon medium class="mr-2"> mdi-content-save </v-icon>
+                    </v-btn>
+                  </div>
+                  <v-icon
+                    medium
+                    @click.prevent="deleteEventInteral(event.id)"
+                    v-if="event.type === eventTypeLocation"
+                  >
+                    mdi-delete
+                  </v-icon>
+                  <div
+                    style="width: 24px; height: 24px"
+                    v-if="event.type !== eventTypeLocation"
+                  ></div>
+                </div>
               </div>
-              <v-icon
-                medium
-                @click.prevent="deleteEventInteral(event.id)"
-                v-if="event.type === eventTypeLocation"
-              >
-                mdi-delete
-              </v-icon>
-              <div
-                style="width: 24px; height: 24px"
-                v-if="event.type !== eventTypeLocation"
-              ></div>
             </div>
-          </div>
+
+            <form
+              v-for="event in events"
+              :key="'form-' + event.id"
+              :id="createFormName(event)"
+              v-on:submit.prevent="saveEvent(event)"
+            />
+          </v-card>
         </div>
-
-        <form
-          v-for="event in events"
-          :key="'form-' + event.id"
-          :id="createFormName(event)"
-          v-on:submit.prevent="saveEvent(event)"
-        />
-      </v-card>
-    </div>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 

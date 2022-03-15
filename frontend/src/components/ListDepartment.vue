@@ -1,55 +1,78 @@
 <template>
   <div>
-    <h1>Deine Feuerwehr</h1>
-    <div v-if="myDepartment.id">
-      <h2>{{ myDepartment.name }}</h2>
-      <EditDepartment :department="myDepartment" />
-    </div>
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="10">
+          <h1>Deine Feuerwehr</h1>
+        </v-col>
+        <v-col cols="6">
+          <div v-if="myDepartment.id">
+            <h2>{{ myDepartment.name }}</h2>
+            <EditDepartment :department="myDepartment" class="mb-8" />
+          </div>
 
-    <form v-on:submit.prevent="updateUser()">
-      <v-text-field
-        v-model="password"
-        label="Password"
-        hint="Mindestlänge 8 Zeichen"
-        required
-      />
-      <v-text-field
-        v-model="repeatPassword"
-        label="Password wiederholen"
-        required
-      />
-      <v-alert v-if="showPasswordError" type="error">
-        Die Passwörter sind nicht gleich.
-      </v-alert>
-      <div></div>
-      <v-container>
-        <v-row justify="end">
-          <v-btn
-            :color="passwordSuccess ? 'success' : 'primary'"
-            :loading="passwordLoading"
-            type="submit"
-          >
-            <div v-if="passwordSuccess">
-              <v-icon medium>mdi-check</v-icon> geändert
+          <form v-on:submit.prevent="updateUser()" class="mb-8">
+            <v-text-field
+              v-model="password"
+              label="Password"
+              hint="Mindestlänge 8 Zeichen"
+              required
+            />
+            <v-text-field
+              v-model="repeatPassword"
+              label="Password wiederholen"
+              required
+            />
+            <v-alert v-if="showPasswordError" type="error">
+              Die Passwörter sind nicht gleich.
+            </v-alert>
+
+            <v-container>
+              <v-row justify="end">
+                <v-btn
+                  :color="passwordSuccess ? 'success' : 'primary'"
+                  :loading="passwordLoading"
+                  type="submit"
+                >
+                  <div v-if="passwordSuccess">
+                    <v-icon medium>mdi-check</v-icon> geändert
+                  </div>
+                  <div v-if="!passwordSuccess">Password ändern</div>
+                </v-btn>
+              </v-row>
+            </v-container>
+          </form>
+        </v-col>
+      </v-row>
+
+      <div v-if="hasAdministrationRole() && departments.length > 0">
+        <v-row justify="center">
+          <v-col cols="10">
+            <h2>Andere Feuerwehren</h2>
+          </v-col>
+          <v-col cols="6">
+            <div v-for="department in departments" :key="department.id">
+              <h3>{{ department.name }}</h3>
+              <EditDepartment :department="department" class="mb-8" />
             </div>
-            <div v-if="!passwordSuccess">Password ändern</div>
-          </v-btn>
+          </v-col>
         </v-row>
-      </v-container>
-    </form>
-
-    <div v-if="hasAdministrationRole() && departments.length > 0">
-      <h2>Andere Feuerwehren</h2>
-      <div v-for="department in departments" :key="department.id">
-        <h3>{{ department.name }}</h3>
-        <EditDepartment :department="department" />
       </div>
-    </div>
 
-    <div v-if="hasAdministrationRole()">
-      <h2>Feuerwehr hinzufügen</h2>
-      <AddDepartment :onDepartmentCreated="onDepartmentCreated" />
-    </div>
+      <div v-if="hasAdministrationRole()">
+        <v-row justify="center">
+          <v-col cols="10">
+            <h2>Feuerwehr hinzufügen</h2>
+          </v-col>
+          <v-col cols="6">
+            <AddDepartment
+              :onDepartmentCreated="onDepartmentCreated"
+              class="mb-8"
+            />
+          </v-col>
+        </v-row>
+      </div>
+    </v-container>
   </div>
 </template>
 

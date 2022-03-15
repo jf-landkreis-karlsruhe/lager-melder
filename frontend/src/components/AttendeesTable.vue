@@ -2,13 +2,13 @@
   <section>
     <v-card>
       <v-card-title>
-        <v-row justify="space-between">
-          <h1>{{ headlineText }}</h1>
+        <div class="d-flex align-baseline">
+          <h3 class="mr-4">{{ headlineText }}</h3>
           <div class="additional-information">
             Anzahl {{ headlineText }}:
             {{ attendeesWithNew.length - 1 }} (Anwesend: {{ enteredAttendees }})
           </div>
-        </v-row>
+        </div>
       </v-card-title>
       <v-card-text>
         <v-data-table
@@ -82,7 +82,7 @@
               </div>
             </div>
           </template>
-          <template v-slot:item.food="{ item }">
+          <template v-slot:item.food="{ item }" class="food">
             <div v-if="!editingAttendeeIds.includes(item.id)">
               {{ foodText(item.food) }}
             </div>
@@ -121,6 +121,7 @@
               <v-textarea
                 v-model="item.additionalInformation"
                 :form="createFormName(item)"
+                rows="1"
               />
             </div>
           </template>
@@ -315,6 +316,7 @@ export default class AttendeesTable extends Vue {
   width: 56px;
 }
 </style>
+
 <style>
 tr.left {
   background-color: #ff000030;
