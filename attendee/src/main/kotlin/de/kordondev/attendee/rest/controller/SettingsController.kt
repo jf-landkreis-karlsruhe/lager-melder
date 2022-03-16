@@ -24,7 +24,5 @@ class SettingsController(
     fun updateSettings(@RequestBody(required = true) @Valid settings: RestSettingsRequest): RestSettings {
         return settingsService.saveSettings(RestSettingsRequest.to(settings))
             .let { RestSettings.of(it) }
-
-
     }
 }

@@ -45,9 +45,8 @@ export const filterByFilterInput = (
 export const FoodSortOrder = [
   Food.MEAT,
   Food.MUSLIM,
-  Food.ALLERGY,
+  Food.SPECIAL,
   Food.VEGETARIAN,
-  Food.VEGAN,
   Food.NONE,
 ];
 
