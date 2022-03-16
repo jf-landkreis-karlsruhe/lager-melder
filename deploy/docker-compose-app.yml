@@ -1,0 +1,27 @@
+version: '3.6'
+
+services:
+  backend:
+    image: kordondev/lager-melder-backend
+    container_name: lm-backend
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=prd
+      - SPRING_DATASOURCE_URL=jdbc:mysql://lm-database:3306/lager_melder
+      - SPRING_DATASOURCE_USERNAME=
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_MAIL_HOST=.kasserver.com
+      - SPRING_MAIL_USERNAME=
+      - SPRING_MAIL_PASSWORD=
+      - SPRING_MAIL_FROM=
+      - APPLICATION_ADMIN_PASSWORDHASH=$$toEscapeDollar
+      - APPLICATION_MAIL_SEND=true
+      - APPLICATION_CORSORIGINS=
+  frontend:
+    image: kordondev/lager-melder-frontend
+    container_name: lm-frontend
+    restart: always
+    ports:
+      - "1080:80"

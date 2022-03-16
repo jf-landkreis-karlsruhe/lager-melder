@@ -6,10 +6,13 @@ services:
     container_name: lm-mysql
     ports:
       - "3306:3306"
+    volumes:
+      - ./data01:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=attendee
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
       - MYSQL_ROOT_PASSWORD=secRET
+    restart: always
     expose:
       - '3306'

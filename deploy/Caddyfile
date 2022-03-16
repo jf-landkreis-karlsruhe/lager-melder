@@ -1,5 +1,8 @@
 lager-melder.localhost {
-    handle /actuator* {
+    handle /actuator/* {
+        reverse_proxy localhost:8080
+    }
+    handle /api/* {
         reverse_proxy localhost:8080
     }
     handle {
