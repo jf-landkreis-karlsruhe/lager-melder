@@ -2,7 +2,7 @@
   <v-card class="mb-16">
     <h2 class="ml-12">PCR Test Serien</h2>
     <v-row justify="center">
-      <v-col cols="6">
+      <v-col sm="12" md="8" lg="6" xl="6">
         <h3>PCR Test Serie erstellen</h3>
         <form v-on:submit.prevent="createPcrTestSeriesInternal()">
           <v-text-field
@@ -16,14 +16,14 @@
             required
           />
           <v-row justify="center" align="center" class="d-flex flex-wrap mt-2">
-            <v-col cols="8">
+            <v-col sm="12" md="12" lg="10" xl="8">
               <DateAndTime
                 :dateTime="newStart"
                 @changed="newStart = $event"
                 label="Startdatum"
               />
             </v-col>
-            <v-col cols="8">
+            <v-col sm="12" md="12" lg="10" xl="8">
               <DateAndTime
                 :dateTime="newEnd"
                 @changed="newEnd = $event"
@@ -37,6 +37,7 @@
               color="primary"
               :loading="loadingPcrTestId === '0'"
               type="submit"
+              rounded
             >
               <span>Erstellen</span>
             </v-btn>
@@ -132,6 +133,7 @@
                       type="sumbit"
                       :loading="loadingPcrTestId === pcrTestSeries.id"
                       :form="createFormName(pcrTestSeries)"
+                      rounded
                     >
                       <v-icon medium class="mr-2"> mdi-content-save </v-icon>
                     </v-btn>
@@ -265,7 +267,10 @@ export default class PcrTestsConfiguration extends Vue {
   display: flex;
 }
 .v-row {
-  padding: 0 14px;
+  padding: 0;
+  @media screen and (min-width: 768px) {
+    padding: 0 14px;
+  }
 }
 .flex-grow {
   flex: 1 1 auto;

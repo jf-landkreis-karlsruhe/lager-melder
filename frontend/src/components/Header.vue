@@ -118,37 +118,44 @@ header {
 
         .nav-item {
           display: inline-block;
-          background: #d3e9f8;
-          border-radius: 12px;
-          transition: padding 0.2s ease-in-out;
-
-          &:hover,
-          &:active {
-            background: #95caee;
-            padding: 0px 8px;
-            border-radius: 16px;
-          }
-
-          &.admin {
-            background: #ffe760;
-
-            &:hover {
-              background: #ecd032;
-            }
-
-            .router-link-active {
-              background: #ecd032;
-            }
-          }
 
           a {
             text-decoration: none;
             color: #303030;
-            padding: 0px 8px;
             border-radius: 16px;
+            border: 2px solid #d3e9f8;
+            transition: padding 0.2s ease-in-out;
+            padding: 0 0.5rem;
+            background: linear-gradient(to left, #d3e9f8 50%, #95caee 50%) right;
+            background-size: 200%;
+            transition: background 0.25s ease-in-out;
 
+            &:hover,
+            &:active {
+              border: 2px solid #95caee;
+              background-position: left;
+            }
             &.router-link-active {
-              background: #95caee;
+              background: linear-gradient(to left, #95caee 50%, #95caee 50%)
+                right;
+            }
+          }
+
+          &.admin {
+            a {
+              border: 2px solid #ffe760;
+              background: linear-gradient(to left, #ffe760 50%, #ecd032 50%)
+                right;
+              background-size: 200%;
+
+              &:hover {
+                border: 2px solid #ecd032;
+                background-position: left;
+              }
+
+              &.router-link-active {
+                background: linear-gradient(to left, #ecd032 50%, #ecd032 50%);
+              }
             }
           }
         }

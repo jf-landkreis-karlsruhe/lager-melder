@@ -66,6 +66,7 @@
                   type="submit"
                   small
                   outlined
+                  rounded
                 >
                   Abschicken
                 </v-btn>
@@ -199,7 +200,12 @@ export default class ScannerComponent extends Vue {
   }
 
   initCameraSelection() {
-    var streamLabel = Quagga.CameraAccess.getActiveStreamLabel();
+    let streamLabel = Quagga.CameraAccess.getActiveStreamLabel();
+    const storedCameraDeviceId =
+      localStorage.getItem(CAMERA_DEVICE_ID_KEY) || undefined;
+    if (storedCameraDeviceId) {
+      streamLabel = storedCameraDeviceId;
+    }
 
     return Quagga.CameraAccess.enumerateVideoDevices().then((devices: any) => {
       function pruneText(text: string) {
@@ -211,7 +217,7 @@ export default class ScannerComponent extends Vue {
         $deviceSelection.removeChild($deviceSelection.firstChild);
       }
       devices.forEach((device: any) => {
-        var $option = document.createElement("option");
+        let $option = document.createElement("option");
         $option.value = device.deviceId || device.id;
         $option.appendChild(
           document.createTextNode(
@@ -237,11 +243,16 @@ export default class ScannerComponent extends Vue {
   .scanner {
     position: relative;
     overflow: hidden;
-    width: 640px;
+    width: 100%;
+    height: 100%;
     max-width: 100%;
-    height: 480px;
     max-height: 100%;
     margin-bottom: 6px;
+
+    @media screen and (min-width: 768px) {
+      width: 640px;
+      height: 480px;
+    }
 
     // scan-effect-animation
     &::after {

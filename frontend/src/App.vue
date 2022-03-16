@@ -40,7 +40,10 @@ export default class App extends Vue {}
   grid-row: 1;
 
   .content {
-    padding: 0 14px;
+    padding: 0;
+    @media screen and (min-width: 768px) {
+      padding: 0 14px;
+    }
   }
 }
 </style>

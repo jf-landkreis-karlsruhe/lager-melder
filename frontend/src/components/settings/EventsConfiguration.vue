@@ -2,7 +2,7 @@
   <v-card class="mb-16">
     <h2 class="ml-12">Events</h2>
     <v-row justify="center">
-      <v-col cols="6">
+      <v-col sm="12" md="12" lg="10" xl="8">
         <h3>Event erstellen</h3>
         <form v-on:submit.prevent="createEventInternal()">
           <v-text-field v-model="eventName" label="Titel des Event" required />
@@ -11,6 +11,7 @@
               color="primary"
               :loading="loadingEventId === '0'"
               type="submit"
+              rounded
             >
               <span>Erstellen</span>
             </v-btn>
@@ -24,6 +25,7 @@
             class="underline"
             :loading="loadingDownload"
             @click="downloadEventsPDF"
+            rounded
           >
             Download
           </v-btn>
@@ -67,6 +69,7 @@
                       type="sumbit"
                       :loading="loadingEventId === event.id"
                       :form="createFormName(event)"
+                      rounded
                     >
                       <v-icon medium class="mr-2"> mdi-content-save </v-icon>
                     </v-btn>

@@ -3,7 +3,7 @@
     <v-card class="mb-16">
       <h2 class="ml-12">Allgemein</h2>
       <v-row justify="center">
-        <v-col cols="6">
+        <v-col sm="12" md="12" lg="10" xl="8">
           <form v-on:submit.prevent="saveSettings(settings)">
             <v-text>
               <h3>Anmeldung</h3>
@@ -71,6 +71,7 @@
                   :loading="loading"
                   type="submit"
                   class="mb-8"
+                  rounded
                 >
                   Speichern
                 </v-btn>

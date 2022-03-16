@@ -5,7 +5,7 @@
         <v-col cols="10">
           <h1>Deine Feuerwehr</h1>
         </v-col>
-        <v-col cols="6">
+        <v-col sm="12" md="12" lg="10" xl="8">
           <div v-if="myDepartment.id">
             <h2>{{ myDepartment.name }}</h2>
             <EditDepartment :department="myDepartment" class="mb-8" />
@@ -33,6 +33,7 @@
                   :color="passwordSuccess ? 'success' : 'primary'"
                   :loading="passwordLoading"
                   type="submit"
+                  rounded
                 >
                   <div v-if="passwordSuccess">
                     <v-icon medium>mdi-check</v-icon> geändert
@@ -50,7 +51,7 @@
           <v-col cols="10">
             <h2>Andere Feuerwehren</h2>
           </v-col>
-          <v-col cols="6">
+          <v-col sm="12" md="12" lg="10" xl="8">
             <div v-for="department in departments" :key="department.id">
               <h3>{{ department.name }}</h3>
               <EditDepartment :department="department" class="mb-8" />
@@ -64,7 +65,7 @@
           <v-col cols="10">
             <h2>Feuerwehr hinzufügen</h2>
           </v-col>
-          <v-col cols="6">
+          <v-col sm="12" md="12" lg="10" xl="8">
             <AddDepartment
               :onDepartmentCreated="onDepartmentCreated"
               class="mb-8"
