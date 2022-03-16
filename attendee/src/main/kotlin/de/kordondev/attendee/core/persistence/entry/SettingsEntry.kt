@@ -3,13 +3,15 @@ package de.kordondev.attendee.core.persistence.entry
 import de.kordondev.attendee.core.model.Settings
 import java.time.Instant
 import java.time.LocalDate
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
 @Table(name = "settings")
 data class SettingsEntry(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
     @Column(name = "registration_end")

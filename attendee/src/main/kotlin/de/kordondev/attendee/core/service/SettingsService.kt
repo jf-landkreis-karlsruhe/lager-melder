@@ -25,7 +25,7 @@ class SettingsService(
         if (settingsList.isEmpty()) {
             return saveSettings(
                 Settings(
-                    id = 1,
+                    id = SETTINGS_ID,
                     registrationEnd = Instant.now().plus(30, ChronoUnit.DAYS),
                     hostCity = "Austragungsort",
                     eventStart = LocalDate.now().plusDays(60),

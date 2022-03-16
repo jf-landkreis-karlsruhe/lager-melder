@@ -9,7 +9,7 @@
     <changeSet id="202202190" author="kordon">
         <createTable tableName="settings">
             <column name="id" type="bigint">
-                <constraints primaryKey="true" nullable="false" />
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="event_address" type="varchar(255)">
                 <constraints nullable="false"/>
@@ -39,7 +39,6 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addAutoIncrement tableName="settings" columnName="id" columnDataType="bigint" startWith="10" incrementBy="0"/>
     </changeSet>
 
 </databaseChangeLog>
