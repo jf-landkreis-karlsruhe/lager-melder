@@ -46,7 +46,7 @@ class AttendeeService(
 
     fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
         settingsService.canAttendeesBeEdited()
-        checkFirstNameAndLastNameAreUnique(attendee)
+        checkFirstNameAndLastNameAreUnique(attendee, id)
         return attendeeRepository.findByIdOrNull(id)
             ?.let {
                 authorityService.hasAuthority(
@@ -85,12 +85,16 @@ class AttendeeService(
             ?: throw NotFoundException("No Attendee for code $code found")
     }
 
-    private fun checkFirstNameAndLastNameAreUnique(attendee: NewAttendee) {
+    private fun checkFirstNameAndLastNameAreUnique(attendee: NewAttendee, id: Long = 0) {
         attendeeRepository.findByDepartmentAndFirstNameAndLastName(
             DepartmentEntry.of(attendee.department),
             attendee.firstName,
             attendee.lastName
         )
-            ?.let { throw UniqueException("Vorname (${attendee.firstName}) und Nachname (${attendee.lastName}) müssen pro Feuerwehr einmalig sein") }
+            ?.let {
+                if (it.id != id) {
+                    throw UniqueException("Vorname (${attendee.firstName}) und Nachname (${attendee.lastName}) müssen pro Feuerwehr einmalig sein")
+                }
+            }
     }
 }
