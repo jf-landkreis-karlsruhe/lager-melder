@@ -5,9 +5,11 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.client.j2se.MatrixToImageWriter
 import com.google.zxing.common.BitMatrix
 import com.lowagie.text.*
+import com.lowagie.text.List
 import com.lowagie.text.pdf.*
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
+import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.TShirtSize
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
@@ -172,7 +174,7 @@ class AdminFilesService(
         return out.toByteArray()
     }
 
-    fun addTShirtsForDepartment(department: Department, document: Document) {
+    private fun addTShirtsForDepartment(department: Department, document: Document) {
         val attendees = attendeeService.getAttendeesForDepartment(department)
         if (attendees.isNotEmpty()) {
             val tShirtCount = mutableMapOf<TShirtSize, Int>()
@@ -200,6 +202,51 @@ class AdminFilesService(
             document.add(table)
             document.newPage()
         }
+    }
+
+    fun createFoodPDF(): ByteArray {
+        val out = ByteArrayOutputStream()
+
+        val document = Document(PageSize.A4)
+        val writer = PdfWriter.getInstance(document, out)
+
+        val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
+        writer.isCloseStream = false
+        document.open()
+        val attendees = attendeeService.getAttendees()
+        val foodAttendees = mutableMapOf<Food, MutableList<Attendee>>()
+        for (food in Food.values()) {
+            foodAttendees[food] = mutableListOf()
+        }
+
+        for (attendee in attendees) {
+            foodAttendees[attendee.food]?.add(attendee)
+        }
+
+        document.add(Paragraph("Kreiszeltlager - Essen", headlineFont))
+        for (food in Food.values()) {
+            if (food != Food.MEAT && food != Food.SPECIAL) {
+                document.add(Paragraph(food.toString(), headlineFont))
+                val list = List()
+                list.setListSymbol("\u2022")
+                for (att in foodAttendees[food]!!) {
+                    list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}")
+                }
+                document.add(list)
+            }
+            if (food == Food.SPECIAL) {
+                document.add(Paragraph(food.toString(), headlineFont))
+                val list = List()
+                list.setListSymbol("\u2022")
+                for (att in foodAttendees[food]!!) {
+                    list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}. Kommentar ${att.additionalInformation} (Jugendwart: ${att.department.leaderEMail}, EMail: ${att.department.leaderEMail})")
+                }
+                document.add(list)
+            }
+        }
+
+        document.close()
+        return out.toByteArray()
     }
 
 }
