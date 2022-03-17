@@ -7,6 +7,8 @@ import com.google.zxing.common.BitMatrix
 import com.lowagie.text.*
 import com.lowagie.text.pdf.*
 import de.kordondev.attendee.core.model.Attendee
+import de.kordondev.attendee.core.model.Department
+import de.kordondev.attendee.core.persistence.entry.TShirtSize
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.awt.Color
@@ -17,7 +19,8 @@ import java.io.ByteArrayOutputStream
 class AdminFilesService(
     private val resourceLoader: ResourceLoader,
     private val attendeeService: AttendeeService,
-    private val eventService: EventService
+    private val eventService: EventService,
+    private val departmentService: DepartmentService
 ) {
     private val yDistanceBetweenBatches = 141F
     fun createBatches(): ByteArray {
@@ -151,6 +154,52 @@ class AdminFilesService(
             return "$frontendBaseUrl$eventCode"
         }
         return "$frontendBaseUrl/$eventCode"
+    }
+
+    fun createTShirtPDF(): ByteArray {
+        val out = ByteArrayOutputStream()
+
+        val document = Document(PageSize.A4)
+        val writer = PdfWriter.getInstance(document, out)
+
+        writer.isCloseStream = false
+        document.open()
+        val departments = departmentService.getDepartments()
+        for (department in departments) {
+            addTShirtsForDepartment(department, document)
+        }
+        document.close()
+        return out.toByteArray()
+    }
+
+    fun addTShirtsForDepartment(department: Department, document: Document) {
+        val attendees = attendeeService.getAttendeesForDepartment(department)
+        if (attendees.isNotEmpty()) {
+            val tShirtCount = mutableMapOf<TShirtSize, Int>()
+            for (attendee in attendees) {
+                val currentCount = tShirtCount[attendee.tShirtSize] ?: 0
+                tShirtCount[attendee.tShirtSize] = (currentCount + 1)
+            }
+
+            val font = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
+            document.add(Paragraph("Kreiszeltlager - T-Shirt", font))
+            document.add(Paragraph("Abteilung: ${department.name}", font))
+
+            val table = Table(2)
+            table.borderWidth = 1F
+            table.borderColor = Color(0, 0, 0)
+            table.padding = 7F
+            table.spacing = 0F
+            table.addCell("Größe:")
+            table.addCell("Anzahl:")
+            table.endHeaders()
+            for (size in TShirtSize.values()) {
+                table.addCell(size.toString())
+                table.addCell("${tShirtCount[size] ?: 0}")
+            }
+            document.add(table)
+            document.newPage()
+        }
     }
 
 }
