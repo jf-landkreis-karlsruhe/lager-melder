@@ -11,6 +11,7 @@ import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
 import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.TShirtSize
+import de.kordondev.attendee.core.security.AuthorityService
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.awt.Color
@@ -22,10 +23,12 @@ class AdminFilesService(
     private val resourceLoader: ResourceLoader,
     private val attendeeService: AttendeeService,
     private val eventService: EventService,
-    private val departmentService: DepartmentService
+    private val departmentService: DepartmentService,
+    private val authorityService: AuthorityService,
 ) {
     private val yDistanceBetweenBatches = 141F
     fun createBatches(): ByteArray {
+        authorityService.isSpecializedFieldDirector()
         val pageStream = ByteArrayOutputStream()
         val documentStream = ByteArrayOutputStream()
         val document = Document(PageSize.A4)
@@ -72,7 +75,7 @@ class AdminFilesService(
         return documentStream.toByteArray()
     }
 
-    fun addName(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
+    private fun addName(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         content.beginText()
         val xValue = 345F
         val yValue = 738F
@@ -81,7 +84,7 @@ class AdminFilesService(
         content.endText()
     }
 
-    fun addDepartment(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
+    private fun addDepartment(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         content.beginText()
         val xValue = 335F
         val yValue = 723F
@@ -90,7 +93,7 @@ class AdminFilesService(
         content.endText()
     }
 
-    fun addBarCode(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
+    private fun addBarCode(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         val barcode = Barcode128()
         barcode.code = attendee.code
         barcode.barHeight = 40F
@@ -105,6 +108,7 @@ class AdminFilesService(
     }
 
     fun createEventPDF(frontendBaseUrl: String): ByteArray {
+        authorityService.isSpecializedFieldDirector()
         val out = ByteArrayOutputStream()
 
         val document = Document(PageSize.A4)
@@ -144,14 +148,14 @@ class AdminFilesService(
         return out.toByteArray()
     }
 
-    fun createEventCode(eventCode: String): ByteArray {
+    private fun createEventCode(eventCode: String): ByteArray {
         val out = ByteArrayOutputStream()
         val matrix: BitMatrix = MultiFormatWriter().encode(eventCode, BarcodeFormat.QR_CODE, 400, 400)
         MatrixToImageWriter.writeToStream(matrix, "png", out)
         return out.toByteArray()
     }
 
-    fun createEventUrl(frontendBaseUrl: String, eventCode: String): String {
+    private fun createEventUrl(frontendBaseUrl: String, eventCode: String): String {
         if (frontendBaseUrl.endsWith("/", true)) {
             return "$frontendBaseUrl$eventCode"
         }
@@ -159,6 +163,7 @@ class AdminFilesService(
     }
 
     fun createTShirtPDF(): ByteArray {
+        authorityService.isSpecializedFieldDirector()
         val out = ByteArrayOutputStream()
 
         val document = Document(PageSize.A4)
@@ -205,6 +210,7 @@ class AdminFilesService(
     }
 
     fun createFoodPDF(): ByteArray {
+        authorityService.isSpecializedFieldDirector()
         val out = ByteArrayOutputStream()
 
         val document = Document(PageSize.A4)
@@ -225,21 +231,16 @@ class AdminFilesService(
 
         document.add(Paragraph("Kreiszeltlager - Essen", headlineFont))
         for (food in Food.values()) {
-            if (food != Food.MEAT && food != Food.SPECIAL) {
+            if (food != Food.MEAT) {
                 document.add(Paragraph("${food.toString()} (${foodAttendees[food]!!.size})", headlineFont))
                 val list = List()
                 list.setListSymbol("\u2022")
                 for (att in foodAttendees[food]!!) {
-                    list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}")
-                }
-                document.add(list)
-            }
-            if (food == Food.SPECIAL) {
-                document.add(Paragraph("${food.toString()} (${foodAttendees[food]!!.size})", headlineFont))
-                val list = List()
-                list.setListSymbol("\u2022")
-                for (att in foodAttendees[food]!!) {
-                    list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}. Kommentar: ${att.additionalInformation}. (Jugendwart: ${att.department.leaderEMail}, EMail: ${att.department.leaderEMail})")
+                    if (food == Food.SPECIAL) {
+                        list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}. Kommentar: ${att.additionalInformation}. (Jugendwart: ${att.department.leaderEMail}, EMail: ${att.department.leaderEMail})")
+                    } else {
+                        list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}")
+                    }
                 }
                 document.add(list)
             }
