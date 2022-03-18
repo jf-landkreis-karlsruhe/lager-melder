@@ -47,12 +47,10 @@ export const foodText = (food: Food) => {
       return "Fleisch";
     case Food.NONE:
       return "Nichts";
-    case Food.ALLERGY:
-      return "Allergie";
+    case Food.SPECIAL:
+      return "Sonderessen";
     case Food.VEGETARIAN:
       return "Vegetarisch";
-    case Food.VEGAN:
-      return "Vegan";
     case Food.MUSLIM:
       return "Muslimisch";
     default:

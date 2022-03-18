@@ -18,6 +18,29 @@
       />
     </div>
 
+    <h1>Essensübersicht</h1>
+    <div class="d-flex align-center justify-space-between">
+      <p class="mr-8">
+        Hier kann die Liste der Essen, die nicht Fleisch sind heruntergeladen
+        werden:
+        <br />
+        <button class="download-button" @click="downloadFoodPDF">
+          Download
+        </button>
+      </p>
+    </div>
+
+    <h1>T-Shirtübersicht</h1>
+    <div class="d-flex align-center justify-space-between">
+      <p class="mr-8">
+        Hier kann die Liste der TShirts pro Feuerwehr heruntergeladen werden:
+        <br />
+        <button class="download-button" @click="downloadTShirtsPDF">
+          Download
+        </button>
+      </p>
+    </div>
+
     <div class="d-flex align-baseline">
       <h1 class="mr-4 mb-2">Teilnehmer</h1>
       <div class="department-count">
@@ -99,7 +122,7 @@ import {
 } from "../helper/filterHelper";
 
 import { hasAdministrationRole } from "../services/authentication";
-import { getBatches } from "../services/adminFiles";
+import { getBatches, getFoodPDF, getTShirtPDF } from "../services/adminFiles";
 import { showFile } from "../services/filesHelper";
 
 interface DepartmentWithAttendees {
@@ -145,6 +168,16 @@ export default class AttendeesRegistration extends Vue {
 
   downloadBatchesPDF = () => {
     getBatches().then((fileData) => showFile(fileData.data, fileData.fileName));
+  };
+
+  downloadFoodPDF = () => {
+    getFoodPDF().then((fileData) => showFile(fileData.data, fileData.fileName));
+  };
+
+  downloadTShirtsPDF = () => {
+    getTShirtPDF().then((fileData) =>
+      showFile(fileData.data, fileData.fileName)
+    );
   };
 
   get totalAttendeeCount(): number {

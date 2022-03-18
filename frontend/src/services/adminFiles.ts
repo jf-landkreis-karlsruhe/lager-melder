@@ -32,3 +32,29 @@ export const getEventCodes = (): Promise<FileReponse> => {
       fileName: `events.pdf`,
     }));
 };
+
+export const getFoodPDF = (): Promise<FileReponse> => {
+  return fetchData(`admin-files/food`, {
+    headers: {
+      ...withAuthenticationHeader(),
+    },
+  })
+    .then((r) => r.blob())
+    .then((blob) => ({
+      data: blob,
+      fileName: `essen.pdf`,
+    }));
+};
+
+export const getTShirtPDF = (): Promise<FileReponse> => {
+  return fetchData(`admin-files/t-shirts`, {
+    headers: {
+      ...withAuthenticationHeader(),
+    },
+  })
+    .then((r) => r.blob())
+    .then((blob) => ({
+      data: blob,
+      fileName: `tshirts.pdf`,
+    }));
+};

@@ -39,9 +39,8 @@ export enum AttendeeRole {
 export enum Food {
   MEAT = "MEAT",
   NONE = "NONE",
-  ALLERGY = "ALLERGY",
+  SPECIAL = "SPECIAL",
   VEGETARIAN = "VEGETARIAN",
-  VEGAN = "VEGAN",
   MUSLIM = "MUSLIM",
 }
 

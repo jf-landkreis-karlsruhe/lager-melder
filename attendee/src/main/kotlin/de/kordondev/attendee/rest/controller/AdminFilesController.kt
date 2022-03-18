@@ -32,4 +32,20 @@ class AdminFilesController(
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=batches.pdf")
         return adminFilesService.createBatches()
     }
+
+    @ResponseBody
+    @Throws(IOException::class)
+    @GetMapping(value = ["/admin-files/t-shirts"], produces = ["application/pdf"])
+    fun getTShirtPDF(response: HttpServletResponse): ByteArray? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=tshirts.pdf")
+        return adminFilesService.createTShirtPDF()
+    }
+
+    @ResponseBody
+    @Throws(IOException::class)
+    @GetMapping(value = ["/admin-files/food"], produces = ["application/pdf"])
+    fun getFoodPDF(response: HttpServletResponse): ByteArray? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=essen.pdf")
+        return adminFilesService.createFoodPDF()
+    }
 }
