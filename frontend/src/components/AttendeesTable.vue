@@ -82,7 +82,7 @@
               </div>
             </div>
           </template>
-          <template v-slot:item.food="{ item }" class="food">
+          <template v-slot:item.food="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
               {{ foodText(item.food) }}
             </div>
