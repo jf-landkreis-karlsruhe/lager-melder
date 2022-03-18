@@ -226,7 +226,7 @@ class AdminFilesService(
         document.add(Paragraph("Kreiszeltlager - Essen", headlineFont))
         for (food in Food.values()) {
             if (food != Food.MEAT && food != Food.SPECIAL) {
-                document.add(Paragraph(food.toString(), headlineFont))
+                document.add(Paragraph("${food.toString()} (${foodAttendees[food]!!.size})", headlineFont))
                 val list = List()
                 list.setListSymbol("\u2022")
                 for (att in foodAttendees[food]!!) {
@@ -235,11 +235,11 @@ class AdminFilesService(
                 document.add(list)
             }
             if (food == Food.SPECIAL) {
-                document.add(Paragraph(food.toString(), headlineFont))
+                document.add(Paragraph("${food.toString()} (${foodAttendees[food]!!.size})", headlineFont))
                 val list = List()
                 list.setListSymbol("\u2022")
                 for (att in foodAttendees[food]!!) {
-                    list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}. Kommentar ${att.additionalInformation} (Jugendwart: ${att.department.leaderEMail}, EMail: ${att.department.leaderEMail})")
+                    list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}. Kommentar: ${att.additionalInformation}. (Jugendwart: ${att.department.leaderEMail}, EMail: ${att.department.leaderEMail})")
                 }
                 document.add(list)
             }
