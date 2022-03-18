@@ -1,21 +1,23 @@
 <template>
   <div>
-    <v-container>
-      <h1 class="h1">Teilnehmer {{ department.name }}</h1>
-      <v-row justify="space-between">
+    <div>
+      <div class="d-flex align-baseline">
+        <h1 class="mr-4">Teilnehmer {{ department.name }}</h1>
         <div>
+          Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend:
+          {{ enteredAttendeesCount }})
+        </div>
+      </div>
+      <v-row>
+        <v-col cols="4">
           <v-text-field
             prepend-icon="mdi-magnify"
             v-model="filterInput"
             label="Teilnehmerfilter"
           />
-        </div>
-        <div>
-          Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend:
-          {{ enteredAttendeesCount }})
-        </div>
+        </v-col>
       </v-row>
-    </v-container>
+    </div>
     <AttendeesTable
       headlineText="Jugendliche"
       :attendees="youthAttendees"

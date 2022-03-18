@@ -3,7 +3,7 @@
     <div id="grid-container">
       <div class="my-container">
         <Header />
-        <main>
+        <main class="content">
           <router-view />
         </main>
         <Footer />
@@ -25,19 +25,25 @@ import Footer from "./components/Footer.vue";
 export default class App extends Vue {}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 #grid-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(auto, 1000px) minmax(0, 1fr);
-  grid-gap: 14px;
+  grid-template-columns: minmax(0, 1fr) minmax(auto, 1400px) minmax(0, 1fr);
 }
 
 .my-container {
   grid-column: 2;
   grid-row: 1;
+
+  .content {
+    padding: 0;
+    @media screen and (min-width: 768px) {
+      padding: 0 14px;
+    }
+  }
 }
 </style>

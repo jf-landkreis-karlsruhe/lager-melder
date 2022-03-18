@@ -1,22 +1,45 @@
 <template>
   <header>
     <div class="d-flex justify-center align-center hero-image-container">
-      <img alt="Zeltlager logo" class="hero-image" src="../assets/logo2.jpg" />
+      <router-link to="/teilnehmer">
+        <img
+          alt="Zeltlager logo"
+          class="hero-image"
+          src="../assets/logo2.jpg"
+        />
+      </router-link>
     </div>
-    <div id="nav" v-if="loggedIn">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/teilnehmer">Teilnehmer</router-link> |
-      <router-link to="/pcr-tests">PCR Tests</router-link> |
-      <router-link to="/files">Anmeldeunterlagen</router-link> |
-      <router-link to="/feuerwehr">Meine Feuerwehr</router-link>
-      <span v-if="hasAdministrationRole()">
-        | <router-link to="/overview">Übersicht</router-link>
-      </span>
-      <span v-if="hasAdministrationRole()">
-        | <router-link to="/einstellungen">Einstellungen</router-link>
-      </span>
-    </div>
+    <nav id="nav" v-if="loggedIn">
+      <v-container fluid class="nav-bar">
+        <v-row justify="space-between align-center" class="nav-bar__row">
+          <ul class="pa-0 nav-bar__list">
+            <li class="nav-item">
+              <router-link to="/teilnehmer">Teilnehmer</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/feuerwehr">Meine Feuerwehr</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/files">Anmeldeunterlagen</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/pcr-tests">PCR Tests</router-link>
+            </li>
+            <li class="nav-item admin" v-if="hasAdministrationRole()">
+              <router-link to="/overview"> Übersicht </router-link>
+            </li>
+            <li class="nav-item admin" v-if="hasAdministrationRole()">
+              <router-link to="/einstellungen"> Einstellungen </router-link>
+            </li>
+          </ul>
+
+          <router-link to="/login" class="account">
+            <v-icon medium color="blue darken-2"> mdi-account </v-icon>
+            <span class="account__link pl-1">Account</span>
+          </router-link>
+        </v-row>
+      </v-container>
+    </nav>
   </header>
 </template>
 
@@ -65,15 +88,101 @@ export default class Header extends Vue {
 }
 </script>
 
-<style scoped>
-.hero-image-container {
-  background: #2e6db2;
-}
-.hero-image {
-  max-width: 100%;
-  max-height: 350px;
-}
+<style scoped lang="scss">
 header {
   margin-bottom: 30px;
+
+  .hero-image-container {
+    background: #006fb7;
+
+    .hero-image {
+      max-width: 100%;
+      max-height: 200px;
+      margin-top: -30px;
+    }
+  }
+
+  .nav-bar {
+    margin-top: 12px;
+    font-weight: 500;
+    padding: 10px 24px;
+
+    .nav-bar__row {
+      gap: 12px;
+
+      .nav-bar__list {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+
+        .nav-item {
+          display: inline-block;
+
+          a {
+            text-decoration: none;
+            color: #303030;
+            border-radius: 16px;
+            border: 2px solid #d3e9f8;
+            transition: padding 0.2s ease-in-out;
+            padding: 0 0.5rem;
+            background: linear-gradient(to left, #d3e9f8 50%, #95caee 50%) right;
+            background-size: 200%;
+            transition: background 0.25s ease-in-out;
+
+            &:hover,
+            &:active {
+              border: 2px solid #95caee;
+              background-position: left;
+            }
+            &.router-link-active {
+              background: linear-gradient(to left, #95caee 50%, #95caee 50%)
+                right;
+            }
+          }
+
+          &.admin {
+            a {
+              border: 2px solid #ffe760;
+              background: linear-gradient(to left, #ffe760 50%, #ecd032 50%)
+                right;
+              background-size: 200%;
+
+              &:hover {
+                border: 2px solid #ecd032;
+                background-position: left;
+              }
+
+              &.router-link-active {
+                background: linear-gradient(to left, #ecd032 50%, #ecd032 50%);
+              }
+            }
+          }
+        }
+      }
+      .account {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+        margin-left: auto;
+
+        @media screen and (min-width: 768px) {
+          margin: unset;
+        }
+
+        &:hover,
+        &:active,
+        &.router-link-active {
+          color: #1976d2;
+          box-shadow: 0 3px 0 #1976d2;
+        }
+
+        .account__link {
+          text-decoration: none;
+        }
+      }
+    }
+  }
 }
 </style>

@@ -1,38 +1,49 @@
 <template>
   <div>
-    <v-card v-if="!loggedIn">
-      <v-card-title>Login</v-card-title>
-      <form @submit.prevent="loginHandler">
-        <v-card-text>
-          <v-text-field
-            prepend-icon="mdi-account"
-            v-model="username"
-            label="Benutzername"
-          />
-          <v-text-field
-            type="password"
-            prepend-icon="mdi-lock"
-            v-model="password"
-            label="Passwort"
-          />
-        </v-card-text>
-        <v-card-actions>
-          <v-container>
-            <v-row justify="end">
-              <v-btn color="primary" type="submit">Einloggen</v-btn>
-            </v-row>
-          </v-container>
-        </v-card-actions>
-      </form>
-    </v-card>
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="4">
+          <v-card v-if="!loggedIn">
+            <v-card-title>Login</v-card-title>
+            <form @submit.prevent="loginHandler">
+              <v-card-text>
+                <v-text-field
+                  prepend-icon="mdi-account"
+                  v-model="username"
+                  label="Benutzername"
+                />
+                <v-text-field
+                  type="password"
+                  prepend-icon="mdi-lock"
+                  v-model="password"
+                  label="Passwort"
+                />
+              </v-card-text>
+              <v-card-actions>
+                <v-container>
+                  <v-row justify="end">
+                    <v-btn color="primary" type="submit" rounded
+                      >Einloggen</v-btn
+                    >
+                  </v-row>
+                </v-container>
+              </v-card-actions>
+            </form>
+          </v-card>
 
-    <v-card v-if="loggedIn">
-      <v-card-title>Eingeloggt</v-card-title>
-      <v-card-text>
-        Du bist eingeloggt. Du kannst dich jetzt
-        <v-btn text @click="logout">ausloggen</v-btn>
-      </v-card-text>
-    </v-card>
+          <v-card v-if="loggedIn">
+            <v-card-title>Eingeloggt</v-card-title>
+            <v-card-text>
+              Du bist eingeloggt.
+              <br />
+              <br />
+              Du kannst dich hier
+              <v-btn class="ml-2" rounded @click="logout">ausloggen</v-btn>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 

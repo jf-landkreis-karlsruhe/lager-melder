@@ -16,7 +16,14 @@
         <v-row justify="end">
           <v-dialog v-model="dialogOpen" persistent max-width="500">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn color="primary" dark v-bind="attrs" v-on="on" class="mx-3">
+              <v-btn
+                rounded
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+                class="mb-2"
+              >
                 Registriernugsmail versenden
               </v-btn>
             </template>
@@ -40,7 +47,7 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn text @click="closeModal"> Schließen </v-btn>
+                  <v-btn rounded text @click="closeModal"> Schließen </v-btn>
                   <v-btn
                     color="primary"
                     v-if="!emailSent"
@@ -53,7 +60,13 @@
               </form>
             </v-card>
           </v-dialog>
-          <v-btn color="primary" :loading="loading" type="submit">
+          <v-btn
+            rounded
+            color="primary"
+            :loading="loading"
+            type="submit"
+            class="ml-3"
+          >
             <span v-if="saved">
               <v-icon medium>mdi-check</v-icon> Gespeichert
             </span>

@@ -15,7 +15,7 @@
       />
       <v-text-field v-model="username" label="Benutzername" required />
       <v-row justify="end">
-        <v-btn color="primary" :loading="loading" type="submit">
+        <v-btn color="primary" :loading="loading" type="submit" rounded>
           <span v-if="created">
             <v-icon medium>mdi-check</v-icon> Erstellt
           </span>
