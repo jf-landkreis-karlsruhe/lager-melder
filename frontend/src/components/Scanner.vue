@@ -224,7 +224,7 @@ export default class ScannerComponent extends Vue {
             pruneText(device.label || device.deviceId || device.id)
           )
         );
-        $option.selected = streamLabel === device.label;
+        $option.selected = streamLabel === device.deviceId;
         $deviceSelection?.appendChild($option);
       });
     });
