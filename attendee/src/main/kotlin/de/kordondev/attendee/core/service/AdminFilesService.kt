@@ -231,8 +231,8 @@ class AdminFilesService(
 
         document.add(Paragraph("Kreiszeltlager - Essen", headlineFont))
         for (food in Food.values()) {
+            document.add(Paragraph("${food.toString()} (${foodAttendees[food]!!.size})", headlineFont))
             if (food != Food.MEAT) {
-                document.add(Paragraph("${food.toString()} (${foodAttendees[food]!!.size})", headlineFont))
                 val list = List()
                 list.setListSymbol("\u2022")
                 for (att in foodAttendees[food]!!) {
