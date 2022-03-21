@@ -20,5 +20,4 @@ euer Fachgebietsleiter Lager- und Fahrten
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

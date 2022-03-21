@@ -1,8 +1,8 @@
-import { postData } from "../helper/fetch"
-import { withAuthenticationHeader } from "./authentication"
+import { postData } from "../helper/fetch";
+import { withAuthenticationHeader } from "./authentication";
 
 export interface NewEvent {
-  name: string
+  name: string;
 }
 
 export enum SentTo {
@@ -25,17 +25,17 @@ export const sentToReadable = (sentTo: SentTo) => {
 };
 
 export interface SentMailRequest {
-  sendTo: SentTo
+  sendTo: SentTo;
 }
 
 export interface SentMailResponse {
-  sendMails: number
+  sendMails: number;
 }
 
 export const sendReminderMail = (
   data: SentMailRequest
 ): Promise<SentMailResponse> =>
-  postData<SentMailResponse>("mail/reminder", withAuthenticationHeader(), data)
+  postData<SentMailResponse>("mail/reminder", withAuthenticationHeader(), data);
 
 export const sendRegistrationFinishedMail = (
   data: SentMailRequest
@@ -44,4 +44,4 @@ export const sendRegistrationFinishedMail = (
     "mail/registration-finished",
     withAuthenticationHeader(),
     data
-  )
+  );
