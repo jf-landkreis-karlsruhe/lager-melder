@@ -19,19 +19,21 @@
                 Errinnerungsmail senden
               </v-btn>
             </template>
-            <v-card>
+            <v-card class="mb-0">
               <form v-on:submit.prevent="sendReminderEmail">
                 <v-card-title class="headline">
                   Errinnerungsmail versenden
                 </v-card-title>
                 <v-card-text v-if="!emailSent">
                   An welche Gruppe soll die Mail verschickt werden?
-                  <v-radio-group v-model="sentTo" required>
+                  <v-radio-group v-model="sentTo">
                     <v-radio
                       v-for="sendGroup in sentToValues"
                       :key="sendGroup"
                       :label="sentToReadableInternal(sendGroup)"
                       :value="sendGroup"
+                      name="sendGroup"
+                      required
                     ></v-radio>
                   </v-radio-group>
                 </v-card-text>
@@ -80,19 +82,21 @@
                 Registrierungsende Mail senden
               </v-btn>
             </template>
-            <v-card>
+            <v-card class="mb-0">
               <form v-on:submit.prevent="sendRegistrationEndEmail">
                 <v-card-title class="headline">
                   Registrierungsende Mail versenden
                 </v-card-title>
                 <v-card-text v-if="!emailSent">
                   An welche Gruppe soll die Mail verschickt werden?
-                  <v-radio-group v-model="sentTo" required>
+                  <v-radio-group v-model="sentTo">
                     <v-radio
                       v-for="sendGroup in sentToValues"
                       :key="sendGroup"
                       :label="sentToReadableInternal(sendGroup)"
                       :value="sendGroup"
+                      name="sendGroupRegistration"
+                      required
                     ></v-radio>
                   </v-radio-group>
                 </v-card-text>
