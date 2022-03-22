@@ -56,6 +56,14 @@
               <div>
                 <div class="flex-row">
                   <div v-if="!editingEventIds.includes(event.id)">
+                    <a target="_blank" rel="noopener noreferrer" :href="'/events/' + event.code" class="link-button">
+                      <v-icon
+                        medium
+                        class="mr-2"
+                      >
+                        mdi-open-in-new
+                      </v-icon>
+                    </a>
                     <v-icon
                       medium
                       class="mr-2"
@@ -195,5 +203,8 @@ export default class EventsConfiguration extends Vue {
 }
 .event-card {
   flex: 0 1 800px;
+}
+.link-button {
+  text-decoration: none;
 }
 </style>
