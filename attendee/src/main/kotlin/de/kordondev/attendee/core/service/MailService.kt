@@ -15,7 +15,7 @@ class MailService(
     private val settingsService: SettingsService
 ) {
     fun sendReminderMail(sendTo: SendTo): Number {
-        authorityService.isAdmin()
+        authorityService.isSpecializedFieldDirector()
         val settings = settingsService.getSettings()
         return departmentService.getDepartments()
             .filter { filterDepartmentsBy(it, sendTo) }
@@ -25,7 +25,7 @@ class MailService(
     }
 
     fun sendRegistrationFinishedMail(sendTo: SendTo): Number {
-        authorityService.isAdmin()
+        authorityService.isSpecializedFieldDirector()
         val settings = settingsService.getSettings()
         return departmentService.getDepartments()
             .filter { filterDepartmentsBy(it, sendTo) }

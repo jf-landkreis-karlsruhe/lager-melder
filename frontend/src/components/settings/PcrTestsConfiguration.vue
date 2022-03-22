@@ -78,7 +78,10 @@
                     {{ dateLocalized(pcrTestSeries.end) }} Uhr
                   </div>
                 </div>
-                <div v-if="isOpenForEditing(pcrTestSeries.id)">
+                <div
+                  v-if="isOpenForEditing(pcrTestSeries.id)"
+                  style="width: 100%"
+                >
                   <v-text-field
                     type="text"
                     v-model="pcrTestSeries.name"
