@@ -106,7 +106,7 @@ class YouthLeader(
         pdfHelper.fillField(
             form,
             "$NAME_AND_BIRTHDAY$cellId",
-            "${attendee.lastName}, ${attendee.firstName}, ${attendee.birthday}",
+            "${attendee.lastName}, ${attendee.firstName}, ${pdfHelper.formatBirthday(attendee.birthday, germanDate)}",
             page
         )?.let { fields.add(it) }
         pdfHelper.fillField(form, startDateCell, settings.eventStart.format(germanDate), page)?.let { fields.add(it) }
