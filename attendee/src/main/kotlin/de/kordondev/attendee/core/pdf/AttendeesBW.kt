@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Service
 class AttendeesBW(
@@ -157,7 +159,7 @@ class AttendeesBW(
         return fields
     }
 
-    fun fillAttendeeInForm(
+    private fun fillAttendeeInForm(
         attendee: Attendee,
         form: PDAcroForm,
         firstCellId: Int,
@@ -172,7 +174,7 @@ class AttendeesBW(
         val daysCellId = firstCellId + 7
         pdfHelper.fillField(form, "Texteingabe$nameCellId", "${attendee.lastName}, ${attendee.firstName}", page)
             ?.let { fields.add(it) }
-        pdfHelper.fillField(form, "Texteingabe$birthDateCellId", attendee.birthday, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, "Texteingabe$birthDateCellId", pdfHelper.formatBirthday(attendee.birthday, germanDate), page)?.let { fields.add(it) }
         pdfHelper.fillField(form, "Texteingabe$startCellId", settings.eventStart.format(germanDate), page)
             ?.let { fields.add(it) }
         pdfHelper.fillField(form, "Texteingabe$endCellId", settings.eventEnd.format(germanDate), page)
@@ -180,4 +182,6 @@ class AttendeesBW(
         pdfHelper.fillField(form, "Texteingabe$daysCellId", "$DAYS_OF_EVENT", page)?.let { fields.add(it) }
         return fields
     }
+
+
 }

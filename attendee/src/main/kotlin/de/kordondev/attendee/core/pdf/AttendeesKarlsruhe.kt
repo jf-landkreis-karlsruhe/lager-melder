@@ -147,7 +147,7 @@ class AttendeesKarlsruhe(
         val youthLeaderCellId = firstCellId + 699
         pdfHelper.fillField(form, "$nameCellId", "${attendee.lastName}, ${attendee.firstName}", page)
             ?.let { fields.add(it) }
-        pdfHelper.fillField(form, "$birthDateCellId", attendee.birthday, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, "$birthDateCellId", pdfHelper.formatBirthday(attendee.birthday, germanDate), page)?.let { fields.add(it) }
         pdfHelper.fillField(form, "$startCellId", settings.eventStart.format(germanDateShort), page)
             ?.let { fields.add(it) }
         pdfHelper.fillField(form, "$endCellId", settings.eventEnd.format(germanDateShort), page)?.let { fields.add(it) }

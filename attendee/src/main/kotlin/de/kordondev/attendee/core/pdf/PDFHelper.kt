@@ -4,6 +4,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox
 import org.apache.pdfbox.pdmodel.interactive.form.PDField
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
@@ -30,5 +31,10 @@ class PDFHelper {
             field?.isReadOnly = true
         }
         return field
+    }
+
+    fun formatBirthday(birthday: String, formatter: DateTimeFormatter): String {
+        var dateList = birthday.split("-")
+        return LocalDate.of(dateList[0].toInt(), dateList[1].toInt(), dateList[2].toInt()).format(formatter)
     }
 }
