@@ -17,6 +17,7 @@ import de.kordondev.attendee.exception.ResourceAlreadyExistsException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 
 @Service
@@ -81,6 +82,7 @@ class UserService(
             ?: throw NotFoundException("user with id ${userToChange.id} not found")
     }
 
+    @Transactional
     fun updatePasswordAndSendEmail(user: User): User {
         authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         val newPassword = PasswordGenerator.generatePassword()
