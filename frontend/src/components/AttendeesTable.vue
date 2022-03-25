@@ -19,7 +19,7 @@
           :hide-default-footer="true"
           :item-class="statusClass"
         >
-          <template v-slot:item.status="{ item }">
+          <template v-slot:[`item.status`]="{ item }">
             <div
               v-if="item.status === attendeeStatusLeft"
               title="Zeltlager verlassen"
@@ -33,7 +33,7 @@
               ⛺
             </div>
           </template>
-          <template v-slot:item.firstName="{ item }">
+          <template v-slot:[`item.firstName`]="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
               {{ item.firstName }}
             </div>
@@ -47,7 +47,7 @@
               />
             </div>
           </template>
-          <template v-slot:item.lastName="{ item }">
+          <template v-slot:[`item.lastName`]="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
               {{ item.lastName }}
             </div>
@@ -61,7 +61,7 @@
               />
             </div>
           </template>
-          <template v-slot:item.tShirtSize="{ item }">
+          <template v-slot:[`item.tShirtSize`]="{ item }">
             <div style="max-width: 190px">
               <div v-if="!editingAttendeeIds.includes(item.id)">
                 {{ tShirtSizeText(item.tShirtSize) }}
@@ -82,7 +82,7 @@
               </div>
             </div>
           </template>
-          <template v-slot:item.food="{ item }">
+          <template v-slot:[`item.food`]="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
               {{ foodText(item.food) }}
             </div>
@@ -99,7 +99,7 @@
               ></v-select>
             </div>
           </template>
-          <template v-slot:item.birthday="{ item }">
+          <template v-slot:[`item.birthday`]="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
               {{ birthdayText(item.birthday) }}
             </div>
@@ -113,7 +113,7 @@
               />
             </div>
           </template>
-          <template v-slot:item.additionalInformation="{ item }">
+          <template v-slot:[`item.additionalInformation`]="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
               {{ item.additionalInformation }}
             </div>
@@ -125,7 +125,7 @@
               />
             </div>
           </template>
-          <template v-slot:item.actions="{ item }">
+          <template v-slot:[`item.actions`]="{ item }">
             <v-row class="actions">
               <div v-if="!disabled && !editingAttendeeIds.includes(item.id)">
                 <v-icon medium class="mr-2" @click.prevent="editAttendee(item)">
@@ -216,18 +216,19 @@ export default class AttendeesTable extends Vue {
   attendeeStatusLeft = AttendeeStatus.LEFT;
   attendeeStatusEntered = AttendeeStatus.ENTERED;
 
-  deleteAttendee = (attendee: Attendee) => {
+  deleteAttendee(attendee: Attendee) {
     this.deletingAttendees.push(attendee.id);
     deleteAttendee(attendee.id).then(() => {
       this.removeAttendeeIdFromList(attendee.id, this.deletingAttendees);
       this.deletedAttendeeIds.push(attendee.id);
       this.attendeesChanged(-1);
     });
-  };
-  editAttendee = (attendee: Attendee) =>
+  }
+  editAttendee(attendee: Attendee) {
     this.editingAttendeeIds.push(attendee.id);
+  }
 
-  saveAttendee = (attendee: AttendeeWithValidation) => {
+  saveAttendee(attendee: AttendeeWithValidation) {
     if (!attendee.tShirtSize) {
       attendee.tShirtSizeError = true;
       return;
@@ -245,14 +246,15 @@ export default class AttendeesTable extends Vue {
     updateAttendee(attendee).then(() => {
       this.removeAttendeeIdFromList(attendee.id, this.editingAttendeeIds);
     });
-  };
+  }
   removeAttendeeIdFromList = (id: string, list: string[]) => {
     const indexOfAttendee = list.indexOf(id);
     list.splice(indexOfAttendee, 1);
   };
 
-  createFormName = (attendee: Attendee) =>
-    `form-${this.departmentId}-${this.headlineText}-${attendee.id}`;
+  createFormName(attendee: Attendee) {
+    return `form-${this.departmentId}-${this.headlineText}-${attendee.id}`;
+  }
 
   get tShirtSizes(): { value: TShirtSize; text: string }[] {
     return Object.values(TShirtSize).map((value) => ({

@@ -169,19 +169,19 @@ export default class AttendeesRegistration extends Vue {
       );
   }
 
-  downloadBatchesPDF = () => {
+  downloadBatchesPDF() {
     getBatches().then((fileData) => showFile(fileData.data, fileData.fileName));
-  };
+  }
 
-  downloadFoodPDF = () => {
+  downloadFoodPDF() {
     getFoodPDF().then((fileData) => showFile(fileData.data, fileData.fileName));
-  };
+  }
 
-  downloadTShirtsPDF = () => {
+  downloadTShirtsPDF() {
     getTShirtPDF().then((fileData) =>
       showFile(fileData.data, fileData.fileName)
     );
-  };
+  }
 
   get totalAttendeeCount(): number {
     return this.attendees.length;
