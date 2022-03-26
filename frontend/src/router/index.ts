@@ -7,8 +7,7 @@ Vue.use(VueRouter);
 const routes: Array<RouteConfig> = [
   {
     path: "/",
-    name: "Home",
-    component: HomeView,
+    redirect: "/teilnehmer",
   },
   {
     path: "/login",
