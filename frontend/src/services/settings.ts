@@ -24,13 +24,19 @@ export const getSettings = () =>
     })
   );
 
+export interface RegistrationEnd<T = Date> {
+  registrationEnd: T;
+  attendeesCanBeEdited: boolean;
+}
+
 export const getRegistrationEnd = () => {
-  return getData<{ registrationEnd: string }>(
+  return getData<RegistrationEnd<string>>(
     `settings/registration-end`,
     withAuthenticationHeader()
   ).then((settings) => {
     return {
-      registrationEnd: new Date(settings.registrationEnd).toISOString(),
+      ...settings,
+      registrationEnd: new Date(settings.registrationEnd),
     };
   });
 };

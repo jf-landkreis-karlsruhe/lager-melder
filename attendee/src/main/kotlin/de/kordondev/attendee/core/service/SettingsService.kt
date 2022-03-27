@@ -5,7 +5,6 @@ import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.entry.SettingsEntry
 import de.kordondev.attendee.core.persistence.repository.SettingsRepository
 import de.kordondev.attendee.core.security.AuthorityService
-import de.kordondev.attendee.exception.WrongTimeException
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.LocalDate
@@ -47,10 +46,12 @@ class SettingsService(
             .let { SettingsEntry.to(it) }
     }
 
-    fun canAttendeesBeEdited() {
-        val endRegistration = getSettings().registrationEnd
-        if (endRegistration.isBefore(Instant.now())) {
-            throw WrongTimeException("Registrierungsende wurde überschritten")
+
+    fun canAttendeesBeEdited(): Boolean {
+        if (authorityService.isSpecializedFieldDirectorFilter()) {
+            return true
         }
+        val endRegistration = getSettings().registrationEnd
+        return Instant.now().isBefore(endRegistration)
     }
 }

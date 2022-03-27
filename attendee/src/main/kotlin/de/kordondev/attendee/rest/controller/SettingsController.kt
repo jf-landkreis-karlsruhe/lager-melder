@@ -30,6 +30,6 @@ class SettingsController(
     @GetMapping("/settings/registration-end")
     fun getRegistrationEnd(): RestRegistrationEnd {
         return settingsService.getSettings()
-            .let { RestRegistrationEnd.of(it) }
+            .let { RestRegistrationEnd.of(it, settingsService.canAttendeesBeEdited()) }
     }
 }

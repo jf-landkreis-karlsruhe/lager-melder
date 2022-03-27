@@ -45,7 +45,7 @@
       :departmentId="department.id"
       :role="attendeeRoleYouth"
       :attendeesChanged="attendeesChanged"
-      :disabled="isRegistrationEndReached"
+      :disabled="!attendeesCanBeEdited"
     />
     <AttendeesTable
       headlineText="Jugendleiter"
@@ -53,7 +53,7 @@
       :role="attendeeRoleYouthLeader"
       :departmentId="department.id"
       :attendeesChanged="attendeesChanged"
-      :disabled="isRegistrationEndReached"
+      :disabled="!attendeesCanBeEdited"
     />
   </div>
 </template>
@@ -91,8 +91,9 @@ export default class AttendeesRegistration extends Vue {
   attendeeRoleYouthLeader = AttendeeRole.YOUTH_LEADER;
   totalAttendeeCount: number = 0;
   private now = new Date();
-  private registrationEnd: string = "";
+  private registrationEnd: Date | null = null;
   private registrationEndLocalized: string = "";
+  private attendeesCanBeEdited: boolean = false;
 
   get youthAttendees(): Attendee[] {
     if (!this.department || !this.department.id) {
@@ -135,15 +136,11 @@ export default class AttendeesRegistration extends Vue {
     const response = await getRegistrationEnd();
     this.registrationEnd = response.registrationEnd;
     this.registrationEndLocalized = dateTimeLocalized(response.registrationEnd);
+    this.attendeesCanBeEdited = response.attendeesCanBeEdited;
 
     setInterval(() => {
       this.now = new Date();
     }, 1000);
-  }
-
-  private get isRegistrationEndReached(): boolean {
-    const registrationEnd = new Date(this.registrationEnd);
-    return this.now > registrationEnd;
   }
 
   private get registrationEndDiff():
@@ -154,8 +151,10 @@ export default class AttendeesRegistration extends Vue {
         seconds: number;
       }
     | undefined {
-    const registrationEnd = new Date(this.registrationEnd);
-    const diff = registrationEnd.getTime() - this.now.getTime();
+    if (!this.registrationEnd) {
+      return undefined;
+    }
+    const diff = this.registrationEnd.getTime() - this.now.getTime();
     if (diff < 0) return undefined;
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
