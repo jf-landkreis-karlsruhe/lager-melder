@@ -172,7 +172,7 @@ export default class ScannerComponent extends Vue {
     this.initQuagga(this.getQuaggaConfig(storedCameraDeviceId));
   }
 
-  $destroy() {
+  destroyed() {
     Quagga.stop();
   }
 

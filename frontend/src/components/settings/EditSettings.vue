@@ -5,7 +5,7 @@
       <v-row justify="center">
         <v-col sm="12" md="12" lg="10" xl="8">
           <form v-on:submit.prevent="saveSettings(settings)">
-            <v-text>
+            <div>
               <h3>Anmeldung</h3>
               <v-text-field
                 type="date"
@@ -63,7 +63,7 @@
                 label="Zuschuss pro Betreuer"
                 hint="Benutzt für Pädagogische Betreuer"
               />
-            </v-text>
+            </div>
             <v-card-actions>
               <v-row justify="end">
                 <v-btn

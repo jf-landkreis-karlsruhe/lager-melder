@@ -156,13 +156,13 @@ export default class MailSettings extends Vue {
     SentTo.DEPARTMENTS_WITH_ATTENDEES,
     SentTo.DEPARTMENTS_WITHOUT_ATTENDEES,
   ];
-  sentTo?: SentTo;
+  sentTo: SentTo | null = null;
   sentToReadableInternal = sentToReadable;
 
   closeModal() {
     this.reminderDialogOpen = false;
     this.registrationEndDialogOpen = false;
-    this.sentTo = undefined;
+    this.sentTo = null;
     this.emailSent = false;
   }
 
@@ -187,7 +187,7 @@ export default class MailSettings extends Vue {
         .then(() => {
           this.emailSent = true;
           this.sendingEmail = false;
-          this.sentTo = undefined;
+          this.sentTo = null;
         })
         .catch(() => {
           this.sendingEmail = false;
