@@ -11,7 +11,7 @@
     </div>
     <nav id="nav" v-if="loggedIn">
       <v-container fluid class="nav-bar">
-        <v-row justify="space-between align-center" class="nav-bar__row">
+        <v-row justify="space-between" align="center" class="nav-bar__row">
           <ul class="pa-0 nav-bar__list">
             <li class="nav-item">
               <router-link to="/teilnehmer">Teilnehmer</router-link>

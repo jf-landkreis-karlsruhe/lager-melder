@@ -33,12 +33,11 @@
 
           <v-card v-if="loggedIn">
             <v-card-title>Eingeloggt</v-card-title>
-            <v-card-text>
+            <v-card-text class="d-flex flex-column align-center justify-center">
               Du bist eingeloggt.
               <br />
               <br />
-              Du kannst dich hier
-              <v-btn class="ml-2" rounded @click="logout">ausloggen</v-btn>
+              <v-btn rounded color="error" @click="logout"> Ausloggen </v-btn>
             </v-card-text>
           </v-card>
         </v-col>
