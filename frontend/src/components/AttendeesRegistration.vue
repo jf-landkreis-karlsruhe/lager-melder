@@ -5,7 +5,7 @@
         <div style="color: #333333">
           <b>
             Anmeldeschluss {{ registrationEndDiff ? "ist" : "war" }} am:
-            {{ registrationEnd }}
+            {{ registrationEndLocalized }} Uhr
           </b>
           <br />
           <div v-if="registrationEndDiff">
@@ -92,6 +92,7 @@ export default class AttendeesRegistration extends Vue {
   totalAttendeeCount: number = 0;
   private now = new Date();
   private registrationEnd: string = "";
+  private registrationEndLocalized: string = "";
 
   get youthAttendees(): Attendee[] {
     if (!this.department || !this.department.id) {
@@ -132,7 +133,8 @@ export default class AttendeesRegistration extends Vue {
 
   public async created(): Promise<void> {
     const response = await getRegistrationEnd();
-    this.registrationEnd = dateTimeLocalized(response.registrationEnd);
+    this.registrationEnd = response.registrationEnd;
+    this.registrationEndLocalized = dateTimeLocalized(response.registrationEnd);
 
     setInterval(() => {
       this.now = new Date();
