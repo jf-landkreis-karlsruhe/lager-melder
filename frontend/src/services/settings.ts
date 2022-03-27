@@ -24,6 +24,25 @@ export const getSettings = () =>
     })
   );
 
+export const getRegistrationEnd = () => {
+  // TODO: remove mock
+  return Promise.resolve({
+    registrationEnd: new Date("2022-4-4"),
+  });
+
+  getData<{ registrationEnd: string }>(
+    `settings/registration-end`,
+    withAuthenticationHeader()
+  ).then((settings) => {
+    console.log("here", settings);
+    return {
+      registrationEnd: new Date(settings.registrationEnd)
+        .toISOString()
+        .split("T")[0],
+    };
+  });
+};
+
 export const updateSettings = (settings: Settings) => {
   const registrationEndDate = new Date(settings.registrationEnd);
   registrationEndDate.setHours(23);

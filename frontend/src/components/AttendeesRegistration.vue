@@ -1,6 +1,27 @@
 <template>
   <div>
     <div>
+      <v-alert color="yellow darken-2" type="warning" border="top">
+        <div style="color: #333333">
+          <b>
+            Anmeldeschluss {{ registrationEndDiff ? "ist" : "war" }} am:
+            {{ registrationEnd }}
+          </b>
+          <br />
+          <div v-if="registrationEndDiff">
+            Das sind noch {{ registrationEndDiff.days }}
+            {{ registrationEndDiff.days === 1 ? "Tag" : "Tage" }}
+            {{ registrationEndDiff.hours }}
+            {{ registrationEndDiff.hours === 1 ? "Stunde" : "Stunden" }}
+            {{ registrationEndDiff.minutes }}
+            {{ registrationEndDiff.minutes === 1 ? "Minute" : "Minuten" }}
+            <!-- {{ registrationEndDiff.seconds }}
+            {{ registrationEndDiff.seconds === 1 ? "Sekunde" : "Sekunden" }} -->
+          </div>
+          <div v-else>Anmeldeschluss ist bereits erreicht!</div>
+        </div>
+      </v-alert>
+
       <div class="d-flex align-baseline">
         <h1 class="mr-4">Teilnehmer {{ department.name }}</h1>
         <div>
@@ -24,6 +45,7 @@
       :departmentId="department.id"
       :role="attendeeRoleYouth"
       :attendeesChanged="attendeesChanged"
+      :disabled="isRegistrationEndReached"
     />
     <AttendeesTable
       headlineText="Jugendleiter"
@@ -31,6 +53,7 @@
       :role="attendeeRoleYouthLeader"
       :departmentId="department.id"
       :attendeesChanged="attendeesChanged"
+      :disabled="isRegistrationEndReached"
     />
   </div>
 </template>
@@ -54,6 +77,8 @@ import {
 } from "../helper/filterHelper";
 
 import AttendeesTable from "./AttendeesTable.vue";
+import { getRegistrationEnd } from "@/services/settings";
+import { dateTimeLocalized } from "@/helper/displayDate";
 
 @Component({
   components: { AttendeesTable },
@@ -65,6 +90,8 @@ export default class AttendeesRegistration extends Vue {
   attendeeRoleYouth = AttendeeRole.YOUTH;
   attendeeRoleYouthLeader = AttendeeRole.YOUTH_LEADER;
   totalAttendeeCount: number = 0;
+  private now = new Date();
+  private registrationEnd: string = "";
 
   get youthAttendees(): Attendee[] {
     if (!this.department || !this.department.id) {
@@ -101,6 +128,39 @@ export default class AttendeesRegistration extends Vue {
 
   get enteredAttendeesCount(): number {
     return this.attendees.filter(filterEnteredAttendees).length;
+  }
+
+  public async created(): Promise<void> {
+    const response = await getRegistrationEnd();
+    this.registrationEnd = dateTimeLocalized(response.registrationEnd);
+
+    setInterval(() => {
+      this.now = new Date();
+    }, 1000);
+  }
+
+  private get isRegistrationEndReached(): boolean {
+    const registrationEnd = new Date(this.registrationEnd);
+    return this.now > registrationEnd;
+  }
+
+  private get registrationEndDiff():
+    | {
+        days: number;
+        minutes: number;
+        hours: number;
+        seconds: number;
+      }
+    | undefined {
+    const registrationEnd = new Date(this.registrationEnd);
+    const diff = registrationEnd.getTime() - this.now.getTime();
+    if (diff < 0) return undefined;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    return { days, hours, minutes, seconds };
   }
 
   mounted() {
