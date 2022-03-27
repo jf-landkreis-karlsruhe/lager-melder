@@ -2,6 +2,7 @@ package de.kordondev.attendee.rest.controller
 
 import de.kordondev.attendee.core.service.SettingsService
 import de.kordondev.attendee.rest.model.RestSettings
+import de.kordondev.attendee.rest.model.request.RestRegistrationEnd
 import de.kordondev.attendee.rest.model.request.RestSettingsRequest
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -24,5 +25,11 @@ class SettingsController(
     fun updateSettings(@RequestBody(required = true) @Valid settings: RestSettingsRequest): RestSettings {
         return settingsService.saveSettings(RestSettingsRequest.to(settings))
             .let { RestSettings.of(it) }
+    }
+
+    @GetMapping("/settings/registration-end")
+    fun getRegistrationEnd(): RestRegistrationEnd {
+        return settingsService.getSettings()
+            .let { RestRegistrationEnd.of(it) }
     }
 }
