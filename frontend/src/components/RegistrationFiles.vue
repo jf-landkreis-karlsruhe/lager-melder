@@ -9,7 +9,8 @@
     </p>
     <FileList :departmentId="departmentId" :departmentName="departmentName" />
     <p>
-      ⚠️ In einigen PDF Viewern kommt es zu Probleme mit der Anzeige, es funktionieren mit Google Chrome und Adobe Acrobat Reader. ⚠️
+      ⚠️ In einigen PDF Viewern kommt es zu Probleme mit der Anzeige, es
+      funktionieren mit Google Chrome und Adobe Acrobat Reader. ⚠️
     </p>
     <div v-if="hasAdministrationRole() && departments">
       <h2>Anmeldeunterlagen aller Feuerwehren</h2>
