@@ -13,7 +13,7 @@
       <v-card-text>
         <v-data-table
           :headers="headers"
-          :items="attendeesWithNew"
+          :items="disabled ? attendees : attendeesWithNew"
           :disable-pagination="true"
           :disable-items-per-page="true"
           :hide-default-footer="true"
@@ -127,18 +127,19 @@
           </template>
           <template v-slot:item.actions="{ item }">
             <v-row class="actions">
-              <div v-if="!editingAttendeeIds.includes(item.id)">
+              <div v-if="!disabled && !editingAttendeeIds.includes(item.id)">
                 <v-icon medium class="mr-2" @click.prevent="editAttendee(item)">
                   mdi-pencil
                 </v-icon>
               </div>
-              <div v-if="editingAttendeeIds.includes(item.id)">
+              <div v-if="!disabled && editingAttendeeIds.includes(item.id)">
                 <button type="sumbit" :form="createFormName(item)">
                   <v-icon medium class="mr-2"> mdi-content-save </v-icon>
                 </button>
               </div>
-              <span
+              <button
                 v-if="
+                  !disabled &&
                   !deletingAttendees.includes(item.id) &&
                   item.id !== newAttendeeId
                 "
@@ -146,8 +147,8 @@
                 <v-icon medium @click.prevent="deleteAttendee(item)">
                   mdi-delete
                 </v-icon>
-              </span>
-              <span v-if="deletingAttendees.includes(item.id)">
+              </button>
+              <span v-if="!disabled && deletingAttendees.includes(item.id)">
                 <v-progress-circular indeterminate :size="24" color="green" />
               </span>
             </v-row>
@@ -193,6 +194,7 @@ export default class AttendeesTable extends Vue {
   @Prop() headlineText!: string;
   @Prop() role!: AttendeeRole;
   @Prop() departmentId!: string;
+  @Prop({ default: false }) disabled!: boolean;
   // eslint-disable-next-line no-unused-vars
   @Prop() attendeesChanged!: (change: number) => void;
 

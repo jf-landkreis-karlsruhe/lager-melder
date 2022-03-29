@@ -5,7 +5,6 @@ import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.entry.SettingsEntry
 import de.kordondev.attendee.core.persistence.repository.SettingsRepository
 import de.kordondev.attendee.core.security.AuthorityService
-import de.kordondev.attendee.exception.WrongTimeException
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.LocalDate
@@ -25,7 +24,7 @@ class SettingsService(
         if (settingsList.isEmpty()) {
             return saveSettings(
                 Settings(
-                    id = 1,
+                    id = SETTINGS_ID,
                     registrationEnd = Instant.now().plus(30, ChronoUnit.DAYS),
                     hostCity = "Austragungsort",
                     eventStart = LocalDate.now().plusDays(60),
@@ -47,10 +46,12 @@ class SettingsService(
             .let { SettingsEntry.to(it) }
     }
 
-    fun canAttendeesBeEdited() {
-        val endRegistration = getSettings().registrationEnd
-        if (endRegistration.isBefore(Instant.now())) {
-            throw WrongTimeException("Registrierungsende wurde überschritten")
+
+    fun canAttendeesBeEdited(): Boolean {
+        if (authorityService.isSpecializedFieldDirectorFilter()) {
+            return true
         }
+        val endRegistration = getSettings().registrationEnd
+        return Instant.now().isBefore(endRegistration)
     }
 }

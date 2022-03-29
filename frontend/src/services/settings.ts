@@ -24,6 +24,23 @@ export const getSettings = () =>
     })
   );
 
+export interface RegistrationEnd<T = Date> {
+  registrationEnd: T;
+  attendeesCanBeEdited: boolean;
+}
+
+export const getRegistrationEnd = () => {
+  return getData<RegistrationEnd<string>>(
+    `settings/registration-end`,
+    withAuthenticationHeader()
+  ).then((settings) => {
+    return {
+      ...settings,
+      registrationEnd: new Date(settings.registrationEnd),
+    };
+  });
+};
+
 export const updateSettings = (settings: Settings) => {
   const registrationEndDate = new Date(settings.registrationEnd);
   registrationEndDate.setHours(23);

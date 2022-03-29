@@ -11,6 +11,7 @@ import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.core.security.PasswordGenerator
 import de.kordondev.attendee.exception.NotFoundException
 import de.kordondev.attendee.exception.UniqueException
+import de.kordondev.attendee.exception.WrongTimeException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -36,7 +37,7 @@ class AttendeeService(
 
     fun createAttendee(attendee: NewAttendee): Attendee {
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
-        settingsService.canAttendeesBeEdited()
+        checkCanAttendeeBeEdited()
         checkFirstNameAndLastNameAreUnique(attendee)
         val code = PasswordGenerator.generateCode()
         return attendeeRepository
@@ -45,7 +46,7 @@ class AttendeeService(
     }
 
     fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
-        settingsService.canAttendeesBeEdited()
+        checkCanAttendeeBeEdited()
         checkFirstNameAndLastNameAreUnique(attendee, id)
         return attendeeRepository.findByIdOrNull(id)
             ?.let {
@@ -60,7 +61,7 @@ class AttendeeService(
     }
 
     fun deleteAttendee(id: Long) {
-        settingsService.canAttendeesBeEdited()
+        checkCanAttendeeBeEdited()
         attendeeRepository.findByIdOrNull(id)
             ?.let {
                 authorityService.hasAuthority(
@@ -96,5 +97,11 @@ class AttendeeService(
                     throw UniqueException("Vorname (${attendee.firstName}) und Nachname (${attendee.lastName}) müssen pro Feuerwehr einmalig sein")
                 }
             }
+    }
+
+    private fun checkCanAttendeeBeEdited() {
+        if (!settingsService.canAttendeesBeEdited()) {
+            throw WrongTimeException("Registrierungsende wurde überschritten")
+        }
     }
 }
