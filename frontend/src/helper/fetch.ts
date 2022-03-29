@@ -63,6 +63,8 @@ export const fetchData = (relativeUrl: string, config: RequestInit) => {
       const errObj = await err.json();
       if (isValidatedErrorResponse(errObj)) {
         toast.error(errObj.messages[0].message);
+      } else if (errObj.path.endsWith("login") && errObj.status === 401) {
+        toast.error("Benutzername oder Passwort sind falsch");
       } else {
         const httpRes: Response = errObj as Response;
         const commonErrMsg = `Es ist leider etwas schief gegangen. (Code: ${httpRes.status})`;
