@@ -17,13 +17,13 @@
               <router-link to="/teilnehmer">Teilnehmer</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/feuerwehr">Meine Feuerwehr</router-link>
-            </li>
-            <li class="nav-item">
               <router-link to="/files">Anmeldeunterlagen</router-link>
             </li>
             <li class="nav-item">
               <router-link to="/pcr-tests">PCR Tests</router-link>
+            </li>
+            <li class="nav-item admin" v-if="hasAdministrationRole()">
+              <router-link to="/feuerwehr">Feuerwehren</router-link>
             </li>
             <li class="nav-item admin" v-if="hasAdministrationRole()">
               <router-link to="/overview"> Übersicht </router-link>
@@ -33,9 +33,9 @@
             </li>
           </ul>
 
-          <router-link to="/login" class="account">
+          <router-link to="/account" class="account">
             <v-icon medium color="blue darken-2"> mdi-account </v-icon>
-            <span class="account__link pl-1">Account</span>
+            <span class="account__link pl-1">Mein Profil</span>
           </router-link>
         </v-row>
       </v-container>

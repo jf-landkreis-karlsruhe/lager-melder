@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container>
-      <v-row justify="center">
+      <v-row justify="center" v-if="hasAdministrationRole()">
         <v-col cols="10">
           <h1>Deine Feuerwehr</h1>
         </v-col>
@@ -10,7 +10,14 @@
             <h2>{{ myDepartment.name }}</h2>
             <EditDepartment :department="myDepartment" class="mb-8" />
           </div>
+        </v-col>
+      </v-row>
 
+      <v-row justify="center">
+        <v-col cols="10">
+          <h1>Passwort</h1>
+        </v-col>
+        <v-col cols="10">
           <form v-on:submit.prevent="updateUser()" class="mb-8">
             <v-text-field
               v-model="password"
