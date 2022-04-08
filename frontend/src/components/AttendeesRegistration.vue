@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <div>
       <v-alert color="yellow darken-2" type="warning" border="top">
         <div style="color: #333333">
@@ -55,7 +55,7 @@
       :attendeesChanged="attendeesChanged"
       :disabled="!attendeesCanBeEdited"
     />
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">

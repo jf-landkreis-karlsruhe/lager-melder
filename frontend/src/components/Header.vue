@@ -1,7 +1,7 @@
 <template>
   <header>
     <div class="d-flex justify-center align-center hero-image-container">
-      <router-link to="/teilnehmer">
+      <router-link :to="isLoggedIn ? '/teilnehmer' : ''">
         <img
           alt="Zeltlager logo"
           class="hero-image"
@@ -22,13 +22,13 @@
             <li class="nav-item">
               <router-link to="/pcr-tests">PCR Tests</router-link>
             </li>
-            <li class="nav-item admin" v-if="hasAdministrationRole()">
+            <li class="nav-item admin" v-if="hasAdministrationRole">
               <router-link to="/feuerwehr">Feuerwehren</router-link>
             </li>
-            <li class="nav-item admin" v-if="hasAdministrationRole()">
+            <li class="nav-item admin" v-if="hasAdministrationRole">
               <router-link to="/overview"> Übersicht </router-link>
             </li>
-            <li class="nav-item admin" v-if="hasAdministrationRole()">
+            <li class="nav-item admin" v-if="hasAdministrationRole">
               <router-link to="/einstellungen"> Einstellungen </router-link>
             </li>
           </ul>
@@ -50,6 +50,7 @@ import {
   getTokenData,
   AuthenticationChangedEvent,
   hasAdministrationRole,
+  isLoggedIn,
 } from "../services/authentication";
 
 @Component({})
@@ -57,7 +58,13 @@ export default class Header extends Vue {
   timeoutId = 0;
   loggedIn = false;
 
-  hasAdministrationRole = hasAdministrationRole;
+  private get isLoggedIn(): boolean {
+    return isLoggedIn();
+  }
+
+  private get hasAdministrationRole(): boolean {
+    return hasAdministrationRole();
+  }
 
   mounted() {
     window.addEventListener("focus", this.checkToken);

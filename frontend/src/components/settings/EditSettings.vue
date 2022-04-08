@@ -1,9 +1,9 @@
 <template>
   <section>
     <v-card class="mb-16">
-      <h2 class="ml-12">Allgemein</h2>
+      <h2 class="ml-md-6">Allgemein</h2>
       <v-row justify="center">
-        <v-col sm="12" md="12" lg="10" xl="8">
+        <v-col sm="12" md="8" lg="6" xl="4">
           <form v-on:submit.prevent="saveSettings(settings)">
             <div>
               <h3>Anmeldung</h3>

@@ -1,12 +1,12 @@
 <template>
   <v-card class="mb-16">
-    <h2 class="ml-12">Mails</h2>
+    <h2 class="ml-md-6">Mails</h2>
     <v-col>
       <v-row justify="center">
-        <v-col sm="12" md="12" lg="10" xl="8">
+        <v-col sm="12" md="8" lg="6" xl="4">
           <h3>Errinnerungsmail</h3>
           <MailReminderText />
-          <v-row justify="end">
+          <v-row justify="end" class="mb-2">
             <v-dialog v-model="reminderDialogOpen" persistent max-width="500">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -15,12 +15,13 @@
                   dark
                   v-bind="attrs"
                   v-on="on"
-                  class="mb-2"
+                  class="my-4"
                 >
                   Errinnerungsmail senden
                 </v-btn>
               </template>
-              <v-card class="mb-0">
+
+              <v-card class="mb-4">
                 <form v-on:submit.prevent="sendReminderEmail">
                   <v-card-title class="headline">
                     Errinnerungsmail versenden
@@ -64,8 +65,8 @@
     <v-divider />
 
     <v-col>
-      <v-row justify="center">
-        <v-col sm="12" md="12" lg="10" xl="8">
+      <v-row justify="center" class="mt-8">
+        <v-col sm="12" md="8" lg="6" xl="4">
           <h3>Registrierungsende Mail</h3>
           <MailRegistrationEndText />
           <v-row justify="end">
@@ -81,7 +82,7 @@
                   dark
                   v-bind="attrs"
                   v-on="on"
-                  class="mb-2"
+                  class="my-4"
                 >
                   Registrierungsende Mail senden
                 </v-btn>

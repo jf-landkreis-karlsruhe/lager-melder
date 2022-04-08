@@ -40,7 +40,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
-import { login, isLoggedIn, logout } from "../services/authentication";
+import { login, isLoggedIn } from "../services/authentication";
 
 @Component({})
 export default class Login extends Vue {
@@ -52,10 +52,6 @@ export default class Login extends Vue {
     login(this.username, this.password)
       .then(() => (this.loggedIn = true))
       .then(() => this.$router.push("/"));
-  }
-  logout() {
-    logout();
-    this.loggedIn = false;
   }
 
   mounted() {
