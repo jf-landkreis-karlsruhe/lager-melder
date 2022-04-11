@@ -1,17 +1,19 @@
 <template>
   <footer class="px-16 py-8 mt-12 d-flex justify-space-between align-center">
-    <a
-      href="https://jf-landkreis-karlsruhe.de/?page_id=52"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="imprint"
-    >
-      Impressum
-    </a>
-    <div>
-      © {{ new Date().getFullYear() }} Jugendfeuerwehr Landkreis Karlsruhe. All
-      rights reserved
-    </div>
+    <v-container>
+      <a
+        href="https://jf-landkreis-karlsruhe.de/?page_id=52"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="imprint"
+      >
+        Impressum
+      </a>
+      <div>
+        © {{ new Date().getFullYear() }} Jugendfeuerwehr Landkreis Karlsruhe.
+        All rights reserved
+      </div>
+    </v-container>
   </footer>
 </template>
 

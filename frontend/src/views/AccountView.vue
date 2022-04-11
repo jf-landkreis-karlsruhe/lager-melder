@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col sm="12" md="8" lg="6" xl="4">
+      <v-col sm="12" md="8" lg="6" xl="6">
         <div v-if="myDepartment.id">
           <h2>Deine Feuerwehr - {{ myDepartment.name }}</h2>
           <EditDepartment :department="myDepartment" class="mb-8" />
@@ -10,7 +10,7 @@
     </v-row>
 
     <v-row justify="center">
-      <v-col sm="12" md="8" lg="6" xl="4">
+      <v-col sm="12" md="8" lg="6" xl="6">
         <h2>Passwort</h2>
         <form v-on:submit.prevent="updateUser()" class="mb-8">
           <v-text-field
@@ -49,7 +49,7 @@
 
     <hr class="mt-16 mb-8" />
     <v-row justify="center">
-      <v-col sm="12" md="8" lg="6" xl="4">
+      <v-col sm="12" md="8" lg="6" xl="6">
         <div
           v-if="isLoggedIn"
           class="d-flex justify-space-between align-center"

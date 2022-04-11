@@ -3,7 +3,7 @@
     <h2 class="ml-md-6">Mails</h2>
     <v-col>
       <v-row justify="center">
-        <v-col sm="12" md="8" lg="6" xl="4">
+        <v-col sm="12" md="8" lg="6" xl="6">
           <h3>Errinnerungsmail</h3>
           <MailReminderText />
           <v-row justify="end" class="mb-2">
@@ -66,7 +66,7 @@
 
     <v-col>
       <v-row justify="center" class="mt-8">
-        <v-col sm="12" md="8" lg="6" xl="4">
+        <v-col sm="12" md="8" lg="6" xl="6">
           <h3>Registrierungsende Mail</h3>
           <MailRegistrationEndText />
           <v-row justify="end">

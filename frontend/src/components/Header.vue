@@ -9,37 +9,39 @@
         />
       </router-link>
     </div>
-    <nav id="nav" v-if="loggedIn">
-      <v-container fluid class="nav-bar">
-        <v-row justify="space-between" align="center" class="nav-bar__row">
-          <ul class="pa-0 nav-bar__list">
-            <li class="nav-item">
-              <router-link to="/teilnehmer">Teilnehmer</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/files">Anmeldeunterlagen</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/pcr-tests">PCR Tests</router-link>
-            </li>
-            <li class="nav-item admin" v-if="hasAdministrationRole">
-              <router-link to="/feuerwehr">Feuerwehren</router-link>
-            </li>
-            <li class="nav-item admin" v-if="hasAdministrationRole">
-              <router-link to="/overview"> Übersicht </router-link>
-            </li>
-            <li class="nav-item admin" v-if="hasAdministrationRole">
-              <router-link to="/einstellungen"> Einstellungen </router-link>
-            </li>
-          </ul>
+    <v-container>
+      <nav id="nav" v-if="loggedIn">
+        <v-container fluid class="nav-bar">
+          <v-row justify="space-between" align="center" class="nav-bar__row">
+            <ul class="pa-0 nav-bar__list">
+              <li class="nav-item">
+                <router-link to="/teilnehmer">Teilnehmer</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="/files">Anmeldeunterlagen</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="/pcr-tests">PCR Tests</router-link>
+              </li>
+              <li class="nav-item admin" v-if="hasAdministrationRole">
+                <router-link to="/feuerwehr">Feuerwehren</router-link>
+              </li>
+              <li class="nav-item admin" v-if="hasAdministrationRole">
+                <router-link to="/overview"> Übersicht </router-link>
+              </li>
+              <li class="nav-item admin" v-if="hasAdministrationRole">
+                <router-link to="/einstellungen"> Einstellungen </router-link>
+              </li>
+            </ul>
 
-          <router-link to="/account" class="account">
-            <v-icon medium color="blue darken-2"> mdi-account </v-icon>
-            <span class="account__link pl-1">Mein Profil</span>
-          </router-link>
-        </v-row>
-      </v-container>
-    </nav>
+            <router-link to="/account" class="account">
+              <v-icon medium color="blue darken-2"> mdi-account </v-icon>
+              <span class="account__link pl-1">Mein Profil</span>
+            </router-link>
+          </v-row>
+        </v-container>
+      </nav>
+    </v-container>
   </header>
 </template>
 
@@ -112,7 +114,6 @@ header {
   .nav-bar {
     margin-top: 12px;
     font-weight: 500;
-    padding: 10px 24px;
 
     .nav-bar__row {
       gap: 12px;

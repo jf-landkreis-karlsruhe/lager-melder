@@ -3,7 +3,7 @@
     <v-container>
       <div v-if="hasAdministrationRole() && departments.length > 0">
         <v-row justify="center">
-          <v-col sm="12" md="8" lg="6" xl="4">
+          <v-col sm="12" md="8" lg="6" xl="6">
             <h1>Feuerwehren</h1>
             <div v-for="department in departments" :key="department.id">
               <h2>{{ department.name }}</h2>
@@ -14,17 +14,18 @@
       </div>
     </v-container>
 
-    <div v-if="hasAdministrationRole()">
-      <hr />
-      <v-row justify="center" class="add-new-department">
-        <v-col sm="12" md="8" lg="6" xl="4">
-          <h1>Feuerwehr hinzufügen</h1>
-          <AddDepartment
-            :onDepartmentCreated="onDepartmentCreated"
-            class="mb-8"
-          />
-        </v-col>
-      </v-row>
+    <div v-if="hasAdministrationRole()" class="add-new-department">
+      <v-container>
+        <v-row justify="center">
+          <v-col sm="12" md="8" lg="6" xl="6">
+            <h1>Feuerwehr hinzufügen</h1>
+            <AddDepartment
+              :onDepartmentCreated="onDepartmentCreated"
+              class="mb-8"
+            />
+          </v-col>
+        </v-row>
+      </v-container>
     </div>
   </div>
 </template>

@@ -2,7 +2,7 @@
   <v-card class="mb-16">
     <h2 class="ml-md-6">PCR Test Serien</h2>
     <v-row justify="center">
-      <v-col sm="12" md="8" lg="6" xl="4">
+      <v-col sm="12" md="8" lg="6" xl="6">
         <h3>PCR Test Serie erstellen</h3>
         <form v-on:submit.prevent="createPcrTestSeriesInternal()">
           <v-text-field

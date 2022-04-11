@@ -2,7 +2,7 @@
   <v-card class="mb-16">
     <h2 class="ml-md-6">Events</h2>
     <v-row justify="center">
-      <v-col sm="12" md="8" lg="6" xl="4">
+      <v-col sm="12" md="8" lg="6" xl="6">
         <h3>Event erstellen</h3>
         <form v-on:submit.prevent="createEventInternal()">
           <v-text-field v-model="eventName" label="Titel des Event" required />
