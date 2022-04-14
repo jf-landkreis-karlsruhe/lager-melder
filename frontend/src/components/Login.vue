@@ -22,23 +22,13 @@
               <v-card-actions>
                 <v-container>
                   <v-row justify="end">
-                    <v-btn color="primary" type="submit" rounded
-                      >Einloggen</v-btn
-                    >
+                    <v-btn color="primary" type="submit" rounded>
+                      Einloggen
+                    </v-btn>
                   </v-row>
                 </v-container>
               </v-card-actions>
             </form>
-          </v-card>
-
-          <v-card v-if="loggedIn">
-            <v-card-title>Eingeloggt</v-card-title>
-            <v-card-text class="d-flex flex-column align-center justify-center">
-              Du bist eingeloggt.
-              <br />
-              <br />
-              <v-btn rounded color="error" @click="logout"> Ausloggen </v-btn>
-            </v-card-text>
           </v-card>
         </v-col>
       </v-row>
@@ -50,7 +40,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
-import { login, isLoggedIn, logout } from "../services/authentication";
+import { login, isLoggedIn } from "../services/authentication";
 
 @Component({})
 export default class Login extends Vue {
@@ -62,10 +52,6 @@ export default class Login extends Vue {
     login(this.username, this.password)
       .then(() => (this.loggedIn = true))
       .then(() => this.$router.push("/"));
-  }
-  logout() {
-    logout();
-    this.loggedIn = false;
   }
 
   mounted() {

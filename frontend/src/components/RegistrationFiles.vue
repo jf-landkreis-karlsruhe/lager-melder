@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <h1>Anmeldeunterlagen</h1>
     <p>
       Die hier aufgelisteten Dateien sind für die Anmeldung am Kreiszeltlager.
@@ -20,9 +20,10 @@
           :departmentId="department.id"
           :departmentName="department.name"
         />
+        <br />
       </div>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">

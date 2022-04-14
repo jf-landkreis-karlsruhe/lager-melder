@@ -58,6 +58,11 @@ const routes: Array<RouteConfig> = [
     name: "Einstellungen",
     component: () => import("../views/SettingsView.vue"),
   },
+  {
+    path: "/account",
+    name: "Account",
+    component: () => import("../views/AccountView.vue"),
+  },
 ];
 
 const router = new VueRouter({

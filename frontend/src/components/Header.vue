@@ -1,7 +1,7 @@
 <template>
   <header>
     <div class="d-flex justify-center align-center hero-image-container">
-      <router-link to="/teilnehmer">
+      <router-link :to="isLoggedIn ? '/teilnehmer' : ''">
         <img
           alt="Zeltlager logo"
           class="hero-image"
@@ -9,37 +9,39 @@
         />
       </router-link>
     </div>
-    <nav id="nav" v-if="loggedIn">
-      <v-container fluid class="nav-bar">
-        <v-row justify="space-between" align="center" class="nav-bar__row">
-          <ul class="pa-0 nav-bar__list">
-            <li class="nav-item">
-              <router-link to="/teilnehmer">Teilnehmer</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/feuerwehr">Meine Feuerwehr</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/files">Anmeldeunterlagen</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/pcr-tests">PCR Tests</router-link>
-            </li>
-            <li class="nav-item admin" v-if="hasAdministrationRole()">
-              <router-link to="/overview"> Übersicht </router-link>
-            </li>
-            <li class="nav-item admin" v-if="hasAdministrationRole()">
-              <router-link to="/einstellungen"> Einstellungen </router-link>
-            </li>
-          </ul>
+    <v-container>
+      <nav id="nav" v-if="loggedIn">
+        <v-container fluid class="nav-bar">
+          <v-row justify="space-between" align="center" class="nav-bar__row">
+            <ul class="pa-0 nav-bar__list">
+              <li class="nav-item">
+                <router-link to="/teilnehmer">Teilnehmer</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="/files">Anmeldeunterlagen</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="/pcr-tests">PCR Tests</router-link>
+              </li>
+              <li class="nav-item admin" v-if="hasAdministrationRole">
+                <router-link to="/feuerwehr">Feuerwehren</router-link>
+              </li>
+              <li class="nav-item admin" v-if="hasAdministrationRole">
+                <router-link to="/overview"> Übersicht </router-link>
+              </li>
+              <li class="nav-item admin" v-if="hasAdministrationRole">
+                <router-link to="/einstellungen"> Einstellungen </router-link>
+              </li>
+            </ul>
 
-          <router-link to="/login" class="account">
-            <v-icon medium color="blue darken-2"> mdi-account </v-icon>
-            <span class="account__link pl-1">Account</span>
-          </router-link>
-        </v-row>
-      </v-container>
-    </nav>
+            <router-link to="/account" class="account">
+              <v-icon medium color="blue darken-2"> mdi-account </v-icon>
+              <span class="account__link pl-1">Mein Profil</span>
+            </router-link>
+          </v-row>
+        </v-container>
+      </nav>
+    </v-container>
   </header>
 </template>
 
@@ -50,6 +52,7 @@ import {
   getTokenData,
   AuthenticationChangedEvent,
   hasAdministrationRole,
+  isLoggedIn,
 } from "../services/authentication";
 
 @Component({})
@@ -57,7 +60,13 @@ export default class Header extends Vue {
   timeoutId = 0;
   loggedIn = false;
 
-  hasAdministrationRole = hasAdministrationRole;
+  private get isLoggedIn(): boolean {
+    return isLoggedIn();
+  }
+
+  private get hasAdministrationRole(): boolean {
+    return hasAdministrationRole();
+  }
 
   mounted() {
     window.addEventListener("focus", this.checkToken);
@@ -105,7 +114,6 @@ header {
   .nav-bar {
     margin-top: 12px;
     font-weight: 500;
-    padding: 10px 24px;
 
     .nav-bar__row {
       gap: 12px;

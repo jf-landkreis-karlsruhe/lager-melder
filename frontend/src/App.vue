@@ -1,12 +1,12 @@
 <template>
   <v-app>
-    <div id="grid-container">
+    <div class="grid-container">
       <div class="my-container">
-        <Header />
+        <Header class="header" />
         <main class="content">
           <router-view />
         </main>
-        <Footer />
+        <Footer class="footer" />
       </div>
     </div>
   </v-app>
@@ -26,24 +26,33 @@ export default class App extends Vue {}
 </script>
 
 <style scoped lang="scss">
-#grid-container {
+.grid-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(auto, 1400px) minmax(0, 1fr);
+  height: 100%;
 }
 
 .my-container {
-  grid-column: 2;
-  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  height: 100%;
+
+  .header {
+    flex: 0 1 auto;
+  }
 
   .content {
+    flex: 1 1 auto;
     padding: 0;
     @media screen and (min-width: 768px) {
       padding: 0 14px;
     }
+  }
+
+  .footer {
+    flex: 0 1 auto;
   }
 }
 </style>

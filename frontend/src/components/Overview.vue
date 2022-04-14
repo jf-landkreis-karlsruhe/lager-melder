@@ -1,13 +1,14 @@
 <template>
-  <div v-if="hasAdministrationRole()">
+  <v-container v-if="hasAdministrationRole()">
     <h1>Lagerausweise</h1>
     <div class="d-flex align-center justify-space-between">
       <p class="mr-8">
-        Hier können alle Lagerausweise heruntergeladen werden:
+        Hier können alle Lagerausweise heruntergeladen werden.
         <br />
-        <button class="download-button" @click="downloadBatchesPDF">
-          Download
-        </button>
+        <v-btn color="#ffe760" @click="downloadBatchesPDF" small>
+          Herunterladen
+          <v-icon right dark> mdi-cloud-download </v-icon>
+        </v-btn>
       </p>
       <img
         src="../assets/Zeltlager-Ausweis-Beispiel.png"
@@ -22,22 +23,24 @@
     <div class="d-flex align-center justify-space-between">
       <p class="mr-8">
         Hier kann die Liste der Essen, die nicht Fleisch sind heruntergeladen
-        werden:
+        werden.
         <br />
-        <button class="download-button" @click="downloadFoodPDF">
-          Download
-        </button>
+        <v-btn color="#ffe760" @click="downloadFoodPDF" small>
+          Herunterladen
+          <v-icon right dark> mdi-cloud-download </v-icon>
+        </v-btn>
       </p>
     </div>
 
     <h1>T-Shirtübersicht</h1>
     <div class="d-flex align-center justify-space-between">
       <p class="mr-8">
-        Hier kann die Liste der TShirts pro Feuerwehr heruntergeladen werden:
+        Hier kann die Liste der TShirts pro Feuerwehr heruntergeladen werden.
         <br />
-        <button class="download-button" @click="downloadTShirtsPDF">
-          Download
-        </button>
+        <v-btn color="#ffe760" @click="downloadTShirtsPDF" small>
+          Herunterladen
+          <v-icon right dark> mdi-cloud-download </v-icon>
+        </v-btn>
       </p>
     </div>
 
@@ -89,7 +92,7 @@
     </div>
 
     <!-- <Distribution :attendees="attendees" /> -->
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -205,12 +208,6 @@ export default class AttendeesRegistration extends Vue {
 .indented-2 {
   margin-left: 26px;
   margin-right: 16px;
-}
-.download-button {
-  text-decoration: underline;
-  &:hover {
-    color: #1976d2;
-  }
 }
 .departmentCount {
   color: rgba(0, 0, 0, 0.6);

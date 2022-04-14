@@ -2,7 +2,7 @@
   <v-row>
     <v-row justify="center" v-if="attendees.length > 0">
       <v-list subheader two-line class="attendee-list">
-        <v-subheader inset>Teilnehmer</v-subheader>
+        <v-subheader inset class="attendee-subheader">Teilnehmer</v-subheader>
 
         <v-list-item v-for="attendee in attendees" :key="attendee.attendeeCode">
           <v-list-item-avatar>
@@ -88,3 +88,10 @@ export default class AttendeeList extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+.attendee-subheader {
+  justify-content: center;
+  margin-left: 0;
+}
+</style>

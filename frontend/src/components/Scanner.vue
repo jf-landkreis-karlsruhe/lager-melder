@@ -236,6 +236,19 @@ export default class ScannerComponent extends Vue {
 }
 </script>
 
+<style lang="scss">
+video {
+  width: 100%;
+}
+
+// todo: figure out why this does not work
+.drawingBuffer {
+  position: absolute;
+  width: 10px !important;
+  height: auto;
+}
+</style>
+
 <style scoped lang="scss">
 * {
   box-sizing: border-box;
@@ -248,7 +261,7 @@ export default class ScannerComponent extends Vue {
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 100%;
+    height: 500px;
     max-width: 100%;
     max-height: 100%;
     margin-bottom: 6px;
@@ -273,13 +286,6 @@ export default class ScannerComponent extends Vue {
       box-shadow: 0 0 35px 5px white;
       animation: scan 3s linear infinite;
       opacity: 0.5;
-    }
-
-    // todo: figure out why this does not work
-    .drawingBuffer {
-      position: absolute;
-      width: 10px !important;
-      height: auto;
     }
   }
 

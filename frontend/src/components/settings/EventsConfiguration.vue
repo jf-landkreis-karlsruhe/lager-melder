@@ -1,8 +1,8 @@
 <template>
   <v-card class="mb-16">
-    <h2 class="ml-12">Events</h2>
+    <h2 class="ml-md-6">Events</h2>
     <v-row justify="center">
-      <v-col sm="12" md="12" lg="10" xl="8">
+      <v-col sm="12" md="8" lg="6" xl="6">
         <h3>Event erstellen</h3>
         <form v-on:submit.prevent="createEventInternal()">
           <v-text-field v-model="eventName" label="Titel des Event" required />
@@ -22,12 +22,14 @@
         <p>
           Die QR Codes für alle Events herrunterladen.
           <v-btn
+            small
             class="underline"
             :loading="loadingDownload"
             @click="downloadEventsPDF"
             rounded
           >
-            Download
+            Herunterladen
+            <v-icon right dark> mdi-cloud-download </v-icon>
           </v-btn>
         </p>
 

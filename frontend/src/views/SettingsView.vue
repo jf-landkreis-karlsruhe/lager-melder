@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <v-container>
     <h1>Einstellungen</h1>
     <EditSettings />
     <EventsConfiguration />
     <PcrTestsConfiguration />
     <MailSettings />
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">

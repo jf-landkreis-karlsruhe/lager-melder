@@ -15,7 +15,10 @@
       <v-container>
         <v-row justify="end">
           <v-dialog v-model="dialogOpen" persistent max-width="500">
-            <template v-slot:activator="{ on, attrs }">
+            <template
+              v-slot:activator="{ on, attrs }"
+              v-if="hasAdministrationRole()"
+            >
               <v-btn
                 rounded
                 color="primary"
@@ -81,6 +84,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import { hasAdministrationRole } from "@/services/authentication";
 
 import {
   // eslint-disable-next-line no-unused-vars
@@ -99,6 +103,7 @@ import {
 export default class EditDepartment extends Vue {
   @Prop() department!: Department;
   error = false;
+  hasAdministrationRole = hasAdministrationRole;
 
   loading: boolean = false;
   saved: boolean = false;
@@ -124,11 +129,15 @@ export default class EditDepartment extends Vue {
 
   updateDepartment() {
     this.loading = true;
-    updateDepartment(this.department).then(() => {
-      this.loading = false;
-      this.saved = true;
-      setTimeout(() => (this.saved = false), 2000);
-    });
+    updateDepartment(this.department)
+      .then(() => {
+        this.loading = false;
+        this.saved = true;
+        setTimeout(() => (this.saved = false), 2000);
+      })
+      .catch(() => {
+        this.loading = false;
+      });
   }
 
   mounted() {

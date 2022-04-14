@@ -1,6 +1,6 @@
 <template>
   <v-row align="center" justify="center">
-    <v-col sm="4" offset-lg="2">
+    <v-col sm="6" md="4" lg="4" offset-sm="1">
       <v-text-field
         type="date"
         :value="dateOnly"
@@ -10,7 +10,7 @@
         class="mx-4"
       />
     </v-col>
-    <v-col sm="6">
+    <v-col sm="4" md="4" lg="4">
       <span class="mr-4">{{ timeOnly }} Uhr</span>
       <v-dialog v-model="showTime" width="450">
         <template v-slot:activator="{ on, attrs }">
