@@ -97,7 +97,7 @@ class AdminFilesService(
         val barcode = Barcode128()
         barcode.code = attendee.code
         barcode.barHeight = 40F
-        barcode.x = 1.5F
+        barcode.x = 1.4F
         barcode.altText = attendee.code
         barcode.baseline = 12F
         barcode.size = 12F
