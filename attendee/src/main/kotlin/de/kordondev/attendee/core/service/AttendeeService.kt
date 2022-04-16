@@ -21,7 +21,7 @@ class AttendeeService(
     private val authorityService: AuthorityService,
     private val settingsService: SettingsService
 ) {
-    fun getAttendees(): Iterable<Attendee> {
+    fun getAttendees(): List<Attendee> {
         return attendeeRepository.findAll()
             .map { AttendeeEntry.to(it) }
             .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }

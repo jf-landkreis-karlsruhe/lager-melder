@@ -97,7 +97,7 @@ class AdminFilesService(
         val barcode = Barcode128()
         barcode.code = attendee.code
         barcode.barHeight = 40F
-        barcode.x = 1.5F
+        barcode.x = 1.4F
         barcode.altText = attendee.code
         barcode.baseline = 12F
         barcode.size = 12F
@@ -171,42 +171,57 @@ class AdminFilesService(
 
         writer.isCloseStream = false
         document.open()
+
+        val globalDepartments = Department(0, "Zeltlager gesamt", "", "")
+        val allAttendees = attendeeService.getAttendees()
+        val totalTShirtCount = countTShirtPerSize(allAttendees)
+
+        addTShirtsForDepartment(globalDepartments, totalTShirtCount, document)
+
         val departments = departmentService.getDepartments()
         for (department in departments) {
-            addTShirtsForDepartment(department, document)
+            val attendees = attendeeService.getAttendeesForDepartment(department)
+            if (attendees.isNotEmpty()) {
+                val tShirtCount = countTShirtPerSize(attendees)
+                addTShirtsForDepartment(department, tShirtCount, document)
+            }
         }
         document.close()
         return out.toByteArray()
     }
 
-    private fun addTShirtsForDepartment(department: Department, document: Document) {
-        val attendees = attendeeService.getAttendeesForDepartment(department)
-        if (attendees.isNotEmpty()) {
-            val tShirtCount = mutableMapOf<TShirtSize, Int>()
-            for (attendee in attendees) {
-                val currentCount = tShirtCount[attendee.tShirtSize] ?: 0
-                tShirtCount[attendee.tShirtSize] = (currentCount + 1)
-            }
+    private fun addTShirtsForDepartment(
+        department: Department,
+        tShirtCount: MutableMap<TShirtSize, Int>,
+        document: Document
+    ) {
+        val font = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
+        document.add(Paragraph("Kreiszeltlager - T-Shirt", font))
+        document.add(Paragraph("Abteilung: ${department.name}", font))
 
-            val font = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
-            document.add(Paragraph("Kreiszeltlager - T-Shirt", font))
-            document.add(Paragraph("Abteilung: ${department.name}", font))
-
-            val table = Table(2)
-            table.borderWidth = 1F
-            table.borderColor = Color(0, 0, 0)
-            table.padding = 7F
-            table.spacing = 0F
-            table.addCell("Größe:")
-            table.addCell("Anzahl:")
-            table.endHeaders()
-            for (size in TShirtSize.values()) {
-                table.addCell(size.toString())
-                table.addCell("${tShirtCount[size] ?: 0}")
-            }
-            document.add(table)
-            document.newPage()
+        val table = Table(2)
+        table.borderWidth = 1F
+        table.borderColor = Color(0, 0, 0)
+        table.padding = 7F
+        table.spacing = 0F
+        table.addCell("Größe:")
+        table.addCell("Anzahl:")
+        table.endHeaders()
+        for (size in TShirtSize.values()) {
+            table.addCell(size.toString())
+            table.addCell("${tShirtCount[size] ?: 0}")
         }
+        document.add(table)
+        document.newPage()
+    }
+
+    private fun countTShirtPerSize(attendees: kotlin.collections.List<Attendee>): MutableMap<TShirtSize, Int> {
+        val tShirtCount = mutableMapOf<TShirtSize, Int>()
+        for (attendee in attendees) {
+            val currentCount = tShirtCount[attendee.tShirtSize] ?: 0
+            tShirtCount[attendee.tShirtSize] = (currentCount + 1)
+        }
+        return tShirtCount
     }
 
     fun createFoodPDF(): ByteArray {
