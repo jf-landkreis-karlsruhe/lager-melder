@@ -177,13 +177,13 @@ export default class EventsConfiguration extends Vue {
       .then((data) => (this.events = data));
   }
 
-  downloadEventsPDF = () => {
+  downloadEventsPDF() {
     this.loadingDownload = true;
     getEventCodes().then((fileData) => {
       showFile(fileData.data, fileData.fileName);
       this.loadingDownload = false;
     });
-  };
+  }
 }
 </script>
 

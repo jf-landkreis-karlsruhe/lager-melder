@@ -45,29 +45,29 @@ export default class RegistrationFiles extends Vue {
   @Prop() departmentId!: string;
   @Prop() departmentName!: string;
 
-  downloadYouthPlan = () => {
+  downloadYouthPlan() {
     getYouthPlan(this.departmentId, this.departmentName).then((fileData) =>
       showFile(fileData.data, fileData.fileName)
     );
-  };
+  }
 
-  downloadAttendeesKarlsruhe = () => {
+  downloadAttendeesKarlsruhe() {
     getAttendeesKarlsruhe(this.departmentId, this.departmentName).then(
       (fileData) => showFile(fileData.data, fileData.fileName)
     );
-  };
+  }
 
-  downloadAttendeesBW = () => {
+  downloadAttendeesBW() {
     getAttendeesBW(this.departmentId, this.departmentName).then((fileData) =>
       showFile(fileData.data, fileData.fileName)
     );
-  };
+  }
 
-  downloadAttendeesCommunal = () => {
+  downloadAttendeesCommunal() {
     getAttendeesCommunal(this.departmentId, this.departmentName).then(
       (fileData) => showFile(fileData.data, fileData.fileName)
     );
-  };
+  }
 }
 </script>
 
