@@ -32,3 +32,4 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+account-creator/jugendwarte.csv
