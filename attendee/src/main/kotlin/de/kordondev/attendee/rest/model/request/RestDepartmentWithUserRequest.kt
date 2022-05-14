@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 data class RestDepartmentWithUserRequest(
-    @field: Size(min = 4, max = 20, message = "username needs to be between 4 and 20 chars long")
+    @field: Size(min = 4, max = 40, message = "username needs to be between 4 and 40 chars long")
     val username: String,
     @field:NotNull(message = "departmen name cannot be missing")
     @field:NotBlank(message = "departmen name cannot be blank")
