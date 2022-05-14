@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/jszwec/csvutil"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/jszwec/csvutil"
 )
 
 type AccountData struct {
@@ -17,11 +18,6 @@ type AccountData struct {
 	DepartmentName string `json:"departmentName"`
 	LeaderName     string `json:"leaderName"`
 	LeaderEMail    string `json:"leaderEMail"`
-}
-
-type Login struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
 }
 
 type DepartmentCSV struct {
@@ -33,17 +29,13 @@ type DepartmentCSV struct {
 }
 
 func main() {
-	departments := readCSV("./jugendwarte.csv")
+	args := parseCommandLineArgs(os.Args[1:])
+
+	departments := readCSV(args.CsvPath)
 	accounts := departmentToAccount(departments)
 
-	token := login("admin", "")
-	log.Println(token)
 	for _, account := range accounts {
-		if account.LeaderName == "STOPArne Jan Maier" {
-			//TODO: fix max length of username
-			account.Username = "Ka-La"
-			createAccount(account, token)
-		}
+		createAccount(account, args.Token, args.Url)
 	}
 }
 
@@ -55,40 +47,12 @@ func toBody(acc AccountData) *bytes.Reader {
 	return bytes.NewReader(postBody)
 }
 
-func login(username string, password string) string {
-	loginData := Login{
-		username,
-		password,
-	}
-	postBody, err := json.Marshal(loginData)
-	if err != nil {
-		log.Fatalf("error by generation json %v", loginData)
-	}
-	resp, err := http.Post("http://lager-melder.kordondev.de/api/login", "application/json", bytes.NewReader(postBody))
-	if err != nil {
-		log.Println("Error on response.\n[ERROR] -", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Println("Error while reading the response bytes:", err)
-	}
-	var loginResponse LoginResponse
-	json.Unmarshal(body, &loginResponse)
-	return loginResponse.Authorization
-}
-
-func createAccount(account AccountData, accessToken string) {
-	// https://stackoverflow.com/questions/51452148/how-can-i-make-a-request-with-a-bearer-token-in-go
-	// url := "http://localhost:8080/register"
-	url := "https://lager-melder.kordondev.de/api/register"
-
+func createAccount(account AccountData, accessToken string, url string) {
 	// Create a new request using http
 	req, err := http.NewRequest("POST", url, toBody(account))
 
 	// add authorization header to the req
-	req.Header.Add("Authorization", token)
+	req.Header.Add("Authorization", "Bearer "+accessToken)
 	req.Header.Add("Content-Type", "application/json")
 
 	// Send req using http Client
@@ -145,6 +109,35 @@ func accountName(department DepartmentCSV) string {
 	return strings.ReplaceAll(department.Name+"-"+department.DepartmentName, " ", "")
 }
 
+func parseCommandLineArgs(args []string) CommandLineArgs {
+	parsedArgs := CommandLineArgs{}
+	for _, arg := range args {
+		splitArg := strings.Split(arg, "=")
+		if splitArg[0] == "-t" {
+			parsedArgs.Token = splitArg[1]
+		}
+		if splitArg[0] == "-u" {
+			parsedArgs.CsvPath = splitArg[1]
+		}
+		if len(splitArg) == 1 {
+			parsedArgs.Url = splitArg[0]
+		}
+	}
+
+	fmt.Println(parsedArgs)
+	if parsedArgs.CsvPath == "" || parsedArgs.Token == "" || parsedArgs.Url == "" {
+		log.Fatal("you need to provide '-t=' for the login token, '-u=' for users as csv and the url")
+		os.Exit(1)
+	}
+	return parsedArgs
+}
+
+type CommandLineArgs struct {
+	Token   string
+	CsvPath string
+	Url     string
+}
+
 type RegisterResponse struct {
 	UserId         string `json:"userId"`
 	Username       string `json:"username"`
@@ -153,8 +146,4 @@ type RegisterResponse struct {
 	DepartmentName string `json:"departmentName"`
 	LeaderName     string `json:"leaderName"`
 	LeaderEMail    string `json:"leaderEMail"`
-}
-
-type LoginResponse struct {
-	Authorization string `json:"Authorization"`
 }
