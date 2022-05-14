@@ -3,7 +3,7 @@ package de.kordondev.attendee.core.model
 
 data class NewUser(
     val userName: String,
-    val passWord: String,
+    var passWord: String,
     val role: String,
     val department: Department
 )

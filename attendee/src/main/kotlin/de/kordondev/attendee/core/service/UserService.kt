@@ -63,6 +63,7 @@ class UserService(
         userRepository
             .findOneByUserName(user.userName)
             ?.let { throw ResourceAlreadyExistsException("Username already exists") }
+        user.passWord = PasswordGenerator.generatePassword()
         val userWithEncryptedPassword = user.copy(passWord = bCryptPasswordEncoder.encode(user.passWord))
         val settings = settingsService.getSettings()
         return userRepository
