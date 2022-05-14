@@ -49,7 +49,7 @@ class MailSenderService(
             val mimeMessage = this.mailSender.createMimeMessage()
             val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
             message.setFrom(sendFrom)
-            message.setSubject("Onlineanmeldung Kreiszeltlager in ${settings.hostCity} eröffnet")
+            message.setSubject("Onlineanmeldung Kreiszeltlager-Tag in ${settings.hostCity} eröffnet")
             message.setTo(to)
             val htmlContent = this.htmlTemplateEngine.process(newUserMailTemplate, cxt)
             message.setText(htmlContent, true)
