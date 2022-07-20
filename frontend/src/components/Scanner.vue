@@ -8,12 +8,19 @@
               <label class="camera-selection">
                 <span>📸 Kamera</span>
                 <select
-                  id="deviceSelection"
                   name="input-stream_constraints"
                   class="camera-select"
                   @change="cameraChanged"
                 >
                   <option value="">--Select your camera--</option>
+                  <option
+                    v-for="device in availableDevices"
+                    :key="device.id"
+                    :value="device.id"
+                    :selected="activeDeviceId === device.id"
+                  >
+                    {{ device.label }}
+                  </option>
                 </select>
               </label>
 
@@ -82,7 +89,6 @@
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
 import Quagga from "quagga"; // ES6
-import { isValidTestCode } from "../assets/config";
 
 const CAMERA_DEVICE_ID_KEY = "cameraDeviceId";
 
@@ -90,6 +96,9 @@ const CAMERA_DEVICE_ID_KEY = "cameraDeviceId";
 export default class ScannerComponent extends Vue {
   code: string = "";
   previousCode: string = "";
+
+  availableDevices: { id: string; label: string }[] = [];
+  activeDeviceId: string | undefined;
 
   manualCode: string = "";
   manualCodeValid = false;
@@ -144,10 +153,6 @@ export default class ScannerComponent extends Vue {
 
   protected async codeDetected(data: Quagga.Code) {
     const detectedCode = data.codeResult.code;
-    // TODO: use isValidCode for prod
-    if (!isValidTestCode(detectedCode)) {
-      return;
-    }
     this.code = detectedCode;
 
     if (this.code && this.code !== this.previousCode) {
@@ -204,32 +209,20 @@ export default class ScannerComponent extends Vue {
   }
 
   initCameraSelection() {
-    let streamLabel = Quagga.CameraAccess.getActiveStreamLabel();
+    let streamId = Quagga.CameraAccess.getActiveStreamLabel();
     const storedCameraDeviceId =
       localStorage.getItem(CAMERA_DEVICE_ID_KEY) || undefined;
     if (storedCameraDeviceId) {
-      streamLabel = storedCameraDeviceId;
+      streamId = storedCameraDeviceId;
     }
+    this.activeDeviceId = streamId;
 
     return Quagga.CameraAccess.enumerateVideoDevices().then((devices: any) => {
-      function pruneText(text: string) {
-        return text?.length > 30 ? text.substr(0, 30) : text;
-      }
-      const $deviceSelection = document.getElementById("deviceSelection");
-
-      while ($deviceSelection?.firstChild) {
-        $deviceSelection.removeChild($deviceSelection.firstChild);
-      }
-      devices.forEach((device: any) => {
-        let $option = document.createElement("option");
-        $option.value = device.deviceId || device.id;
-        $option.appendChild(
-          document.createTextNode(
-            pruneText(device.label || device.deviceId || device.id)
-          )
-        );
-        $option.selected = streamLabel === device.deviceId;
-        $deviceSelection?.appendChild($option);
+      this.availableDevices = [...devices].map((device) => {
+        return {
+          id: device.deviceId || device.id,
+          label: device.label.substring(0, 30) || device.deviceId || device.id,
+        };
       });
     });
   }
