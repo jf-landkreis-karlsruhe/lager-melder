@@ -88,6 +88,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
+import { isValidTestCode } from "../assets/config";
 import Quagga from "quagga"; // ES6
 
 const CAMERA_DEVICE_ID_KEY = "cameraDeviceId";
@@ -153,6 +154,10 @@ export default class ScannerComponent extends Vue {
 
   protected async codeDetected(data: Quagga.Code) {
     const detectedCode = data.codeResult.code;
+    // TODO: use isValidCode for prod
+    if (!isValidTestCode(detectedCode)) {
+      return;
+    }
     this.code = detectedCode;
 
     if (this.code && this.code !== this.previousCode) {
