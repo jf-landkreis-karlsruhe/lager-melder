@@ -17,7 +17,7 @@
     "vue-chartjs": "^3.5.1",
     "vue-router": "^3.5.3",
     "vue-toastification": "^1.7.14",
-    "vuetify": "^2.4.0"
+    "vuetify": "^2.6.10"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.4.0",
