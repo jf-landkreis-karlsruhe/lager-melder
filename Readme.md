@@ -10,7 +10,8 @@ cd attendee
 ```
 
 ## Customation
-* in the backend in `resource/static/kreiszeltlager-logo.jpg` paste the current logo for the header
+* in the backend in `resource/static/kreiszeltlager-logo.jpg` paste the current logo for the email header
+* For the header past the new image to `src/assets/logo.jpg` and fix styles in `Header.vue`.
 
 ## Run backend with docker
 * `cd attendee`

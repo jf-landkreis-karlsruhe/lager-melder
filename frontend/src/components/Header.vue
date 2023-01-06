@@ -2,11 +2,7 @@
   <header>
     <div class="d-flex justify-center align-center hero-image-container">
       <router-link :to="isLoggedIn ? '/teilnehmer' : ''">
-        <img
-          alt="Zeltlager logo"
-          class="hero-image"
-          src="../assets/logo2.jpg"
-        />
+        <img alt="Zeltlager logo" class="hero-image" src="../assets/logo.jpg" />
       </router-link>
     </div>
     <v-container>
@@ -102,12 +98,12 @@ header {
   margin-bottom: 30px;
 
   .hero-image-container {
-    background: #006fb7;
+    background: #0077c0;
 
     .hero-image {
       max-width: 100%;
       max-height: 200px;
-      margin-top: -30px;
+      margin-top: -10px;
     }
   }
 
