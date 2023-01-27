@@ -11,5 +11,6 @@
     <include file="classpath:db/scripts/005_add-mock-data.xml"/>
     <include file="classpath:db/scripts/006_add-event-type.xml"/>
     <include file="classpath:db/scripts/007_add-attendee-status.xml"/>
+    <include file="classpath:db/scripts/008_add-tent-count.xml"/>
 
 </databaseChangeLog>
