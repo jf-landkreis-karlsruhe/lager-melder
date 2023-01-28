@@ -44,6 +44,49 @@
       </p>
     </div>
 
+    <h1>Zeltübersicht</h1>
+    <div>
+      <p class="mr-8">
+        Hier stehen wie viele Zelte insgesamt angemeldet wurden.
+      </p>
+      <v-simple-table>
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th class="text-left">
+                Größe (Länge x Breite)
+              </th>
+              <th class="text-left">
+                Anzahl
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>SG 200 (4m x 5,9m)</td>
+              <td>{{ totalTents.sg200 }}</td>
+            </tr>
+            <tr>
+              <td>SG 20 (5m x 4,74m)</td>
+              <td>{{totalTents.sg20}}</td>
+            </tr>
+            <tr>
+              <td>SG 30 (6m x 5,64m)</td>
+              <td>{{totalTents.sg30}}</td>
+            </tr>
+            <tr>
+              <td>SG 40 (8m x 5,64m)</td>
+              <td>{{totalTents.sg40}}</td>
+            </tr>
+            <tr>
+              <td>SG 50 (10m x 5,64m)</td>
+              <td>{{totalTents.sg50}}</td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+    </div>
+
     <div class="d-flex align-baseline">
       <h1 class="mr-4 mb-2">Teilnehmer</h1>
       <div class="department-count">
@@ -88,6 +131,7 @@
           :departmentId="registration.department.id"
           :role="attendeeRoleYouthLeader"
         />
+        <TentsPreregistration :departmentId="registration.department.id" :short="true" />
       </div>
     </div>
 
@@ -118,6 +162,7 @@ import {
 } from "../services/department";
 
 import AttendeesTable from "./AttendeesTable.vue";
+import TentsPreregistration from './TentsPreregistration.vue'
 import {
   youthLeaderAttendees,
   youthAttendees,
@@ -127,6 +172,7 @@ import {
 import { hasAdministrationRole } from "../services/authentication";
 import { getBatches, getFoodPDF, getTShirtPDF } from "../services/adminFiles";
 import { showFile } from "../services/filesHelper";
+import { getTents, Tents } from "@/services/tents";
 
 interface DepartmentWithAttendees {
   department: Department;
@@ -135,7 +181,7 @@ interface DepartmentWithAttendees {
 }
 
 @Component({
-  components: { AttendeesTable, Distribution },
+  components: { AttendeesTable, Distribution, TentsPreregistration },
 })
 export default class AttendeesRegistration extends Vue {
   attendees: Attendee[] = [];
@@ -144,6 +190,7 @@ export default class AttendeesRegistration extends Vue {
   attendeeRoleYouth = AttendeeRole.YOUTH;
   attendeeRoleYouthLeader = AttendeeRole.YOUTH_LEADER;
   hasAdministrationRole = hasAdministrationRole;
+  totalTents: Tents = {} as Tents
 
   get departmentWithAttendees(): DepartmentWithAttendees[] {
     return this.departments
@@ -196,6 +243,25 @@ export default class AttendeesRegistration extends Vue {
       this.attendees = attendees;
     });
     getDepartments().then((departments) => (this.departments = departments));
+    getTents().then((tentsList) => {
+      this.totalTents = tentsList.reduce(
+        (acc, current) => {
+          acc.sg200 = acc.sg200 + current.sg200
+          acc.sg20 = acc.sg20 + current.sg20
+          acc.sg30 = acc.sg30 + current.sg30
+          acc.sg40 = acc.sg40 + current.sg40
+          acc.sg50 = acc.sg50 + current.sg50
+          return acc
+        },
+       {
+        sg200: 0,
+        sg20: 0,
+        sg30: 0,
+        sg40: 0,
+        sg50: 0,
+        } as Tents
+       )
+    });
   }
 }
 </script>

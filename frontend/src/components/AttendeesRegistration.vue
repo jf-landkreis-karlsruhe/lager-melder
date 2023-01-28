@@ -56,7 +56,7 @@
       :disabled="!attendeesCanBeEdited"
     />
 
-    <TentsPreregistration />
+    <TentsPreregistration :departmentId="department.id" />
   </v-container>
 </template>
 

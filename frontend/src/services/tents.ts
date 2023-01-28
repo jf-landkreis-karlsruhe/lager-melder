@@ -1,7 +1,7 @@
 import { getData, putData } from "../helper/fetch"
 import { withAuthenticationHeader, getTokenData } from "./authentication"
 
-export const getAttendees = () =>
+export const getTents = () =>
   getData<Tents[]>("tents/", withAuthenticationHeader())
 
 export const getTentsForMyDepartment = () => {
