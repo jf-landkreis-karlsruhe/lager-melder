@@ -27,11 +27,18 @@ data class RestTents(
         fun to(tents: RestTents, department: Department) = TentsEntity(
             id = tents.id,
             department = DepartmentEntry.of(department),
-            sg200 = tents.sg200,
-            sg20 = tents.sg20,
-            sg30 = tents.sg30,
-            sg40 = tents.sg40,
-            sg50 = tents.sg50
+            sg200 = minZero(tents.sg200),
+            sg20 = minZero(tents.sg20),
+            sg30 = minZero(tents.sg30),
+            sg40 = minZero(tents.sg40),
+            sg50 = minZero(tents.sg50)
         )
+
+        private fun minZero(number: Int): Int {
+           if (number < 0) {
+               return 0
+           }
+           return number
+        }
     }
 }

@@ -82,9 +82,14 @@ export default class TentsPreregistration extends Vue {
   saveTents() {
     this.saving = true;
     updateTents(this.tents)
-        .then(t => {
-            console.log(t)
+        .then(tents => {
+            this.tents = tents;
             this.saving = false;
+            this.$toast.success("Zelte wurden gespeichert.");
+        })
+        .catch(() => {
+            this.saving = false;
+            this.$toast.error("Fehler beim speichern der Zelte.")
         })
   }
 
