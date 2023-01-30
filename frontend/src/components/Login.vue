@@ -22,7 +22,7 @@
               <v-card-actions>
                 <v-container>
                   <v-row justify="end">
-                    <v-btn color="primary" type="submit" rounded>
+                    <v-btn color="primary" type="submit" :loading="loading" rounded>
                       Einloggen
                     </v-btn>
                   </v-row>
@@ -47,11 +47,17 @@ export default class Login extends Vue {
   username = "";
   password = "";
   loggedIn = false;
+  loading = false;
 
   loginHandler() {
+    this.loading = true;
     login(this.username, this.password)
       .then(() => (this.loggedIn = true))
-      .then(() => this.$router.push("/"));
+      .then(() => this.$router.push("/"))
+      .catch(() => {
+        this.loading = false;
+        this.$toast.error("Login nicht erfolgreich. Benutzername oder Passwort falsch.")
+      });
   }
 
   mounted() {
