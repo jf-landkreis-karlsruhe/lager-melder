@@ -56,7 +56,9 @@
       :disabled="!attendeesCanBeEdited"
     />
 
-    <TentsPreregistration :departmentId="department.id" />
+    <div v-if="department && department.id">
+      <TentsPreregistration :departmentId="department.id" />
+    </div>
   </v-container>
 </template>
 
