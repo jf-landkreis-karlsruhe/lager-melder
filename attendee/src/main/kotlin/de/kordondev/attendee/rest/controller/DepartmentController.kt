@@ -2,16 +2,19 @@ package de.kordondev.attendee.rest.controller
 
 import de.kordondev.attendee.core.service.AttendeeService
 import de.kordondev.attendee.core.service.DepartmentService
+import de.kordondev.attendee.core.service.TentsService
 import de.kordondev.attendee.rest.model.RestAttendee
 import de.kordondev.attendee.rest.model.RestDepartment
+import de.kordondev.attendee.rest.model.RestTents
 import de.kordondev.attendee.rest.model.request.RestDepartmentRequest
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
 class DepartmentController(
-        private val departmentService: DepartmentService,
-        private val attendeeService: AttendeeService
+    private val departmentService: DepartmentService,
+    private val attendeeService: AttendeeService,
+    private val tentsService: TentsService
 ) {
     @GetMapping("/departments")
     fun getDepartments(): List<RestDepartment> {
@@ -52,5 +55,15 @@ class DepartmentController(
                 .getDepartment(id)
                 .let { attendeeService.getAttendeesForDepartment(it) }
                 .let { attendees -> attendees.map { attendee -> RestAttendee.of(attendee) } }
+    }
+
+    @GetMapping("departments/{id}/tents")
+    fun getForDepartment(
+        @PathVariable(required = true)id: Long,
+    ): RestTents {
+        return departmentService
+            .getDepartment(id)
+            .let(tentsService::getForDepartment)
+            .let { RestTents.of(it) }
     }
 }

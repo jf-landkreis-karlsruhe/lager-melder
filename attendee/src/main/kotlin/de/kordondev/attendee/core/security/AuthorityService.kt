@@ -4,7 +4,9 @@ import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
 import de.kordondev.attendee.core.model.NewAttendee
 import de.kordondev.attendee.core.model.User
+import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
 import de.kordondev.attendee.core.persistence.entry.Roles
+import de.kordondev.attendee.core.persistence.entry.TentsEntity
 import de.kordondev.attendee.core.security.SecurityConstants.DEPARTMENT_ID_PREFIX
 import de.kordondev.attendee.core.security.SecurityConstants.ROLE_PREFIX
 import de.kordondev.attendee.core.security.SecurityConstants.USER_ID_PREFIX
@@ -30,6 +32,9 @@ class AuthorityService {
         return hasAuthorityFilter(attendee.department, allowedRoles);
     }
 
+    fun hasAuthorityFilter(department: DepartmentEntry, allowedRoles: List<String>): Boolean {
+        return hasAuthorityFilter(DepartmentEntry.to(department), allowedRoles);
+    }
 
     fun hasAuthority(department: Department, allowedRoles: List<String>): Department {
         if (hasAuthorityFilter(department, allowedRoles)) {
@@ -48,6 +53,13 @@ class AuthorityService {
     fun hasAuthority(attendee: NewAttendee, allowedRoles: List<String>): NewAttendee {
         if (hasAuthorityFilter(attendee.department, allowedRoles)) {
             return attendee
+        }
+        throw AccessDeniedException("You are not allowed to change attendees from other departments")
+    }
+
+    fun hasAuthority(tents: TentsEntity, allowedRoles: List<String>): TentsEntity {
+        if (hasAuthorityFilter(tents.department, allowedRoles)) {
+            return tents
         }
         throw AccessDeniedException("You are not allowed to change attendees from other departments")
     }
