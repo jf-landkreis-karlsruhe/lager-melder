@@ -56,7 +56,7 @@ export default class Login extends Vue {
       .then(() => this.$router.push("/"))
       .catch(() => {
         this.loading = false;
-        this.$toast.error("Login nicht erfolgreich. Benutzername oder Passwort falsch.")
+        this.$toast.error("Der Login war nicht erfolgreich. Benutzername oder Passwort falsch.")
       });
   }
 
