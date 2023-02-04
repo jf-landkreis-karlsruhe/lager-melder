@@ -16,9 +16,6 @@
               <li class="nav-item">
                 <router-link to="/files">Anmeldeunterlagen</router-link>
               </li>
-              <li class="nav-item">
-                <router-link to="/pcr-tests">PCR Tests</router-link>
-              </li>
               <li class="nav-item admin" v-if="hasAdministrationRole">
                 <router-link to="/feuerwehr">Feuerwehren</router-link>
               </li>
