@@ -124,7 +124,6 @@ func parseCommandLineArgs(args []string) CommandLineArgs {
 		}
 	}
 
-	fmt.Println(parsedArgs)
 	if parsedArgs.CsvPath == "" || parsedArgs.Token == "" || parsedArgs.Url == "" {
 		log.Fatal("you need to provide '-t=' for the login token, '-u=' for users as csv and the url")
 		os.Exit(1)
