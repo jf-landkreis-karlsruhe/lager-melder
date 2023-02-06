@@ -12,6 +12,9 @@
       ⚠️ In einigen PDF Viewern kommt es zu Probleme mit der Anzeige, es
       funktionieren mit Google Chrome und Adobe Acrobat Reader. ⚠️
     </p>
+    <p>
+      ℹ️ Die Verteilung zwischen pädagogischen Betreuern und Teilnehmer wird anhand verschiedener Kriterien durchgeführt. Wer Sonderurlaub beantragt hat, kann keinen weiteren Zuschuss des Landkreis Karlsruhe bekommen. Wer unter 27 Jahre alt ist, kann sowohl Teilnehmer, als auch pädagogischer Betreuer sein.
+    </p>
     <div v-if="hasAdministrationRole() && departments">
       <h2>Anmeldeunterlagen aller Feuerwehren</h2>
       <div v-for="department in departments" :key="department.id">
