@@ -7,7 +7,7 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_DATABASE=attendee
+      - MYSQL_DATABASE=lager_melder
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
       - MYSQL_ROOT_PASSWORD=secRET
@@ -19,7 +19,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - MYSQL_HOST=database
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:mysql://lm-mysql:3306/lager_melder
     depends_on:
       - "database"
     volumes:
