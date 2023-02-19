@@ -83,6 +83,15 @@ class UserService(
             ?: throw NotFoundException("user with id ${userToChange.id} not found")
     }
 
+    fun updateRole(userId: Long, role: String): User {
+        authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        return userRepository.findByIdOrNull(userId)
+            ?.let { it.copy(role = role) }
+            ?.let { userRepository.save(it) }
+            ?.let { UserEntry.to(it) }
+            ?: throw NotFoundException("user with id $userId not found")
+    }
+
     @Transactional
     fun updatePasswordAndSendEmail(user: User): User {
         authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))

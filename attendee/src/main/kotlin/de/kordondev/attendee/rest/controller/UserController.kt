@@ -7,6 +7,7 @@ import de.kordondev.attendee.core.service.DepartmentService
 import de.kordondev.attendee.core.service.UserService
 import de.kordondev.attendee.rest.model.RestUser
 import de.kordondev.attendee.rest.model.request.RestUserRequest
+import de.kordondev.attendee.rest.model.request.RestUserRoleRequest
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -63,6 +64,13 @@ class UserController(
         return userService
             .updatePasswordAndSendEmail(user)
             .let { RestUser.of(it) }
+    }
+
+    @PutMapping("/users/{id}/role")
+    fun updateRole(@PathVariable("id") id:Long, @RequestBody(required = true) @Valid userRole: RestUserRoleRequest): RestUser {
+        return userService
+            .updateRole(id, userRole.role)
+            .let { RestUser.of(it)}
     }
 
 }
