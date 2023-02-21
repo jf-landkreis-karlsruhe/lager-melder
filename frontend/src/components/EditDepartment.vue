@@ -78,13 +78,48 @@
         </v-row>
       </v-container>
     </form>
+    <form v-on:submit.prevent="updateRole()">
+      <v-container v-if="user.role !== 'ADMIN'">
+        <v-row align="center" justify="space-between">
+          <div>
+            <v-text-field
+              type="text"
+              v-model="user.username"
+              label="Benutzername"
+              hint="Read only"
+              readonly
+              required
+            />
+          </div>
+          <div>
+            <v-select
+              v-model="user.role"
+              :items="rolesList"
+              item-text="text"
+              item-value="value"
+              label="Role"
+            ></v-select>
+          </div>
+          <div>
+            <button type="sumbit" :loading="roleLoading">
+              <v-icon medium class="mr-2"> mdi-content-save </v-icon>
+            </button>
+          </div>
+        </v-row>
+        <hr class="mt-16 mb-8" />
+      </v-container>
+    </form>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { hasAdministrationRole } from "@/services/authentication";
+import {
+  hasAdministrationRole,
+  Roles,
+  rolesText,
+} from "@/services/authentication";
 
 import {
   // eslint-disable-next-line no-unused-vars
@@ -97,6 +132,7 @@ import {
   User,
   sendRegistrationMail,
   userForDepartment,
+  updateRole,
 } from "../services/user";
 
 @Component({})
@@ -107,11 +143,19 @@ export default class EditDepartment extends Vue {
 
   loading: boolean = false;
   saved: boolean = false;
+  roleLoading: boolean = false;
 
   sendingEmail: boolean = false;
   emailSent: boolean = false;
   dialogOpen: boolean = false;
   user: User = {} as User;
+  rolesList = [
+    { value: Roles.USER, text: rolesText(Roles.USER) },
+    {
+      value: Roles.SPECIALIZED_FIELD_DIRECTOR,
+      text: rolesText(Roles.SPECIALIZED_FIELD_DIRECTOR),
+    },
+  ];
 
   closeModal() {
     this.dialogOpen = false;
@@ -138,6 +182,30 @@ export default class EditDepartment extends Vue {
       .catch(() => {
         this.loading = false;
       });
+  }
+
+  updateRole() {
+    if (this.user.role) {
+      this.roleLoading = true;
+      updateRole(this.user.id, this.user.role)
+        .then((updatedUser) => {
+          this.user = updatedUser;
+          this.roleLoading = false;
+          this.$toast.success(
+            `Rolle ${rolesText(updatedUser.role)} für ${
+              updatedUser.username
+            } gepeichert.`
+          );
+        })
+        .catch(() => {
+          this.roleLoading = false;
+          this.$toast.error(
+            `Rolle ${rolesText(this.user.role)} konnte für ${
+              this.user.username
+            } nicht gepeichert werden.`
+          );
+        });
+    }
   }
 
   mounted() {
