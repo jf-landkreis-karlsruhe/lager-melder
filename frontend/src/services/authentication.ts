@@ -9,6 +9,21 @@ export enum Roles {
   SPECIALIZED_FIELD_DIRECTOR = "SPECIALIZED_FIELD_DIRECTOR",
 }
 
+export function rolesText(role?: Roles) {
+  switch (role) {
+    case Roles.ADMIN:
+      return "Admin";
+    case Roles.USER:
+      return "Benutzer";
+    case Roles.SPECIALIZED_FIELD_DIRECTOR:
+      return "Fachgebietsleiter";
+    case Roles.UNAUTHORIZED:
+      return "Keine";
+    default:
+      return "";
+  }
+}
+
 export interface JWT {
   sub: string;
   role: Roles;

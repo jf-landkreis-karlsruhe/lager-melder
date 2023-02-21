@@ -81,7 +81,7 @@ import {
 } from "../helper/filterHelper";
 
 import AttendeesTable from "./AttendeesTable.vue";
-import TentsPreregistration from './TentsPreregistration.vue';
+import TentsPreregistration from "./TentsPreregistration.vue";
 import { getRegistrationEnd } from "@/services/settings";
 import { dateTimeLocalized } from "@/helper/displayDate";
 
