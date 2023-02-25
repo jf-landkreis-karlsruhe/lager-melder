@@ -29,7 +29,8 @@ class Entities() {
                 AttendeeRole.YOUTH,
                 department(),
                 "code",
-                status = null
+                status = null,
+                specialLeave = false
             )
         }
 
@@ -42,7 +43,8 @@ class Entities() {
                 food = Food.MEAT,
                 tShirtSize = TShirtSize.S164.toString(),
                 additionalInformation = "n",
-                role = AttendeeRole.YOUTH
+                role = AttendeeRole.YOUTH,
+                specialLeave = false
             )
 
         }

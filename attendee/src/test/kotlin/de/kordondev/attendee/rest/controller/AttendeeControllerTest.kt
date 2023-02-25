@@ -79,7 +79,8 @@ class AttendeeControllerTest(val context: WebApplicationContext) {
             food = Food.VEGETARIAN,
             tShirtSize = TShirtSize.M.toString(),
             additionalInformation = "no",
-            role = AttendeeRole.YOUTH_LEADER
+            role = AttendeeRole.YOUTH_LEADER,
+            specialLeave = false
         )
 
         restMockMvc.perform(webTestHelper.put("/attendees/${createdAttendee.id}", updatedAttendee))
