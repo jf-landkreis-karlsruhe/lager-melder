@@ -12,16 +12,14 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Service
-class AttendeesBW(
+class StateYouthPlanAttendees(
     private val resourceLoader: ResourceLoader,
     private val pdfHelper: PDFHelper,
     private val settingsService: SettingsService
 ) {
-    private val logger: Logger = LoggerFactory.getLogger(AttendeesBW::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(StateYouthPlanAttendees::class.java)
 
     val SUM_DAYS_PAGE_1 = "tage_gesamt"
     val COPY_SUM_DAYS_PAGE_1_TO_PAGE_2 = "Texteingabe510"
@@ -65,8 +63,8 @@ class AttendeesBW(
 
     val DAYS_OF_EVENT = 5
 
-    fun createAttendeesBWPdf(attendees: List<Attendee>): PDDocument {
-        val resource: Resource = resourceLoader.getResource("classpath:data/attendees_LJP.pdf")
+    fun createStateYouthPlanAttendees(attendees: List<Attendee>): PDDocument {
+        val resource: Resource = resourceLoader.getResource("classpath:data/stateYouthPlanAttendees.pdf")
         val settings = settingsService.getSettings()
 
         logger.info("attendeeSize ${attendees.size}")

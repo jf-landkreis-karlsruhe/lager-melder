@@ -2,11 +2,11 @@ import { fetchData } from "../helper/fetch";
 import { withAuthenticationHeader } from "./authentication";
 import { FileReponse } from "./filesHelper";
 
-export const getYouthPlan = (
+export const getStateYouthPlanLeader = (
   departmentId: string,
   departmentName: string
 ): Promise<FileReponse> => {
-  return fetchData(`registrationFiles/youthPlan/${departmentId}`, {
+  return fetchData(`registrationFiles/stateYouthPlanLeader/${departmentId}`, {
     headers: {
       ...withAuthenticationHeader(),
     },
@@ -14,7 +14,7 @@ export const getYouthPlan = (
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `paedagogischeBetreuer-${departmentName}.pdf`,
+      fileName: `betreuerBW-${departmentName}.pdf`,
     }));
 };
 
@@ -34,11 +34,11 @@ export const getAttendeesKarlsruhe = (
     }));
 };
 
-export const getAttendeesBW = (
+export const getStateYouthPlanAttendees = (
   departmentId: string,
   departmentName: string
 ): Promise<FileReponse> => {
-  return fetchData(`registrationFiles/attendeesBW/${departmentId}`, {
+  return fetchData(`registrationFiles/stateYouthPlanAttendees/${departmentId}`, {
     headers: {
       ...withAuthenticationHeader(),
     },
