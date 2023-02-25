@@ -22,8 +22,7 @@ class AttendeeService(
     private val settingsService: SettingsService
 ) {
     fun getAttendees(): List<Attendee> {
-        return attendeeRepository.findAll()
-            .map { AttendeeEntry.to(it) }
+        return getAllAttendees()
             .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
     }
 
@@ -84,6 +83,11 @@ class AttendeeService(
         return attendeeRepository.findByCode(code)
             ?.let { AttendeeEntry.to(it) }
             ?: throw NotFoundException("No Attendee for code $code found")
+    }
+
+    fun getAllAttendees(): List<Attendee> {
+        return attendeeRepository.findAll()
+            .map { AttendeeEntry.to(it) }
     }
 
     private fun checkFirstNameAndLastNameAreUnique(attendee: NewAttendee, id: Long = 0) {
