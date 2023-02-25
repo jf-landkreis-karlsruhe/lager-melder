@@ -8,13 +8,13 @@
         mit Unterschrift des Kommandanten
       </li>
       <li>
-        <button class="underline" @click="downloadAttendeesBW">
+        <button class="underline" @click="downloadStateYouthPlanAttendees">
           Teilnehmerlisten
         </button>
         für den Landesjugendplan
       </li>
       <li>
-        <button class="underline" @click="downloadYouthPlan">
+        <button class="underline" @click="downloadStateYouthPlanLeader">
           Pädagogische Betreuer
         </button>
       </li>
@@ -33,10 +33,10 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
 import {
-  getAttendeesBW,
+  getStateYouthPlanAttendees,
   getAttendeesCommunal,
   getAttendeesKarlsruhe,
-  getYouthPlan,
+  getStateYouthPlanLeader,
 } from "../services/registrationFiles";
 import { showFile } from "../services/filesHelper";
 
@@ -45,8 +45,8 @@ export default class RegistrationFiles extends Vue {
   @Prop() departmentId!: string;
   @Prop() departmentName!: string;
 
-  downloadYouthPlan() {
-    getYouthPlan(this.departmentId, this.departmentName).then((fileData) =>
+  downloadStateYouthPlanLeader() {
+    getStateYouthPlanLeader(this.departmentId, this.departmentName).then((fileData) =>
       showFile(fileData.data, fileData.fileName)
     );
   }
@@ -57,8 +57,8 @@ export default class RegistrationFiles extends Vue {
     );
   }
 
-  downloadAttendeesBW() {
-    getAttendeesBW(this.departmentId, this.departmentName).then((fileData) =>
+  downloadStateYouthPlanAttendees() {
+    getStateYouthPlanAttendees(this.departmentId, this.departmentName).then((fileData) =>
       showFile(fileData.data, fileData.fileName)
     );
   }

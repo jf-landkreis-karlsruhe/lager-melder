@@ -15,12 +15,12 @@ import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 
 @Service
-class YouthLeader(
+class StateYouthPlanLeader(
     val resourceLoader: ResourceLoader,
     val pdfHelper: PDFHelper,
     private val settingsService: SettingsService
 ) {
-    private val logger: Logger = LoggerFactory.getLogger(YouthLeader::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(StateYouthPlanLeader::class.java)
 
     val YEAR = "Landesjugendplan_"
     val MONEY_PRO_YOUTH_LEADER = "bewilligter_Zuschuss_"
@@ -36,8 +36,8 @@ class YouthLeader(
 
     val DAYS_OF_EVENT = 5
 
-    fun createYouthLeaderPdf(attendees: List<Attendee>): PDDocument {
-        val resource: Resource = resourceLoader.getResource("classpath:data/youthLeader.pdf")
+    fun createStateYouthPlanLeaderPdf(attendees: List<Attendee>): PDDocument {
+        val resource: Resource = resourceLoader.getResource("classpath:data/stateYouthPlanLeader.pdf")
         val settings = settingsService.getSettings()
 
         val youthLeaders = attendees.filter { it.role == AttendeeRole.YOUTH_LEADER }

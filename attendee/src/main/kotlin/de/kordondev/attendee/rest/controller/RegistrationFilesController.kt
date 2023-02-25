@@ -17,14 +17,6 @@ class RegistrationFilesController(
 
     @ResponseBody
     @Throws(IOException::class)
-    @GetMapping(value = ["registrationFiles/youthPlan/{id}"], produces = ["application/pdf"])
-    fun getYouthPlan(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
-        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=paedagogischeBetreuer.pdf")
-        return registrationFilesService.getYouthLeader(id);
-    }
-
-    @ResponseBody
-    @Throws(IOException::class)
     @GetMapping(value = ["registrationFiles/attendeesKarlsruhe/{id}"], produces = ["application/pdf"])
     fun getAttendeesKarlsruhe(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=teilnehmenlisteKarlsruhe.pdf")
@@ -33,10 +25,18 @@ class RegistrationFilesController(
 
     @ResponseBody
     @Throws(IOException::class)
-    @GetMapping(value = ["registrationFiles/attendeesBW/{id}"], produces = ["application/pdf"])
-    fun getAttendeesBW(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
+    @GetMapping(value = ["registrationFiles/stateYouthPlanLeader/{id}"], produces = ["application/pdf"])
+    fun getStateYouthPlanLeader(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=betreuerBadenWürttemberg.pdf")
+        return registrationFilesService.getStateYouthPlanLeader(id);
+    }
+
+    @ResponseBody
+    @Throws(IOException::class)
+    @GetMapping(value = ["registrationFiles/stateYouthPlanAttendees/{id}"], produces = ["application/pdf"])
+    fun getStateYouthPlanAttendees(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=teilnehmenlisteBadenWürttemberg.pdf")
-        return registrationFilesService.getAttendeesBW(id);
+        return registrationFilesService.getStateYouthPlanAttendees(id);
     }
 
     @ResponseBody
