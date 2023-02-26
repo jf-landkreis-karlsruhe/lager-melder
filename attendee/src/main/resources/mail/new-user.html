@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:remove="all">Anmeldedaten für das Kreiszeltlager</title>
+    <title th:remove="all">Anmeldedaten für die Kindergruppen am Aktionstag des Kreiszeltlager</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
 <img style="max-width: 100%; max-height: 250px" src="logo.jpg" th:src="|cid:${headerLogo}|" />
 <p>
     Hallo <span th:text="${leaderName}"></span>,<br/>
-    die Onlineanmeldung zum Kreiszeltlager der Jugendfeuerwehr Landkreis Karlsruhe in <span th:text="${hostCity}"></span> ist ab sofort freigeschalten.
+    die Onlineanmeldung für die Kindergruppen am Aktionstag des Kreiszeltlager der Jugendfeuerwehr Landkreis Karlsruhe in <span th:text="${hostCity}"></span> ist ab sofort freigeschalten.
 </p>
 <p>
     Hier sind deine Logindaten:
@@ -21,8 +21,8 @@
 </p>
 
 <p>
-    Der Login ist ber die URL: https://anmeldung.jugendfeuerwehrlager.de möglich. <br/>
-    Die eingegeben Teilnehmerdaten sind bis zum Anmeldeschluss am <span th:text="${registrationDeadline}"></span> editier- und löschbar.
+    Der Login ist ber die URL: https://kindergruppenanmeldung.jugendfeuerwehrlager.de möglich. <br/>
+    Die eingegeben Teilnehmerdaten sind bis zum Anmeldeschluss am <span th:text="${registrationDeadline}"></span> editier- und löschbar. Bitte hier niemanden eintragen, der auch am gesamten Zeltlager angemeldet ist.
 </p>
 <p>
     Kameradschaftliche Grüße,<br/>
