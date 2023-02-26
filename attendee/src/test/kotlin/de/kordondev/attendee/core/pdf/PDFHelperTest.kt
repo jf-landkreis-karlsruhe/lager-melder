@@ -7,14 +7,18 @@ import de.kordondev.attendee.core.persistence.entry.AttendeeStatus
 import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.TShirtSize
 import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class PDFHelperTest {
 
     private lateinit var pdfHelper: PDFHelper
 
+    @BeforeEach
     fun setup() {
         pdfHelper = PDFHelper()
+
     }
 
 
@@ -29,7 +33,7 @@ class PDFHelperTest {
             createAttendee(5L, "2022-05-01"),
         )
 
-        val result = pdfHelper.getOptimizedLeaderAndAttendees(allAttendees)
+        val result = pdfHelper.getOptimizedLeaderAndAttendees(allAttendees, LocalDate.of(2023, 5,5))
         val leader = result.first
         Assertions.assertThat(leader.map { it.id }).isEqualTo(listOf(6L, 1L, 2L))
 
