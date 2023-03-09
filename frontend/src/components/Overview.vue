@@ -128,57 +128,19 @@
           {{ enteredAttendeesCount }})
         </div>
       </div>
-      <v-row>
-        <v-col cols="5">
-          <v-text-field
-            prepend-icon="mdi-magnify"
-            v-model="filterInput"
-            label="Filter nach Teilnehmer"
-            class="w"
-          />
-        </v-col>
-      </v-row>
-
-      <div
-        v-for="registration in departmentWithAttendees"
-        :key="registration.department.id"
-        class="indented-1"
-      >
-        <div class="d-flex align-baseline">
-          <h2 class="mr-4 my-8">
-            Feuerwehr {{ registration.department.name }}
-          </h2>
-          <div class="department-count">
-            Gesamt Teilnehmerzahl:
-            {{
-              registration.youthAttendees.length +
-              registration.youthLeader.length
-            }}
-          </div>
-          <div class="d-flex justify-end align-center flex-grow-1">
-            <v-btn
-              @click="checkinDepartment(registration.department.id)"
-              class="checkin"
-              rounded
-            >
-              ⛺ Teilnehmer {{ registration.department.name }} einchecken
-            </v-btn>
-          </div>
-        </div>
-        <div class="indented-2">
-          <AttendeesTable
-            headlineText="Jugendliche"
-            :attendees="registration.youthAttendees"
-            :departmentId="registration.department.id"
-            :role="attendeeRoleYouth"
-          />
-          <AttendeesTable
-            headlineText="Jugendleiter"
-            :attendees="registration.youthLeader"
-            :departmentId="registration.department.id"
-            :role="attendeeRoleYouthLeader"
-          />
-        </div>
+      <div class="indented-2">
+        <AttendeesTable
+          headlineText="Jugendliche"
+          :attendees="registration.youthAttendees"
+          :departmentId="registration.department.id"
+          :role="attendeeRoleYouth"
+        />
+        <AttendeesTable
+          headlineText="Jugendleiter"
+          :attendees="registration.youthLeader"
+          :departmentId="registration.department.id"
+          :role="attendeeRoleYouthLeader"
+        />
       </div>
     </div>
 
