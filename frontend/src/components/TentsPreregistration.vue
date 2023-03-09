@@ -63,7 +63,6 @@
             tents.sg50 < 0 ? 'Anzahl darf nicht kleiner als 0 sein.' : ''
           "
         />
-
         <v-row justify="end" class="my-4">
           <v-btn rounded color="primary" :loading="saving" type="submit">
             Zelte speichern
