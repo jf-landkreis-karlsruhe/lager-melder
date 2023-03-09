@@ -179,7 +179,6 @@ import {
 } from "../services/department";
 
 import AttendeesTable from "./AttendeesTable.vue";
-import TentsPreregistration from "./TentsPreregistration.vue";
 import {
   youthLeaderAttendees,
   youthAttendees,
@@ -203,7 +202,7 @@ interface DepartmentWithAttendees {
 }
 
 @Component({
-  components: { AttendeesTable, Distribution, TentsPreregistration },
+  components: { AttendeesTable, Distribution },
 })
 export default class AttendeesRegistration extends Vue {
   attendees: Attendee[] = [];

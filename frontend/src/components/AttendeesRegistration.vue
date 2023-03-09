@@ -55,10 +55,6 @@
       :attendeesChanged="attendeesChanged"
       :disabled="!attendeesCanBeEdited"
     />
-
-    <div v-if="department && department.id">
-      <TentsPreregistration :departmentId="department.id" />
-    </div>
   </v-container>
 </template>
 
@@ -81,12 +77,11 @@ import {
 } from "../helper/filterHelper";
 
 import AttendeesTable from "./AttendeesTable.vue";
-import TentsPreregistration from "./TentsPreregistration.vue";
 import { getRegistrationEnd } from "@/services/settings";
 import { dateTimeLocalized } from "@/helper/displayDate";
 
 @Component({
-  components: { AttendeesTable, TentsPreregistration },
+  components: { AttendeesTable },
 })
 export default class AttendeesRegistration extends Vue {
   attendees: Attendee[] = [];
