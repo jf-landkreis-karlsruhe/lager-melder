@@ -60,7 +60,7 @@
           min="0"
           required
           :error-messages="
-            tents.sg0 < 0 ? 'Anzahl darf nicht kleiner als 0 sein.' : ''
+            tents.sg50 < 0 ? 'Anzahl darf nicht kleiner als 0 sein.' : ''
           "
         />
 
