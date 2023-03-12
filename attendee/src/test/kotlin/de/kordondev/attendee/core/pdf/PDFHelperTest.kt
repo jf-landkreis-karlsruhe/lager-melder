@@ -83,6 +83,68 @@ class PDFHelperTest {
         Assertions.assertThat(attendees.map { it.id }).isEqualTo(emptyList<Attendee>())
     }
 
+
+    @Test
+    fun moveWithManyPeople() {
+      val eventDate = LocalDate.of(2023, 5,5)
+      val youths = createAttendees(30, eventDate)
+      val leaderMovable = createLeaderBelow27(5, eventDate)
+      val leaderStable = createLeaderAtLeast27(10, eventDate)
+
+      val result = pdfHelper.getOptimizedLeaderAndAttendees(youths + leaderMovable + leaderStable, eventDate)
+      val leader = result.first
+      Assertions.assertThat(leader).hasSize(10)
+
+      val attendees = result.first
+      Assertions.assertThat(attendees).hasSize(35)
+    }
+    
+    @Test
+    fun toOldToMoveAtEventStart() {
+      val eventDate = LocalDate.of(2023, 5,5)
+      val youths = createAttendees(9, eventDate)
+      val birthdayAtEventStart = createAttendee(100L, eventDate.minusYears(27).toString(), AttendeeRole.YOUTH_LEADER)
+      val leaderStable = createLeaderAtLeast27(2, eventDate)
+
+      val result = pdfHelper.getOptimizedLeaderAndAttendees(youths + birthdayAtEventStart + leaderStable, eventDate)
+      val leader = result.first
+      Assertions.assertThat(leader.contains(birthdayAtEventStart)).isEqualTo(true)
+
+      val attendees = result.first
+      Assertions.assertThat(attendees.contains(birthdayAtEventStart)).isEqualTo(false)
+    }
+
+    @Test
+    fun justNOTToOldToMove() {
+      val eventDate = LocalDate.of(2023, 5,5)
+      val youths = createAttendees(9, eventDate)
+      val birthdayAtEventStart = createAttendee(100L, eventDate.minusYears(27).plusDays(1).toString(), AttendeeRole.YOUTH_LEADER)
+      val leaderStable = createLeaderAtLeast27(2, eventDate)
+
+      val result = pdfHelper.getOptimizedLeaderAndAttendees(youths + birthdayAtEventStart + leaderStable, eventDate)
+      val leader = result.first
+      Assertions.assertThat(leader.contains(birthdayAtEventStart)).isEqualTo(false)
+
+      val attendees = result.first
+      Assertions.assertThat(attendees.contains(birthdayAtEventStart)).isEqualTo(true)
+    }
+
+    @Test
+    fun oldEnougthToMoveAtEventStart() {
+      val eventDate = LocalDate.of(2023, 5,5)
+      val youths = createAttendees(9, eventDate)
+      val birthdayAtEventStart = createAttendee(100L, eventDate.minusYears(18).toString(), AttendeeRole.YOUTH_LEADER)
+      val leaderStable = createLeaderAtLeast27(2, eventDate)
+
+      val result = pdfHelper.getOptimizedLeaderAndAttendees(youths + birthdayAtEventStart + leaderStable, eventDate)
+      val leader = result.first
+      Assertions.assertThat(leader.contains(birthdayAtEventStart)).isEqualTo(true)
+
+      val attendees = result.first
+      Assertions.assertThat(attendees.contains(birthdayAtEventStart)).isEqualTo(false)
+    }
+
+
     fun createLeaderAtLeast27(count: Int, eventDate: LocalDate): List<Attendee> {
       var id = 1L
       var attendees = listOf<Attendee>()
