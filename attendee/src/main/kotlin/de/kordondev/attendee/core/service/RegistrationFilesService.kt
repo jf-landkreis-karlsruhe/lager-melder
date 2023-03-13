@@ -39,7 +39,7 @@ class RegistrationFilesService(
         val department = departmentService.getDepartment(id)
         val result = attendeeService.getAllAttendees()
             .let { pdfHelper.getOptimizedLeaderAndAttendees(it, settingsService.getSettings().eventStart) }
-            .let { it.second.filter { att -> att.department.id == department.id } }
+            .let { it.first.filter { att -> att.department.id == department.id } }
             .let { stateYouthPlanAttendees.createStateYouthPlanAttendees(it) }
 
         val out = ByteArrayOutputStream()
@@ -53,7 +53,7 @@ class RegistrationFilesService(
         val result =
              attendeeService.getAllAttendees()
             .let { pdfHelper.getOptimizedLeaderAndAttendees(it, settingsService.getSettings().eventStart)}
-             .let { it.first.filter { att -> att.department.id == department.id } }
+             .let { it.second.filter { att -> att.department.id == department.id } }
             .let { stateYouthPlanLeader.createStateYouthPlanLeaderPdf(it) }
         val out = ByteArrayOutputStream()
         result.save(out)
