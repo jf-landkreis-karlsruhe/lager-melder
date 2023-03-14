@@ -9,6 +9,7 @@ import com.lowagie.text.List
 import com.lowagie.text.pdf.*
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
+import de.kordondev.attendee.core.pdf.PDFHelper
 import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.TShirtSize
 import de.kordondev.attendee.core.security.AuthorityService
@@ -16,6 +17,7 @@ import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.awt.Color
 import java.io.ByteArrayOutputStream
+import java.time.LocalDate
 
 
 @Service
@@ -25,6 +27,8 @@ class AdminFilesService(
     private val eventService: EventService,
     private val departmentService: DepartmentService,
     private val authorityService: AuthorityService,
+    private val pdfHelper: PDFHelper,
+    private val settingsService: SettingsService,
 ) {
     private val yDistanceBetweenBatches = 141F
     fun createBatches(): ByteArray {
@@ -175,34 +179,38 @@ class AdminFilesService(
         val globalDepartments = Department(0, "Zeltlager gesamt", "", "")
         val allAttendees = attendeeService.getAttendees()
         val totalTShirtCount = countTShirtPerSize(allAttendees)
+        val eventStart = settingsService.getSettings().eventStart
+        val totalBraceletCount = countBracelet(allAttendees, eventStart)
 
-        addTShirtsForDepartment(globalDepartments, totalTShirtCount, document)
+        addTShirtsAndBraceletForDepartment(globalDepartments, totalTShirtCount, totalBraceletCount, document)
 
         val departments = departmentService.getDepartments()
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartment(department)
             if (attendees.isNotEmpty()) {
                 val tShirtCount = countTShirtPerSize(attendees)
-                addTShirtsForDepartment(department, tShirtCount, document)
+                val braceletCount = countBracelet(attendees, eventStart)
+                addTShirtsAndBraceletForDepartment(department, tShirtCount, braceletCount, document)
             }
         }
         document.close()
         return out.toByteArray()
     }
 
-    private fun addTShirtsForDepartment(
+    private fun addTShirtsAndBraceletForDepartment(
         department: Department,
         tShirtCount: MutableMap<TShirtSize, Int>,
+        braceletCount: MutableMap<Color, Int>,
         document: Document
     ) {
-        val font = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
-        document.add(Paragraph("Kreiszeltlager - T-Shirt", font))
-        document.add(Paragraph("Abteilung: ${department.name}", font))
+        val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
+        document.add(Paragraph("Abteilung: ${department.name}", headlineFont))
+        document.add(Paragraph("Kreiszeltlager - T-Shirt", headlineFont))
 
         val table = Table(2)
         table.borderWidth = 1F
-        table.borderColor = Color(0, 0, 0)
-        table.padding = 7F
+        table.borderColor =  Color(0, 0, 0)
+        table.padding = 5F
         table.spacing = 0F
         table.addCell("Größe:")
         table.addCell("Anzahl:")
@@ -212,6 +220,25 @@ class AdminFilesService(
             table.addCell("${tShirtCount[size] ?: 0}")
         }
         document.add(table)
+
+        document.add(Paragraph("Kreiszeltlager - Armband", headlineFont))
+        val braceletTable = Table(2)
+        braceletTable.borderWidth = 1F
+        braceletTable.borderColor =  Color(0, 0, 0)
+        braceletTable.padding = 5F
+        braceletTable.spacing = 0F
+        braceletTable.addCell("Farbe:")
+        braceletTable.addCell("Anzahl:")
+        braceletTable.endHeaders()
+
+        braceletTable.addCell("Grün")
+        braceletTable.addCell("${braceletCount[Color.GREEN] ?: 0}")
+        braceletTable.addCell("Gelb")
+        braceletTable.addCell("${braceletCount[Color.YELLOW] ?: 0}")
+        braceletTable.addCell("Rot")
+        braceletTable.addCell("${braceletCount[Color.RED] ?: 0}")
+        document.add(braceletTable)
+
         document.newPage()
     }
 
@@ -222,6 +249,27 @@ class AdminFilesService(
             tShirtCount[attendee.tShirtSize] = (currentCount + 1)
         }
         return tShirtCount
+    }
+
+    private fun countBracelet(attendees: kotlin.collections.List<Attendee>, eventStart: LocalDate): MutableMap<Color, Int> {
+        val braceletCount = mutableMapOf<Color, Int>()
+        for (attendee in attendees) {
+            val color =colorForAgeGroup(attendee, eventStart)
+            val currentCount = braceletCount[color] ?: 0
+            braceletCount[color] = (currentCount + 1)
+        }
+        return braceletCount
+    }
+
+    private fun colorForAgeGroup(attendee: Attendee, eventStart: LocalDate): Color {
+        val age = pdfHelper.ageAtEvent(attendee.birthday, eventStart)
+        if (age < 16) {
+            return Color.RED
+        }
+        if (age < 18) {
+            return Color.YELLOW
+        }
+        return Color.GREEN
     }
 
     fun createFoodPDF(): ByteArray {

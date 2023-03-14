@@ -32,10 +32,10 @@
       </p>
     </div>
 
-    <h1>T-Shirtübersicht</h1>
+    <h1>T-Shirt- und Armbandübersicht</h1>
     <div class="d-flex align-center justify-space-between">
       <p class="mr-8">
-        Hier kann die Liste der TShirts pro Feuerwehr heruntergeladen werden.
+        Hier kann die Liste der TShirts und Armbänder pro Feuerwehr heruntergeladen werden.
         <br />
         <v-btn color="#ffe760" @click="downloadTShirtsPDF" small>
           Herunterladen
