@@ -2,6 +2,7 @@ package de.kordondev.attendee.core.service
 
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.pdf.*
+import de.kordondev.attendee.rest.model.YouthPlanDistribution
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -53,12 +54,18 @@ class RegistrationFilesService(
         val result =
              attendeeService.getAllAttendees()
             .let { pdfHelper.getOptimizedLeaderAndAttendees(it, settingsService.getSettings().eventStart)}
-             .let { it.second.filter { att -> att.department.id == department.id } }
+            .let { it.second.filter { att -> att.department.id == department.id } }
             .let { stateYouthPlanLeader.createStateYouthPlanLeaderPdf(it) }
         val out = ByteArrayOutputStream()
         result.save(out)
         result.close()
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
+    }
+
+    fun getYouthPlanDistribution(): YouthPlanDistribution {
+        return attendeeService.getAllAttendees()
+            .let{ pdfHelper.getOptimizedLeaderAndAttendees(it, settingsService.getSettings().eventStart) }
+            .let { YouthPlanDistribution(youthCount = it.first.size, leaderCount = it.second.size) }
     }
 
     fun getAttendeesCommunal(id: Long): ByteArray {
