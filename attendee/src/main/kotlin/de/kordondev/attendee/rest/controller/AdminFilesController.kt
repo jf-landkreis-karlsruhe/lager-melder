@@ -1,11 +1,9 @@
 package de.kordondev.attendee.rest.controller
 
 import de.kordondev.attendee.core.service.AdminFilesService
+import de.kordondev.attendee.rest.model.RestAttendee
 import org.springframework.http.HttpHeaders
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.io.IOException
 import javax.servlet.http.HttpServletResponse
 
