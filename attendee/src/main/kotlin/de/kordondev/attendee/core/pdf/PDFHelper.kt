@@ -46,21 +46,20 @@ class PDFHelper {
 
     private val oldFirst = compareBy<Attendee> {it.birthday}
     private val oldFirstThenFirstname = oldFirst.thenByDescending {it.firstName}
-    private val listWithOldFirst = compareBy<List<Attendee>> {it[0].birthday}
     fun getOptimizedLeaderAndAttendees(allAttendees: List<Attendee>, eventStart: LocalDate): Pair<List<Attendee>, List<Attendee>> {
         // birthday: "2020-03-30" "yyyy-MM-dd"
         var (youth, leader) = allAttendees
             .sortedWith(oldFirstThenFirstname)
             .filter { ageAtEvent(it.birthday, eventStart) >= 6 }
             .partition { ageAtEvent(it.birthday, eventStart) <= 26 }
-            .toList()
 
-        val toMuchAttendees = allAttendees.size - (leader.size * 5)
-        val attendeesToLeader = toMuchAttendees / 6
-        if (attendeesToLeader > 0) {
+        val correctDistributedAttendees = leader.size + leader.size * 5
+        val toMuchYouths = allAttendees.size - correctDistributedAttendees
+        val possibleLeaderCount = toMuchYouths / 6
+        if (possibleLeaderCount > 0) {
             // move x first of attendees, who are at least 18, to the end of leader
             val newLeader = youth
-                .subList(0, attendeesToLeader)
+                .subList(0, possibleLeaderCount)
                 .filter { ageAtEvent(it.birthday, eventStart) >= 18 }
             leader = leader.plus(newLeader)
             youth = youth.subList(newLeader.size, youth.size)
