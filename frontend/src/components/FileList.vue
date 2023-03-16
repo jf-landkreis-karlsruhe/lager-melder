@@ -46,8 +46,8 @@ export default class RegistrationFiles extends Vue {
   @Prop() departmentName!: string;
 
   downloadStateYouthPlanLeader() {
-    getStateYouthPlanLeader(this.departmentId, this.departmentName).then((fileData) =>
-      showFile(fileData.data, fileData.fileName)
+    getStateYouthPlanLeader(this.departmentId, this.departmentName).then(
+      (fileData) => showFile(fileData.data, fileData.fileName)
     );
   }
 
@@ -58,8 +58,8 @@ export default class RegistrationFiles extends Vue {
   }
 
   downloadStateYouthPlanAttendees() {
-    getStateYouthPlanAttendees(this.departmentId, this.departmentName).then((fileData) =>
-      showFile(fileData.data, fileData.fileName)
+    getStateYouthPlanAttendees(this.departmentId, this.departmentName).then(
+      (fileData) => showFile(fileData.data, fileData.fileName)
     );
   }
 

@@ -12,7 +12,9 @@
       ⚠️ In einigen PDF Viewern kommt es zu Probleme mit der Anzeige, es
       funktionieren mit Google Chrome und Adobe Acrobat Reader. ⚠️
     </p>
-    <div v-if="hasAdministrationRole()"></div>
+    <div>
+      <YouthPlanDistribution />
+    </div>
     <div v-if="hasAdministrationRole() && departments">
       <h2>Anmeldeunterlagen aller Feuerwehren</h2>
       <div v-for="department in departments" :key="department.id">
@@ -32,6 +34,7 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 import FileList from "./FileList.vue";
+import YouthPlanDistribution from "./YouthPlanDistribution.vue";
 
 import { hasAdministrationRole } from "../services/authentication";
 import {
@@ -42,7 +45,7 @@ import {
 } from "../services/department";
 
 @Component({
-  components: { FileList },
+  components: { FileList, YouthPlanDistribution },
 })
 export default class RegistrationFiles extends Vue {
   departmentId: string = "";

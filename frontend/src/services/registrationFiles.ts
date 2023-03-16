@@ -38,11 +38,14 @@ export const getStateYouthPlanAttendees = (
   departmentId: string,
   departmentName: string
 ): Promise<FileReponse> => {
-  return fetchData(`registrationFiles/stateYouthPlanAttendees/${departmentId}`, {
-    headers: {
-      ...withAuthenticationHeader(),
-    },
-  })
+  return fetchData(
+    `registrationFiles/stateYouthPlanAttendees/${departmentId}`,
+    {
+      headers: {
+        ...withAuthenticationHeader(),
+      },
+    }
+  )
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
@@ -71,5 +74,8 @@ export interface YouthPlanDistribution {
   leaderCount: number;
 }
 export const getYouthPlanDistribution = (): Promise<YouthPlanDistribution> => {
-  return getData<YouthPlanDistribution>(`registrationFiles/youthPlanDistribution`, withAuthenticationHeader());
+  return getData<YouthPlanDistribution>(
+    `registrationFiles/youthPlanDistribution`,
+    withAuthenticationHeader()
+  );
 };

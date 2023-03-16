@@ -151,8 +151,10 @@
               <span v-if="!disabled && deletingAttendees.includes(item.id)">
                 <v-progress-circular indeterminate :size="24" color="green" />
               </span>
-            </v-row>
-          </template>
+            </v-row> </template></v-data-table></v-card-text
+    ></v-card>
+  </section>
+</template>
         </v-data-table>
       </v-card-text>
     </v-card>
