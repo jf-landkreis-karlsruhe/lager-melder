@@ -125,6 +125,29 @@ class PDFHelperTest {
         Assertions.assertThat(youths.contains(birthdayAtEventStart)).isEqualTo(true)
     }
 
+    @Test
+    fun canNOTDistributeYoungLeader() {
+        val eventDate = LocalDate.of(2023, 5, 5)
+        val registeredYouths = createAttendees(12, eventDate)
+        val youngLeader = createLeaderBelow27(6, eventDate)
+        val oldLeader = createLeaderAtLeast27(3, eventDate)
+
+        val (youths, leader) = pdfHelper.getOptimizedLeaderAndAttendees(registeredYouths + youngLeader + oldLeader, eventDate)
+        Assertions.assertThat(youths.size).isEqualTo(18)
+        Assertions.assertThat(leader.size).isEqualTo(3)
+    }
+
+    @Test
+    fun distributeYoungLeader() {
+        val eventDate = LocalDate.of(2023, 5, 5)
+        val registeredYouths = createAttendees(14, eventDate)
+        val youngLeader = createLeaderBelow27(7, eventDate)
+        val oldLeader = createLeaderAtLeast27(3, eventDate)
+
+        val (youths, leader) = pdfHelper.getOptimizedLeaderAndAttendees(registeredYouths + youngLeader + oldLeader, eventDate)
+        Assertions.assertThat(youths.size).isEqualTo(20)
+        Assertions.assertThat(leader.size).isEqualTo(4)
+    }
 
     fun createLeaderAtLeast27(count: Int, eventDate: LocalDate): List<Attendee> {
         var id = 1L
