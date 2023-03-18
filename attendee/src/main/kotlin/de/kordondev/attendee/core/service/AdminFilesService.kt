@@ -231,12 +231,10 @@ class AdminFilesService(
         braceletTable.addCell("Anzahl:")
         braceletTable.endHeaders()
 
-        braceletTable.addCell("Grün")
-        braceletTable.addCell("${braceletCount[Color.GREEN] ?: 0}")
-        braceletTable.addCell("Gelb")
-        braceletTable.addCell("${braceletCount[Color.YELLOW] ?: 0}")
-        braceletTable.addCell("Rot")
-        braceletTable.addCell("${braceletCount[Color.RED] ?: 0}")
+        for (color in listOf(Color.GREEN, Color.YELLOW, Color.RED)) {
+            braceletTable.addCell(colorToString(color))
+            braceletTable.addCell("${braceletCount[color] ?: 0}")
+        }
         document.add(braceletTable)
 
         document.newPage()
@@ -271,6 +269,16 @@ class AdminFilesService(
         }
         return Color.GREEN
     }
+
+    private fun colorToString(color: Color): String {
+        return when (color) {
+            Color.GREEN -> "Grün"
+            Color.YELLOW -> "Gelb"
+            Color.RED -> "Rot"
+            else -> color.toString()
+        }
+    }
+
 
     fun createFoodPDF(): ByteArray {
         authorityService.isSpecializedFieldDirector()
@@ -309,6 +317,47 @@ class AdminFilesService(
             }
         }
 
+        document.close()
+        return out.toByteArray()
+    }
+
+    fun createOverviewForEachDepartment(): ByteArray {
+        authorityService.isSpecializedFieldDirector()
+        val eventStart = settingsService.getSettings().eventStart
+        val out = ByteArrayOutputStream()
+
+        val document = Document(PageSize.A4)
+        val writer = PdfWriter.getInstance(document, out)
+        val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
+
+        writer.isCloseStream = false
+        document.open()
+
+        val departments = departmentService.getDepartments()
+        for (department in departments) {
+            val attendees = attendeeService.getAttendeesForDepartment(department)
+            if (attendees.isEmpty()) {
+                continue
+            }
+            document.add(Paragraph("Abteilung: ${department.name}", headlineFont))
+
+            val table = Table(3)
+            table.borderWidth = 1F
+            table.borderColor = Color(0, 0, 0)
+            table.padding = 3F
+            table.spacing = 0F
+            table.addCell("Name:")
+            table.addCell("T-Shirt")
+            table.addCell("Armband")
+            table.endHeaders()
+            for (attendee in attendees) {
+                table.addCell("${attendee.firstName} ${attendee.lastName}")
+                table.addCell(attendee.tShirtSize.toString())
+                table.addCell(colorToString(colorForAgeGroup(attendee, eventStart)))
+            }
+            document.add(table)
+            document.newPage()
+        }
         document.close()
         return out.toByteArray()
     }
