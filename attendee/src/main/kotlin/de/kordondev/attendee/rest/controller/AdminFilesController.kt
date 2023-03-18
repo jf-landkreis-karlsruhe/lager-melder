@@ -46,4 +46,12 @@ class AdminFilesController(
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=essen.pdf")
         return adminFilesService.createFoodPDF()
     }
+
+    @ResponseBody
+    @Throws(IOException::class)
+    @GetMapping(value = ["/admin-files/overviewForDepartment"], produces = ["application/pdf"])
+    fun getOverviewForDepartment(response: HttpServletResponse): ByteArray? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=übersichtÜberFeuerwehr.pdf")
+        return adminFilesService.createOverviewForEachDepartment()
+    }
 }
