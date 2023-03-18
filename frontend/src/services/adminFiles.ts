@@ -58,3 +58,16 @@ export const getTShirtPDF = (): Promise<FileReponse> => {
       fileName: `tshirts.pdf`,
     }));
 };
+
+export const getDepartmentOverview = (): Promise<FileReponse> => {
+  return fetchData(`admin-files/overviewForDepartment`, {
+    headers: {
+      ...withAuthenticationHeader(),
+    },
+  })
+    .then((r) => r.blob())
+    .then((blob) => ({
+      data: blob,
+      fileName: "übersichtÜberFeuerwehr.pdf",
+    }));
+};
