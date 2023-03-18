@@ -35,9 +35,23 @@
     <h1>T-Shirt- und Armbandübersicht</h1>
     <div class="d-flex align-center justify-space-between">
       <p class="mr-8">
-        Hier kann die Liste der TShirts und Armbänder pro Feuerwehr heruntergeladen werden.
+        Hier kann die Liste der TShirts und Armbänder pro Feuerwehr
+        heruntergeladen werden.
         <br />
         <v-btn color="#ffe760" @click="downloadTShirtsPDF" small>
+          Herunterladen
+          <v-icon right dark> mdi-cloud-download </v-icon>
+        </v-btn>
+      </p>
+    </div>
+
+    <h1>Feuerwehr T-Shirt- und Armbandverteilliste</h1>
+    <div class="d-flex align-center justify-space-between">
+      <p class="mr-8">
+        Hier kann eine Liste pro Feuerwehr zur Verteilung der TShirts und
+        Armbänder heruntergeladen werden.
+        <br />
+        <v-btn color="#ffe760" @click="downloadDepartmentOverview" small>
           Herunterladen
           <v-icon right dark> mdi-cloud-download </v-icon>
         </v-btn>
@@ -169,7 +183,12 @@ import {
 } from "../helper/filterHelper";
 
 import { hasAdministrationRole } from "../services/authentication";
-import { getBatches, getFoodPDF, getTShirtPDF } from "../services/adminFiles";
+import {
+  getBatches,
+  getDepartmentOverview,
+  getFoodPDF,
+  getTShirtPDF,
+} from "../services/adminFiles";
 import { showFile } from "../services/filesHelper";
 import { getTents, Tents } from "@/services/tents";
 
@@ -225,6 +244,12 @@ export default class AttendeesRegistration extends Vue {
 
   downloadTShirtsPDF() {
     getTShirtPDF().then((fileData) =>
+      showFile(fileData.data, fileData.fileName)
+    );
+  }
+
+  downloadDepartmentOverview() {
+    getDepartmentOverview().then((fileData) =>
       showFile(fileData.data, fileData.fileName)
     );
   }
