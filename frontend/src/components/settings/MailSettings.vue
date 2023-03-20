@@ -174,9 +174,11 @@ export default class MailSettings extends Vue {
         .then(() => {
           this.emailSent = true;
           this.sendingEmail = false;
+          this.$toast.success("Erinnerungsemail versendet.");
         })
         .catch(() => {
           this.sendingEmail = false;
+          this.$toast.success("Fehler beim versenden der Erinnerungsemail.");
         });
     }
   }
@@ -189,9 +191,11 @@ export default class MailSettings extends Vue {
           this.emailSent = true;
           this.sendingEmail = false;
           this.sentTo = null;
+          this.$toast.success("Registrierungsmail versendet.");
         })
         .catch(() => {
           this.sendingEmail = false;
+          this.$toast.success("Fehler beim versenden der Registrierungsmail.");
         });
     }
   }

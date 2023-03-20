@@ -216,8 +216,10 @@ export default class PcrTestsConfiguration extends Vue {
       testCodes: this.newPcrTestCodesArray,
     }).catch(() => {
       this.setToDefaultFormValues();
+      this.$toast.error("PCR Test Reihe konnte nicht erstellt werden.");
     });
     this.setToDefaultFormValues();
+    this.$toast.success("PCR Test Reihe erstellt.");
 
     const poolData = await getAllPcrPoolSeries();
     this.pcrTests = poolData;
@@ -241,17 +243,20 @@ export default class PcrTestsConfiguration extends Vue {
     }
 
     const data = await updatePcrPoolSeries(pcrTestSeries).catch(() => {
+      this.$toast.error("PCR Test Reihe konnte nicht gespeichert werden.");
       this.loadingPcrTestId = "";
     });
     if (!data) return;
     const index = this.editingPcrTestIds.indexOf(data.id);
     this.editingPcrTestIds.splice(index, 1);
     this.loadingPcrTestId = "";
+    this.$toast.success("PCR Test Reihe gespeichert.");
   }
 
   async deletePcrTestSeriesInteral(id: string) {
     await deletePcrPoolSeries(id);
     const data = await getAllPcrPoolSeries();
+    this.$toast.success("PCR Test Reihe gelöscht.");
     this.pcrTests = data;
   }
 
