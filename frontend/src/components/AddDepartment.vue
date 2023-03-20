@@ -67,6 +67,9 @@ export default class AddDepartment extends Vue {
       .then((departmentWithUser) => {
         this.loading = false;
         this.created = true;
+        this.$toast.success(
+          `Feuerwehr ${departmentWithUser.departmentName} erfolgreich angelegt.`
+        );
         this.onDepartmentCreated({
           id: departmentWithUser.departmentId,
           name: departmentWithUser.departmentName,
@@ -79,8 +82,8 @@ export default class AddDepartment extends Vue {
         this.username = "";
       })
       .catch((e: any) => {
-        console.log("error", e);
         this.loading = false;
+        this.$toast.error(`Feuerwehr konnte nicht angelegt werden. (${e})`);
       });
   }
 }

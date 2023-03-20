@@ -98,9 +98,15 @@ export default class EditSettings extends Vue {
 
   saveSettings(settings: Settings) {
     this.loading = true;
-    updateSettings(settings).then(() => {
-      this.loading = false;
-    });
+    updateSettings(settings)
+      .then(() => {
+        this.loading = false;
+        this.$toast.success("Einstellungen gespeichert.");
+      })
+      .catch(() => {
+        this.loading = false;
+        this.$toast.error("Fehler beim Speichern der Einstellungen.");
+      });
   }
 
   mounted() {

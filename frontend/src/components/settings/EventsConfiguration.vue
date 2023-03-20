@@ -151,18 +151,27 @@ export default class EventsConfiguration extends Vue {
       .then(() => {
         this.eventName = "";
         this.loadingEventId = "";
+        this.$toast.success(`Neues Event gespeichert.`);
         return getEvents();
       })
-      .then((data) => (this.events = data));
+      .then((data) => (this.events = data))
+      .catch(() => {
+        this.$toast.error("Neues Event konnte nicht gespeichert werden.");
+      });
   }
 
   saveEvent(event: Event) {
     this.loadingEventId = event.id;
-    updateEvent(event).then((data: Event) => {
-      const indexOfAttendee = this.editingEventIds.indexOf(data.id);
-      this.editingEventIds.splice(indexOfAttendee, 1);
-      this.loadingEventId = "";
-    });
+    updateEvent(event)
+      .then((data: Event) => {
+        const indexOfAttendee = this.editingEventIds.indexOf(data.id);
+        this.editingEventIds.splice(indexOfAttendee, 1);
+        this.loadingEventId = "";
+        this.$toast.success(`${event.name} gespeichert.`);
+      })
+      .catch(() => {
+        this.$toast.error("Event konnte nicht gespeichert werden.");
+      });
   }
 
   createFormName(event: Event) {
@@ -171,10 +180,12 @@ export default class EventsConfiguration extends Vue {
 
   deleteEventInteral(id: string) {
     deleteEvent(id)
-      .then(() => {
-        return getEvents();
-      })
-      .then((data) => (this.events = data));
+      .then(() => this.$toast.success("Event wurde gelöscht."))
+      .catch(() => this.$toast.error("Event konnte nicht gelöscht werden."))
+      .then(() => getEvents())
+      .then((data) => {
+        this.events = data;
+      });
   }
 
   downloadEventsPDF() {
