@@ -196,7 +196,6 @@ class PDFHelperTest {
             role = role,
             department = Department(4L, "", "", ""),
             code = "",
-            specialLeave = false,
             status = AttendeeStatus.ENTERED
         )
     }

@@ -30,7 +30,6 @@ class Entities() {
                 department(),
                 "code",
                 status = null,
-                specialLeave = false
             )
         }
 
@@ -44,7 +43,6 @@ class Entities() {
                 tShirtSize = TShirtSize.S164.toString(),
                 additionalInformation = "n",
                 role = AttendeeRole.YOUTH,
-                specialLeave = false
             )
 
         }
