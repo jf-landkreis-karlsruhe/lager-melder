@@ -1,5 +1,6 @@
 package de.kordondev.attendee.rest.controller
 
+import de.kordondev.attendee.core.persistence.entry.EventType
 import de.kordondev.attendee.core.service.EventService
 import de.kordondev.attendee.rest.model.RestAttendeeInEvent
 import de.kordondev.attendee.rest.model.RestEvent
@@ -20,6 +21,22 @@ class EventController(
         return eventService.addAttendeeToEvent(eventCode, attendeeCode).let {
             RestAttendeeInEvent.of(it)
         }
+    }
+
+    @PostMapping("/events/add-department/{eventCode}/{departmentId}")
+    fun addDepartmentToEvent(
+        @PathVariable(value = "eventCode") eventCode: String,
+        @PathVariable(value = "departmentId") departmentId: Long
+    ): List<RestAttendeeInEvent> {
+        return eventService.addDepartmentToEvent(eventCode, departmentId).map {
+            RestAttendeeInEvent.of(it)
+        }
+    }
+
+    @GetMapping("/events/by-type/{eventType}")
+    fun getEventByType(@PathVariable(value = "eventType") eventType: EventType): RestEvent {
+        return eventService.getEventByType(eventType)
+            .let {RestEvent.of(it) }
     }
 
     @GetMapping("/events/by-code/{eventCode}")

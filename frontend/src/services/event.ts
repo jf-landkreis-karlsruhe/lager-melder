@@ -69,3 +69,17 @@ export const globalEventSummary = () =>
     "events/global/summary",
     withAuthenticationHeader()
   );
+
+export const checkinDepartmentToEvent = (
+  event: Event,
+  departmentId: string
+) => {
+  return postData<AttendeeResponse[]>(
+    `events/add-department/${event.code}/${departmentId}`,
+    withAuthenticationHeader(),
+    {}
+  );
+};
+
+export const getEventByType = (type: EventType) =>
+  getData<Event>(`events/by-type/${type}`, withAuthenticationHeader());

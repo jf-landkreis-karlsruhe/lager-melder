@@ -127,6 +127,14 @@
             registration.youthAttendees.length + registration.youthLeader.length
           }}
         </div>
+        <div class="d-flex justify-end align-center flex-grow-1">
+          <v-btn
+            @click="checkinDepartment(registration.department.id)"
+            class="checkin"
+          >
+            ⛺ Teilnehmer {{ registration.department.name }} einchecken
+          </v-btn>
+        </div>
       </div>
       <div class="indented-2">
         <AttendeesTable
@@ -166,7 +174,15 @@ import {
   Food,
   // eslint-disable-next-line no-unused-vars
   TShirtSize,
+  AttendeeStatus,
 } from "../services/attendee";
+
+import {
+  checkinDepartmentToEvent,
+  EventType,
+  getEventByType,
+  Event,
+} from "../services/event";
 
 import {
   // eslint-disable-next-line no-unused-vars
@@ -209,6 +225,7 @@ export default class AttendeesRegistration extends Vue {
   attendeeRoleYouthLeader = AttendeeRole.YOUTH_LEADER;
   hasAdministrationRole = hasAdministrationRole;
   totalTents: Tents = {} as Tents;
+  enterEvent: Event = {} as Event;
 
   get departmentWithAttendees(): DepartmentWithAttendees[] {
     return this.departments
@@ -262,11 +279,27 @@ export default class AttendeesRegistration extends Vue {
     return this.attendees.filter(filterEnteredAttendees).length;
   }
 
+  checkinDepartment(departmentId: string) {
+    console.log(departmentId);
+    checkinDepartmentToEvent(this.enterEvent, departmentId).then(
+      () =>
+        (this.attendees = this.attendees.map((att) => {
+          if (att.departmentId === departmentId) {
+            att.status = AttendeeStatus.ENTERED;
+          }
+          return att;
+        }))
+    );
+  }
+
   mounted() {
     getAttendees().then((attendees) => {
       this.attendees = attendees;
     });
     getDepartments().then((departments) => (this.departments = departments));
+    getEventByType(EventType.GLOBAL_ENTER).then(
+      (event: Event) => (this.enterEvent = event)
+    );
     getTents().then((tentsList) => {
       this.totalTents = tentsList.reduce(
         (acc, current) => {
@@ -301,5 +334,8 @@ export default class AttendeesRegistration extends Vue {
 }
 .departmentCount {
   color: rgba(0, 0, 0, 0.6);
+}
+.v-btn.checkin {
+  background-color: #00ff0030;
 }
 </style>
