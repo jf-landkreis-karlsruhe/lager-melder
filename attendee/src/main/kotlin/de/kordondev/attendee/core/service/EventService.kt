@@ -20,12 +20,19 @@ class EventService(
     val authorityService: AuthorityService,
     val eventRepository: EventRepository,
     val attendeeInEventRepository: AttendeeInEventRepository,
-    val attendeeRepository: AttendeeRepository
+    val attendeeRepository: AttendeeRepository,
+    val departmentService: DepartmentService
 ) {
     fun getEventByCode(code: String): Event {
         return eventRepository.findByCodeAndTrashedIsFalse(code)
             ?.let { EventEntry.to(it) }
             ?: throw NotFoundException("Event not found for code $code")
+    }
+
+    fun getEventByType(type: EventType): Event {
+        return eventRepository.findByTypeAndTrashedIsFalse(type)
+            ?.let { EventEntry.to(it) }
+            ?: throw NotFoundException("Event not found for type $type")
     }
 
     fun getEvent(id: Long): Event {
@@ -123,6 +130,11 @@ class EventService(
 
     private fun attendeeRoleStatus(status: AttendeeStatus?, role: AttendeeRole): String {
         return "$status + $role"
+    }
 
+    fun addDepartmentToEvent(eventCode: String, departmentId: Long): List<AttendeeInEvent> {
+        return departmentService.getDepartment(departmentId)
+            .let { attendeeService.getAttendeesForDepartment(it) }
+            .map { addAttendeeToEvent(eventCode, it.code) }
     }
 }
