@@ -39,11 +39,6 @@ class PDFHelper {
         return birthdayToDate(birthday).format(formatter)
     }
 
-    fun birthdayToDate(birthday: String) : LocalDate {
-        var dateList = birthday.split("-")
-        return LocalDate.of(dateList[0].toInt(), dateList[1].toInt(), dateList[2].toInt())
-    }
-
     private val oldFirst = compareBy<Attendee> {it.birthday}
     private val oldFirstThenFirstname = oldFirst.thenByDescending {it.firstName}
     fun getOptimizedLeaderAndAttendees(allAttendees: List<Attendee>, eventStart: LocalDate): Pair<List<Attendee>, List<Attendee>> {
@@ -66,10 +61,6 @@ class PDFHelper {
         }
 
         return Pair(youth, leader)
-    }
-
-    private fun ageAtEvent(birthday: String, eventStart: LocalDate): Int {
-        return Period.between(birthdayToDate(birthday), eventStart).years
     }
 
     fun birthdayToDate(birthday: String) : LocalDate {
