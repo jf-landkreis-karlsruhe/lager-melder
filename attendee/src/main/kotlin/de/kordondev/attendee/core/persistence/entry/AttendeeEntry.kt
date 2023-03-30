@@ -45,6 +45,11 @@ data class AttendeeEntry(
     @JoinColumn(name = "department_id")
     val department: DepartmentEntry,
 
+
+    @Column(name = "youthPlanRole")
+    @Enumerated(EnumType.STRING)
+    val youthPlanRole: AttendeeRole?,
+
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     val status: AttendeeStatus?
@@ -63,11 +68,12 @@ data class AttendeeEntry(
                 additionalInformation = attendee.additionalInformation,
                 role = attendee.role,
                 code = attendee.code,
-                status = status
+                status = status,
+                youthPlanRole = attendee.youthPlanRole
             )
         }
 
-        fun of(attendee: NewAttendee, code: String, id: Long = 0) = AttendeeEntry(
+        fun of(attendee: NewAttendee, code: String, youthPlanRole: AttendeeRole?, id: Long = 0) = AttendeeEntry(
             id = id,
             firstName = attendee.firstName,
             lastName = attendee.lastName,
@@ -78,6 +84,7 @@ data class AttendeeEntry(
             additionalInformation = attendee.additionalInformation,
             role = attendee.role,
             code = code,
+            youthPlanRole = youthPlanRole,
             status = null
         )
 
@@ -93,6 +100,7 @@ data class AttendeeEntry(
                 additionalInformation = attendeeEntry.additionalInformation,
                 role = attendeeEntry.role,
                 code = attendeeEntry.code,
+                youthPlanRole = attendeeEntry.youthPlanRole,
                 status = attendeeEntry.status
             )
         }

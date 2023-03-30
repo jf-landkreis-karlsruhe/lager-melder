@@ -7,6 +7,7 @@ import com.google.zxing.common.BitMatrix
 import com.lowagie.text.*
 import com.lowagie.text.List
 import com.lowagie.text.pdf.*
+import de.kordondev.attendee.Helper
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
 import de.kordondev.attendee.core.pdf.PDFHelper
@@ -27,7 +28,6 @@ class AdminFilesService(
     private val eventService: EventService,
     private val departmentService: DepartmentService,
     private val authorityService: AuthorityService,
-    private val pdfHelper: PDFHelper,
     private val settingsService: SettingsService,
 ) {
     private val yDistanceBetweenBatches = 141F
@@ -260,7 +260,7 @@ class AdminFilesService(
     }
 
     private fun colorForAgeGroup(attendee: Attendee, eventStart: LocalDate): Color {
-        val age = pdfHelper.ageAtEvent(attendee.birthday, eventStart)
+        val age = Helper.ageAtEvent(attendee.birthday, eventStart)
         if (age < 16) {
             return Color.RED
         }

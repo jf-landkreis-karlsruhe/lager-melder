@@ -1,9 +1,11 @@
 package de.kordondev.attendee.core.service
 
+import de.kordondev.attendee.Helper
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
 import de.kordondev.attendee.core.model.NewAttendee
 import de.kordondev.attendee.core.persistence.entry.AttendeeEntry
+import de.kordondev.attendee.core.persistence.entry.AttendeeRole
 import de.kordondev.attendee.core.persistence.entry.DepartmentEntry
 import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.repository.AttendeeRepository
@@ -14,6 +16,7 @@ import de.kordondev.attendee.exception.UniqueException
 import de.kordondev.attendee.exception.WrongTimeException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 class AttendeeService(
@@ -88,6 +91,43 @@ class AttendeeService(
     fun getAllAttendees(): List<Attendee> {
         return attendeeRepository.findAll()
             .map { AttendeeEntry.to(it) }
+    }
+
+    private val oldFirst = compareBy<Attendee> {it.birthday}
+    private val oldFirstThenFirstname = oldFirst.thenByDescending {it.firstName}
+    fun distributeForYouthPlan(allAttendees: List<Attendee>, eventStart: LocalDate): Pair<List<Attendee>, List<Attendee>> {
+        // birthday: "2020-03-30" "yyyy-MM-dd"
+        var fixedAttendees = allAttendees.groupBy { it.youthPlanRole }
+
+        var undistributedAttendees = fixedAttendees[null]
+        if (undistributedAttendees != null) {
+            var (youth, leader) = undistributedAttendees
+                .sortedWith(oldFirstThenFirstname)
+                .filter { Helper.ageAtEvent(it.birthday, eventStart) >= 6 }
+                .partition { Helper.ageAtEvent(it.birthday, eventStart) <= 26 }
+
+            val allLeader = leader + fixedAttendees[AttendeeRole.YOUTH_LEADER]
+            val correctDistributedAttendees = allLeader.size + allLeader.size * 5
+            val toMuchYouths = allAttendees.size - correctDistributedAttendees
+            val possibleLeaderCount = toMuchYouths / 6
+            if (possibleLeaderCount > 0) {
+                // move x first of attendees, who are at least 18, to the end of leader
+                val newLeader = youth
+                    .subList(0, possibleLeaderCount)
+                    .filter { Helper.ageAtEvent(it.birthday, eventStart) >= 18 }
+                leader = leader.plus(newLeader)
+                youth = youth.subList(newLeader.size, youth.size)
+                for (l in leader) {
+                    l.youthPlanRole = AttendeeRole.YOUTH_LEADER
+                }
+                for (y in youth) {
+                    y.youthPlanRole = AttendeeRole.YOUTH
+                }
+                attendeeRepository.saveAll((leader + youth).map { AttendeeEntry.of(it, it.status) })
+            }
+        }
+
+        return Pair(youth, leader)
     }
 
     private fun checkFirstNameAndLastNameAreUnique(attendee: NewAttendee, id: Long = 0) {
