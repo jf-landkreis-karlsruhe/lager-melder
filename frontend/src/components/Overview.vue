@@ -131,6 +131,7 @@
           <v-btn
             @click="checkinDepartment(registration.department.id)"
             class="checkin"
+            rounded
           >
             ⛺ Teilnehmer {{ registration.department.name }} einchecken
           </v-btn>
@@ -280,16 +281,14 @@ export default class AttendeesRegistration extends Vue {
   }
 
   checkinDepartment(departmentId: string) {
-    console.log(departmentId);
-    checkinDepartmentToEvent(this.enterEvent, departmentId).then(
-      () =>
-        (this.attendees = this.attendees.map((att) => {
-          if (att.departmentId === departmentId) {
-            att.status = AttendeeStatus.ENTERED;
-          }
-          return att;
-        }))
-    );
+    checkinDepartmentToEvent(this.enterEvent, departmentId).then(() => {
+      this.attendees = this.attendees.map((att) => {
+        if (att.departmentId === departmentId) {
+          att.status = AttendeeStatus.ENTERED;
+        }
+        return att;
+      });
+    });
   }
 
   mounted() {
