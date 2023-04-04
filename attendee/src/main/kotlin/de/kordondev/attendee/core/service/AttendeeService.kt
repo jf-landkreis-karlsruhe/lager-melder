@@ -43,20 +43,23 @@ class AttendeeService(
         checkFirstNameAndLastNameAreUnique(attendee)
         val code = PasswordGenerator.generateCode()
         return attendeeRepository
-            .save(AttendeeEntry.of(attendee, code))
+            .save(AttendeeEntry.of(attendee, code, null))
             .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
     }
 
     fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
         checkCanAttendeeBeEdited()
         checkFirstNameAndLastNameAreUnique(attendee, id)
+
+        attendeeRepository.updateYouthPlanRolesIn(AttendeeRole.YOUTH.toString(), listOf(id))
+
         return attendeeRepository.findByIdOrNull(id)
             ?.let {
                 authorityService.hasAuthority(
                     AttendeeEntry.to(it),
                     listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
                 )
-                attendeeRepository.save(AttendeeEntry.of(attendee, it.code, it.id))
+                attendeeRepository.save(AttendeeEntry.of(attendee, it.code, it.youthPlanRole, it.id))
             }
             ?.let { AttendeeEntry.to(it) }
             ?: createAttendee(attendee)
@@ -93,6 +96,7 @@ class AttendeeService(
             .map { AttendeeEntry.to(it) }
     }
 
+    /*
     private val oldFirst = compareBy<Attendee> {it.birthday}
     private val oldFirstThenFirstname = oldFirst.thenByDescending {it.firstName}
     fun distributeForYouthPlan(allAttendees: List<Attendee>, eventStart: LocalDate): Pair<List<Attendee>, List<Attendee>> {
@@ -128,7 +132,7 @@ class AttendeeService(
         }
 
         return Pair(youth, leader)
-    }
+    }*/
 
     private fun checkFirstNameAndLastNameAreUnique(attendee: NewAttendee, id: Long = 0) {
         attendeeRepository.findByDepartmentAndFirstNameAndLastName(

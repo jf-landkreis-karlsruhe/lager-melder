@@ -30,6 +30,7 @@ class Entities() {
                 department(),
                 "code",
                 status = null,
+                youthPlanRole = null
             )
         }
 
