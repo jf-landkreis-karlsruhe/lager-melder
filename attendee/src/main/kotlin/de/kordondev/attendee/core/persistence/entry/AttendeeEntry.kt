@@ -45,11 +45,6 @@ data class AttendeeEntry(
     @JoinColumn(name = "department_id")
     val department: DepartmentEntry,
 
-
-    @Column(name = "youthPlanRole")
-    @Enumerated(EnumType.STRING)
-    val youthPlanRole: AttendeeRole?,
-
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     val status: AttendeeStatus?
@@ -69,11 +64,10 @@ data class AttendeeEntry(
                 role = attendee.role,
                 code = attendee.code,
                 status = status,
-                youthPlanRole = attendee.youthPlanRole
             )
         }
 
-        fun of(attendee: NewAttendee, code: String, youthPlanRole: AttendeeRole?, id: Long = 0) = AttendeeEntry(
+        fun of(attendee: NewAttendee, code: String, id: Long = 0) = AttendeeEntry(
             id = id,
             firstName = attendee.firstName,
             lastName = attendee.lastName,
@@ -84,7 +78,6 @@ data class AttendeeEntry(
             additionalInformation = attendee.additionalInformation,
             role = attendee.role,
             code = code,
-            youthPlanRole = youthPlanRole,
             status = null
         )
 
@@ -100,22 +93,10 @@ data class AttendeeEntry(
                 additionalInformation = attendeeEntry.additionalInformation,
                 role = attendeeEntry.role,
                 code = attendeeEntry.code,
-                youthPlanRole = attendeeEntry.youthPlanRole,
                 status = attendeeEntry.status
             )
         }
 
-        override fun equals(other: Any?): Boolean {
-            return super.equals(other)
-        }
-
-        override fun hashCode(): Int {
-            return super.hashCode()
-        }
-
-        override fun toString(): String {
-            return super.toString()
-        }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -124,6 +105,10 @@ data class AttendeeEntry(
         other as AttendeeEntry
 
         return id != null && id == other.id
+    }
+
+    override fun toString(): String {
+        return super.toString()
     }
 
     override fun hashCode(): Int {

@@ -27,7 +27,6 @@ data class Attendee(
     val role: AttendeeRole,
     val department: Department,
     val code: String,
-    var youthPlanRole: AttendeeRole?,
     var status: AttendeeStatus?
 )
 

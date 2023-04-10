@@ -17,7 +17,6 @@ data class RestAttendee(
     val additionalInformation: String,
     val role: AttendeeRole,
     val code: String,
-    val youthPlanRole: AttendeeRole?,
     val status: String
 ) {
     companion object {
@@ -32,7 +31,6 @@ data class RestAttendee(
             role = attendee.role,
             departmentId = attendee.department.id,
             code = attendee.code,
-            youthPlanRole = attendee.youthPlanRole,
             status = attendee.status.toString()
         )
     }

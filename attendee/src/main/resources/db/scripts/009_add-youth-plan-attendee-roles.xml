@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle"/>
+
+    <changeSet id="202304091" author="kordon">
+        <createTable tableName="youth_plan_attendee_role">
+            <column name="attendee_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="department_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="youth_plan_role" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="tents" columnNames="department_id"/>
+        <addForeignKeyConstraint baseTableName="youth_plan_attendee_role" baseColumnNames="attendee_id"
+                                 constraintName="youth_plan_attendee_role_attendee_id"
+                                 referencedTableName="attendees" referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

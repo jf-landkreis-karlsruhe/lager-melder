@@ -1,16 +1,16 @@
 package de.kordondev.attendee.core.service
 
-import de.kordondev.attendee.core.model.Attendee
-import de.kordondev.attendee.core.pdf.*
-import de.kordondev.attendee.rest.model.YouthPlanDistribution
+import de.kordondev.attendee.core.pdf.AttendeesCommunal
+import de.kordondev.attendee.core.pdf.AttendeesKarlsruhe
+import de.kordondev.attendee.core.pdf.StateYouthPlanAttendees
+import de.kordondev.attendee.core.persistence.entry.AttendeeEntry
+import de.kordondev.attendee.core.persistence.entry.AttendeeRole
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.time.LocalDate
-import java.time.Period
 
 
 @Service
@@ -18,11 +18,10 @@ class RegistrationFilesService(
     val stateYouthPlanAttendees: StateYouthPlanAttendees,
     val attendeesKarlsruhe: AttendeesKarlsruhe,
     val attendeeService: AttendeeService,
-    val stateYouthPlanLeader: StateYouthPlanLeader,
     val attendeesCommunal: AttendeesCommunal,
     val departmentService: DepartmentService,
-    val pdfHelper: PDFHelper,
-    val settingsService: SettingsService
+    val settingsService: SettingsService,
+    val youthPlanAttendeeRoleService: YouthPlanAttendeeRoleService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(RegistrationFilesService::class.java)
 
@@ -36,11 +35,12 @@ class RegistrationFilesService(
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
     }
 
-    fun getStateYouthPlanAttendees(id: Long): ByteArray {
+    fun getStateYouthPlanYouth(id: Long): ByteArray {
         val department = departmentService.getDepartment(id)
-        val result = attendeeService.getAllAttendees()
-            .let { pdfHelper.getOptimizedLeaderAndAttendees(it, settingsService.getSettings().eventStart) }
-            .let { it.first.filter { att -> att.department.id == department.id } }
+        val result = youthPlanAttendeeRoleService.getOptimizedLeaderAndAttendeeIds()
+            .filter { it.youthPlanRole == AttendeeRole.YOUTH }
+            .filter { it.departmentId == department.id }
+            .map { AttendeeEntry.to(it.attendee) }
             .let { stateYouthPlanAttendees.createStateYouthPlanAttendees(it) }
 
         val out = ByteArrayOutputStream()
@@ -51,21 +51,15 @@ class RegistrationFilesService(
 
     fun getStateYouthPlanLeader(id: Long): ByteArray {
         val department = departmentService.getDepartment(id)
-        val result =
-             attendeeService.getAllAttendees()
-            .let { pdfHelper.getOptimizedLeaderAndAttendees(it, settingsService.getSettings().eventStart)}
-            .let { it.second.filter { att -> att.department.id == department.id } }
-            .let { stateYouthPlanLeader.createStateYouthPlanLeaderPdf(it) }
+        val result = youthPlanAttendeeRoleService.getOptimizedLeaderAndAttendeeIds()
+            .filter { it.youthPlanRole == AttendeeRole.YOUTH_LEADER }
+            .filter { it.departmentId == department.id }
+            .map { AttendeeEntry.to(it.attendee) }
+            .let { stateYouthPlanAttendees.createStateYouthPlanAttendees(it) }
         val out = ByteArrayOutputStream()
         result.save(out)
         result.close()
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
-    }
-
-    fun getYouthPlanDistribution(): YouthPlanDistribution {
-        return attendeeService.getAllAttendees()
-            .let{ pdfHelper.getOptimizedLeaderAndAttendees(it, settingsService.getSettings().eventStart) }
-            .let { YouthPlanDistribution(youthCount = it.first.size, leaderCount = it.second.size) }
     }
 
     fun getAttendeesCommunal(id: Long): ByteArray {

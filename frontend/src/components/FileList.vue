@@ -17,6 +17,7 @@
         <button class="underline" @click="downloadStateYouthPlanLeader">
           Pädagogische Betreuer
         </button>
+        für den Landesjugendplan
       </li>
       <li>
         <button class="underline" @click="downloadAttendeesKarlsruhe">
