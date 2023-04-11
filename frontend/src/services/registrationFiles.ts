@@ -1,4 +1,4 @@
-import { fetchData, getData } from "../helper/fetch";
+import { fetchData } from "../helper/fetch";
 import { withAuthenticationHeader } from "./authentication";
 import { FileReponse } from "./filesHelper";
 
@@ -67,15 +67,4 @@ export const getAttendeesCommunal = (
       data: blob,
       fileName: `teilnehmerlisteKommandant-${departmentName}.pdf`,
     }));
-};
-
-export interface YouthPlanDistribution {
-  youthCount: number;
-  leaderCount: number;
-}
-export const getYouthPlanDistribution = (): Promise<YouthPlanDistribution> => {
-  return getData<YouthPlanDistribution>(
-    `registrationFiles/youthPlanDistribution`,
-    withAuthenticationHeader()
-  );
 };

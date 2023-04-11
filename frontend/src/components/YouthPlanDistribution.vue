@@ -42,7 +42,7 @@ import { Component } from "vue-property-decorator";
 import {
   getYouthPlanDistribution,
   YouthPlanDistribution,
-} from "@/services/registrationFiles";
+} from "@/services/youthPlanAttendees";
 
 import { hasAdministrationRole } from "../services/authentication";
 
