@@ -26,6 +26,7 @@ class SettingsService(
                 Settings(
                     id = SETTINGS_ID,
                     registrationEnd = Instant.now().plus(30, ChronoUnit.DAYS),
+                    startDownloadRegistrationFiles = LocalDate.now().plusDays(45),
                     hostCity = "Austragungsort",
                     eventStart = LocalDate.now().plusDays(60),
                     eventEnd = LocalDate.now().plusDays(65),
@@ -33,7 +34,7 @@ class SettingsService(
                     eventAddress = "",
                     organizer = "",
                     organisationAddress = "",
-                    moneyPerYouthLoader = "8,99"
+                    moneyPerYouthLoader = "8,99",
                 )
             )
         }
