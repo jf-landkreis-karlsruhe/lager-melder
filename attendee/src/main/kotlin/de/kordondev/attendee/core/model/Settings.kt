@@ -13,5 +13,6 @@ data class Settings(
     val eventAddress: String,
     val organizer: String,
     val organisationAddress: String, // Multiline
-    val moneyPerYouthLoader: String
+    val moneyPerYouthLoader: String,
+    val startDownloadRegistrationFiles: LocalDate
 )

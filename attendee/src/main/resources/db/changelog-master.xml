@@ -13,5 +13,6 @@
     <include file="classpath:db/scripts/007_add-attendee-status.xml"/>
     <include file="classpath:db/scripts/008_add-tent-count.xml"/>
     <include file="classpath:db/scripts/009_add-youth-plan-attendee-roles.xml"/>
+    <include file="classpath:db/scripts/010_add-start-of-registration-files-date.xml"/>
 
 </databaseChangeLog>

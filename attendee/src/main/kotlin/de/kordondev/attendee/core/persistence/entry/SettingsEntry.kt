@@ -1,6 +1,7 @@
 package de.kordondev.attendee.core.persistence.entry
 
 import de.kordondev.attendee.core.model.Settings
+import org.hibernate.Hibernate
 import java.time.Instant
 import java.time.LocalDate
 import javax.persistence.Column
@@ -39,7 +40,11 @@ data class SettingsEntry(
     val organisationAddress: String, // Multiline
 
     @Column(name = "moneyPerYouthLoader")
-    val moneyPerYouthLoader: String
+    val moneyPerYouthLoader: String,
+
+    @Column(name = "start_download_registration_files")
+    val startDownloadRegistrationFiles: LocalDate
+
 ) {
     companion object {
         fun of(settings: Settings, id: Long) = SettingsEntry(
@@ -52,7 +57,8 @@ data class SettingsEntry(
             eventAddress = settings.eventAddress,
             organizer = settings.organizer,
             organisationAddress = settings.organisationAddress,
-            moneyPerYouthLoader = settings.moneyPerYouthLoader
+            moneyPerYouthLoader = settings.moneyPerYouthLoader,
+            startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles
         )
 
         fun to(settings: SettingsEntry) = Settings(
@@ -65,7 +71,23 @@ data class SettingsEntry(
             eventAddress = settings.eventAddress,
             organizer = settings.organizer,
             organisationAddress = settings.organisationAddress,
-            moneyPerYouthLoader = settings.moneyPerYouthLoader
+            moneyPerYouthLoader = settings.moneyPerYouthLoader,
+            startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles
         )
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as SettingsEntry
+
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
+
+    @Override
+    override fun toString(): String {
+        return this::class.simpleName + "(id = $id )"
     }
 }

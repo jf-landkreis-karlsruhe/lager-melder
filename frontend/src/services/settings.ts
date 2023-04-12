@@ -12,6 +12,7 @@ export interface Settings {
   organizer: string;
   organisationAddress: string; // multiline
   moneyPerYouthLoader: string;
+  startDownloadRegistrationFiles: string
 }
 
 export const getSettings = () =>

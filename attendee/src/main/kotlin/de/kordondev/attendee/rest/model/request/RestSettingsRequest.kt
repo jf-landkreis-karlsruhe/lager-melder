@@ -40,7 +40,11 @@ data class RestSettingsRequest(
 
     @NotNull
     @NotBlank
-    val moneyPerYouthLoader: String
+    val moneyPerYouthLoader: String,
+
+    @NotNull
+    @NotBlank
+    val startDownloadRegistrationFiles: LocalDate
 ) {
     companion object {
         fun to(settings: RestSettingsRequest) = Settings(
@@ -53,7 +57,8 @@ data class RestSettingsRequest(
             eventAddress = settings.eventAddress,
             organizer = settings.organizer,
             organisationAddress = settings.organisationAddress,
-            moneyPerYouthLoader = settings.moneyPerYouthLoader
+            moneyPerYouthLoader = settings.moneyPerYouthLoader,
+            startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles
         )
     }
 }
