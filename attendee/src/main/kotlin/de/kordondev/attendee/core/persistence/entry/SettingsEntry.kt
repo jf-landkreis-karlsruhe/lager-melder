@@ -43,7 +43,7 @@ data class SettingsEntry(
     val moneyPerYouthLoader: String,
 
     @Column(name = "start_download_registration_files")
-    val startDownloadRegistrationFiles: LocalDate
+    val startDownloadRegistrationFiles: Instant
 
 ) {
     companion object {

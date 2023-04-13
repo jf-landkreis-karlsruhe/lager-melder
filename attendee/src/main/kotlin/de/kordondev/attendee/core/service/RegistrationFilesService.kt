@@ -5,6 +5,7 @@ import de.kordondev.attendee.core.pdf.AttendeesKarlsruhe
 import de.kordondev.attendee.core.pdf.StateYouthPlanAttendees
 import de.kordondev.attendee.core.persistence.entry.AttendeeEntry
 import de.kordondev.attendee.core.persistence.entry.AttendeeRole
+import de.kordondev.attendee.exception.WrongTimeException
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -26,6 +27,9 @@ class RegistrationFilesService(
     private val logger: Logger = LoggerFactory.getLogger(RegistrationFilesService::class.java)
 
     fun getAttendeesKarlsruhe(id: Long): ByteArray {
+        if (!settingsService.canRegistrationFilesDownloaded()) {
+            throw WrongTimeException("Dateien können noch nicht heruntergeladen werden.")
+        }
         val result = departmentService.getDepartment(id)
             .let { attendeeService.getAttendeesForDepartment(it) }
             .let { attendeesKarlsruhe.createAttendeesKarlsruhePdf(it) }
@@ -36,6 +40,9 @@ class RegistrationFilesService(
     }
 
     fun getStateYouthPlanYouth(id: Long): ByteArray {
+        if (!settingsService.canRegistrationFilesDownloaded()) {
+            throw WrongTimeException("Dateien können noch nicht heruntergeladen werden.")
+        }
         val department = departmentService.getDepartment(id)
         val result = youthPlanAttendeeRoleService.getOptimizedLeaderAndAttendeeIds()
             .filter { it.youthPlanRole == AttendeeRole.YOUTH }
@@ -50,6 +57,9 @@ class RegistrationFilesService(
     }
 
     fun getStateYouthPlanLeader(id: Long): ByteArray {
+        if (!settingsService.canRegistrationFilesDownloaded()) {
+            throw WrongTimeException("Dateien können noch nicht heruntergeladen werden.")
+        }
         val department = departmentService.getDepartment(id)
         val result = youthPlanAttendeeRoleService.getOptimizedLeaderAndAttendeeIds()
             .filter { it.youthPlanRole == AttendeeRole.YOUTH_LEADER }
@@ -63,6 +73,9 @@ class RegistrationFilesService(
     }
 
     fun getAttendeesCommunal(id: Long): ByteArray {
+        if (!settingsService.canRegistrationFilesDownloaded()) {
+            throw WrongTimeException("Dateien können noch nicht heruntergeladen werden.")
+        }
         val department = departmentService.getDepartment(id)
         val result = department
             .let { attendeeService.getAttendeesForDepartment(it) }

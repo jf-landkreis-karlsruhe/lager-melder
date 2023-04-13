@@ -44,7 +44,7 @@ data class RestSettingsRequest(
 
     @NotNull
     @NotBlank
-    val startDownloadRegistrationFiles: LocalDate
+    val startDownloadRegistrationFiles: Instant
 ) {
     companion object {
         fun to(settings: RestSettingsRequest) = Settings(

@@ -12,6 +12,11 @@
                 v-model="settings.registrationEnd"
                 label="Ende Registration"
               />
+              <v-text-field
+                type="date"
+                v-model="settings.startDownloadRegistrationFiles"
+                label="Anfangszeitpunkt des Downloads der Anmeldeunterlagen"
+              />
               <h3>Veranstalltung</h3>
               <v-text-field
                 type="date"

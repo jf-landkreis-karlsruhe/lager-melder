@@ -12,16 +12,15 @@ export interface Settings {
   organizer: string;
   organisationAddress: string; // multiline
   moneyPerYouthLoader: string;
-  startDownloadRegistrationFiles: string
+  startDownloadRegistrationFiles: string;
 }
 
 export const getSettings = () =>
   getData<Settings>(`settings`, withAuthenticationHeader()).then(
     (settings) => ({
       ...settings,
-      registrationEnd: new Date(settings.registrationEnd)
-        .toISOString()
-        .split("T")[0],
+      registrationEnd: toDate(settings.registrationEnd),
+      startDownloadRegistrationFiles: toDate(settings.startDownloadRegistrationFiles),
     })
   );
 
@@ -50,6 +49,22 @@ export const updateSettings = (settings: Settings) => {
   registrationEndDate.toISOString();
   return putData<Settings>(`settings`, withAuthenticationHeader(), {
     ...settings,
-    registrationEnd: registrationEndDate,
+    registrationEnd: toInstantString(settings.registrationEnd, false),
+    startDownloadRegistrationFiles: toInstantString(
+      settings.startDownloadRegistrationFiles,
+      true
+    ),
   });
 };
+
+const toInstantString = (dateString: string, toStartOfDay: boolean) => {
+  const date = new Date(dateString);
+  date.setHours(toStartOfDay ? 0 : 23);
+  date.setMinutes(toStartOfDay ? 0 : 59);
+  date.setSeconds(toStartOfDay ? 0 : 59);
+  return date.toISOString();
+};
+
+const toDate = (dateString: string) => {
+  return new Date(dateString).toISOString().split("T")[0];
+}
