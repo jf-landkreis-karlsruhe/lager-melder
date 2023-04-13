@@ -17,7 +17,7 @@ class YouthPlanAttendeeRoleHelper {
     ): List<YouthPlanAttendeeRoleEntry> {
         if (undistributedAttendees.isNotEmpty()) {
             val leader = youthPlanAttendeeRoles.filter { it.youthPlanRole === AttendeeRole.YOUTH_LEADER }
-            return distributeNewAttendees(undistributedAttendees, eventStart, leader.size, youthPlanAttendeeRoles.size)
+            return distributeNewAttendees(undistributedAttendees, eventStart, youthPlanAttendeeRoles.size, leader.size)
         }
         return listOf()
     }
@@ -27,8 +27,8 @@ class YouthPlanAttendeeRoleHelper {
     private fun distributeNewAttendees(
         newAttendees: List<AttendeeEntry>,
         eventStart: LocalDate,
-        allAttendeesSize: Int,
-        fixedLeaderSize: Int?
+        fixedDistributedAttendeesSize: Int,
+        fixedLeaderSize: Int
     ): List<YouthPlanAttendeeRoleEntry> {
         // birthday: "2020-03-30" "yyyy-MM-dd"
         var (youth, leader) = newAttendees
@@ -38,7 +38,7 @@ class YouthPlanAttendeeRoleHelper {
 
         val allLeaderSize = leader.size + (fixedLeaderSize ?: 0)
         val correctDistributedAttendees = allLeaderSize + allLeaderSize * 5
-        val toMuchYouths = (allAttendeesSize + newAttendees.size) - correctDistributedAttendees
+        val toMuchYouths = (fixedDistributedAttendeesSize + newAttendees.size) - correctDistributedAttendees
         val possibleLeaderCount = toMuchYouths / 6
         if (possibleLeaderCount > 0) {
             // move x first of attendees, who are at least 18, to the end of leader
