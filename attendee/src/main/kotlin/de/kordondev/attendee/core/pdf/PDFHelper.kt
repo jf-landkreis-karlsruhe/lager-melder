@@ -27,8 +27,8 @@ class PDFHelper {
         val field = form.getField(fieldName)
         if (field != null) {
             (field as PDCheckBox).check()
-            field?.partialName = "$page$fieldName"
-            field?.isReadOnly = true
+            field.partialName = "$page$fieldName"
+            field.isReadOnly = true
         }
         return field
     }

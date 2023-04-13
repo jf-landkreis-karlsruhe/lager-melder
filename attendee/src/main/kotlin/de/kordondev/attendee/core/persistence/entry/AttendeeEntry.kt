@@ -115,5 +115,3 @@ data class AttendeeEntry(
         return Objects.hash(code)
     }
 }
-
-

@@ -7,7 +7,7 @@
     <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle"/>
 
     <changeSet id="202304091" author="kordon">
-        <createTable tableName="youth_plan_attendee_role">
+        <createTable tableName="youth_plan_attendee_roles">
             <column name="attendee_id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -19,9 +19,12 @@
             </column>
         </createTable>
         <addUniqueConstraint tableName="tents" columnNames="department_id"/>
-        <addForeignKeyConstraint baseTableName="youth_plan_attendee_role" baseColumnNames="attendee_id"
+        <addForeignKeyConstraint baseTableName="youth_plan_attendee_roles" baseColumnNames="attendee_id"
                                  constraintName="youth_plan_attendee_role_attendee_id"
                                  referencedTableName="attendees" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="youth_plan_attendee_roles" baseColumnNames="department_id"
+                                 constraintName="youth_plan_attendee_role_department_id"
+                                 referencedTableName="departments" referencedColumnNames="id"/>
     </changeSet>
 
 </databaseChangeLog>

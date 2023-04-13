@@ -2,7 +2,7 @@ package de.kordondev.attendee.core.service
 
 import de.kordondev.attendee.core.persistence.entry.AttendeeRole
 import de.kordondev.attendee.core.persistence.entry.YouthPlanAttendeeRoleEntry
-import de.kordondev.attendee.core.persistence.repository.YouthPlanAttendeeRoleRepository
+import de.kordondev.attendee.core.persistence.repository.YouthPlanAttendeeRolesRepository
 import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.core.service.helper.YouthPlanAttendeeRoleHelper
 import de.kordondev.attendee.rest.model.YouthPlanDistribution
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class YouthPlanAttendeeRoleService(
-    private val youthPlanAttendeeRoleRepository: YouthPlanAttendeeRoleRepository,
+    private val youthPlanAttendeeRolesRepository: YouthPlanAttendeeRolesRepository,
     private val attendeeService: AttendeeService,
     private val settingsService: SettingsService,
     private val youthPlanAttendeeRoleHelper: YouthPlanAttendeeRoleHelper,
@@ -18,11 +18,11 @@ class YouthPlanAttendeeRoleService(
 ) {
 
     fun saveAll(attendeeRoles: List<YouthPlanAttendeeRoleEntry>): List<YouthPlanAttendeeRoleEntry> {
-        return youthPlanAttendeeRoleRepository.saveAll(attendeeRoles).toList()
+        return youthPlanAttendeeRolesRepository.saveAll(attendeeRoles).toList()
     }
 
     fun getAll(): List<YouthPlanAttendeeRoleEntry> {
-        return youthPlanAttendeeRoleRepository.findAll().toList()
+        return youthPlanAttendeeRolesRepository.findAll().toList()
     }
 
     fun getAttendeeDistribution(): YouthPlanDistribution {

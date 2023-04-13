@@ -6,7 +6,7 @@ import org.hibernate.annotations.CascadeType
 import javax.persistence.*
 
 @Entity
-@Table(name = "youthPlanAttendeeRole")
+@Table(name = "youthPlanAttendeeRoles")
 data class YouthPlanAttendeeRoleEntry(
 
     @Id
