@@ -26,7 +26,7 @@ class SettingsService(
                 Settings(
                     id = SETTINGS_ID,
                     registrationEnd = Instant.now().plus(30, ChronoUnit.DAYS),
-                    startDownloadRegistrationFiles = LocalDate.now().plusDays(45),
+                    startDownloadRegistrationFiles = Instant.now().plus(45, ChronoUnit.DAYS),
                     hostCity = "Austragungsort",
                     eventStart = LocalDate.now().plusDays(60),
                     eventEnd = LocalDate.now().plusDays(65),
@@ -54,5 +54,9 @@ class SettingsService(
         }
         val endRegistration = getSettings().registrationEnd
         return Instant.now().isBefore(endRegistration)
+    }
+
+    fun canRegistrationFilesDownloaded(): Boolean {
+        return Instant.now().isAfter(getSettings().startDownloadRegistrationFiles)
     }
 }
