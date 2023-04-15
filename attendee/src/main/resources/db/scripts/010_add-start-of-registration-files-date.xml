@@ -8,7 +8,7 @@
 
     <changeSet id="202304011" author="kordon">
         <addColumn tableName="settings">
-            <column name="start_download_registration_files" type="date">
+            <column name="start_download_registration_files" type="datetime(6)">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
