@@ -4,6 +4,7 @@ import de.kordondev.attendee.core.service.SettingsService
 import de.kordondev.attendee.rest.model.RestSettings
 import de.kordondev.attendee.rest.model.request.RestRegistrationEnd
 import de.kordondev.attendee.rest.model.request.RestSettingsRequest
+import de.kordondev.attendee.rest.model.request.RestStartDownloadRegistrationFiles
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -32,4 +33,11 @@ class SettingsController(
         return settingsService.getSettings()
             .let { RestRegistrationEnd.of(it, settingsService.canAttendeesBeEdited()) }
     }
+
+    @GetMapping("/settings/start-download-registration-files")
+    fun getStartDownloadRegistrationFiles(): RestStartDownloadRegistrationFiles {
+        return settingsService.getSettings()
+            .let { RestStartDownloadRegistrationFiles.of(it, settingsService.canRegistrationFilesDownloaded()) }
+    }
+
 }

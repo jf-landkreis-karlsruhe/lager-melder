@@ -57,14 +57,33 @@ export const updateSettings = (settings: Settings) => {
   });
 };
 
+export interface StartDownloadRegistrationFiles<T = Date> {
+  startDownloadRegistrationFiles: T;
+  registrationFilesCanBeDownloaded: boolean;
+}
+
+export const getStartDownloadRegistrationFiles = () => {
+  return getData<StartDownloadRegistrationFiles<string>>(
+    `settings/start-download-registration-files`,
+    withAuthenticationHeader()
+  ).then((settings) => {
+    return {
+      ...settings,
+      startDownloadRegistrationFiles: new Date(
+        settings.startDownloadRegistrationFiles
+      ),
+    };
+  });
+};
+
 const toInstantString = (dateString: string, toStartOfDay: boolean) => {
   const date = new Date(dateString);
-  date.setHours(toStartOfDay ? 0 : 23);
+  date.setHours(toStartOfDay ? 5 : 23);
   date.setMinutes(toStartOfDay ? 0 : 59);
-  date.setSeconds(toStartOfDay ? 0 : 59);
+  date.setSeconds(toStartOfDay ? 1 : 59);
   return date.toISOString();
 };
 
 const toDate = (dateString: string) => {
   return new Date(dateString).toISOString().split("T")[0];
-}
+};
