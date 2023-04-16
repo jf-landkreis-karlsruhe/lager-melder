@@ -11,11 +11,21 @@
                 type="date"
                 v-model="settings.registrationEnd"
                 label="Ende Registration"
+                :error-messages="
+                  downloadAfterEndRegistration
+                    ? ''
+                    : 'Ende der Registrierung muss nach dem Start des Downloads der Anmeldeunterlagen liegen.'
+                "
               />
               <v-text-field
                 type="date"
                 v-model="settings.startDownloadRegistrationFiles"
                 label="Anfangszeitpunkt des Downloads der Anmeldeunterlagen"
+                :error-messages="
+                  downloadAfterEndRegistration
+                    ? ''
+                    : 'Ende der Registrierung muss nach dem Start des Downloads der Anmeldeunterlagen liegen.'
+                "
               />
               <h3>Veranstalltung</h3>
               <v-text-field
@@ -74,6 +84,7 @@
                 <v-btn
                   color="primary"
                   :loading="loading"
+                  :disabled="!downloadAfterEndRegistration"
                   type="submit"
                   class="mb-8"
                   rounded
@@ -100,6 +111,14 @@ import { getSettings, updateSettings, Settings } from "../../services/settings";
 export default class EditSettings extends Vue {
   settings: Settings = {} as Settings;
   loading: boolean = false;
+
+  private get downloadAfterEndRegistration(): boolean {
+    return (
+      new Date(this.settings.registrationEnd).getTime() -
+        new Date(this.settings.startDownloadRegistrationFiles).getTime() <
+      0
+    );
+  }
 
   saveSettings(settings: Settings) {
     this.loading = true;

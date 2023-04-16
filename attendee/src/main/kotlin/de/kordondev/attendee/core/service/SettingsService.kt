@@ -5,6 +5,7 @@ import de.kordondev.attendee.core.persistence.entry.Roles
 import de.kordondev.attendee.core.persistence.entry.SettingsEntry
 import de.kordondev.attendee.core.persistence.repository.SettingsRepository
 import de.kordondev.attendee.core.security.AuthorityService
+import de.kordondev.attendee.exception.BadRequestException
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.LocalDate
@@ -43,6 +44,9 @@ class SettingsService(
 
     fun saveSettings(settings: Settings): Settings {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        if (settings.registrationEnd.isBefore(settings.startDownloadRegistrationFiles)) {
+            throw BadRequestException("Registrierungsende muss vor dem Start der Downloads der Anmeldeunterlagen sein.")
+        }
         return settingsRepository.save(SettingsEntry.of(settings, SETTINGS_ID))
             .let { SettingsEntry.to(it) }
     }
