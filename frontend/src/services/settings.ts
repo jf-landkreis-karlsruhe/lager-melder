@@ -20,7 +20,9 @@ export const getSettings = () =>
     (settings) => ({
       ...settings,
       registrationEnd: toDate(settings.registrationEnd),
-      startDownloadRegistrationFiles: toDate(settings.startDownloadRegistrationFiles),
+      startDownloadRegistrationFiles: toDate(
+        settings.startDownloadRegistrationFiles
+      ),
     })
   );
 

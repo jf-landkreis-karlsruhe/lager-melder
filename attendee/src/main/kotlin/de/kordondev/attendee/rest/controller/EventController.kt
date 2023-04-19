@@ -3,6 +3,7 @@ package de.kordondev.attendee.rest.controller
 import de.kordondev.attendee.core.service.EventService
 import de.kordondev.attendee.rest.model.RestAttendeeInEvent
 import de.kordondev.attendee.rest.model.RestEvent
+import de.kordondev.attendee.rest.model.RestGlobalEventSummary
 import de.kordondev.attendee.rest.model.request.RestEventRequest
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -25,6 +26,11 @@ class EventController(
     fun getEventByCode(@PathVariable(value = "eventCode") eventCode: String): RestEvent {
         return eventService.getEventByCode(eventCode)
             .let { RestEvent.of(it) }
+    }
+
+    @GetMapping("/events/global/summary")
+    fun getGlobalEventSummary(): RestGlobalEventSummary {
+        return eventService.getGlobalEventSummary()
     }
 
     @GetMapping("/events")
