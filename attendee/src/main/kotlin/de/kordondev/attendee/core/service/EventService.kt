@@ -9,6 +9,8 @@ import de.kordondev.attendee.core.security.AuthorityService
 import de.kordondev.attendee.core.security.PasswordGenerator
 import de.kordondev.attendee.exception.NotDeletableException
 import de.kordondev.attendee.exception.NotFoundException
+import de.kordondev.attendee.rest.model.Distribution
+import de.kordondev.attendee.rest.model.RestGlobalEventSummary
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -78,5 +80,49 @@ class EventService(
         attendeeRepository.save(AttendeeEntry.of(attendee, attendee.status))
         return attendeeInEventRepository.save(AttendeeInEventEntry.of(attendeeInEvent))
             .let { AttendeeInEvent(attendee.firstName, attendee.lastName, event.name, it.time) }
+    }
+
+    fun getGlobalEventSummary(): RestGlobalEventSummary {
+        val allAttendees = attendeeService.getAllAttendees()
+        val attendeesByDepartment = allAttendees.groupBy { it.department }
+
+        return RestGlobalEventSummary(
+            total = sumUp(allAttendees, "Zeltlager"),
+            departments = attendeesByDepartment.keys.map { sumUp(attendeesByDepartment[it]!!, it.name) }
+        )
+    }
+
+    private fun sumUp(attendees: List<Attendee>, name: String): Distribution {
+        val groupedAttendees = attendees.groupBy { attendeeRoleStatus(it.status, it.role) }
+        return Distribution(
+            name = name,
+            checkedInYouth = groupedAttendees[attendeeRoleStatus(
+                AttendeeStatus.ENTERED,
+                AttendeeRole.YOUTH
+            )]?.size ?: 0,
+            checkedInYouthLeader = groupedAttendees[attendeeRoleStatus(
+                AttendeeStatus.ENTERED,
+                AttendeeRole.YOUTH_LEADER
+            )]?.size ?: 0,
+            checkedOutYouth = (groupedAttendees[attendeeRoleStatus(
+                AttendeeStatus.LEFT,
+                AttendeeRole.YOUTH
+            )]?.size ?: 0) + (groupedAttendees[attendeeRoleStatus(
+                null,
+                AttendeeRole.YOUTH
+            )]?.size ?: 0),
+            checkedOutYouthLeader = (groupedAttendees[attendeeRoleStatus(
+                AttendeeStatus.LEFT,
+                AttendeeRole.YOUTH_LEADER
+            )]?.size ?: 0) + (groupedAttendees[attendeeRoleStatus(
+                null,
+                AttendeeRole.YOUTH_LEADER
+            )]?.size ?: 0),
+        )
+    }
+
+    private fun attendeeRoleStatus(status: AttendeeStatus?, role: AttendeeRole): String {
+        return "$status + $role"
+
     }
 }
