@@ -52,12 +52,12 @@ export const updateEvent = (event: Event) =>
 export const deleteEvent = (id: string): Promise<Response> =>
   deleteData(`events/${id}`, withAuthenticationHeader());
 
-interface GlobalEventSummary {
+export interface GlobalEventSummary {
   total: Distribution;
   departments: Distribution[];
 }
 
-interface Distribution {
+export interface Distribution {
   name: string;
   checkedInYouth: number;
   checkedInYouthLeader: number;
@@ -66,6 +66,6 @@ interface Distribution {
 }
 export const globalEventSummary = () =>
   getData<GlobalEventSummary>(
-    "/events/global/summary",
+    "events/global/summary",
     withAuthenticationHeader()
   );

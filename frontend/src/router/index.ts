@@ -59,6 +59,11 @@ const routes: Array<RouteConfig> = [
     component: () => import("../views/SettingsView.vue"),
   },
   {
+    path: "/anwesend",
+    name: "Anwesende",
+    component: () => import("../views/EventSummaryView.vue"),
+  },
+  {
     path: "/account",
     name: "Account",
     component: () => import("../views/AccountView.vue"),
