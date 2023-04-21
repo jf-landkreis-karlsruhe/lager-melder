@@ -26,6 +26,9 @@
                 <router-link to="/overview"> Übersicht </router-link>
               </li>
               <li class="nav-item admin" v-if="hasAdministrationRole">
+                <router-link to="/anwesend"> Anwesend </router-link>
+              </li>
+              <li class="nav-item admin" v-if="hasAdministrationRole">
                 <router-link to="/einstellungen"> Einstellungen </router-link>
               </li>
             </ul>
