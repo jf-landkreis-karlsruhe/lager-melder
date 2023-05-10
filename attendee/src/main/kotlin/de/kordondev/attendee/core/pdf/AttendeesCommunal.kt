@@ -108,7 +108,7 @@ class AttendeesCommunal(
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
-        pdfHelper.fillField(form, EVENT_LOCATION, settings.organisationAddress, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, EVENT_LOCATION, settings.hostCity, page)?.let { fields.add(it) }
         pdfHelper.fillField(form, START_DATE, settings.eventStart.format(germanDate), page)?.let { fields.add(it) }
         pdfHelper.fillField(form, END_DATE, settings.eventEnd.format(germanDate), page)?.let { fields.add(it) }
         fields.addAll(fillPage(pdfDocument, attendees, TABLE_ROW_START_SECOND_PAGE, page))
