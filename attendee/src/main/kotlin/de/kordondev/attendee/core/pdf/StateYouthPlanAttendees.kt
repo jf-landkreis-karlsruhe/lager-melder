@@ -21,7 +21,7 @@ class StateYouthPlanAttendees(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(StateYouthPlanAttendees::class.java)
 
-    val SUM_DAYS_PAGE_1 = "tage_gesamt"
+    val SUM_DAYS_PAGE_1 = "Tage_gesamt"
     val COPY_SUM_DAYS_PAGE_1_TO_PAGE_2 = "Texteingabe510"
     val SUM_DAYS_PAGE_2 = "Texteingabe500"
     val YEAR = "Landesjugendplan"
@@ -89,7 +89,7 @@ class StateYouthPlanAttendees(
                     settings
                 )
             )
-            fields.addAll(fillFirstPage(pdfDocument, attendees, 1, settings))
+            fields.addAll(fillFirstPage(pdfDocument, attendees.subList(0, ATTENDEES_ON_FIRST_PAGE), 1, settings))
             result.addPage(pdfDocument.getPage(0))
             var page = 2
             for (i in ATTENDEES_ON_FIRST_PAGE until attendees.size step ATTENDEES_ON_SECOND_PAGE) {
@@ -151,9 +151,10 @@ class StateYouthPlanAttendees(
     fun fillSecondPage(pdfDocument: PDDocument, attendees: List<Attendee>, page: Int): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
-        val previousDays = ATTENDEES_ON_FIRST_PAGE + ATTENDEES_ON_SECOND_PAGE * (page - 2)
+        val previousDays = (ATTENDEES_ON_FIRST_PAGE + ATTENDEES_ON_SECOND_PAGE * (page - 2)) * DAYS_OF_EVENT
         pdfHelper.fillField(form, COPY_SUM_DAYS_PAGE_1_TO_PAGE_2, "$previousDays", page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, SUM_DAYS_PAGE_2, "${previousDays + attendees.size}", page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, SUM_DAYS_PAGE_2, "${previousDays + attendees.size * DAYS_OF_EVENT}", page)
+            ?.let { fields.add(it) }
         return fields
     }
 
@@ -172,7 +173,12 @@ class StateYouthPlanAttendees(
         val daysCellId = firstCellId + 7
         pdfHelper.fillField(form, "Texteingabe$nameCellId", "${attendee.lastName}, ${attendee.firstName}", page)
             ?.let { fields.add(it) }
-        pdfHelper.fillField(form, "Texteingabe$birthDateCellId", pdfHelper.formatBirthday(attendee.birthday, germanDate), page)?.let { fields.add(it) }
+        pdfHelper.fillField(
+            form,
+            "Texteingabe$birthDateCellId",
+            pdfHelper.formatBirthday(attendee.birthday, germanDate),
+            page
+        )?.let { fields.add(it) }
         pdfHelper.fillField(form, "Texteingabe$startCellId", settings.eventStart.format(germanDate), page)
             ?.let { fields.add(it) }
         pdfHelper.fillField(form, "Texteingabe$endCellId", settings.eventEnd.format(germanDate), page)
