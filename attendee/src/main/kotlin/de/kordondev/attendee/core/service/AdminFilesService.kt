@@ -10,10 +10,11 @@ import com.lowagie.text.pdf.*
 import de.kordondev.attendee.Helper
 import de.kordondev.attendee.core.model.Attendee
 import de.kordondev.attendee.core.model.Department
-import de.kordondev.attendee.core.pdf.PDFHelper
 import de.kordondev.attendee.core.persistence.entry.Food
 import de.kordondev.attendee.core.persistence.entry.TShirtSize
 import de.kordondev.attendee.core.security.AuthorityService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.awt.Color
@@ -31,20 +32,22 @@ class AdminFilesService(
     private val settingsService: SettingsService,
 ) {
     private val yDistanceBetweenBatches = 141F
+    private val logger: Logger = LoggerFactory.getLogger(AdminFilesService::class.java)
     fun createBatches(): ByteArray {
         authorityService.isSpecializedFieldDirector()
-        val pageStream = ByteArrayOutputStream()
         val documentStream = ByteArrayOutputStream()
         val document = Document(PageSize.A4)
         val pdfCopy = PdfCopy(document, documentStream)
         document.open()
 
-        val attendees = attendeeService.getAttendees().toList()
+        val attendees = attendeeService.getAttendees()
+        logger.info("Creating batches for ${attendees.size} on ${1 + (attendees.size / 5)} pages")
         var attendeeIndex = 0
         while (attendeeIndex < attendees.size) {
 
             val resource = resourceLoader.getResource("classpath:data/batch.pdf")
             val pdfReader = PdfReader(resource.inputStream)
+            val pageStream = ByteArrayOutputStream()
             val stamper = PdfStamper(pdfReader, pageStream)
 
             val content = stamper.getOverContent(1)
@@ -209,7 +212,7 @@ class AdminFilesService(
 
         val table = Table(2)
         table.borderWidth = 1F
-        table.borderColor =  Color(0, 0, 0)
+        table.borderColor = Color(0, 0, 0)
         table.padding = 5F
         table.spacing = 0F
         table.addCell("Größe:")
@@ -224,7 +227,7 @@ class AdminFilesService(
         document.add(Paragraph("Kreiszeltlager - Armband", headlineFont))
         val braceletTable = Table(2)
         braceletTable.borderWidth = 1F
-        braceletTable.borderColor =  Color(0, 0, 0)
+        braceletTable.borderColor = Color(0, 0, 0)
         braceletTable.padding = 5F
         braceletTable.spacing = 0F
         braceletTable.addCell("Farbe:")
@@ -249,10 +252,13 @@ class AdminFilesService(
         return tShirtCount
     }
 
-    private fun countBracelet(attendees: kotlin.collections.List<Attendee>, eventStart: LocalDate): MutableMap<Color, Int> {
+    private fun countBracelet(
+        attendees: kotlin.collections.List<Attendee>,
+        eventStart: LocalDate
+    ): MutableMap<Color, Int> {
         val braceletCount = mutableMapOf<Color, Int>()
         for (attendee in attendees) {
-            val color =colorForAgeGroup(attendee, eventStart)
+            val color = colorForAgeGroup(attendee, eventStart)
             val currentCount = braceletCount[color] ?: 0
             braceletCount[color] = (currentCount + 1)
         }
