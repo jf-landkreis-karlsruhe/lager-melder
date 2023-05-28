@@ -128,19 +128,47 @@
           {{ enteredAttendeesCount }})
         </div>
       </div>
-      <div class="indented-2">
-        <AttendeesTable
-          headlineText="Jugendliche"
-          :attendees="registration.youthAttendees"
-          :departmentId="registration.department.id"
-          :role="attendeeRoleYouth"
-        />
-        <AttendeesTable
-          headlineText="Jugendleiter"
-          :attendees="registration.youthLeader"
-          :departmentId="registration.department.id"
-          :role="attendeeRoleYouthLeader"
-        />
+
+      <div
+        v-for="registration in departmentWithAttendees"
+        :key="registration.department.id"
+        class="indented-1"
+      >
+        <div class="d-flex align-baseline">
+          <h2 class="mr-4 my-8">
+            Feuerwehr {{ registration.department.name }}
+          </h2>
+          <div class="department-count">
+            Gesamt Teilnehmerzahl:
+            {{
+              registration.youthAttendees.length +
+              registration.youthLeader.length
+            }}
+          </div>
+          <div class="d-flex justify-end align-center flex-grow-1">
+            <v-btn
+              @click="checkinDepartment(registration.department.id)"
+              class="checkin"
+              rounded
+            >
+              ⛺ Teilnehmer {{ registration.department.name }} einchecken
+            </v-btn>
+          </div>
+        </div>
+        <div class="indented-2">
+          <AttendeesTable
+            headlineText="Jugendliche"
+            :attendees="registration.youthAttendees"
+            :departmentId="registration.department.id"
+            :role="attendeeRoleYouth"
+          />
+          <AttendeesTable
+            headlineText="Jugendleiter"
+            :attendees="registration.youthLeader"
+            :departmentId="registration.department.id"
+            :role="attendeeRoleYouthLeader"
+          />
+        </div>
       </div>
     </div>
 
@@ -295,7 +323,9 @@ export default class AttendeesRegistration extends Vue {
   }
 
   mounted() {
+    this.initialLoanding = false;
     getAttendees().then((attendees) => {
+      console.log("was");
       this.attendees = attendees;
     });
     getDepartments().then((departments) => (this.departments = departments));
@@ -303,7 +333,6 @@ export default class AttendeesRegistration extends Vue {
       (event: Event) => (this.enterEvent = event)
     );
     getTents().then((tentsList) => {
-      this.initialLoanding = false;
       this.totalTents = tentsList.reduce(
         (acc, current) => {
           acc.sg200 = acc.sg200 + current.sg200;
