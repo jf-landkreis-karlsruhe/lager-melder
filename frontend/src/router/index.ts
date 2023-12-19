@@ -6,15 +6,12 @@ const router = createRouter({
     {
       path: '/',
       redirect: '/teilnehmer'
-    }
-    // {
-    //   path: '/login',
-    //   name: 'Login',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import('../views/LoginView.vue')
-    // },
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('../views/LoginView.vue')
+    },
     // {
     //   path: '/teilnehmer',
     //   name: 'AttendeesRegistration',
@@ -60,11 +57,11 @@ const router = createRouter({
     //   name: 'Anwesende',
     //   component: () => import('../views/EventSummaryView.vue')
     // },
-    // {
-    //   path: '/account',
-    //   name: 'Account',
-    //   component: () => import('../views/AccountView.vue')
-    // }
+    {
+      path: '/account',
+      name: 'Account',
+      component: () => import('../views/AccountView.vue')
+    }
   ]
 })
 

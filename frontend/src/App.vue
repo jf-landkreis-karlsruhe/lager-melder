@@ -5,10 +5,6 @@ import Header from "./components/LmHeader.vue";
 </script>
 
 <template>
-  <!-- <template #icon>
-    <DocumentationIcon />
-  </template> -->
-
   <v-app>
     <div class="grid-container">
       <div class="my-container">

@@ -1,6 +1,8 @@
-import { toast } from '@/plugins/toastification'
+import { createToastInterface } from 'vue-toastification'
 import { BASE_URL } from '../assets/config'
 import type { ErrorResponse } from '@/services/errorConstants'
+
+const toast = createToastInterface()
 
 export const getData = <T>(relativeUrl: string, headers: HeadersInit) => {
   return fetchData(relativeUrl, {

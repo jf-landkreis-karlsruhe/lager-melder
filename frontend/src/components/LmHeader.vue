@@ -42,47 +42,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
   getTokenData,
   AuthenticationChangedEvent,
   hasAdministrationRole,
-  isLoggedIn,
-} from "../services/authentication";
+  isLoggedIn
+} from '../services/authentication'
 
-  let timeoutId = 0;
-  const loggedIn = ref<boolean>(false);
-  const router = useRouter();
-  const route = useRoute();
+let timeoutId = 0
+const loggedIn = ref<boolean>(false)
+const router = useRouter()
+const route = useRoute()
 
+onMounted(() => {
+  window.addEventListener('focus', checkToken)
+  checkToken()
+  window.addEventListener(AuthenticationChangedEvent, checkToken)
+})
 
-  onMounted(() => {
-    window.addEventListener("focus", checkToken);
-    checkToken();
-    window.addEventListener(AuthenticationChangedEvent, checkToken);
-  });
+onBeforeUnmount(() => {
+  timeoutId && clearTimeout(timeoutId)
+  window.removeEventListener('focus', checkToken)
+  window.removeEventListener(AuthenticationChangedEvent, checkToken)
+})
 
-  onBeforeUnmount(() => {
-    timeoutId && clearTimeout(timeoutId);
-    window.removeEventListener("focus", checkToken);
-    window.removeEventListener(AuthenticationChangedEvent, checkToken);
-  });
-
-  const checkToken = () => {
-    const token = getTokenData();
-    if (!token) {
-      loggedIn.value = false;
-      route.path !== "/login" && router.push("/login");
-      return;
-    }
-    loggedIn.value = true;
-    const secondsUntilTokenExpires = token.exp - new Date().getTime() / 1000;
-    timeoutId = setTimeout(
-      () => checkToken,
-      secondsUntilTokenExpires * 1000
-    );
-  };
+const checkToken = () => {
+  const token = getTokenData()
+  if (!token) {
+    loggedIn.value = false
+    route.path !== '/login' && router.push('/login')
+    return
+  }
+  loggedIn.value = true
+  const secondsUntilTokenExpires = token.exp - new Date().getTime() / 1000
+  timeoutId = setTimeout(() => checkToken, secondsUntilTokenExpires * 1000)
+}
 </script>
 
 <style scoped lang="scss">
@@ -132,16 +128,14 @@ header {
               background-position: left;
             }
             &.router-link-active {
-              background: linear-gradient(to left, #95caee 50%, #95caee 50%)
-                right;
+              background: linear-gradient(to left, #95caee 50%, #95caee 50%) right;
             }
           }
 
           &.admin {
             a {
               border: 2px solid #ffe760;
-              background: linear-gradient(to left, #ffe760 50%, #ecd032 50%)
-                right;
+              background: linear-gradient(to left, #ffe760 50%, #ecd032 50%) right;
               background-size: 200%;
 
               &:hover {
