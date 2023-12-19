@@ -4,7 +4,7 @@
       <v-col sm="12" md="8" lg="6" xl="6">
         <div v-if="myDepartment.id">
           <h2>Deine Feuerwehr - {{ myDepartment.name }}</h2>
-          <!-- <EditDepartment :department="myDepartment" class="mb-8" /> -->
+          <EditDepartment :department="myDepartment" class="mb-8" />
         </div>
       </v-col>
     </v-row>
@@ -60,7 +60,7 @@ import { getMyDepartment } from '@/services/department'
 import type { Department } from '@/services/department'
 import { changePassword, getMe } from '@/services/user'
 import type { User } from '@/services/user'
-// import EditDepartment from '../components/EditDepartment.vue'
+import EditDepartment from '../components/LmEditDepartment.vue'
 
 const myDepartment = ref<Department>({} as Department)
 const password = ref<string>('')

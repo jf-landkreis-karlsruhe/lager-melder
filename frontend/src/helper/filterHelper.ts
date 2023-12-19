@@ -1,10 +1,5 @@
-import {
-  Attendee,
-  AttendeeRole,
-  TShirtSize,
-  Food,
-  AttendeeStatus,
-} from "../services/attendee";
+import { AttendeeRole, TShirtSize, Food, AttendeeStatus } from '../services/attendee'
+import type { Attendee } from '../services/attendee'
 
 export const youthLeaderAttendees = (
   departmentId: string,
@@ -14,8 +9,8 @@ export const youthLeaderAttendees = (
   return attendees
     .filter((attendee) => attendee.departmentId === departmentId)
     .filter((attendee) => attendee.role === AttendeeRole.YOUTH_LEADER)
-    .filter((attendees) => filterByFilterInput(attendees, filterInput));
-};
+    .filter((attendees) => filterByFilterInput(attendees, filterInput))
+}
 
 export const youthAttendees = (
   departmentId: string,
@@ -25,30 +20,21 @@ export const youthAttendees = (
   return attendees
     .filter((attendee) => attendee.departmentId === departmentId)
     .filter((attendee) => attendee.role === AttendeeRole.YOUTH)
-    .filter((attendees) => filterByFilterInput(attendees, filterInput));
-};
+    .filter((attendees) => filterByFilterInput(attendees, filterInput))
+}
 
-export const filterByFilterInput = (
-  attendee: Attendee,
-  filterInput: string
-) => {
+export const filterByFilterInput = (attendee: Attendee, filterInput: string) => {
   if (filterInput.length > 0) {
     return (
       attendee.firstName.includes(filterInput) ||
       attendee.lastName.includes(filterInput) ||
       attendee.additionalInformation.includes(filterInput)
-    );
+    )
   }
-  return true;
-};
+  return true
+}
 
-export const FoodSortOrder = [
-  Food.MEAT,
-  Food.MUSLIM,
-  Food.SPECIAL,
-  Food.VEGETARIAN,
-  Food.NONE,
-];
+export const FoodSortOrder = [Food.MEAT, Food.MUSLIM, Food.SPECIAL, Food.VEGETARIAN, Food.NONE]
 
 export const TShirtSizeSortOrder = [
   TShirtSize.S104110,
@@ -63,9 +49,9 @@ export const TShirtSizeSortOrder = [
   TShirtSize.XXL,
   TShirtSize.X3L,
   TShirtSize.X4L,
-  TShirtSize.X5L,
-];
+  TShirtSize.X5L
+]
 
 export const filterEnteredAttendees = (attendee: Attendee): boolean => {
-  return attendee.status === AttendeeStatus.ENTERED;
-};
+  return attendee.status === AttendeeStatus.ENTERED
+}
