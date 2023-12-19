@@ -16,7 +16,7 @@ export const getMe = () =>
 export const changePassword = (user: User) =>
   putData<User>(`users/${user.id}/password`, withAuthenticationHeader(), user);
 
-export const sendRegistrationMail = (userId: string) =>
+export const sendRegistrationMail = (userId: number) =>
   postData<User>(
     `users/${userId}/sendRegistrationEmail`,
     withAuthenticationHeader(),
@@ -26,7 +26,7 @@ export const sendRegistrationMail = (userId: string) =>
 export const userForDepartment = (departmentId: string) =>
   getData<User>(`users/department/${departmentId}`, withAuthenticationHeader());
 
-export const updateRole = (userId: string, role: Roles) =>
+export const updateRole = (userId: number, role: Roles) =>
   putData<User>(`users/${userId}/role`, withAuthenticationHeader(), {
     role,
   });
@@ -45,8 +45,8 @@ export interface DepartmentWithUserRequest {
   leaderEMail: string;
 }
 export interface DepartmentWithUser extends DepartmentWithUserRequest {
-  departmentId: string;
-  userId: string;
+  departmentId: number;
+  userId: number;
 }
 
 export const registerNewDepartmentAndUser = (

@@ -10,6 +10,13 @@
   margin-bottom: 30px;
 }
 
+.v-icon {
+  filter: invert(0.35);
+}
+.v-alert .v-icon {
+  filter: unset;
+}
+
 h1 {
   margin: 14px 0;
   font-family: Avenir, Helvetica, Arial, sans-serif;

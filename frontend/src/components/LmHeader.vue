@@ -1,3 +1,43 @@
+<script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import {
+  getTokenData,
+  AuthenticationChangedEvent,
+  hasAdministrationRole,
+  isLoggedIn
+} from '../services/authentication'
+
+let timeoutId = 0
+const loggedIn = ref<boolean>(false)
+const router = useRouter()
+const route = useRoute()
+
+onMounted(() => {
+  window.addEventListener('focus', checkToken)
+  checkToken()
+  window.addEventListener(AuthenticationChangedEvent, checkToken)
+})
+
+onBeforeUnmount(() => {
+  timeoutId && clearTimeout(timeoutId)
+  window.removeEventListener('focus', checkToken)
+  window.removeEventListener(AuthenticationChangedEvent, checkToken)
+})
+
+const checkToken = () => {
+  const token = getTokenData()
+  if (!token) {
+    loggedIn.value = false
+    route.path !== '/login' && router.push('/login')
+    return
+  }
+  loggedIn.value = true
+  const secondsUntilTokenExpires = token.exp - new Date().getTime() / 1000
+  timeoutId = setTimeout(() => checkToken, secondsUntilTokenExpires * 1000)
+}
+</script>
+
 <template>
   <header>
     <div class="d-flex justify-center align-center hero-image-container">
@@ -40,46 +80,6 @@
     </v-container>
   </header>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import {
-  getTokenData,
-  AuthenticationChangedEvent,
-  hasAdministrationRole,
-  isLoggedIn
-} from '../services/authentication'
-
-let timeoutId = 0
-const loggedIn = ref<boolean>(false)
-const router = useRouter()
-const route = useRoute()
-
-onMounted(() => {
-  window.addEventListener('focus', checkToken)
-  checkToken()
-  window.addEventListener(AuthenticationChangedEvent, checkToken)
-})
-
-onBeforeUnmount(() => {
-  timeoutId && clearTimeout(timeoutId)
-  window.removeEventListener('focus', checkToken)
-  window.removeEventListener(AuthenticationChangedEvent, checkToken)
-})
-
-const checkToken = () => {
-  const token = getTokenData()
-  if (!token) {
-    loggedIn.value = false
-    route.path !== '/login' && router.push('/login')
-    return
-  }
-  loggedIn.value = true
-  const secondsUntilTokenExpires = token.exp - new Date().getTime() / 1000
-  timeoutId = setTimeout(() => checkToken, secondsUntilTokenExpires * 1000)
-}
-</script>
 
 <style scoped lang="scss">
 header {

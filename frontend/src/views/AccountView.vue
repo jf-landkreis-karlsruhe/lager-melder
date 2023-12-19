@@ -1,3 +1,57 @@
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
+import { logout, isLoggedIn } from '@/services/authentication'
+import { getMyDepartment } from '@/services/department'
+import type { Department } from '@/services/department'
+import { changePassword, getMe } from '@/services/user'
+import type { User } from '@/services/user'
+import EditDepartment from '../components/LmEditDepartment.vue'
+
+const myDepartment = ref<Department>({} as Department)
+const password = ref<string>('')
+const repeatPassword = ref<string>('')
+const passwordLoading = ref<boolean>(false)
+const passwordSuccess = ref<boolean>(false)
+const user = ref<User>({} as User)
+const showPasswordError = ref<boolean>(false)
+
+const updateUser = () => {
+  if (password.value !== repeatPassword.value) {
+    showPasswordError.value = true
+    return
+  }
+  passwordLoading.value = true
+  changePassword({ ...user.value, password: password.value })
+    .then(() => {
+      passwordLoading.value = false
+      passwordSuccess.value = true
+      password.value = ''
+      repeatPassword.value = ''
+      setTimeout(() => (passwordSuccess.value = false), 2000)
+    })
+    .catch((error) => {
+      console.error(error)
+      passwordLoading.value = false
+    })
+}
+
+const onLogout = () => {
+  logout()
+  document.location.assign('/login')
+}
+
+onMounted(() => {
+  getMe().then((newUser) => (user.value = newUser))
+  getMyDepartment().then((department) => {
+    myDepartment.value = department
+  })
+})
+
+watch([password, repeatPassword], () => {
+  showPasswordError.value = false
+})
+</script>
+
 <template>
   <v-container>
     <v-row justify="center">
@@ -52,57 +106,3 @@
     </v-row>
   </v-container>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-import { logout, isLoggedIn } from '@/services/authentication'
-import { getMyDepartment } from '@/services/department'
-import type { Department } from '@/services/department'
-import { changePassword, getMe } from '@/services/user'
-import type { User } from '@/services/user'
-import EditDepartment from '../components/LmEditDepartment.vue'
-
-const myDepartment = ref<Department>({} as Department)
-const password = ref<string>('')
-const repeatPassword = ref<string>('')
-const passwordLoading = ref<boolean>(false)
-const passwordSuccess = ref<boolean>(false)
-const user = ref<User>({} as User)
-const showPasswordError = ref<boolean>(false)
-
-const updateUser = () => {
-  if (password.value !== repeatPassword.value) {
-    showPasswordError.value = true
-    return
-  }
-  passwordLoading.value = true
-  changePassword({ ...user.value, password: password.value })
-    .then(() => {
-      passwordLoading.value = false
-      passwordSuccess.value = true
-      password.value = ''
-      repeatPassword.value = ''
-      setTimeout(() => (passwordSuccess.value = false), 2000)
-    })
-    .catch((error) => {
-      console.log(error)
-      passwordLoading.value = false
-    })
-}
-
-const onLogout = () => {
-  logout()
-  document.location.assign('/login')
-}
-
-onMounted(() => {
-  getMe().then((newUser) => (user.value = newUser))
-  getMyDepartment().then((department) => {
-    myDepartment.value = department
-  })
-})
-
-watch([password, repeatPassword], () => {
-  showPasswordError.value = false
-})
-</script>

@@ -1,3 +1,139 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { AttendeeStatus, updateAttendee } from '../services/attendee'
+import { tShirtSizeText, foodText, birthdayText } from '../helper/displayText'
+import { Food, TShirtSize, AttendeeRole, createAttendee } from '../services/attendee'
+import type { Attendee } from '../services/attendee'
+import { deleteAttendee as deleteAttendeeService } from '../services/attendee'
+import { filterEnteredAttendees } from '@/helper/filterHelper'
+import { computed } from 'vue'
+
+interface AttendeeWithValidation extends Attendee {
+  tShirtSizeError: boolean
+}
+
+const props = withDefaults(
+  defineProps<{
+    attendees: Attendee[]
+    headlineText: string
+    role: AttendeeRole
+    departmentId: number
+    disabled: boolean
+    attendeesChanged: (change: number) => void
+  }>(),
+  {
+    disabled: false
+  }
+)
+
+const newAttendees = ref<Attendee[]>([])
+const deletedAttendeeIds = ref<string[]>([])
+const newAttendeeId = ref<string>('newAttendee')
+const deletingAttendees = ref<string[]>([])
+const editingAttendeeIds = ref<string[]>([newAttendeeId.value])
+const headers = ref<{ title: string; value: string; sortable?: boolean }[]>([
+  { title: '', value: 'status' },
+  { title: 'Vorname', value: 'firstName' },
+  { title: 'Nachname', value: 'lastName' },
+  { title: 'Essen', value: 'food' },
+  { title: 'TShirt Größe', value: 'tShirtSize' },
+  { title: 'Geburtsdatum', value: 'birthday' },
+  { title: 'Anmerkung', value: 'additionalInformation' },
+  { title: '', value: 'actions', sortable: false }
+])
+
+const deleteAttendee = (att: Attendee) => {
+  deletingAttendees.value.push(att.id)
+  deleteAttendeeService(att.id).then(() => {
+    removeAttendeeIdFromList(att.id, deletingAttendees.value)
+    deletedAttendeeIds.value.push(att.id)
+    props.attendeesChanged(-1)
+  })
+}
+
+const editAttendee = (att: Attendee) => {
+  editingAttendeeIds.value.push(att.id)
+}
+
+const saveAttendee = (att: AttendeeWithValidation) => {
+  if (!att.tShirtSize) {
+    att.tShirtSizeError = true
+    return
+  } else {
+    att.tShirtSizeError = false
+  }
+
+  if (att.id === newAttendeeId.value) {
+    createAttendee(att).then((newAtt) => {
+      newAttendees.value.push(newAtt)
+      props.attendeesChanged(1)
+    })
+    return
+  }
+  updateAttendee(att).then(() => {
+    removeAttendeeIdFromList(att.id, editingAttendeeIds.value)
+  })
+}
+
+const removeAttendeeIdFromList = (id: string, list: string[]) => {
+  const indexOfAttendee = list.indexOf(id)
+  list.splice(indexOfAttendee, 1)
+}
+
+const createFormName = (att: Attendee) => {
+  return `form-${props.departmentId}-${props.headlineText}-${att.id}`
+}
+
+const statusClass = (item: any): string => {
+  if (item.status === AttendeeStatus.ENTERED) {
+    return 'icon-first entered'
+  }
+  if (item.status === AttendeeStatus.LEFT) {
+    return 'icon-first left'
+  }
+  return 'icon-first'
+}
+
+const tShirtSizes = computed<{ value: TShirtSize; title: string }[]>(() => {
+  return Object.values(TShirtSize).map((value) => ({
+    value,
+    title: tShirtSizeText(value)
+  }))
+})
+
+const foods = computed<{ value: Food; title: string }[]>(() => {
+  return Object.values(Food).map((value) => ({
+    value,
+    title: foodText(value)
+  }))
+})
+
+const enteredAttendees = computed<number>(() => {
+  return props.attendees.filter(filterEnteredAttendees).length
+})
+
+const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
+  return props.attendees
+    .concat(newAttendees.value)
+    .filter((attendee) => !deletedAttendeeIds.value.includes(attendee.id))
+    .concat([
+      {
+        status: null,
+        id: newAttendeeId.value,
+        firstName: '',
+        lastName: '',
+        birthday: '',
+        food: Food.MEAT,
+        tShirtSize: '' as TShirtSize,
+        additionalInformation: '',
+        role: props.role,
+        departmentId: props.departmentId
+      }
+    ])
+    .map((attendee) => ({ ...attendee, tShirtSizeError: false }))
+})
+</script>
+
 <template>
   <section>
     <v-card>
@@ -5,33 +141,21 @@
         <div class="d-flex align-baseline">
           <h3 class="mr-4">{{ headlineText }}</h3>
           <div class="additional-information">
-            Anzahl {{ headlineText }}:
-            {{ attendeesWithNew.length - 1 }} (Anwesend: {{ enteredAttendees }})
+            Anzahl {{ headlineText }}: {{ attendeesWithNew.length - 1 }} (Anwesend:
+            {{ enteredAttendees }})
           </div>
         </div>
       </v-card-title>
       <v-card-text>
         <v-data-table
           :headers="headers"
-          :items="disabled ? attendees : attendeesWithNew"
-          :disable-pagination="true"
-          :disable-items-per-page="true"
-          :hide-default-footer="true"
+          :items="disabled ? (attendees as unknown as AttendeeWithValidation[]) : attendeesWithNew"
           :item-class="statusClass"
+          :items-per-page="0"
         >
           <template v-slot:[`item.status`]="{ item }">
-            <div
-              v-if="item.status === attendeeStatusLeft"
-              title="Zeltlager verlassen"
-            >
-              🏠
-            </div>
-            <div
-              v-if="item.status === attendeeStatusEntered"
-              title="Zeltlager betreten"
-            >
-              ⛺
-            </div>
+            <div v-if="item.status === AttendeeStatus.LEFT" title="Zeltlager verlassen">🏠</div>
+            <div v-if="item.status === AttendeeStatus.ENTERED" title="Zeltlager betreten">⛺</div>
           </template>
           <template v-slot:[`item.firstName`]="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
@@ -42,6 +166,7 @@
                 type="text"
                 v-model="item.firstName"
                 label="Vorname"
+                variant="underlined"
                 required
                 :form="createFormName(item)"
               />
@@ -56,6 +181,7 @@
                 type="text"
                 v-model="item.lastName"
                 label="Nachname"
+                variant="underlined"
                 required
                 :form="createFormName(item)"
               />
@@ -70,13 +196,11 @@
                 <v-select
                   v-model="item.tShirtSize"
                   :items="tShirtSizes"
-                  item-text="text"
-                  item-value="value"
                   label="TShirt Größe"
+                  variant="underlined"
+                  :required="true"
                   single-line
-                  :error-messages="
-                    item.tShirtSizeError ? ['TShirt Größe auswählen'] : []
-                  "
+                  :error-messages="item.tShirtSizeError ? ['TShirt Größe auswählen'] : []"
                   :form="createFormName(item)"
                 ></v-select>
               </div>
@@ -90,8 +214,7 @@
               <v-select
                 v-model="item.food"
                 :items="foods"
-                item-text="text"
-                item-value="value"
+                variant="underlined"
                 label="Essen"
                 single-line
                 required
@@ -109,6 +232,7 @@
                 v-model="item.birthday"
                 label="Geburtsdatum"
                 required
+                variant="underlined"
                 :form="createFormName(item)"
               />
             </div>
@@ -121,6 +245,7 @@
               <v-textarea
                 v-model="item.additionalInformation"
                 :form="createFormName(item)"
+                variant="underlined"
                 rows="1"
               />
             </div>
@@ -133,26 +258,23 @@
                 </v-icon>
               </div>
               <div v-if="!disabled && editingAttendeeIds.includes(item.id)">
-                <button type="sumbit" :form="createFormName(item)">
+                <button type="submit" :form="createFormName(item)">
                   <v-icon medium class="mr-2"> mdi-content-save </v-icon>
                 </button>
               </div>
               <button
                 v-if="
-                  !disabled &&
-                  !deletingAttendees.includes(item.id) &&
-                  item.id !== newAttendeeId
+                  !disabled && !deletingAttendees.includes(item.id) && item.id !== newAttendeeId
                 "
               >
-                <v-icon medium @click.prevent="deleteAttendee(item)">
-                  mdi-delete
-                </v-icon>
+                <v-icon medium @click.prevent="deleteAttendee(item)"> mdi-delete </v-icon>
               </button>
               <span v-if="!disabled && deletingAttendees.includes(item.id)">
                 <v-progress-circular indeterminate :size="24" color="green" />
               </span>
             </v-row>
           </template>
+          <template #bottom></template>
         </v-data-table>
       </v-card-text>
     </v-card>
@@ -164,152 +286,6 @@
     ></form>
   </section>
 </template>
-
-<script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
-import { AttendeeStatus, updateAttendee } from "../services/attendee";
-import { tShirtSizeText, foodText, birthdayText } from "../helper/displayText";
-
-import {
-  // eslint-disable-next-line no-unused-vars
-  Attendee,
-  Food,
-  TShirtSize,
-  // eslint-disable-next-line no-unused-vars
-  AttendeeRole,
-  createAttendee,
-} from "../services/attendee";
-
-import { deleteAttendee } from "../services/attendee";
-import { filterEnteredAttendees } from "@/helper/filterHelper";
-
-interface AttendeeWithValidation extends Attendee {
-  tShirtSizeError: boolean;
-}
-
-@Component({})
-export default class AttendeesTable extends Vue {
-  @Prop() attendees!: Attendee[];
-  @Prop() headlineText!: string;
-  @Prop() role!: AttendeeRole;
-  @Prop() departmentId!: string;
-  @Prop({ default: false }) disabled!: boolean;
-  // eslint-disable-next-line no-unused-vars
-  @Prop() attendeesChanged!: (change: number) => void;
-
-  newAttendees: Attendee[] = [];
-  deletedAttendeeIds: string[] = [];
-  newAttendeeId = "newAttendee";
-  deletingAttendees: string[] = [];
-  editingAttendeeIds: string[] = [this.newAttendeeId];
-  headers = [
-    { text: "", value: "status" },
-    { text: "Vorname", value: "firstName" },
-    { text: "Nachname", value: "lastName" },
-    { text: "Essen", value: "food" },
-    { text: "TShirt Größe", value: "tShirtSize" },
-    { text: "Geburtsdatum", value: "birthday" },
-    { text: "Anmerkung", value: "additionalInformation" },
-    { text: "", value: "actions", sortable: false },
-  ];
-  attendeeStatusLeft = AttendeeStatus.LEFT;
-  attendeeStatusEntered = AttendeeStatus.ENTERED;
-
-  deleteAttendee(attendee: Attendee) {
-    this.deletingAttendees.push(attendee.id);
-    deleteAttendee(attendee.id).then(() => {
-      this.removeAttendeeIdFromList(attendee.id, this.deletingAttendees);
-      this.deletedAttendeeIds.push(attendee.id);
-      this.attendeesChanged(-1);
-    });
-  }
-  editAttendee(attendee: Attendee) {
-    this.editingAttendeeIds.push(attendee.id);
-  }
-
-  saveAttendee(attendee: AttendeeWithValidation) {
-    if (!attendee.tShirtSize) {
-      attendee.tShirtSizeError = true;
-      return;
-    } else {
-      attendee.tShirtSizeError = false;
-    }
-
-    if (attendee.id === this.newAttendeeId) {
-      createAttendee(attendee).then((attendee) => {
-        this.newAttendees.push(attendee);
-        this.attendeesChanged(1);
-      });
-      return;
-    }
-    updateAttendee(attendee).then(() => {
-      this.removeAttendeeIdFromList(attendee.id, this.editingAttendeeIds);
-    });
-  }
-  removeAttendeeIdFromList = (id: string, list: string[]) => {
-    const indexOfAttendee = list.indexOf(id);
-    list.splice(indexOfAttendee, 1);
-  };
-
-  createFormName(attendee: Attendee) {
-    return `form-${this.departmentId}-${this.headlineText}-${attendee.id}`;
-  }
-
-  get tShirtSizes(): { value: TShirtSize; text: string }[] {
-    return Object.values(TShirtSize).map((value) => ({
-      value,
-      text: this.tShirtSizeText(value),
-    }));
-  }
-
-  get foods(): { value: Food; text: string }[] {
-    return Object.values(Food).map((value) => ({
-      value,
-      text: this.foodText(value),
-    }));
-  }
-
-  get enteredAttendees(): number {
-    return this.attendees.filter(filterEnteredAttendees).length;
-  }
-
-  birthdayText = birthdayText;
-  foodText = foodText;
-  tShirtSizeText = tShirtSizeText;
-
-  statusClass(item: any): string {
-    if (item.status === AttendeeStatus.ENTERED) {
-      return "icon-first entered";
-    }
-    if (item.status === AttendeeStatus.LEFT) {
-      return "icon-first left";
-    }
-    return "icon-first";
-  }
-
-  get attendeesWithNew(): AttendeeWithValidation[] {
-    return this.attendees
-      .concat(this.newAttendees)
-      .filter((attendee) => !this.deletedAttendeeIds.includes(attendee.id))
-      .concat([
-        {
-          status: null,
-          id: this.newAttendeeId,
-          firstName: "",
-          lastName: "",
-          birthday: "",
-          food: Food.MEAT,
-          tShirtSize: "" as TShirtSize,
-          additionalInformation: "",
-          role: this.role,
-          departmentId: this.departmentId,
-        },
-      ])
-      .map((attendee) => ({ ...attendee, tShirtSizeError: false }));
-  }
-}
-</script>
 
 <style scoped>
 .additional-information {

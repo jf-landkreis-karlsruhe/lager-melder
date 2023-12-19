@@ -1,3 +1,33 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
+import { login, isLoggedIn } from '../services/authentication'
+
+const router = useRouter()
+const toast = useToast()
+
+const username = ref<string>('')
+const password = ref<string>('')
+const loggedIn = ref<boolean>(false)
+const loading = ref<boolean>(false)
+
+const loginHandler = async () => {
+  loading.value = true
+  await login(username.value, password.value).catch(() => {
+    loading.value = false
+    toast.error('Der Login war nicht erfolgreich. Benutzername oder Passwort falsch.')
+  })
+  loading.value = false
+  loggedIn.value = true
+  router.push('/')
+}
+
+onMounted(() => {
+  loggedIn.value = isLoggedIn()
+})
+</script>
+
 <template>
   <div>
     <v-container>
@@ -31,33 +61,3 @@
     </v-container>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useToast } from 'vue-toastification'
-import { login, isLoggedIn } from '../services/authentication'
-
-const router = useRouter()
-const toast = useToast()
-
-const username = ref<string>('')
-const password = ref<string>('')
-const loggedIn = ref<boolean>(false)
-const loading = ref<boolean>(false)
-
-const loginHandler = async () => {
-  loading.value = true
-  await login(username.value, password.value).catch(() => {
-    loading.value = false
-    toast.error('Der Login war nicht erfolgreich. Benutzername oder Passwort falsch.')
-  })
-  loading.value = false
-  loggedIn.value = true
-  router.push('/')
-}
-
-onMounted(() => {
-  loggedIn.value = isLoggedIn()
-})
-</script>

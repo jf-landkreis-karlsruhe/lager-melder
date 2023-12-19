@@ -2,7 +2,7 @@ import { AttendeeRole, TShirtSize, Food, AttendeeStatus } from '../services/atte
 import type { Attendee } from '../services/attendee'
 
 export const youthLeaderAttendees = (
-  departmentId: string,
+  departmentId: number,
   attendees: Attendee[],
   filterInput: string
 ): Attendee[] => {
@@ -13,7 +13,7 @@ export const youthLeaderAttendees = (
 }
 
 export const youthAttendees = (
-  departmentId: string,
+  departmentId: number,
   attendees: Attendee[],
   filterInput: string
 ): Attendee[] => {

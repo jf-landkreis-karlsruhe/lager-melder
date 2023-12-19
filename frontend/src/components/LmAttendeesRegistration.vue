@@ -1,62 +1,3 @@
-<template>
-  <v-container>
-    <div>
-      <v-alert color="yellow darken-2" type="warning" border="top">
-        <div style="color: #333333">
-          <b>
-            Anmeldeschluss {{ registrationEndDiff ? 'ist' : 'war' }} am:
-            {{ registrationEndLocalized }} Uhr
-          </b>
-          <br />
-          <div v-if="registrationEndDiff">
-            Das sind noch {{ registrationEndDiff.days }}
-            {{ registrationEndDiff.days === 1 ? 'Tag' : 'Tage' }}
-            {{ registrationEndDiff.hours }}
-            {{ registrationEndDiff.hours === 1 ? 'Stunde' : 'Stunden' }}
-            {{ registrationEndDiff.minutes }}
-            {{ registrationEndDiff.minutes === 1 ? 'Minute' : 'Minuten' }}
-            <!-- {{ registrationEndDiff.seconds }}
-            {{ registrationEndDiff.seconds === 1 ? "Sekunde" : "Sekunden" }} -->
-          </div>
-          <div v-else>Anmeldeschluss ist bereits erreicht!</div>
-        </div>
-      </v-alert>
-
-      <div class="d-flex align-baseline">
-        <h1 class="mr-4">Teilnehmer {{ department.name }}</h1>
-        <div>
-          Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})
-        </div>
-      </div>
-      <v-row>
-        <v-col cols="4">
-          <v-text-field prepend-icon="mdi-magnify" v-model="filterInput" label="Teilnehmerfilter" />
-        </v-col>
-      </v-row>
-    </div>
-    <AttendeesTable
-      headlineText="Jugendliche"
-      :attendees="youthAttendeeList"
-      :departmentId="department.id"
-      :role="attendeeRoleYouth"
-      :attendeesChanged="attendeesChanged"
-      :disabled="!attendeesCanBeEdited"
-    />
-    <AttendeesTable
-      headlineText="Jugendleiter"
-      :attendees="youthLeaderAttendeeList"
-      :role="attendeeRoleYouthLeader"
-      :departmentId="department.id"
-      :attendeesChanged="attendeesChanged"
-      :disabled="!attendeesCanBeEdited"
-    />
-
-    <div v-if="department && department.id">
-      <TentsPreregistration :departmentId="department.id" />
-    </div>
-  </v-container>
-</template>
-
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { getAttendeesForMyDepartment, AttendeeRole } from '../services/attendee'
@@ -150,6 +91,65 @@ onMounted(() => {
   getMyDepartment().then((newDepartment) => (department.value = newDepartment))
 })
 </script>
+
+<template>
+  <v-container>
+    <div>
+      <v-alert color="warning" type="warning" border="top">
+        <div style="color: #333333">
+          <b>
+            Anmeldeschluss {{ registrationEndDiff ? 'ist' : 'war' }} am:
+            {{ registrationEndLocalized }} Uhr
+          </b>
+          <br />
+          <div v-if="registrationEndDiff">
+            Das sind noch {{ registrationEndDiff.days }}
+            {{ registrationEndDiff.days === 1 ? 'Tag' : 'Tage' }}
+            {{ registrationEndDiff.hours }}
+            {{ registrationEndDiff.hours === 1 ? 'Stunde' : 'Stunden' }}
+            {{ registrationEndDiff.minutes }}
+            {{ registrationEndDiff.minutes === 1 ? 'Minute' : 'Minuten' }}
+            <!-- {{ registrationEndDiff.seconds }}
+            {{ registrationEndDiff.seconds === 1 ? "Sekunde" : "Sekunden" }} -->
+          </div>
+          <div v-else>Anmeldeschluss ist bereits erreicht!</div>
+        </div>
+      </v-alert>
+
+      <div class="d-flex align-baseline">
+        <h1 class="mr-4">Teilnehmer {{ department.name }}</h1>
+        <div>
+          Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})
+        </div>
+      </div>
+      <v-row>
+        <v-col cols="4">
+          <v-text-field prepend-icon="mdi-magnify" v-model="filterInput" label="Teilnehmerfilter" />
+        </v-col>
+      </v-row>
+    </div>
+    <AttendeesTable
+      headlineText="Jugendliche"
+      :attendees="youthAttendeeList"
+      :departmentId="department.id"
+      :role="attendeeRoleYouth"
+      :attendeesChanged="attendeesChanged"
+      :disabled="!attendeesCanBeEdited"
+    />
+    <AttendeesTable
+      headlineText="Jugendleiter"
+      :attendees="youthLeaderAttendeeList"
+      :role="attendeeRoleYouthLeader"
+      :departmentId="department.id"
+      :attendeesChanged="attendeesChanged"
+      :disabled="!attendeesCanBeEdited"
+    />
+
+    <div v-if="department && department.id">
+      <TentsPreregistration :departmentId="department.id" />
+    </div>
+  </v-container>
+</template>
 
 <style scoped>
 .departmentCount {

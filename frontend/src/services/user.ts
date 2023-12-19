@@ -3,7 +3,7 @@ import type { Department } from './department'
 import { putData, getData, postData } from '../helper/fetch'
 
 export interface User {
-  id: string
+  id: number
   username: string
   password?: string
   role?: Roles
@@ -15,18 +15,18 @@ export const getMe = () => getData<User>(`users/me`, withAuthenticationHeader())
 export const changePassword = (user: User) =>
   putData<User>(`users/${user.id}/password`, withAuthenticationHeader(), user)
 
-export const sendRegistrationMail = (userId: string) =>
+export const sendRegistrationMail = (userId: number) =>
   postData<User>(`users/${userId}/sendRegistrationEmail`, withAuthenticationHeader(), {})
 
-export const userForDepartment = (departmentId: string) =>
+export const userForDepartment = (departmentId: number) =>
   getData<User>(`users/department/${departmentId}`, withAuthenticationHeader())
 
-export const updateRole = (userId: string, role: Roles) =>
+export const updateRole = (userId: number, role: Roles) =>
   putData<User>(`users/${userId}/role`, withAuthenticationHeader(), {
     role
   })
 
-export const createUser = (departmentId: string, username: string) =>
+export const createUser = (departmentId: number, username: string) =>
   postData<User>(`users`, withAuthenticationHeader(), {
     departmentId,
     username,
@@ -40,8 +40,8 @@ export interface DepartmentWithUserRequest {
   leaderEMail: string
 }
 export interface DepartmentWithUser extends DepartmentWithUserRequest {
-  departmentId: string
-  userId: string
+  departmentId: number
+  userId: number
 }
 
 export const registerNewDepartmentAndUser = (departmentWithUser: DepartmentWithUserRequest) => {

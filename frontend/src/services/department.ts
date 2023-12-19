@@ -15,7 +15,7 @@ export const updateDepartment = (department: Department) =>
   putData<Department>(`departments/${department.id}`, withAuthenticationHeader(), department)
 
 export interface Department {
-  id: string
+  id: number
   name: string
   leaderName: string
   leaderEMail: string

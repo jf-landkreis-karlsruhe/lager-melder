@@ -20,7 +20,7 @@ export const updateDepartment = (department: Department) =>
   );
 
 export interface Department {
-  id: string;
+  id: number;
   name: string;
   leaderName: string;
   leaderEMail: string;

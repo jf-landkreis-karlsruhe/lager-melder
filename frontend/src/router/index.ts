@@ -12,11 +12,11 @@ const router = createRouter({
       name: 'Login',
       component: () => import('../views/LoginView.vue')
     },
-    // {
-    //   path: '/teilnehmer',
-    //   name: 'AttendeesRegistration',
-    //   component: () => import('../views/AttendeesRegistrationView.vue')
-    // },
+    {
+      path: '/teilnehmer',
+      name: 'AttendeesRegistration',
+      component: () => import('../views/AttendeesRegistrationView.vue')
+    },
     // {
     //   path: '/overview',
     //   name: 'Lagerübersicht',
@@ -32,31 +32,21 @@ const router = createRouter({
     //   name: 'Meine Feuerwehr',
     //   component: () => import('../components/ListDepartment.vue')
     // },
-    // {
-    //   path: '/events/:eventCode',
-    //   name: 'Events',
-    //   component: () => import('../views/EventsView.vue')
-    // },
-    // {
-    //   path: '/pcr-tests',
-    //   name: 'PCR Tests',
-    //   component: () => import('../views/PcrTestsView.vue')
-    // },
-    // {
-    //   path: '/pcr-tests/:poolId',
-    //   name: 'PCR Test Pool',
-    //   component: () => import('../views/PcrTestView.vue')
-    // },
-    // {
-    //   path: '/einstellungen',
-    //   name: 'Einstellungen',
-    //   component: () => import('../views/SettingsView.vue')
-    // },
-    // {
-    //   path: '/anwesend',
-    //   name: 'Anwesende',
-    //   component: () => import('../views/EventSummaryView.vue')
-    // },
+    {
+      path: '/events/:eventCode',
+      name: 'Events',
+      component: () => import('../views/EventsView.vue')
+    },
+    {
+      path: '/einstellungen',
+      name: 'Einstellungen',
+      component: () => import('../views/SettingsView.vue')
+    },
+    {
+      path: '/anwesend',
+      name: 'Anwesende',
+      component: () => import('../views/EventSummaryView.vue')
+    },
     {
       path: '/account',
       name: 'Account',
