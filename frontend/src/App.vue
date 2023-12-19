@@ -1,58 +1,85 @@
-<template>
-  <v-app>
-    <div class="grid-container">
-      <div class="my-container">
-        <Header class="header" />
-        <main class="content">
-          <router-view />
-        </main>
-        <Footer class="footer" />
-      </div>
-    </div>
-  </v-app>
-</template>
-
-<script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-
-import Header from "./components/Header.vue";
-import Footer from "./components/Footer.vue";
-
-@Component({
-  components: { Header, Footer },
-})
-export default class App extends Vue {}
+<script setup lang="ts">
+import { RouterLink, RouterView } from 'vue-router'
+import HelloWorld from './components/HelloWorld.vue'
 </script>
 
-<style scoped lang="scss">
-.grid-container {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  height: 100%;
+<template>
+  <header>
+    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+
+    <div class="wrapper">
+      <HelloWorld msg="You did it!" />
+
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/about">About</RouterLink>
+      </nav>
+    </div>
+  </header>
+
+  <RouterView />
+</template>
+
+<style scoped>
+header {
+  line-height: 1.5;
+  max-height: 100vh;
 }
 
-.my-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  height: 100%;
+.logo {
+  display: block;
+  margin: 0 auto 2rem;
+}
 
-  .header {
-    flex: 0 1 auto;
+nav {
+  width: 100%;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+nav a.router-link-exact-active {
+  color: var(--color-text);
+}
+
+nav a.router-link-exact-active:hover {
+  background-color: transparent;
+}
+
+nav a {
+  display: inline-block;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+}
+
+nav a:first-of-type {
+  border: 0;
+}
+
+@media (min-width: 1024px) {
+  header {
+    display: flex;
+    place-items: center;
+    padding-right: calc(var(--section-gap) / 2);
   }
 
-  .content {
-    flex: 1 1 auto;
-    padding: 0;
-    @media screen and (min-width: 768px) {
-      padding: 0 14px;
-    }
+  .logo {
+    margin: 0 2rem 0 0;
   }
 
-  .footer {
-    flex: 0 1 auto;
+  header .wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  nav {
+    text-align: left;
+    margin-left: -1rem;
+    font-size: 1rem;
+
+    padding: 1rem 0;
+    margin-top: 1rem;
   }
 }
 </style>

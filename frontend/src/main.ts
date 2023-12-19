@@ -1,19 +1,11 @@
-import Vue from "vue";
-import App from "./App.vue";
-import router from "./router";
-import vuetify from "./plugins/vuetify";
+import './assets/main.css'
 
-import Toast from "vue-toastification";
-import "vue-toastification/dist/index.css";
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
 
-import "./assets/global.css";
-import "./assets/normalize.css";
+const app = createApp(App)
 
-Vue.use(Toast);
-Vue.config.productionTip = false;
+app.use(router)
 
-new Vue({
-  router,
-  vuetify,
-  render: (h) => h(App),
-}).$mount("#app");
+app.mount('#app')
