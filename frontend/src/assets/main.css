@@ -1,35 +1,53 @@
 @import './base.css';
+@import './normalize.css';
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+.underline {
+  text-decoration: underline;
+}
+
+.v-card {
+  padding: 14px;
+  margin-bottom: 30px;
+}
+
+h1 {
+  margin: 14px 0;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+}
+
+h2 {
+  margin: 9px 0;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
 }
 
 a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+a:visited {
+  color: var(--lm-c-active);
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+/* ____ANIMATIONS____ */
+
+/* __FADE__ */
+.fade-enter-active {
+  transition: all 2s ease;
+}
+.fade-leave-active {
+  transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+/* __SLIDE-FADE__ */
+.slide-fade-enter-active {
+  transition: all 0.25s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: translateX(100%);
+  opacity: 0;
 }
