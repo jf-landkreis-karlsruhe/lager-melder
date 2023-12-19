@@ -53,9 +53,9 @@ class JWTAuthenticationFilter(
             ?.let { UserEntry.to(it) }
             ?.let { user ->
                 JWT.create()
-                    .withSubject(user?.userName)
-                    .withClaim("departmentId", user?.department.id)
-                    .withClaim("role", user?.role)
+                    .withSubject(user.userName)
+                    .withClaim("departmentId", user.department.id)
+                    .withClaim("role", user.role)
                     .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION_TIME))
                     .sign(Algorithm.HMAC512(SECRET))
             }
