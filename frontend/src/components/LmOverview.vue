@@ -1,3 +1,137 @@
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { getAttendees, AttendeeRole, AttendeeStatus } from '../services/attendee'
+import type { Attendee } from '../services/attendee'
+import { checkinDepartmentToEvent, EventType, getEventByType } from '../services/event'
+import type { Event } from '../services/event'
+import { getDepartments } from '../services/department'
+import type { Department } from '../services/department'
+import {
+  youthLeaderAttendees,
+  youthAttendees,
+  filterEnteredAttendees
+} from '../helper/filterHelper'
+import { hasAdministrationRole as hasAdministrationRole } from '../services/authentication'
+import { getBatches, getDepartmentOverview, getFoodPDF, getTShirtPDF } from '../services/adminFiles'
+import { showFile } from '../services/filesHelper'
+import { getTents } from '@/services/tents'
+import type { Tents } from '@/services/tents'
+import AttendeesTable from './LmAttendeesTable.vue'
+
+interface DepartmentWithAttendees {
+  department: Department
+  youthAttendees: Attendee[]
+  youthLeader: Attendee[]
+}
+
+const attendees = ref<Attendee[]>([])
+const departments = ref<Department[]>([])
+const filterInput = ref<string>('')
+const attendeeRoleYouth = ref<AttendeeRole>(AttendeeRole.YOUTH)
+const attendeeRoleYouthLeader = ref<AttendeeRole>(AttendeeRole.YOUTH_LEADER)
+const totalTents = ref<Tents>({} as Tents)
+const enterEvent = ref<Event>({} as Event)
+const initialLoanding = ref<boolean>(true)
+const loadingBatches = ref<boolean>(false)
+const loadingFood = ref<boolean>(false)
+const loadingTshirt = ref<boolean>(false)
+const loadingDepartmentOverview = ref<boolean>(false)
+
+const departmentWithAttendees = computed<DepartmentWithAttendees[]>(() => {
+  return departments.value
+    .map((department) => {
+      return {
+        department: department,
+        youthAttendees: youthAttendees(department.id, attendees.value, filterInput.value),
+        youthLeader: youthLeaderAttendees(department.id, attendees.value, filterInput.value)
+      }
+    })
+    .filter(
+      (registration) =>
+        registration.youthAttendees.length > 0 || registration.youthLeader.length > 0
+    )
+})
+
+const downloadBatchesPDF = () => {
+  loadingBatches.value = true
+  getBatches().then((fileData) => {
+    loadingBatches.value = false
+    showFile(fileData.data, fileData.fileName)
+  })
+}
+
+const downloadFoodPDF = () => {
+  loadingFood.value = true
+  getFoodPDF().then((fileData) => {
+    loadingFood.value = false
+    showFile(fileData.data, fileData.fileName)
+  })
+}
+
+const downloadTShirtsPDF = () => {
+  loadingTshirt.value = true
+  getTShirtPDF().then((fileData) => {
+    loadingTshirt.value = false
+    showFile(fileData.data, fileData.fileName)
+  })
+}
+
+const downloadDepartmentOverview = () => {
+  loadingDepartmentOverview.value = true
+  getDepartmentOverview().then((fileData) => {
+    loadingDepartmentOverview.value = false
+    showFile(fileData.data, fileData.fileName)
+  })
+}
+
+const totalAttendeeCount = computed<number>(() => {
+  return attendees.value.length
+})
+
+const enteredAttendeesCount = computed<number>(() => {
+  return attendees.value.filter(filterEnteredAttendees).length
+})
+
+const checkinDepartment = (departmentId: number) => {
+  checkinDepartmentToEvent(enterEvent.value, departmentId).then(() => {
+    attendees.value = attendees.value.map((att) => {
+      if (att.departmentId === departmentId) {
+        att.status = AttendeeStatus.ENTERED
+      }
+      return att
+    })
+  })
+}
+
+onMounted(() => {
+  getAttendees().then((newAttendees) => {
+    attendees.value = newAttendees
+  })
+  getDepartments().then((newDepartments) => (departments.value = newDepartments))
+  getEventByType(EventType.GLOBAL_ENTER).then((event: Event) => (enterEvent.value = event))
+  getTents().then((tentsList) => {
+    initialLoanding.value = false
+    totalTents.value = tentsList.reduce(
+      (acc, current) => {
+        acc.sg200 = acc.sg200 + current.sg200
+        acc.sg20 = acc.sg20 + current.sg20
+        acc.sg30 = acc.sg30 + current.sg30
+        acc.sg40 = acc.sg40 + current.sg40
+        acc.sg50 = acc.sg50 + current.sg50
+        return acc
+      },
+      {
+        sg200: 0,
+        sg20: 0,
+        sg30: 0,
+        sg40: 0,
+        sg50: 0
+      } as Tents
+    )
+  })
+})
+</script>
+
 <template>
   <v-container v-if="hasAdministrationRole()">
     <h1>Lagerausweise</h1>
@@ -166,140 +300,6 @@
     <!-- <Distribution :attendees="attendees" /> -->
   </v-container>
 </template>
-
-<script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { getAttendees, AttendeeRole, AttendeeStatus } from '../services/attendee'
-import type { Attendee } from '../services/attendee'
-import { checkinDepartmentToEvent, EventType, getEventByType } from '../services/event'
-import type { Event } from '../services/event'
-import { getDepartments } from '../services/department'
-import type { Department } from '../services/department'
-import {
-  youthLeaderAttendees,
-  youthAttendees,
-  filterEnteredAttendees
-} from '../helper/filterHelper'
-import { hasAdministrationRole as hasAdministrationRole } from '../services/authentication'
-import { getBatches, getDepartmentOverview, getFoodPDF, getTShirtPDF } from '../services/adminFiles'
-import { showFile } from '../services/filesHelper'
-import { getTents } from '@/services/tents'
-import type { Tents } from '@/services/tents'
-import AttendeesTable from './LmAttendeesTable.vue'
-
-interface DepartmentWithAttendees {
-  department: Department
-  youthAttendees: Attendee[]
-  youthLeader: Attendee[]
-}
-
-const attendees = ref<Attendee[]>([])
-const departments = ref<Department[]>([])
-const filterInput = ref<string>('')
-const attendeeRoleYouth = ref<AttendeeRole>(AttendeeRole.YOUTH)
-const attendeeRoleYouthLeader = ref<AttendeeRole>(AttendeeRole.YOUTH_LEADER)
-const totalTents = ref<Tents>({} as Tents)
-const enterEvent = ref<Event>({} as Event)
-const initialLoanding = ref<boolean>(true)
-const loadingBatches = ref<boolean>(false)
-const loadingFood = ref<boolean>(false)
-const loadingTshirt = ref<boolean>(false)
-const loadingDepartmentOverview = ref<boolean>(false)
-
-const departmentWithAttendees = computed<DepartmentWithAttendees[]>(() => {
-  return departments.value
-    .map((department) => {
-      return {
-        department: department,
-        youthAttendees: youthAttendees(department.id, attendees.value, filterInput.value),
-        youthLeader: youthLeaderAttendees(department.id, attendees.value, filterInput.value)
-      }
-    })
-    .filter(
-      (registration) =>
-        registration.youthAttendees.length > 0 || registration.youthLeader.length > 0
-    )
-})
-
-const downloadBatchesPDF = () => {
-  loadingBatches.value = true
-  getBatches().then((fileData) => {
-    loadingBatches.value = false
-    showFile(fileData.data, fileData.fileName)
-  })
-}
-
-const downloadFoodPDF = () => {
-  loadingFood.value = true
-  getFoodPDF().then((fileData) => {
-    loadingFood.value = false
-    showFile(fileData.data, fileData.fileName)
-  })
-}
-
-const downloadTShirtsPDF = () => {
-  loadingTshirt.value = true
-  getTShirtPDF().then((fileData) => {
-    loadingTshirt.value = false
-    showFile(fileData.data, fileData.fileName)
-  })
-}
-
-const downloadDepartmentOverview = () => {
-  loadingDepartmentOverview.value = true
-  getDepartmentOverview().then((fileData) => {
-    loadingDepartmentOverview.value = false
-    showFile(fileData.data, fileData.fileName)
-  })
-}
-
-const totalAttendeeCount = computed<number>(() => {
-  return attendees.value.length
-})
-
-const enteredAttendeesCount = computed<number>(() => {
-  return attendees.value.filter(filterEnteredAttendees).length
-})
-
-const checkinDepartment = (departmentId: number) => {
-  checkinDepartmentToEvent(enterEvent.value, departmentId).then(() => {
-    attendees.value = attendees.value.map((att) => {
-      if (att.departmentId === departmentId) {
-        att.status = AttendeeStatus.ENTERED
-      }
-      return att
-    })
-  })
-}
-
-onMounted(() => {
-  getAttendees().then((newAttendees) => {
-    attendees.value = newAttendees
-  })
-  getDepartments().then((newDepartments) => (departments.value = newDepartments))
-  getEventByType(EventType.GLOBAL_ENTER).then((event: Event) => (enterEvent.value = event))
-  getTents().then((tentsList) => {
-    initialLoanding.value = false
-    totalTents.value = tentsList.reduce(
-      (acc, current) => {
-        acc.sg200 = acc.sg200 + current.sg200
-        acc.sg20 = acc.sg20 + current.sg20
-        acc.sg30 = acc.sg30 + current.sg30
-        acc.sg40 = acc.sg40 + current.sg40
-        acc.sg50 = acc.sg50 + current.sg50
-        return acc
-      },
-      {
-        sg200: 0,
-        sg20: 0,
-        sg30: 0,
-        sg40: 0,
-        sg50: 0
-      } as Tents
-    )
-  })
-})
-</script>
 
 <style scoped lang="scss">
 .indented-1 {

@@ -20,7 +20,7 @@ const router = createRouter({
     {
       path: '/overview',
       name: 'Lagerübersicht',
-      component: () => import('../views/Overview.vue')
+      component: () => import('../views/OverviewView.vue')
     },
     // {
     //   path: '/files',
