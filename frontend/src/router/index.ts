@@ -27,11 +27,11 @@ const router = createRouter({
       name: 'Registrierungsunterlagen',
       component: () => import('../views/RegistrationFiles.vue')
     },
-    // {
-    //   path: '/feuerwehr',
-    //   name: 'Meine Feuerwehr',
-    //   component: () => import('../components/ListDepartment.vue')
-    // },
+    {
+      path: '/feuerwehr',
+      name: 'Meine Feuerwehr',
+      component: () => import('../views/ListDepartmentView.vue')
+    },
     {
       path: '/events/:eventCode',
       name: 'Events',
