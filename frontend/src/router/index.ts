@@ -22,11 +22,11 @@ const router = createRouter({
       name: 'Lagerübersicht',
       component: () => import('../views/OverviewView.vue')
     },
-    // {
-    //   path: '/files',
-    //   name: 'Registrierungsunterlagen',
-    //   component: () => import('../components/RegistrationFiles.vue')
-    // },
+    {
+      path: '/files',
+      name: 'Registrierungsunterlagen',
+      component: () => import('../views/RegistrationFiles.vue')
+    },
     // {
     //   path: '/feuerwehr',
     //   name: 'Meine Feuerwehr',
