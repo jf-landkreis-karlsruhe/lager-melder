@@ -90,8 +90,14 @@ onMounted(() => {
 <template>
   <div v-if="!error">
     <form v-on:submit.prevent="onUpdateDepartment">
-      <v-text-field v-model="leaderName" label="Jugendwart" required />
-      <v-text-field type="email" v-model="leaderEmail" label="Jugendwart Email" required />
+      <v-text-field variant="underlined" v-model="leaderName" label="Jugendwart" required />
+      <v-text-field
+        variant="underlined"
+        type="email"
+        v-model="leaderEmail"
+        label="Jugendwart Email"
+        required
+      />
       <v-container>
         <v-row justify="end">
           <v-dialog v-model="dialogOpen" persistent max-width="500">
@@ -138,6 +144,7 @@ onMounted(() => {
               type="text"
               v-model="user.username"
               label="Benutzername"
+              variant="underlined"
               hint="Read only"
               readonly
               required

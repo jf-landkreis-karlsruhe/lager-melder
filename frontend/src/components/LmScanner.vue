@@ -204,6 +204,7 @@ const initCameraSelection = () => {
                   :hint="props.manualCodeHint"
                   :rules="props.manualCodeInputRules"
                   class="manual-code-input mr-3"
+                  variant="underlined"
                 />
                 <v-btn
                   :disabled="!manualCode || !manualCodeValid"

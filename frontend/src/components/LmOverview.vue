@@ -258,6 +258,7 @@ onMounted(() => {
             prepend-icon="mdi-magnify"
             v-model="filterInput"
             label="Filter nach Teilnehmer"
+            variant="underlined"
             class="w"
           />
         </v-col>

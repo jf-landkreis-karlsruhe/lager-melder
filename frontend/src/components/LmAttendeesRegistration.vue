@@ -124,7 +124,12 @@ onMounted(() => {
       </div>
       <v-row>
         <v-col cols="4">
-          <v-text-field prepend-icon="mdi-magnify" v-model="filterInput" label="Teilnehmerfilter" />
+          <v-text-field
+            variant="underlined"
+            prepend-icon="mdi-magnify"
+            v-model="filterInput"
+            label="Teilnehmerfilter"
+          />
         </v-col>
       </v-row>
     </div>

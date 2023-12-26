@@ -71,9 +71,15 @@ watch([password, repeatPassword], () => {
             v-model="password"
             label="Passwort"
             hint="Mindestlänge 8 Zeichen"
+            variant="underlined"
             required
           />
-          <v-text-field v-model="repeatPassword" label="Passwort wiederholen" required />
+          <v-text-field
+            variant="underlined"
+            v-model="repeatPassword"
+            label="Passwort wiederholen"
+            required
+          />
           <v-alert v-if="showPasswordError" type="error">
             Die Passwörter sind nicht gleich.
           </v-alert>
