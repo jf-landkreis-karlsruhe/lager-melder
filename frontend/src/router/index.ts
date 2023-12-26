@@ -17,11 +17,11 @@ const router = createRouter({
       name: 'AttendeesRegistration',
       component: () => import('../views/AttendeesRegistrationView.vue')
     },
-    // {
-    //   path: '/overview',
-    //   name: 'Lagerübersicht',
-    //   component: () => import('../components/Overview.vue')
-    // },
+    {
+      path: '/overview',
+      name: 'Lagerübersicht',
+      component: () => import('../views/Overview.vue')
+    },
     // {
     //   path: '/files',
     //   name: 'Registrierungsunterlagen',

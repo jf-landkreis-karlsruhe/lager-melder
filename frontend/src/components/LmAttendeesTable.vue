@@ -15,11 +15,11 @@ interface AttendeeWithValidation extends Attendee {
 const props = withDefaults(
   defineProps<{
     attendees: Attendee[]
+    departmentId: number
     headlineText: string
     role: AttendeeRole
-    departmentId: number
     disabled: boolean
-    attendeesChanged: (change: number) => void
+    attendeesChanged?: (change: number) => void
   }>(),
   {
     disabled: false
@@ -47,7 +47,7 @@ const deleteAttendee = (att: Attendee) => {
   deleteAttendeeService(att.id).then(() => {
     removeAttendeeIdFromList(att.id, deletingAttendees.value)
     deletedAttendeeIds.value.push(att.id)
-    props.attendeesChanged(-1)
+    props.attendeesChanged?.(-1)
   })
 }
 
@@ -66,7 +66,7 @@ const saveAttendee = (att: AttendeeWithValidation) => {
   if (att.id === newAttendeeId.value) {
     createAttendee(att).then((newAtt) => {
       newAttendees.value.push(newAtt)
-      props.attendeesChanged(1)
+      props.attendeesChanged?.(1)
     })
     return
   }

@@ -134,8 +134,8 @@ header {
 
           &.admin {
             a {
-              border: 2px solid #ffe760;
-              background: linear-gradient(to left, #ffe760 50%, #ecd032 50%) right;
+              border: 2px solid var(--lm-c-accent);
+              background: linear-gradient(to left, var(--lm-c-accent) 50%, #ecd032 50%) right;
               background-size: 200%;
 
               &:hover {
