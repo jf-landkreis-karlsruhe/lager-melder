@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import Footer from './components/LmFooter.vue';
-import Header from "./components/LmHeader.vue";
+import Footer from './components/LmFooter.vue'
+import Header from './components/LmHeader.vue'
 </script>
 
 <template>
@@ -24,6 +24,7 @@ import Header from "./components/LmHeader.vue";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
+  overflow: hidden;
 }
 
 .my-container {
