@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { hasAdministrationRole, Roles, rolesText } from '@/services/authentication'
+import { hasAdministrationRole, Roles, rolesText as rolesTitle } from '@/services/authentication'
 import { updateDepartment } from '../services/department'
 import type { Department } from '../services/department'
 import { sendRegistrationMail, userForDepartment, updateRole } from '../services/user'
@@ -23,11 +23,11 @@ const dialogOpen = ref<boolean>(false)
 const user = ref<User>({} as User)
 const leaderName = ref<string>(props.department.leaderName)
 const leaderEmail = ref<string>(props.department.leaderEMail)
-const rolesList = ref<{ value: Roles; text: string }[]>([
-  { value: Roles.USER, text: rolesText(Roles.USER) },
+const rolesList = ref<{ value: Roles; title: string }[]>([
+  { value: Roles.USER, title: rolesTitle(Roles.USER) },
   {
     value: Roles.SPECIALIZED_FIELD_DIRECTOR,
-    text: rolesText(Roles.SPECIALIZED_FIELD_DIRECTOR)
+    title: rolesTitle(Roles.SPECIALIZED_FIELD_DIRECTOR)
   }
 ])
 
@@ -66,13 +66,13 @@ const onUpdateRole = () => {
         user.value = updatedUser
         roleLoading.value = false
         toast.success(
-          `Rolle ${rolesText(updatedUser.role)} für ${updatedUser.username} gepeichert.`
+          `Rolle ${rolesTitle(updatedUser.role)} für ${updatedUser.username} gepeichert.`
         )
       })
       .catch(() => {
         roleLoading.value = false
         toast.error(
-          `Rolle ${rolesText(user.value.role)} konnte für ${
+          `Rolle ${rolesTitle(user.value.role)} konnte für ${
             user.value.username
           } nicht gepeichert werden.`
         )
@@ -80,10 +80,14 @@ const onUpdateRole = () => {
   }
 }
 
-onMounted(() => {
-  userForDepartment(props.department.id)
-    .then((newUser) => (user.value = newUser))
-    .catch(() => (error.value = true))
+onMounted(async () => {
+  const newUser = await userForDepartment(props.department.id).catch(() => {
+    error.value = true
+    return undefined
+  })
+  if (newUser) {
+    user.value = newUser
+  }
 })
 </script>
 
@@ -139,7 +143,7 @@ onMounted(() => {
     <form v-on:submit.prevent="onUpdateRole">
       <v-container v-if="user.role !== 'ADMIN'">
         <v-row align="center" justify="space-between">
-          <div>
+          <div class="w-33">
             <v-text-field
               type="text"
               v-model="user.username"
@@ -150,11 +154,12 @@ onMounted(() => {
               required
             />
           </div>
-          <div>
+          <div class="w-33">
             <v-select
               v-model="user.role"
               :items="rolesList"
               item-text="text"
+              variant="underlined"
               item-value="value"
               label="Role"
             ></v-select>
@@ -165,7 +170,7 @@ onMounted(() => {
             </button>
           </div>
         </v-row>
-        <hr class="mt-16 mb-8" />
+        <v-divider class="mt-16 mb-8 border-opacity-15"></v-divider>
       </v-container>
     </form>
   </div>

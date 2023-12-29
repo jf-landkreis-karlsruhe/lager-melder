@@ -32,7 +32,7 @@ onMounted(() => {
   <div>
     <v-container>
       <v-row justify="center">
-        <v-col cols="4">
+        <v-col sm="12" md="6">
           <v-card v-if="!loggedIn">
             <v-card-title>Login</v-card-title>
             <form @submit.prevent="loginHandler">
