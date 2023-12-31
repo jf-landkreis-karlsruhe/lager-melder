@@ -136,4 +136,30 @@ class MailSenderService(
             return false
         }
     }
+    
+    fun sendForgotPasswordMail(to: String, changePasswordLink: String): Boolean {
+      try {
+          val headerLogoName = "kreiszeltlager-logo.jpg"
+          val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
+
+          val cxt = Context()
+          cxt.setVariable("headerLogo", headerLogoName);
+          cxt.setVariable("changePasswordLink", changePasswordLink)
+          val mimeMessage = this.mailSender.createMimeMessage()
+          val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
+          message.setFrom(sendFrom)
+          message.setTo(to)
+          val htmlContent = this.htmlTemplateEngine.process("forgot-password", cxt)
+          message.setText(htmlContent, true)
+          message.addInline(headerLogoName, headerLogo);
+          logger.info("Forgot password mail send to $to")
+          if (sendMail) {
+              this.mailSender.send(mimeMessage)
+          }
+          return true
+      } catch (exception: SendFailedException) {
+          logger.error(exception.message)
+          return false
+      }
+    }
 }
