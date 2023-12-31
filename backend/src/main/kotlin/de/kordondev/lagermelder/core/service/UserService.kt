@@ -101,6 +101,7 @@ class UserService(
             .also { sendEmail(it, newPassword, settings) }
     }
 
+
     private fun sendEmail(user: User, password: String, settings: Settings) {
         authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         mailSenderService.sendRegistrationMail(
