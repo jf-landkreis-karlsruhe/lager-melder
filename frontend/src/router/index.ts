@@ -25,7 +25,7 @@ const router = createRouter({
     {
       path: '/files',
       name: 'Registrierungsunterlagen',
-      component: () => import('../views/RegistrationFiles.vue')
+      component: () => import('../views/RegistrationFilesView.vue')
     },
     {
       path: '/feuerwehr',

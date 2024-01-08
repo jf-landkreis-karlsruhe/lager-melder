@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { login, isLoggedIn } from '../services/authentication'
+import LmContainer from './LmContainer.vue'
 
 const router = useRouter()
 const toast = useToast()
@@ -33,7 +34,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <v-container>
+    <LmContainer>
       <v-row justify="center">
         <v-col sm="12" md="6">
           <v-card v-if="!loggedIn">
@@ -67,6 +68,6 @@ onMounted(() => {
           </v-card>
         </v-col>
       </v-row>
-    </v-container>
+    </LmContainer>
   </div>
 </template>

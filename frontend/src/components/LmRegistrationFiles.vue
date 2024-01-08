@@ -8,6 +8,7 @@ import type { StartDownloadRegistrationFiles } from '../services/settings'
 import { dateLocalized } from '@/helper/displayDate'
 import FileList from './LmFileList.vue'
 import YouthPlanDistribution from './LmYouthPlanDistribution.vue'
+import LmContainer from './LmContainer.vue'
 
 const departmentId = ref<number | undefined>()
 const departmentName = ref<string>('')
@@ -41,7 +42,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-container>
+  <LmContainer>
     <h1>Anmeldeunterlagen</h1>
     <div
       v-if="
@@ -80,7 +81,7 @@ onMounted(() => {
       Die Anmeldeunterlagen sind noch nicht bereit zum Herunterladen. Sie stehen ab
       {{ localizedStartDate && localizedStartDate }} zur Verfügung.
     </div>
-  </v-container>
+  </LmContainer>
 </template>
 
 <style scoped></style>

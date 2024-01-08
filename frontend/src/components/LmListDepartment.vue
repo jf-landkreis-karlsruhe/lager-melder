@@ -7,6 +7,7 @@ import { getMe } from '../services/user'
 import type { User } from '../services/user'
 import EditDepartment from './LmEditDepartment.vue'
 import AddDepartment from './LmAddDepartment.vue'
+import LmContainer from './LmContainer.vue'
 
 const myDepartment = ref<Department>({} as Department)
 const departments = ref<Department[]>([])
@@ -41,30 +42,22 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
-    <v-container>
-      <div v-if="hasAdministrationRole() && departments.length > 0">
-        <v-row justify="center">
-          <v-col sm="12" md="8" lg="6" xl="6">
-            <h1>Feuerwehren</h1>
-            <div v-for="department in departments" :key="department.id">
-              <h2>{{ department.name }}</h2>
-              <EditDepartment :department="department" class="mb-8" />
-            </div>
-          </v-col>
-        </v-row>
-      </div>
-    </v-container>
+  <div v-if="hasAdministrationRole()">
+    <div v-if="departments.length > 0">
+      <LmContainer>
+        <h1>Feuerwehren</h1>
+        <div v-for="department in departments" :key="department.id">
+          <h2>{{ department.name }}</h2>
+          <EditDepartment :department="department" class="mb-8" />
+        </div>
+      </LmContainer>
+    </div>
 
-    <div v-if="hasAdministrationRole()" class="add-new-department">
-      <v-container>
-        <v-row justify="center">
-          <v-col sm="12" md="8" lg="6" xl="6">
-            <h1>Feuerwehr hinzufügen</h1>
-            <AddDepartment :onDepartmentCreated="onDepartmentCreated" class="mb-8" />
-          </v-col>
-        </v-row>
-      </v-container>
+    <div class="add-new-department">
+      <LmContainer>
+        <h1>Feuerwehr hinzufügen</h1>
+        <AddDepartment :onDepartmentCreated="onDepartmentCreated" class="mb-8" />
+      </LmContainer>
     </div>
   </div>
 </template>

@@ -78,107 +78,113 @@ const downloadEventsPDF = () => {
 
 <template>
   <v-card class="mb-16">
-    <h2 class="pa-4 ml-md-6">Events</h2>
+    <h2 class="pa-4 ml-md-4">Events</h2>
     <v-row justify="center">
-      <v-col sm="12" md="8" lg="6" xl="6">
-        <h3>Event erstellen</h3>
-        <form class="pa-4" v-on:submit.prevent="createEventInternal()">
-          <v-text-field
-            v-model="eventName"
-            label="Titel des Event"
-            required
-            :variant="'underlined'"
-          />
-          <v-row class="v-row" justify="end">
-            <v-btn color="primary" :loading="loadingEventId === '0'" type="submit" rounded>
-              <span>Erstellen</span>
+      <v-col sm="12">
+        <div class="pa-4">
+          <h3>Event erstellen</h3>
+          <form v-on:submit.prevent="createEventInternal()">
+            <v-text-field
+              v-model="eventName"
+              label="Titel des Event"
+              required
+              :variant="'underlined'"
+            />
+            <v-row class="v-row" justify="end">
+              <v-btn color="primary" :loading="loadingEventId === '0'" type="submit" rounded>
+                <span>Erstellen</span>
+              </v-btn>
+            </v-row>
+          </form>
+        </div>
+
+        <div class="px-4">
+          <h2>Event QR Codes</h2>
+          <p class="d-flex justify-space-between align-center mb-6">
+            Die QR Codes für alle Events herrunterladen.
+            <v-btn
+              small
+              class="underline"
+              :loading="loadingDownload"
+              @click="downloadEventsPDF"
+              rounded
+            >
+              Herunterladen
+              <v-icon right dark> mdi-cloud-download </v-icon>
             </v-btn>
-          </v-row>
-        </form>
+          </p>
+        </div>
 
-        <h2>Event QR Codes</h2>
-        <p>
-          Die QR Codes für alle Events herrunterladen.
-          <v-btn
-            small
-            class="underline"
-            :loading="loadingDownload"
-            @click="downloadEventsPDF"
-            rounded
-          >
-            Herunterladen
-            <v-icon right dark> mdi-cloud-download </v-icon>
-          </v-btn>
-        </p>
-
-        <h3>Event verwalten</h3>
-        <div class="flex-row flex-center">
-          <v-card class="card event-card mt-6">
-            <p v-if="!events || events.length === 0" class="mb-0">ℹ️ Keine Events vorhanden.</p>
-            <div class="flex-row event" v-for="event in events" :key="event.id">
-              <div class="flex-row flex-grow">
-                <div v-if="!editingEventIds.includes(event.id)">
-                  {{ event.name }}
-                </div>
-                <div v-if="editingEventIds.includes(event.id)">
-                  <v-text-field
-                    type="text"
-                    v-model="event.name"
-                    label="Titel des Event"
-                    :variant="'underlined'"
-                    required
-                    :form="createFormName(event)"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div class="flex-row">
+        <div class="px-4">
+          <h3>Event verwalten</h3>
+          <div class="flex-row flex-center">
+            <v-card class="event-card mt-6 p-6">
+              <p v-if="!events || events.length === 0" class="mb-0">ℹ️ Keine Events vorhanden.</p>
+              <div class="flex-row event" v-for="event in events" :key="event.id">
+                <div class="flex-row flex-grow">
                   <div v-if="!editingEventIds.includes(event.id)">
-                    <a
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      :href="'/events/' + event.code"
-                      class="link-button"
-                    >
-                      <v-icon medium class="mr-2"> mdi-open-in-new </v-icon>
-                    </a>
-                    <v-icon medium class="mr-2" @click.prevent="addToEditing(event)">
-                      mdi-pencil
-                    </v-icon>
+                    {{ event.name }}
                   </div>
                   <div v-if="editingEventIds.includes(event.id)">
-                    <v-btn
-                      type="sumbit"
-                      :loading="loadingEventId === event.id"
+                    <v-text-field
+                      type="text"
+                      v-model="event.name"
+                      label="Titel des Event"
+                      :variant="'underlined'"
+                      required
                       :form="createFormName(event)"
-                      rounded
-                    >
-                      <v-icon medium class="mr-2"> mdi-content-save </v-icon>
-                    </v-btn>
+                    />
                   </div>
-                  <v-icon
-                    medium
-                    @click.prevent="deleteEventInteral(event.id)"
-                    v-if="event.type === eventTypeLocation"
-                  >
-                    mdi-delete
-                  </v-icon>
-                  <div
-                    style="width: 24px; height: 24px"
-                    v-if="event.type !== eventTypeLocation"
-                  ></div>
+                </div>
+
+                <div>
+                  <div class="flex-row">
+                    <div v-if="!editingEventIds.includes(event.id)">
+                      <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        :href="'/events/' + event.code"
+                        class="link-button"
+                      >
+                        <v-icon medium class="mr-2"> mdi-open-in-new </v-icon>
+                      </a>
+                      <v-icon medium class="mr-2" @click.prevent="addToEditing(event)">
+                        mdi-pencil
+                      </v-icon>
+                    </div>
+                    <div v-if="editingEventIds.includes(event.id)">
+                      <v-btn
+                        type="sumbit"
+                        :loading="loadingEventId === event.id"
+                        :form="createFormName(event)"
+                        rounded
+                      >
+                        <v-icon medium class="mr-2"> mdi-content-save </v-icon>
+                      </v-btn>
+                    </div>
+                    <v-icon
+                      medium
+                      @click.prevent="deleteEventInteral(event.id)"
+                      v-if="event.type === eventTypeLocation"
+                    >
+                      mdi-delete
+                    </v-icon>
+                    <div
+                      style="width: 24px; height: 24px"
+                      v-if="event.type !== eventTypeLocation"
+                    ></div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <form
-              v-for="event in events"
-              :key="'form-' + event.id"
-              :id="createFormName(event)"
-              v-on:submit.prevent="saveEvent(event)"
-            />
-          </v-card>
+              <form
+                v-for="event in events"
+                :key="'form-' + event.id"
+                :id="createFormName(event)"
+                v-on:submit.prevent="saveEvent(event)"
+              />
+            </v-card>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -190,7 +196,7 @@ const downloadEventsPDF = () => {
   display: flex;
 }
 .v-row {
-  padding: 0 14px;
+  padding: 0 16px;
 }
 .flex-grow {
   flex: 1 1 auto;
@@ -199,7 +205,7 @@ const downloadEventsPDF = () => {
   justify-content: center;
 }
 .event {
-  margin-bottom: 12px;
+  padding: 6px 16px;
 }
 .event-card {
   flex: 0 1 800px;

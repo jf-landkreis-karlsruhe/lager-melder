@@ -40,9 +40,9 @@ onMounted(() => {
 <template>
   <section>
     <v-card class="pa-4 mb-16">
-      <h2 class="ml-md-6">Allgemein</h2>
+      <h2 class="ml-md-4">Allgemein</h2>
       <v-row justify="center">
-        <v-col sm="12" md="8" lg="6" xl="6">
+        <v-col sm="12">
           <form class="pa-4" v-on:submit.prevent="saveSettings(settings)">
             <div>
               <h3>Anmeldung</h3>

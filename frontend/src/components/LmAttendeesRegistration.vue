@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onBeforeMount, onMounted } from 'vue'
 import { getAttendeesForMyDepartment, AttendeeRole } from '../services/attendee'
 import type { Attendee } from '../services/attendee'
 import { getMyDepartment } from '../services/department'
@@ -13,8 +13,6 @@ import AttendeesTable from './LmAttendeesTable.vue'
 import TentsPreregistration from './LmTentsPreregistration.vue'
 import { getRegistrationEnd } from '@/services/settings'
 import { dateTimeLocalized } from '@/helper/displayDate'
-import { onBeforeMount } from 'vue'
-import { onMounted } from 'vue'
 
 const attendees = ref<Attendee[]>([] as Attendee[])
 const department = ref<Department>({} as Department)

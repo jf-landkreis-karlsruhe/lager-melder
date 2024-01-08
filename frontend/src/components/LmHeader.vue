@@ -165,7 +165,7 @@ header {
         &:active,
         &.router-link-active {
           color: var(--lm-c-active);
-          box-shadow: 0 3px 0 var(--lm-c-active);
+          box-shadow: 0 3px 0 -1px var(--lm-c-active);
         }
 
         .account__link {
