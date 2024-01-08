@@ -1,4 +1,4 @@
-version: '3.6'
+version: "3.6"
 
 services:
   database:
@@ -12,7 +12,7 @@ services:
       - MYSQL_PASSWORD=pass
       - MYSQL_ROOT_PASSWORD=secRET
     expose:
-      - '3306'
+      - "3306"
   backend:
     image: openjdk
     container_name: lm-backend
@@ -33,4 +33,4 @@ services:
       - "9000:9000"
     volumes:
       - "../../frontend/:/app/:rw"
-    command: sh -c "cd /app && yarn install && yarn serve"
+    command: sh -c "cd /app && npm install && npm run start"
