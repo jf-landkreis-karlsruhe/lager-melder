@@ -4,7 +4,7 @@ import type { ErrorResponse } from '@/services/errorConstants'
 
 const toast = createToastInterface()
 
-export const getData = <T>(relativeUrl: string, headers: HeadersInit) => {
+export const getData = async <T>(relativeUrl: string, headers: HeadersInit) => {
   return fetchData(relativeUrl, {
     headers: {
       'Content-Type': 'application/json',
@@ -13,7 +13,7 @@ export const getData = <T>(relativeUrl: string, headers: HeadersInit) => {
   }).then((res) => res.json() as Promise<T>)
 }
 
-export const postData = <T>(relativeUrl: string, headers: HeadersInit, body: object) => {
+export const postData = async <T>(relativeUrl: string, headers: HeadersInit, body: object) => {
   return fetchData(relativeUrl, {
     method: 'POST',
     headers: {
@@ -24,7 +24,7 @@ export const postData = <T>(relativeUrl: string, headers: HeadersInit, body: obj
   }).then((res) => res.json() as Promise<T>)
 }
 
-export const putData = <T>(relativeUrl: string, headers: HeadersInit, body: object) => {
+export const putData = async <T>(relativeUrl: string, headers: HeadersInit, body: object) => {
   return fetchData(relativeUrl, {
     method: 'PUT',
     headers: {
@@ -45,7 +45,7 @@ export const deleteData = (relativeUrl: string, headers: HeadersInit) => {
   })
 }
 
-export const fetchData = (relativeUrl: string, config: RequestInit) => {
+export const fetchData = async (relativeUrl: string, config: RequestInit): Promise<Response> => {
   return fetch(`${BASE_URL}/${relativeUrl}`, config)
     .then((res) => {
       if (!res.ok) {

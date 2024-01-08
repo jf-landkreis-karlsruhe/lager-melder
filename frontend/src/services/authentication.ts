@@ -33,7 +33,7 @@ export interface JWT {
 
 export const AuthenticationChangedEvent = 'authenticationChanged'
 
-export const login = (username: string, password: string) => {
+export const login = async (username: string, password: string) => {
   return postData<AuthorizationResponse>(
     'login',
     {},

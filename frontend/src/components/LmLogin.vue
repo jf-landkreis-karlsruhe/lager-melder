@@ -14,13 +14,16 @@ const loading = ref<boolean>(false)
 
 const loginHandler = async () => {
   loading.value = true
-  await login(username.value, password.value).catch(() => {
+  const success = await login(username.value, password.value).catch(() => {
     loading.value = false
     toast.error('Der Login war nicht erfolgreich. Benutzername oder Passwort falsch.')
+    return undefined
   })
-  loading.value = false
-  loggedIn.value = true
-  router.push('/')
+  if (success) {
+    loading.value = false
+    loggedIn.value = true
+    router.push('/')
+  }
 }
 
 onMounted(() => {
