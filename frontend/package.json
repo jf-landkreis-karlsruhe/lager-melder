@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "vite --port 9000",
+    "serve": "vite --host 0.0.0.0 --port 9000",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",

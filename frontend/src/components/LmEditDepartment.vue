@@ -47,7 +47,12 @@ const sendRegistrationEmail = () => {
 
 const onUpdateDepartment = () => {
   loading.value = true
-  updateDepartment(props.department)
+  const updatedDepartment = {
+    ...props.department,
+    leaderName: leaderName.value,
+    leaderEMail: leaderEmail.value
+  };
+  updateDepartment(updatedDepartment)
     .then(() => {
       loading.value = false
       saved.value = true
