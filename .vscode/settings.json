@@ -3,7 +3,7 @@
   "editor.formatOnSave": true,
   "[vue]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "octref.vetur",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[typescript]": {
     "editor.formatOnSave": true,

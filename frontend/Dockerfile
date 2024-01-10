@@ -5,13 +5,13 @@ WORKDIR /var/frontend
 
 COPY package.json /var/frontend
 
-COPY yarn.lock /var/frontend
+COPY package-lock.json /var/frontend
 
-RUN yarn install
+RUN npm install
 
 ADD . .
 
-RUN yarn build
+RUN npm run build
 
 
 # Run the app

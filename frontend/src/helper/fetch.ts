@@ -1,81 +1,73 @@
-import { toast } from "@/plugins/toastification";
-import { ErrorResponse } from "@/services/errorConstants";
-import { BASE_URL } from "../assets/config";
+import { createToastInterface } from 'vue-toastification'
+import { BASE_URL } from '../assets/config'
+import type { ErrorResponse } from '@/services/errorConstants'
 
-export const getData = <T>(relativeUrl: string, headers: HeadersInit) => {
+const toast = createToastInterface()
+
+export const getData = async <T>(relativeUrl: string, headers: HeadersInit) => {
   return fetchData(relativeUrl, {
     headers: {
-      "Content-Type": "application/json",
-      ...headers,
-    },
-  }).then((res) => res.json() as Promise<T>);
-};
+      'Content-Type': 'application/json',
+      ...headers
+    }
+  }).then((res) => res.json() as Promise<T>)
+}
 
-export const postData = <T>(
-  relativeUrl: string,
-  headers: HeadersInit,
-  body: object
-) => {
+export const postData = async <T>(relativeUrl: string, headers: HeadersInit, body: object) => {
   return fetchData(relativeUrl, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      ...headers,
+      'Content-Type': 'application/json',
+      ...headers
     },
-    body: JSON.stringify(body),
-  }).then((res) => res.json() as Promise<T>);
-};
+    body: JSON.stringify(body)
+  }).then((res) => res.json() as Promise<T>)
+}
 
-export const putData = <T>(
-  relativeUrl: string,
-  headers: HeadersInit,
-  body: object
-) => {
+export const putData = async <T>(relativeUrl: string, headers: HeadersInit, body: object) => {
   return fetchData(relativeUrl, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
-      ...headers,
+      'Content-Type': 'application/json',
+      ...headers
     },
-    body: JSON.stringify(body),
-  }).then((res) => res.json() as Promise<T>);
-};
+    body: JSON.stringify(body)
+  }).then((res) => res.json() as Promise<T>)
+}
 
 export const deleteData = (relativeUrl: string, headers: HeadersInit) => {
   return fetchData(relativeUrl, {
-    method: "DELETE",
+    method: 'DELETE',
     headers: {
-      "Content-Type": "application/json",
-      ...headers,
-    },
-  });
-};
+      'Content-Type': 'application/json',
+      ...headers
+    }
+  })
+}
 
-export const fetchData = (relativeUrl: string, config: RequestInit) => {
+export const fetchData = async (relativeUrl: string, config: RequestInit): Promise<Response> => {
   return fetch(`${BASE_URL}/${relativeUrl}`, config)
     .then((res) => {
       if (!res.ok) {
-        throw res;
+        throw res
       }
-      return res;
+      return res
     })
     .catch(async (err: Response) => {
-      const errObj = await err.json();
+      const errObj = await err.json()
       if (isValidatedErrorResponse(errObj)) {
-        toast.error(errObj.messages[0].message);
-      } else if (errObj.path.endsWith("login") && errObj.status === 401) {
-        toast.error("Benutzername oder Passwort sind falsch");
+        toast.error(errObj.messages[0].message)
+      } else if (errObj.path.endsWith('login') && errObj.status === 401) {
+        toast.error('Benutzername oder Passwort sind falsch')
       } else {
-        const httpRes: Response = errObj as Response;
-        const commonErrMsg = `Es ist leider etwas schief gegangen. (Code: ${httpRes.status})`;
-        toast.error(commonErrMsg);
+        const httpRes: Response = errObj as Response
+        const commonErrMsg = `Es ist leider etwas schief gegangen. (Code: ${httpRes.status})`
+        toast.error(commonErrMsg)
       }
-      throw errObj;
-    });
-};
+      throw errObj
+    })
+}
 
-const isValidatedErrorResponse = (
-  err: Record<string, any>
-): err is ErrorResponse => {
-  return err.key && err.messages;
-};
+const isValidatedErrorResponse = (err: Record<string, any>): err is ErrorResponse => {
+  return err.key && err.messages
+}

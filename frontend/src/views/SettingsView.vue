@@ -1,29 +1,15 @@
+<script setup lang="ts">
+import EditSettings from '../components/settings/LmEditSettings.vue'
+import EventsConfiguration from '../components/settings/LmEventsConfiguration.vue'
+import MailSettings from '../components/settings/LmMailSettings.vue'
+import LmContainer from '@/components/LmContainer.vue'
+</script>
+
 <template>
-  <v-container>
+  <LmContainer>
     <h1>Einstellungen</h1>
     <EditSettings />
     <EventsConfiguration />
-    <PcrTestsConfiguration />
     <MailSettings />
-  </v-container>
+  </LmContainer>
 </template>
-
-<script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-
-import EditSettings from "../components/settings/EditSettings.vue";
-import EventsConfiguration from "../components/settings/EventsConfiguration.vue";
-import PcrTestsConfiguration from "../components/settings/PcrTestsConfiguration.vue";
-import MailSettings from "../components/settings/MailSettings.vue";
-
-@Component({
-  components: {
-    EditSettings,
-    EventsConfiguration,
-    PcrTestsConfiguration,
-    MailSettings,
-  },
-})
-export default class SettingsView extends Vue {}
-</script>

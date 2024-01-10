@@ -1,70 +1,67 @@
-import { fetchData } from "../helper/fetch";
-import { withAuthenticationHeader } from "./authentication";
-import { FileReponse } from "./filesHelper";
+import { fetchData } from '../helper/fetch'
+import { withAuthenticationHeader } from './authentication'
+import type { FileReponse } from './filesHelper'
 
 export const getStateYouthPlanLeader = (
-  departmentId: string,
+  departmentId: number,
   departmentName: string
 ): Promise<FileReponse> => {
   return fetchData(`registrationFiles/stateYouthPlanLeader/${departmentId}`, {
     headers: {
-      ...withAuthenticationHeader(),
-    },
+      ...withAuthenticationHeader()
+    }
   })
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `betreuerBW-${departmentName}.pdf`,
-    }));
-};
+      fileName: `betreuerBW-${departmentName}.pdf`
+    }))
+}
 
 export const getAttendeesKarlsruhe = (
-  departmentId: string,
+  departmentId: number,
   departmentName: string
 ): Promise<FileReponse> => {
   return fetchData(`registrationFiles/attendeesKarlsruhe/${departmentId}`, {
     headers: {
-      ...withAuthenticationHeader(),
-    },
+      ...withAuthenticationHeader()
+    }
   })
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteKarlsruhe-${departmentName}.pdf`,
-    }));
-};
+      fileName: `teilnehmerlisteKarlsruhe-${departmentName}.pdf`
+    }))
+}
 
 export const getStateYouthPlanAttendees = (
-  departmentId: string,
+  departmentId: number,
   departmentName: string
 ): Promise<FileReponse> => {
-  return fetchData(
-    `registrationFiles/stateYouthPlanAttendees/${departmentId}`,
-    {
-      headers: {
-        ...withAuthenticationHeader(),
-      },
+  return fetchData(`registrationFiles/stateYouthPlanAttendees/${departmentId}`, {
+    headers: {
+      ...withAuthenticationHeader()
     }
-  )
+  })
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteBW-${departmentName}.pdf`,
-    }));
-};
+      fileName: `teilnehmerlisteBW-${departmentName}.pdf`
+    }))
+}
 
 export const getAttendeesCommunal = (
-  departmentId: string,
+  departmentId: number,
   departmentName: string
 ): Promise<FileReponse> => {
   return fetchData(`registrationFiles/attendeesCommunal/${departmentId}`, {
     headers: {
-      ...withAuthenticationHeader(),
-    },
+      ...withAuthenticationHeader()
+    }
   })
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteKommandant-${departmentName}.pdf`,
-    }));
-};
+      fileName: `teilnehmerlisteKommandant-${departmentName}.pdf`
+    }))
+}

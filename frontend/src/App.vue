@@ -1,10 +1,16 @@
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
+import Footer from './components/LmFooter.vue'
+import Header from './components/LmHeader.vue'
+</script>
+
 <template>
   <v-app>
     <div class="grid-container">
       <div class="my-container">
         <Header class="header" />
         <main class="content">
-          <router-view />
+          <RouterView />
         </main>
         <Footer class="footer" />
       </div>
@@ -12,25 +18,13 @@
   </v-app>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-
-import Header from "./components/Header.vue";
-import Footer from "./components/Footer.vue";
-
-@Component({
-  components: { Header, Footer },
-})
-export default class App extends Vue {}
-</script>
-
 <style scoped lang="scss">
 .grid-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
+  overflow: hidden;
 }
 
 .my-container {

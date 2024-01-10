@@ -1,14 +1,7 @@
+<script setup lang="ts">
+import AttendeesRegistration from '../components/LmAttendeesRegistration.vue'
+</script>
+
 <template>
   <AttendeesRegistration />
 </template>
-
-<script>
-import AttendeesRegistration from "../components/AttendeesRegistration.vue";
-
-export default {
-  name: "AttendeesRegistrationView",
-  components: {
-    AttendeesRegistration,
-  },
-};
-</script>
