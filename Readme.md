@@ -10,6 +10,13 @@ cd attendee
 SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
 ```
 
+## Sart frontend
+```
+cd frontend
+npm install
+VITE_BACKEND_URL=http://localhost:8080/api npm start
+```
+
 ## Customization
 
 - in the backend in `resource/static/kreiszeltlager-logo.jpg` paste the current logo for the email header
