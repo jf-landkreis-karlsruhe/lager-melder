@@ -36,7 +36,7 @@ class YouthPlanAttendeeRoleHelper {
             .filter { Helper.ageAtEvent(it.birthday, eventStart) >= 6 }
             .partition { Helper.ageAtEvent(it.birthday, eventStart) <= 26 }
 
-        val allLeaderSize = leader.size + (fixedLeaderSize ?: 0)
+        val allLeaderSize = leader.size + fixedLeaderSize
         val correctDistributedAttendees = allLeaderSize + allLeaderSize * 5
         val toMuchYouths = (fixedDistributedAttendeesSize + newAttendees.size) - correctDistributedAttendees
         val possibleLeaderCount = toMuchYouths / 6

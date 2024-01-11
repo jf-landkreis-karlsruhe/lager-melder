@@ -50,6 +50,6 @@ Then just: `./run.sh`
 
 ## Example Data
 
-See https://github.com/KordonDev/lager-melder/blob/master/attendee/src/main/kotlin/de/kordondev/attendee/AttendeeApplication.kt
+See https://github.com/KordonDev/lager-melder/blob/main/attendee/src/main/kotlin/de/kordondev/attendee/AttendeeApplication.kt
 
 Event: <frontendUrl>/scanner/event001
