@@ -34,7 +34,7 @@ const checkToken = () => {
   }
   loggedIn.value = true
   const secondsUntilTokenExpires = token.exp - new Date().getTime() / 1000
-  timeoutId = setTimeout(() => checkToken, secondsUntilTokenExpires * 1000)
+  timeoutId = window.setTimeout(() => checkToken, secondsUntilTokenExpires * 1000)
 }
 </script>
 
