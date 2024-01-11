@@ -20,18 +20,18 @@ jobs:
           cache: "maven"
       - name: Install dependencies
         run: mvn install
-        working-directory: ./attendee
+        working-directory: ./lager-melder
       - name: Execute Tests
         run: mvn test
-        working-directory: ./attendee
+        working-directory: ./lager-melder
       - name: Build java
         run: mvn compile
-        working-directory: ./attendee
+        working-directory: ./lager-melder
       - name: Extract branch name
         shell: bash
         run: echo "branch=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
         id: extract_branch
-        working-directory: ./attendee
+        working-directory: ./lager-melder
       - name: Login to DockerHub
         uses: docker/login-action@v3
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/tags/deploy' }}
@@ -41,7 +41,7 @@ jobs:
       - name: Deploy
         run: mvn jib:build -Djib.to.tags=${{ steps.extract_branch.outputs.branch }}-${{ github.run_id }}
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/tags/deploy' }}
-        working-directory: ./attendee
+        working-directory: ./lager-melder
 
   build-and-push-frontend:
     name: Frontend - Build, containerize and push
@@ -66,7 +66,7 @@ jobs:
         shell: bash
         run: echo "branch=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
         id: extract_branch
-        working-directory: ./attendee
+        working-directory: ./lager-melder
       - name: Login to DockerHub
         uses: docker/login-action@v3
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/tags/deploy' }}
