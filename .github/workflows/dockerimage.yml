@@ -23,7 +23,7 @@ jobs:
         working-directory: ./backend
       - name: Execute Tests
         run: mvn test
-        working-directory: ./lbackend
+        working-directory: ./backend
       - name: Build java
         run: mvn compile
         working-directory: ./backend
