@@ -15,9 +15,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @SpringBootApplication
-class AttendeeApplication {
+class LagermelderApplication {
 
-    val logger: Logger = LoggerFactory.getLogger(AttendeeApplication::class.java)
+    val logger: Logger = LoggerFactory.getLogger(LagermelderApplication::class.java)
 
     @Bean
     fun init(
@@ -64,5 +64,5 @@ class AttendeeApplication {
 }
 
 fun main(args: Array<String>) {
-    runApplication<AttendeeApplication>(*args)
+    runApplication<LagermelderApplication>(*args)
 }
