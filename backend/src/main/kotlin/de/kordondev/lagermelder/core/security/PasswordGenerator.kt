@@ -3,6 +3,7 @@ package de.kordondev.lagermelder.core.security
 import org.passay.CharacterRule
 import org.passay.EnglishCharacterData
 import org.passay.PasswordGenerator
+import org.springframework.stereotype.Service
 
 @Service
 class PasswordGenerator() {

@@ -1,3 +1,8 @@
+import org.hibernate.Hibernate
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
 @Table(name = "reset_token")
@@ -10,8 +15,18 @@ data class ResetTokenEntry(
   val departmentId: Long,
 ) {
 
+    companion object {
+        fun of(token: String, departmentId: Long): ResetTokenEntry {
+            return ResetTokenEntry(
+                token = token,
+                departmentLeaderMail = departmentLeaderMail,
+                departmentId = departmentId,
+            )
+        }
+    }
+
     override fun toString(): String {
-        return "$departmentId $token
+        return "$departmentId $token"
     }
 
     override fun equals(other: Any?): Boolean {
