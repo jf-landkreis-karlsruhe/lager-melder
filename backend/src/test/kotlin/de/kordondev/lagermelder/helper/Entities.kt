@@ -2,11 +2,7 @@ package de.kordondev.lagermelder.helper
 
 import de.kordondev.lagermelder.core.model.Attendee
 import de.kordondev.lagermelder.core.model.Department
-import de.kordondev.lagermelder.core.model.User
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
-import de.kordondev.lagermelder.core.persistence.entry.Food
-import de.kordondev.lagermelder.core.persistence.entry.Roles
-import de.kordondev.lagermelder.core.persistence.entry.TShirtSize
+import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.rest.model.request.*
 import java.time.ZonedDateTime
 
@@ -15,6 +11,10 @@ class Entities() {
     companion object {
         fun department(): Department {
             return Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        }
+
+        fun departmentEntry(): DepartmentEntry {
+            return DepartmentEntry(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         }
 
         fun attendee(): Attendee {
@@ -56,8 +56,14 @@ class Entities() {
             )
         }
 
-        fun user(): User {
-            return User(id = 1L, role = Roles.USER, department = department(), userName = "user", passWord = "pass")
+        fun user(): UserEntry {
+            return UserEntry(
+                id = 1L,
+                role = Roles.USER,
+                department = departmentEntry(),
+                userName = "user",
+                passWord = "pass"
+            )
         }
 
         fun restDepartmentWithUserRequest(): RestDepartmentWithUserRequest {

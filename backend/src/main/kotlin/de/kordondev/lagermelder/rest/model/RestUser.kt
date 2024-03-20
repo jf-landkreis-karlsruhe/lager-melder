@@ -1,6 +1,6 @@
 package de.kordondev.lagermelder.rest.model
 
-import de.kordondev.lagermelder.core.model.User
+import de.kordondev.lagermelder.core.persistence.entry.UserEntry
 
 data class RestUser(
     val id: Long,
@@ -9,7 +9,7 @@ data class RestUser(
     val role: String
 ) {
     companion object {
-        fun of(user: User) = RestUser(
+        fun of(user: UserEntry) = RestUser(
             id = user.id,
             username = user.userName,
             departmentId = user.department.id,

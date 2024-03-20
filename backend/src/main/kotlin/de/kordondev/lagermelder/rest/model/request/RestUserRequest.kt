@@ -1,7 +1,7 @@
 package de.kordondev.lagermelder.rest.model.request
 
-import de.kordondev.lagermelder.core.model.Department
-import de.kordondev.lagermelder.core.model.User
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
+import de.kordondev.lagermelder.core.persistence.entry.UserEntry
 import de.kordondev.lagermelder.exception.BadRequestException
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
@@ -19,11 +19,11 @@ data class RestUserRequest(
     val role: String
 ) {
     companion object {
-        fun to(user: RestUserRequest, id: Long, department: Department): User {
+        fun to(user: RestUserRequest, id: Long, department: DepartmentEntry): UserEntry {
             if (user.password == null) {
                 throw BadRequestException("password missing")
             }
-            return User(
+            return UserEntry(
                 id = id,
                 userName = user.username,
                 passWord = user.password,

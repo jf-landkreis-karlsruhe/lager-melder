@@ -32,6 +32,14 @@ class DepartmentService(
             ?: throw NotFoundException("Attendee with id $id not found")
     }
 
+    // FixMe: only temporary
+    fun getDepartmentEntry(id: Long): DepartmentEntry {
+        return departmentRepository
+            .findByIdOrNull(id)
+            ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
+            ?: throw NotFoundException("Attendee with id $id not found")
+    }
+
     fun createDepartment(department: NewDepartment): Department {
         authorityService.isSpecializedFieldDirector()
         return departmentRepository

@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import de.kordondev.lagermelder.core.persistence.entry.UserEntry
 import de.kordondev.lagermelder.core.persistence.repository.UserRepository
 import de.kordondev.lagermelder.core.security.SecurityConstants.EXPIRATION_TIME
 import de.kordondev.lagermelder.core.security.SecurityConstants.HEADER_STRING
@@ -50,7 +49,6 @@ class JWTAuthenticationFilter(
         authResult: Authentication
     ) {
         userRepository.findOneByUserName((authResult.principal as User).username)
-            ?.let { UserEntry.to(it) }
             ?.let { user ->
                 JWT.create()
                     .withSubject(user.userName)

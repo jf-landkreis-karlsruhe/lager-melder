@@ -1,7 +1,6 @@
 package de.kordondev.lagermelder.core.persistence.entry
 
 import de.kordondev.lagermelder.core.model.NewUser
-import de.kordondev.lagermelder.core.model.User
 import javax.persistence.*
 
 @Entity
@@ -26,28 +25,8 @@ data class UserEntry(
     val department: DepartmentEntry
 ) {
     companion object {
-        fun to(user: UserEntry): User {
-            return User(
-                id = user.id,
-                role = Roles.filterToExistingRoles(user.role),
-                userName = user.userName,
-                passWord = user.passWord,
-                department = DepartmentEntry.to(user.department)
-            )
-        }
-
         fun of(user: NewUser): UserEntry {
             return UserEntry(
-                role = user.role,
-                userName = user.userName,
-                passWord = user.passWord,
-                department = DepartmentEntry.of(user.department)
-            )
-        }
-
-        fun of(user: User): UserEntry {
-            return UserEntry(
-                id = user.id,
                 role = user.role,
                 userName = user.userName,
                 passWord = user.passWord,
@@ -62,11 +41,11 @@ class Roles {
         const val USER = "USER"
         const val ADMIN = "ADMIN"
         const val SPECIALIZED_FIELD_DIRECTOR = "SPECIALIZED_FIELD_DIRECTOR"
-        val existingRoles = listOf(ADMIN, SPECIALIZED_FIELD_DIRECTOR, USER)
+        private val existingRoles = listOf(ADMIN, SPECIALIZED_FIELD_DIRECTOR, USER)
 
         fun filterToExistingRoles(role: String): String {
             if (existingRoles.contains(role)) {
-                return role;
+                return role
             }
             return USER
         }

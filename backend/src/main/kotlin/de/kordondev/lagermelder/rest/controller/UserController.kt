@@ -52,7 +52,7 @@ class UserController(
         @RequestBody(required = true) @Valid user: RestUserRequest,
         @PathVariable("id") id: Long
     ): RestUser {
-        val department = departmentService.getDepartment(user.departmentId)
+        val department = departmentService.getDepartmentEntry(user.departmentId)
         return userService
             .saveUpdatePassword(RestUserRequest.to(user, id, department))
             .let { RestUser.of(it) }
