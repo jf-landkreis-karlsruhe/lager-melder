@@ -3,13 +3,13 @@ package de.kordondev.lagermelder.rest.model.request
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.UserEntry
 import de.kordondev.lagermelder.exception.BadRequestException
+import javax.validation.constraints.Email
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 
 data class RestUserRequest(
-    @field:Pattern(regexp = "^\\S+\$", message = "Spaces are not allowed")
-    @field:Size(min = 4, max = 20, message = "username needs to be between 4 and 20 chars long")
+    @field:Email(message = "username needs to be an email")
     val username: String,
     @field:Size(min = 8, max = 20, message = "password needs to be between 8 and 20 chars long")
     val password: String?,

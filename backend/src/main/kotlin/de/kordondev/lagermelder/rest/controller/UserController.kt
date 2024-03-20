@@ -4,7 +4,8 @@ import de.kordondev.lagermelder.core.service.DepartmentService
 import de.kordondev.lagermelder.core.service.SecurityService
 import de.kordondev.lagermelder.core.service.UserService
 import de.kordondev.lagermelder.rest.model.RestUser
-import de.kordondev.lagermelder.rest.model.request.RestResetPasswordRequest
+import de.kordondev.lagermelder.rest.model.request.RestPasswordPasswordTokenRequest
+import de.kordondev.lagermelder.rest.model.request.RestResetPasswordTokenRequest
 import de.kordondev.lagermelder.rest.model.request.RestUserRequest
 import de.kordondev.lagermelder.rest.model.request.RestUserRoleRequest
 import org.springframework.web.bind.annotation.*
@@ -71,11 +72,20 @@ class UserController(
             .let { RestUser.of(it)}
     }
 
-    @PutMapping("/users/forgotPassword")
+    @PutMapping("/users/forgotPasswordToken")
     fun sendForgotPasswordEmail(
-        @RequestBody(required = true) @Valid resetPasswordRequest: RestResetPasswordRequest
+        @RequestBody(required = true) @Valid passwordPasswordTokenRequest: RestPasswordPasswordTokenRequest
     ) {
-        return securityService.sendResetPasswordLink(resetPasswordRequest.username, resetPasswordRequest.linkAddress)
+        return securityService.sendResetPasswordLink(
+            passwordPasswordTokenRequest.username,
+            passwordPasswordTokenRequest.linkAddress
+        )
     }
 
+    @PutMapping("/users/resetPasswordWithToken")
+    fun resetPasswordWithToken(
+        @RequestBody(required = true) @Valid resetPasswordRequest: RestResetPasswordTokenRequest
+    ) {
+        return securityService.resetPasswordWithToken(resetPasswordRequest.token, resetPasswordRequest.password)
+    }
 }

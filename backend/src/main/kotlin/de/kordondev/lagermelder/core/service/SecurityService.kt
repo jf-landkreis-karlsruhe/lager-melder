@@ -5,6 +5,7 @@ import de.kordondev.lagermelder.core.persistence.entry.ResetTokenEntry
 import de.kordondev.lagermelder.core.persistence.repository.ResetTokenRepository
 import de.kordondev.lagermelder.core.security.PasswordGenerator
 import de.kordondev.lagermelder.exception.MailNotSendException
+import de.kordondev.lagermelder.exception.NotFoundException
 import org.springframework.stereotype.Service
 
 @Service
@@ -24,6 +25,15 @@ class SecurityService(
         if (!mailSend) {
             throw MailNotSendException("Mail could not be send")
         }
+    }
+
+    fun resetPasswordWithToken(token: String, password: String) {
+        val resetToken = resetTokenRepository.findByToken(token)
+            ?: throw NotFoundException("Token not found")
+
+        val user = userService.getUser(resetToken.userId)
+        userService.saveUpdatePassword(user.copy(passWord = password))
+        resetTokenRepository.delete(resetToken)
     }
 
 }
