@@ -1,3 +1,5 @@
+package de.kordondev.lagermelder.core.persistence.entry
+
 import org.hibernate.Hibernate
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -11,22 +13,21 @@ data class ResetTokenEntry(
   @Column(name = "token", unique = true)
   val token: String,
 
-  @Column(name="department_id")
-  val departmentId: Long,
+  @Column(name = "user_id")
+  val userId: Long,
 ) {
 
     companion object {
-        fun of(token: String, departmentId: Long): ResetTokenEntry {
+        fun of(token: String, userId: Long): ResetTokenEntry {
             return ResetTokenEntry(
                 token = token,
-                departmentLeaderMail = departmentLeaderMail,
-                departmentId = departmentId,
+                userId = userId
             )
         }
     }
 
     override fun toString(): String {
-        return "$departmentId $token"
+        return "$userId $token"
     }
 
     override fun equals(other: Any?): Boolean {

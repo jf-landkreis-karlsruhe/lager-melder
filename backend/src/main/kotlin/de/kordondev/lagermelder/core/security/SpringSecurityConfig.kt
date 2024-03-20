@@ -28,6 +28,7 @@ class SpringSecurityConfig(
             //HTTP Basic authentication
             .authorizeRequests()
             .antMatchers(("/login")).permitAll()
+            .antMatchers(("/users/forgotPassword")).permitAll()
             .antMatchers("/actuator/health").permitAll()
             .antMatchers("**").authenticated()
             .and()

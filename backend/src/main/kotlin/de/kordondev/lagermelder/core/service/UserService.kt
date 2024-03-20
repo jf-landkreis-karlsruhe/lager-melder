@@ -50,6 +50,11 @@ class UserService(
         return user
     }
 
+    fun getUserByUsername(username: String): UserEntry {
+        return userRepository.findOneByUserName(username)?.copy(passWord = "")
+            ?: throw NotFoundException("user with username $username not found")
+    }
+
     fun createUser(newUser: UserEntry): UserEntry {
         authorityService.isSpecializedFieldDirector()
         if (newUser.role != Roles.USER) {
