@@ -1,9 +1,9 @@
 package de.kordondev.lagermelder.rest.model.request
 
-import de.kordondev.lagermelder.core.model.Department
 import de.kordondev.lagermelder.core.model.NewDepartment
-import de.kordondev.lagermelder.core.model.NewUser
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Roles
+import de.kordondev.lagermelder.core.persistence.entry.UserEntry
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
@@ -28,7 +28,7 @@ data class RestDepartmentWithUserRequest(
             leaderEMail = departmentWithUser.leaderEMail
         )
 
-        fun toUser(departmentWithUser: RestDepartmentWithUserRequest, department: Department) = NewUser(
+        fun toUser(departmentWithUser: RestDepartmentWithUserRequest, department: DepartmentEntry) = UserEntry(
             userName = departmentWithUser.username,
             passWord = "",
             department = department,

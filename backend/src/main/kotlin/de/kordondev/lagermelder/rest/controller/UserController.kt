@@ -1,8 +1,6 @@
 package de.kordondev.lagermelder.rest.controller
 
-import de.kordondev.lagermelder.core.model.NewUser
-import de.kordondev.lagermelder.core.persistence.entry.Roles
-import de.kordondev.lagermelder.core.security.PasswordGenerator
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.service.DepartmentService
 import de.kordondev.lagermelder.core.service.UserService
 import de.kordondev.lagermelder.rest.model.RestUser
@@ -37,12 +35,7 @@ class UserController(
         val department = departmentService.getDepartment(user.departmentId)
         return userService
             .createUser(
-                NewUser(
-                    userName = user.username,
-                    role = Roles.filterToExistingRoles(user.role),
-                    department = department,
-                    passWord = user.password ?: PasswordGenerator.generatePassword()
-                )
+                RestUserRequest.to(user, 0, DepartmentEntry.of(department))
             )
             .let { RestUser.of(it) }
     }

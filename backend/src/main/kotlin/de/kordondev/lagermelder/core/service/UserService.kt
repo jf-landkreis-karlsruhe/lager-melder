@@ -2,7 +2,6 @@ package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.mail.MailSenderService
 import de.kordondev.lagermelder.core.model.Department
-import de.kordondev.lagermelder.core.model.NewUser
 import de.kordondev.lagermelder.core.model.Settings
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Roles
@@ -52,21 +51,21 @@ class UserService(
         return user
     }
 
-    fun createUser(user: NewUser): UserEntry {
+    fun createUser(newUser: UserEntry): UserEntry {
         authorityService.isSpecializedFieldDirector()
-        if (user.role != Roles.USER) {
+        if (newUser.role != Roles.USER) {
             authorityService.isAdmin()
         }
         userRepository
-            .findOneByUserName(user.userName)
+            .findOneByUserName(newUser.userName)
             ?.let { throw ResourceAlreadyExistsException("Username already exists") }
-        user.passWord = PasswordGenerator.generatePassword()
-        val userWithEncryptedPassword = user.copy(passWord = bCryptPasswordEncoder.encode(user.passWord))
+        val password = PasswordGenerator.generatePassword()
+        val userWithEncryptedPassword = newUser.copy(passWord = bCryptPasswordEncoder.encode(password))
         val settings = settingsService.getSettings()
         return userRepository
-            .save(UserEntry.of(userWithEncryptedPassword))
+            .save(userWithEncryptedPassword)
             .copy(passWord = "")
-            .also { sendEmail(it, user.passWord, settings) }
+            .also { sendEmail(it, newUser.passWord, settings) }
     }
 
     fun saveUpdatePassword(userToChange: UserEntry): UserEntry {

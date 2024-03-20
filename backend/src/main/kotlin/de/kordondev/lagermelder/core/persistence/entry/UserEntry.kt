@@ -1,6 +1,5 @@
 package de.kordondev.lagermelder.core.persistence.entry
 
-import de.kordondev.lagermelder.core.model.NewUser
 import javax.persistence.*
 
 @Entity
@@ -23,18 +22,7 @@ data class UserEntry(
     @ManyToOne
     @JoinColumn(name = "department_id")
     val department: DepartmentEntry
-) {
-    companion object {
-        fun of(user: NewUser): UserEntry {
-            return UserEntry(
-                role = user.role,
-                userName = user.userName,
-                passWord = user.passWord,
-                department = DepartmentEntry.of(user.department)
-            )
-        }
-    }
-}
+)
 
 class Roles {
     companion object {

@@ -1,5 +1,6 @@
 package de.kordondev.lagermelder.rest.controller
 
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.repository.DepartmentRepository
 import de.kordondev.lagermelder.core.persistence.repository.UserRepository
 import de.kordondev.lagermelder.core.service.DepartmentService
@@ -38,7 +39,7 @@ class RegisterController(
         val newDepartment = RestDepartmentWithUserRequest.toDepartment(departmentWithUser)
         val department = departmentService.createDepartment(newDepartment)
 
-        val newUser = RestDepartmentWithUserRequest.toUser(departmentWithUser, department)
+        val newUser = RestDepartmentWithUserRequest.toUser(departmentWithUser, DepartmentEntry.of(department))
         val user = userService.createUser(newUser)
 
         return RestDepartmentWithUser.from(department, user)
