@@ -1,7 +1,6 @@
 package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.mail.MailSenderService
-import de.kordondev.lagermelder.core.model.Department
 import de.kordondev.lagermelder.core.model.Settings
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Roles
@@ -43,8 +42,8 @@ class UserService(
             ?: throw NotFoundException("user with id $id not found")
     }
 
-    fun getUserForDepartment(department: Department): UserEntry {
-        val user = userRepository.findOneByDepartment(DepartmentEntry.of(department))
+    fun getUserForDepartment(department: DepartmentEntry): UserEntry {
+        val user = userRepository.findOneByDepartment(department)
             ?: throw NotFoundException("user for department id ${department.id} not found")
 
         authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))

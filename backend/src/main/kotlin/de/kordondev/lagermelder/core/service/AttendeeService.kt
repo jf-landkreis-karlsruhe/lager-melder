@@ -1,7 +1,6 @@
 package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.model.Attendee
-import de.kordondev.lagermelder.core.model.Department
 import de.kordondev.lagermelder.core.model.NewAttendee
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
@@ -76,9 +75,9 @@ class AttendeeService(
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
 
-    fun getAttendeesForDepartment(department: Department): List<Attendee> {
+    fun getAttendeesForDepartment(department: DepartmentEntry): List<Attendee> {
         return attendeeRepository
-            .findByDepartment(DepartmentEntry.of(department))
+            .findByDepartment(department)
             .map { attendee -> AttendeeEntry.to(attendee) }
             .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
     }
@@ -100,7 +99,7 @@ class AttendeeService(
 
     private fun checkFirstNameAndLastNameAreUnique(attendee: NewAttendee, id: Long = 0) {
         attendeeRepository.findByDepartmentAndFirstNameAndLastName(
-            DepartmentEntry.of(attendee.department),
+            attendee.department,
             attendee.firstName,
             attendee.lastName
         )

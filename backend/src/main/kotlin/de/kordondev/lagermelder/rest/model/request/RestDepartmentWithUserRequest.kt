@@ -1,6 +1,5 @@
 package de.kordondev.lagermelder.rest.model.request
 
-import de.kordondev.lagermelder.core.model.NewDepartment
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.persistence.entry.UserEntry
@@ -22,7 +21,8 @@ data class RestDepartmentWithUserRequest(
     val leaderEMail: String
 ) {
     companion object {
-        fun toDepartment(departmentWithUser: RestDepartmentWithUserRequest) = NewDepartment(
+        fun toDepartment(departmentWithUser: RestDepartmentWithUserRequest) = DepartmentEntry(
+            id = 0,
             name = departmentWithUser.departmentName,
             leaderName = departmentWithUser.leaderName,
             leaderEMail = departmentWithUser.leaderEMail

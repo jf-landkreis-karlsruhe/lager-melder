@@ -1,6 +1,5 @@
 package de.kordondev.lagermelder.rest.controller
 
-import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.service.DepartmentService
 import de.kordondev.lagermelder.core.service.UserService
 import de.kordondev.lagermelder.rest.model.RestUser
@@ -35,7 +34,7 @@ class UserController(
         val department = departmentService.getDepartment(user.departmentId)
         return userService
             .createUser(
-                RestUserRequest.to(user, 0, DepartmentEntry.of(department))
+                RestUserRequest.to(user, 0, department)
             )
             .let { RestUser.of(it) }
     }
@@ -45,7 +44,7 @@ class UserController(
         @RequestBody(required = true) @Valid user: RestUserRequest,
         @PathVariable("id") id: Long
     ): RestUser {
-        val department = departmentService.getDepartmentEntry(user.departmentId)
+        val department = departmentService.getDepartment(user.departmentId)
         return userService
             .saveUpdatePassword(RestUserRequest.to(user, id, department))
             .let { RestUser.of(it) }

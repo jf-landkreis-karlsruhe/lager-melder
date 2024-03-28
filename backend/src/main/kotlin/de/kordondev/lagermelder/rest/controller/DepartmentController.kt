@@ -39,8 +39,9 @@ class DepartmentController(
 
     @PutMapping("/departments/{id}")
     fun saveDepartment(@RequestBody(required = true) @Valid department: RestDepartmentRequest, @PathVariable("id") id: Long): RestDepartment {
+
         return departmentService
-                .saveDepartment(id, RestDepartmentRequest.to(department))
+            .saveDepartment(RestDepartmentRequest.to(department, id))
                 .let { RestDepartment.of(it) }
     }
 

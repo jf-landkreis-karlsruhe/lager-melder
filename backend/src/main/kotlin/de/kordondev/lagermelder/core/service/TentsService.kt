@@ -1,6 +1,5 @@
 package de.kordondev.lagermelder.core.service
 
-import de.kordondev.lagermelder.core.model.Department
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.persistence.entry.TentsEntity
@@ -21,9 +20,9 @@ class TentsService(
             .filter { authorityService.hasAuthorityFilter(it.department, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
     }
 
-    fun getForDepartment(department: Department): TentsEntity {
-        return tentsRepository.findByDepartment(DepartmentEntry.of(department))
-            ?: TentsEntity(0, DepartmentEntry.of(department),0,0,0,0,0)
+    fun getForDepartment(department: DepartmentEntry): TentsEntity {
+        return tentsRepository.findByDepartment(department)
+            ?: TentsEntity(0, department, 0, 0, 0, 0, 0)
     }
 
     fun saveForDepartment(tents: TentsEntity): TentsEntity {

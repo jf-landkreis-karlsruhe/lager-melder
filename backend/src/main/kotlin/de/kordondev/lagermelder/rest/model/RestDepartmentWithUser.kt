@@ -1,6 +1,6 @@
 package de.kordondev.lagermelder.rest.model
 
-import de.kordondev.lagermelder.core.model.Department
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.UserEntry
 
 data class RestDepartmentWithUser(
@@ -13,7 +13,7 @@ data class RestDepartmentWithUser(
     val leaderEMail: String
 ) {
     companion object {
-        fun from(department: Department, user: UserEntry) = RestDepartmentWithUser(
+        fun from(department: DepartmentEntry, user: UserEntry) = RestDepartmentWithUser(
             userId = user.id,
             username = user.userName,
             role = user.role,

@@ -9,7 +9,7 @@ import com.lowagie.text.List
 import com.lowagie.text.pdf.*
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.model.Attendee
-import de.kordondev.lagermelder.core.model.Department
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
 import de.kordondev.lagermelder.core.persistence.entry.TShirtSize
 import de.kordondev.lagermelder.core.security.AuthorityService
@@ -179,7 +179,7 @@ class AdminFilesService(
         writer.isCloseStream = false
         document.open()
 
-        val globalDepartments = Department(0, "Zeltlager gesamt", "", "")
+        val globalDepartments = DepartmentEntry(0, "Zeltlager gesamt", "", "")
         val allAttendees = attendeeService.getAttendees()
         val totalTShirtCount = countTShirtPerSize(allAttendees)
         val eventStart = settingsService.getSettings().eventStart
@@ -201,7 +201,7 @@ class AdminFilesService(
     }
 
     private fun addTShirtsAndBraceletForDepartment(
-        department: Department,
+        department: DepartmentEntry,
         tShirtCount: MutableMap<TShirtSize, Int>,
         braceletCount: MutableMap<Color, Int>,
         document: Document

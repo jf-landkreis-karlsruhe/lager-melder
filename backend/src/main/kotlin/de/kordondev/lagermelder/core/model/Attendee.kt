@@ -1,9 +1,6 @@
 package de.kordondev.lagermelder.core.model
 
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeStatus
-import de.kordondev.lagermelder.core.persistence.entry.Food
-import de.kordondev.lagermelder.core.persistence.entry.TShirtSize
+import de.kordondev.lagermelder.core.persistence.entry.*
 
 data class NewAttendee(
     val firstName: String,
@@ -13,7 +10,7 @@ data class NewAttendee(
     val tShirtSize: TShirtSize,
     val additionalInformation: String,
     val role: AttendeeRole,
-    val department: Department
+    val department: DepartmentEntry
 )
 
 data class Attendee(
@@ -25,7 +22,7 @@ data class Attendee(
     val tShirtSize: TShirtSize,
     val additionalInformation: String,
     val role: AttendeeRole,
-    val department: Department,
+    val department: DepartmentEntry,
     val code: String,
     var status: AttendeeStatus?
 )

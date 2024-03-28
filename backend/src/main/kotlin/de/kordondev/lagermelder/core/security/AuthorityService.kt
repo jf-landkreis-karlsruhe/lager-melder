@@ -1,7 +1,6 @@
 package de.kordondev.lagermelder.core.security
 
 import de.kordondev.lagermelder.core.model.Attendee
-import de.kordondev.lagermelder.core.model.Department
 import de.kordondev.lagermelder.core.model.NewAttendee
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Roles
@@ -19,7 +18,7 @@ import java.util.*
 @Service("authorityService")
 class AuthorityService {
 
-    fun hasAuthorityFilter(department: Department, allowedRoles: List<String>): Boolean {
+    fun hasAuthorityFilter(department: DepartmentEntry, allowedRoles: List<String>): Boolean {
         return SecurityContextHolder
             .getContext()
             .authentication
@@ -30,17 +29,6 @@ class AuthorityService {
 
     fun hasAuthorityFilter(attendee: Attendee, allowedRoles: List<String>): Boolean {
         return hasAuthorityFilter(attendee.department, allowedRoles);
-    }
-
-    fun hasAuthorityFilter(department: DepartmentEntry, allowedRoles: List<String>): Boolean {
-        return hasAuthorityFilter(DepartmentEntry.to(department), allowedRoles);
-    }
-
-    fun hasAuthority(department: Department, allowedRoles: List<String>): Department {
-        if (hasAuthorityFilter(department, allowedRoles)) {
-            return department
-        }
-        throw AccessDeniedException("You are not allowed to access department with other department id")
     }
 
     fun hasAuthority(department: DepartmentEntry, allowedRoles: List<String>): DepartmentEntry {
