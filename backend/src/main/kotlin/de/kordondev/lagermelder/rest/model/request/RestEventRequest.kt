@@ -1,6 +1,7 @@
 package de.kordondev.lagermelder.rest.model.request
 
-import de.kordondev.lagermelder.core.model.NewEvent
+import de.kordondev.lagermelder.core.persistence.entry.EventEntry
+import de.kordondev.lagermelder.core.persistence.entry.EventType
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
@@ -10,8 +11,14 @@ data class RestEventRequest(
     val name: String
 ) {
     companion object {
-        fun to(event: RestEventRequest): NewEvent {
-            return NewEvent(name = event.name)
+        fun to(event: RestEventRequest): EventEntry {
+            return EventEntry(
+                id = 0,
+                name = event.name,
+                code = "",
+                type = EventType.Location,
+                trashed = false
+            )
         }
     }
 }
