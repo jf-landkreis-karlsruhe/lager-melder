@@ -1,6 +1,9 @@
 package de.kordondev.lagermelder.core.service
 
-import de.kordondev.lagermelder.core.model.*
+import de.kordondev.lagermelder.core.model.AttendeeInEvent
+import de.kordondev.lagermelder.core.model.Event
+import de.kordondev.lagermelder.core.model.NewAttendeeCodeInEventCode
+import de.kordondev.lagermelder.core.model.NewEvent
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeInEventRepository
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeRepository
@@ -76,15 +79,16 @@ class EventService(
 
     fun addAttendeeToEvent(eventCode: String, attendeeCode: String): AttendeeInEvent {
         val event: Event = getEventByCode(eventCode)
-        val attendee: Attendee = attendeeService.getAttendeeByCode(attendeeCode)
+        val attendee: AttendeeEntry = attendeeService.getAttendeeByCode(attendeeCode)
         val attendeeInEvent = NewAttendeeCodeInEventCode(attendeeCode, eventCode, Instant.now())
+        var attendeeStatus: AttendeeStatus? = null
         if (event.type == EventType.GlobalEnter) {
-            attendee.status = AttendeeStatus.ENTERED
+            attendeeStatus = AttendeeStatus.ENTERED
         }
         if (event.type == EventType.GlobalLeave) {
-            attendee.status = AttendeeStatus.LEFT
+            attendeeStatus = AttendeeStatus.LEFT
         }
-        attendeeRepository.save(AttendeeEntry.of(attendee, attendee.status))
+        attendeeRepository.save(attendee.copy(status = attendeeStatus))
         return attendeeInEventRepository.save(AttendeeInEventEntry.of(attendeeInEvent))
             .let { AttendeeInEvent(attendee.firstName, attendee.lastName, event.name, it.time) }
     }
@@ -99,7 +103,7 @@ class EventService(
         )
     }
 
-    private fun sumUp(attendees: List<Attendee>, name: String): Distribution {
+    private fun sumUp(attendees: List<AttendeeEntry>, name: String): Distribution {
         val groupedAttendees = attendees.groupBy { attendeeRoleStatus(it.status, it.role) }
         return Distribution(
             name = name,

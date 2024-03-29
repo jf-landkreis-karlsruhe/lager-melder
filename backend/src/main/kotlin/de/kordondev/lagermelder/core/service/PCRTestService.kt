@@ -72,15 +72,15 @@ class PCRTestService(
                 oldPcrTest.testedAttendees = oldPcrTest.testedAttendees.filter { it.id != attendee.id }.toMutableSet()
                 pcrTestRepository.save(oldPcrTest)
             }
-        pcrTest.testedAttendees.add(AttendeeEntry.of(attendee, attendee.status))
+        pcrTest.testedAttendees.add(attendee.copy(status = attendee.status))
         pcrTestRepository.save(pcrTest)
-        return AttendeeEntry.of(attendee, attendee.status)
+        return attendee.copy(status = attendee.status)
     }
 
     fun deleteAttendeeToPCRTest(pcrTestCode: String, attendeeCode: String) {
         val pcrTest = getPCRTestForCode(pcrTestCode)
         val attendee = attendeeService.getAttendeeByCode(attendeeCode)
-        val attendeeEntry = AttendeeEntry.of(attendee, attendee.status)
+        val attendeeEntry = attendee.copy(status = attendee.status)
         pcrTest.testedAttendees.remove(attendeeEntry)
         pcrTestRepository.save(pcrTest)
     }

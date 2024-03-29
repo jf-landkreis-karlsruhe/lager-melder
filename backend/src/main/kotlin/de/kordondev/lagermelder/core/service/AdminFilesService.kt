@@ -5,10 +5,9 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.client.j2se.MatrixToImageWriter
 import com.google.zxing.common.BitMatrix
 import com.lowagie.text.*
-import com.lowagie.text.List
 import com.lowagie.text.pdf.*
 import de.kordondev.lagermelder.Helper
-import de.kordondev.lagermelder.core.model.Attendee
+import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
 import de.kordondev.lagermelder.core.persistence.entry.TShirtSize
@@ -82,7 +81,7 @@ class AdminFilesService(
         return documentStream.toByteArray()
     }
 
-    private fun addName(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
+    private fun addName(content: PdfContentByte, attendee: AttendeeEntry, attendeesOnPage: Int) {
         content.beginText()
         val xValue = 345F
         val yValue = 738F
@@ -91,7 +90,7 @@ class AdminFilesService(
         content.endText()
     }
 
-    private fun addDepartment(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
+    private fun addDepartment(content: PdfContentByte, attendee: AttendeeEntry, attendeesOnPage: Int) {
         content.beginText()
         val xValue = 335F
         val yValue = 723F
@@ -100,7 +99,7 @@ class AdminFilesService(
         content.endText()
     }
 
-    private fun addBarCode(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
+    private fun addBarCode(content: PdfContentByte, attendee: AttendeeEntry, attendeesOnPage: Int) {
         val barcode = Barcode128()
         barcode.code = attendee.code
         barcode.barHeight = 40F
@@ -243,7 +242,7 @@ class AdminFilesService(
         document.newPage()
     }
 
-    private fun countTShirtPerSize(attendees: kotlin.collections.List<Attendee>): MutableMap<TShirtSize, Int> {
+    private fun countTShirtPerSize(attendees: kotlin.collections.List<AttendeeEntry>): MutableMap<TShirtSize, Int> {
         val tShirtCount = mutableMapOf<TShirtSize, Int>()
         for (attendee in attendees) {
             val currentCount = tShirtCount[attendee.tShirtSize] ?: 0
@@ -253,7 +252,7 @@ class AdminFilesService(
     }
 
     private fun countBracelet(
-        attendees: kotlin.collections.List<Attendee>,
+        attendees: kotlin.collections.List<AttendeeEntry>,
         eventStart: LocalDate
     ): MutableMap<Color, Int> {
         val braceletCount = mutableMapOf<Color, Int>()
@@ -265,7 +264,7 @@ class AdminFilesService(
         return braceletCount
     }
 
-    private fun colorForAgeGroup(attendee: Attendee, eventStart: LocalDate): Color {
+    private fun colorForAgeGroup(attendee: AttendeeEntry, eventStart: LocalDate): Color {
         val age = Helper.ageAtEvent(attendee.birthday, eventStart)
         if (age < 16) {
             return Color.RED
@@ -297,7 +296,7 @@ class AdminFilesService(
         writer.isCloseStream = false
         document.open()
         val attendees = attendeeService.getAttendees()
-        val foodAttendees = mutableMapOf<Food, MutableList<Attendee>>()
+        val foodAttendees = mutableMapOf<Food, MutableList<AttendeeEntry>>()
         for (food in Food.values()) {
             foodAttendees[food] = mutableListOf()
         }
