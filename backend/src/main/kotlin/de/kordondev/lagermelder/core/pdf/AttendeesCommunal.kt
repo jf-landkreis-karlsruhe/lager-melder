@@ -1,9 +1,9 @@
 package de.kordondev.lagermelder.core.pdf
 
-import de.kordondev.lagermelder.core.model.Settings
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
+import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import de.kordondev.lagermelder.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
@@ -104,7 +104,7 @@ class AttendeesCommunal(
         pdfDocument: PDDocument,
         attendees: List<AttendeeEntry>,
         page: Int,
-        settings: Settings
+        settings: SettingsEntry
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;

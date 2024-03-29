@@ -1,6 +1,5 @@
 package de.kordondev.lagermelder.core.persistence.entry
 
-import de.kordondev.lagermelder.core.model.Settings
 import org.hibernate.Hibernate
 import java.time.Instant
 import java.time.LocalDate
@@ -46,36 +45,6 @@ data class SettingsEntry(
     val startDownloadRegistrationFiles: Instant
 
 ) {
-    companion object {
-        fun of(settings: Settings, id: Long) = SettingsEntry(
-            id = id,
-            registrationEnd = settings.registrationEnd,
-            hostCity = settings.hostCity,
-            eventStart = settings.eventStart,
-            eventEnd = settings.eventEnd,
-            eventName = settings.eventName,
-            eventAddress = settings.eventAddress,
-            organizer = settings.organizer,
-            organisationAddress = settings.organisationAddress,
-            moneyPerYouthLoader = settings.moneyPerYouthLoader,
-            startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles
-        )
-
-        fun to(settings: SettingsEntry) = Settings(
-            id = settings.id,
-            registrationEnd = settings.registrationEnd,
-            hostCity = settings.hostCity,
-            eventStart = settings.eventStart,
-            eventEnd = settings.eventEnd,
-            eventName = settings.eventName,
-            eventAddress = settings.eventAddress,
-            organizer = settings.organizer,
-            organisationAddress = settings.organisationAddress,
-            moneyPerYouthLoader = settings.moneyPerYouthLoader,
-            startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles
-        )
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false

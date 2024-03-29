@@ -1,6 +1,6 @@
 package de.kordondev.lagermelder.rest.model.request;
 
-import de.kordondev.lagermelder.core.model.Settings
+import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import java.time.Instant
 import java.time.LocalDate
 import javax.validation.constraints.FutureOrPresent
@@ -47,7 +47,7 @@ data class RestSettingsRequest(
     val startDownloadRegistrationFiles: Instant
 ) {
     companion object {
-        fun to(settings: RestSettingsRequest) = Settings(
+        fun to(settings: RestSettingsRequest) = SettingsEntry(
             id = 0,
             registrationEnd = settings.registrationEnd,
             hostCity = settings.hostCity,

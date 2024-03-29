@@ -1,8 +1,8 @@
 package de.kordondev.lagermelder.core.pdf
 
-import de.kordondev.lagermelder.core.model.Settings
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
+import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import de.kordondev.lagermelder.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
@@ -121,7 +121,7 @@ class StateYouthPlanAttendees(
         attendees: List<AttendeeEntry>,
         cellIds: List<Int>,
         page: Int,
-        settings: Settings
+        settings: SettingsEntry
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm
@@ -135,7 +135,7 @@ class StateYouthPlanAttendees(
         pdfDocument: PDDocument,
         attendees: List<AttendeeEntry>,
         page: Int,
-        settings: Settings
+        settings: SettingsEntry
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
@@ -163,7 +163,7 @@ class StateYouthPlanAttendees(
         form: PDAcroForm,
         firstCellId: Int,
         page: Number,
-        settings: Settings
+        settings: SettingsEntry
     ): List<PDField> {
         val fields = mutableListOf<PDField>()
         val nameCellId = firstCellId + 2

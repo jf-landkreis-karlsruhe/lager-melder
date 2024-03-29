@@ -1,6 +1,6 @@
 package de.kordondev.lagermelder.rest.model.request
 
-import de.kordondev.lagermelder.core.model.Settings
+import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import java.time.Instant
 
 data class RestStartDownloadRegistrationFiles(
@@ -8,7 +8,7 @@ data class RestStartDownloadRegistrationFiles(
     val registrationFilesCanBeDownloaded: Boolean
 ) {
     companion object {
-        fun of(settings: Settings, registrationFilesCanBeDownloaded: Boolean) = RestStartDownloadRegistrationFiles(
+        fun of(settings: SettingsEntry, registrationFilesCanBeDownloaded: Boolean) = RestStartDownloadRegistrationFiles(
             startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles,
             registrationFilesCanBeDownloaded = registrationFilesCanBeDownloaded
         )

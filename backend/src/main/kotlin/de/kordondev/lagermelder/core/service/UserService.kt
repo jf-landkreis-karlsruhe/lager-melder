@@ -1,9 +1,9 @@
 package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.mail.MailSenderService
-import de.kordondev.lagermelder.core.model.Settings
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Roles
+import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import de.kordondev.lagermelder.core.persistence.entry.UserEntry
 import de.kordondev.lagermelder.core.persistence.repository.UserRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
@@ -93,7 +93,7 @@ class UserService(
             .also { sendEmail(it, newPassword, settings) }
     }
 
-    private fun sendEmail(user: UserEntry, password: String, settings: Settings) {
+    private fun sendEmail(user: UserEntry, password: String, settings: SettingsEntry) {
         authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         mailSenderService.sendRegistrationMail(
             to = user.department.leaderEMail,
