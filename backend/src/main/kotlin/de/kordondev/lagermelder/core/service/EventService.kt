@@ -1,13 +1,12 @@
 package de.kordondev.lagermelder.core.service
 
-import de.kordondev.lagermelder.core.model.AttendeeInEvent
-import de.kordondev.lagermelder.core.model.NewAttendeeCodeInEventCode
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeInEventRepository
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeRepository
 import de.kordondev.lagermelder.core.persistence.repository.EventRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
+import de.kordondev.lagermelder.core.service.helper.AttendeeInEvent
 import de.kordondev.lagermelder.exception.NotDeletableException
 import de.kordondev.lagermelder.exception.NotFoundException
 import de.kordondev.lagermelder.rest.model.Distribution
@@ -72,7 +71,7 @@ class EventService(
     fun addAttendeeToEvent(eventCode: String, attendeeCode: String): AttendeeInEvent {
         val event = getEventByCode(eventCode)
         val attendee: AttendeeEntry = attendeeService.getAttendeeByCode(attendeeCode)
-        val attendeeInEvent = NewAttendeeCodeInEventCode(attendeeCode, eventCode, Instant.now())
+        val attendeeInEvent = AttendeeInEventEntry(id = 0, attendeeCode, eventCode, Instant.now())
         var attendeeStatus: AttendeeStatus? = null
         if (event.type == EventType.GlobalEnter) {
             attendeeStatus = AttendeeStatus.ENTERED
@@ -80,9 +79,18 @@ class EventService(
         if (event.type == EventType.GlobalLeave) {
             attendeeStatus = AttendeeStatus.LEFT
         }
-        attendeeRepository.save(attendee.copy(status = attendeeStatus))
-        return attendeeInEventRepository.save(AttendeeInEventEntry.of(attendeeInEvent))
-            .let { AttendeeInEvent(attendee.firstName, attendee.lastName, event.name, it.time) }
+        if (attendeeStatus != null) {
+            attendeeRepository.save(attendee.copy(status = attendeeStatus))
+        }
+        return attendeeInEventRepository.save(attendeeInEvent)
+            .let {
+                AttendeeInEvent(
+                    attendeeFirstName = attendee.firstName,
+                    attendeeLastName = attendee.lastName,
+                    eventName = event.name,
+                    time = attendeeInEvent.time
+                )
+            }
     }
 
     fun getGlobalEventSummary(): RestGlobalEventSummary {

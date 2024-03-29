@@ -1,7 +1,5 @@
 package de.kordondev.lagermelder.helper
 
-import de.kordondev.lagermelder.core.model.Attendee
-import de.kordondev.lagermelder.core.model.Department
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.rest.model.request.*
 import java.time.ZonedDateTime
@@ -9,16 +7,16 @@ import java.time.ZonedDateTime
 
 class Entities() {
     companion object {
-        fun department(): Department {
-            return Department(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+        fun department(): DepartmentEntry {
+            return DepartmentEntry(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         }
 
         fun departmentEntry(): DepartmentEntry {
             return DepartmentEntry(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
         }
 
-        fun attendee(): Attendee {
-            return Attendee(
+        fun attendee(): AttendeeEntry {
+            return AttendeeEntry(
                 10L,
                 "att",
                 "endee",
@@ -26,9 +24,9 @@ class Entities() {
                 Food.MEAT,
                 TShirtSize.S164,
                 "",
+                "code",
                 AttendeeRole.YOUTH,
                 department(),
-                "code",
                 status = null,
             )
         }
