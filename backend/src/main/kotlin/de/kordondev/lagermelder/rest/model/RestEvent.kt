@@ -1,6 +1,6 @@
 package de.kordondev.lagermelder.rest.model
 
-import de.kordondev.lagermelder.core.model.Event
+import de.kordondev.lagermelder.core.persistence.entry.EventEntry
 import de.kordondev.lagermelder.core.persistence.entry.EventType
 
 data class RestEvent(
@@ -10,7 +10,7 @@ data class RestEvent(
     val type: EventType
 ) {
     companion object {
-        fun of(event: Event): RestEvent {
+        fun of(event: EventEntry): RestEvent {
             return RestEvent(
                 id = event.id,
                 name = event.name,

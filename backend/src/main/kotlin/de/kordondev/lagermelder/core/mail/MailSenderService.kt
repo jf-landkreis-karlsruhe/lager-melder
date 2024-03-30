@@ -1,7 +1,7 @@
 package de.kordondev.lagermelder.core.mail
 
-import de.kordondev.lagermelder.core.model.Settings
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
+import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import de.kordondev.lagermelder.core.security.AuthorityService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -31,7 +31,13 @@ class MailSenderService(
     private val reminderMailTemplate = "reminder"
     private val registrationFinishedTemplate = "registration-finished"
 
-    fun sendRegistrationMail(to: String, leaderName: String, username: String, password: String, settings: Settings) {
+    fun sendRegistrationMail(
+        to: String,
+        leaderName: String,
+        username: String,
+        password: String,
+        settings: SettingsEntry
+    ) {
         try {
             authorityService.isSpecializedFieldDirector()
             val headerLogoName = "kreiszeltlager-logo.jpg"
@@ -64,7 +70,7 @@ class MailSenderService(
         }
     }
 
-    fun sendReminderMail(to: String, leaderName: String, settings: Settings): Boolean {
+    fun sendReminderMail(to: String, leaderName: String, settings: SettingsEntry): Boolean {
         try {
             authorityService.isAdmin()
             val headerLogoName = "kreiszeltlager-logo.jpg"
@@ -100,7 +106,7 @@ class MailSenderService(
         }
     }
 
-    fun sendRegistrationFinishedMail(to: String, leaderName: String, settings: Settings): Boolean {
+    fun sendRegistrationFinishedMail(to: String, leaderName: String, settings: SettingsEntry): Boolean {
         try {
             authorityService.isAdmin()
             val headerLogoName = "kreiszeltlager-logo.jpg"

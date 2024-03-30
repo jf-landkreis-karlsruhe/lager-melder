@@ -1,10 +1,10 @@
 package de.kordondev.lagermelder.core.pdf
 
-import de.kordondev.lagermelder.core.model.Attendee
-import de.kordondev.lagermelder.core.model.Settings
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDateShort
+import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
+import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import de.kordondev.lagermelder.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
@@ -33,7 +33,7 @@ class AttendeesKarlsruhe(
     private val EVENT_END = "bis"
     private val DAYS_OF_EVENT = 5
 
-    fun createAttendeesKarlsruhePdf(attendees: List<Attendee>): PDDocument {
+    fun createAttendeesKarlsruhePdf(attendees: List<AttendeeEntry>): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/attendees_LRA_KA.pdf")
         val settings = settingsService.getSettings()
 
@@ -86,10 +86,10 @@ class AttendeesKarlsruhe(
 
     fun fillPage(
         pdfDocument: PDDocument,
-        attendees: List<Attendee>,
+        attendees: List<AttendeeEntry>,
         cellIds: List<Int>,
         page: Int,
-        settings: Settings
+        settings: SettingsEntry
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm
@@ -101,9 +101,9 @@ class AttendeesKarlsruhe(
 
     fun fillFirstPage(
         pdfDocument: PDDocument,
-        attendees: List<Attendee>,
+        attendees: List<AttendeeEntry>,
         page: Int,
-        settings: Settings
+        settings: SettingsEntry
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm
@@ -116,11 +116,11 @@ class AttendeesKarlsruhe(
     }
 
     fun fillAttendeeInForm(
-        attendee: Attendee,
+        attendee: AttendeeEntry,
         form: PDAcroForm,
         firstCellId: Int,
         page: Number,
-        settings: Settings
+        settings: SettingsEntry
     ): List<PDField> {
         val fields = mutableListOf<PDField>()
         val nameCellId = firstCellId

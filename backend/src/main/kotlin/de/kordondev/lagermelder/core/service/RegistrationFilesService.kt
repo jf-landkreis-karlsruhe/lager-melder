@@ -3,7 +3,6 @@ package de.kordondev.lagermelder.core.service
 import de.kordondev.lagermelder.core.pdf.AttendeesCommunal
 import de.kordondev.lagermelder.core.pdf.AttendeesKarlsruhe
 import de.kordondev.lagermelder.core.pdf.StateYouthPlanAttendees
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.exception.WrongTimeException
 import org.apache.commons.io.IOUtils
@@ -47,7 +46,7 @@ class RegistrationFilesService(
         val result = youthPlanAttendeeRoleService.getOptimizedLeaderAndAttendeeIds()
             .filter { it.youthPlanRole == AttendeeRole.YOUTH }
             .filter { it.departmentId == department.id }
-            .map { AttendeeEntry.to(it.attendee) }
+            .map { it.attendee }
             .let { stateYouthPlanAttendees.createStateYouthPlanAttendees(it) }
 
         val out = ByteArrayOutputStream()
@@ -64,7 +63,7 @@ class RegistrationFilesService(
         val result = youthPlanAttendeeRoleService.getOptimizedLeaderAndAttendeeIds()
             .filter { it.youthPlanRole == AttendeeRole.YOUTH_LEADER }
             .filter { it.departmentId == department.id }
-            .map { AttendeeEntry.to(it.attendee) }
+            .map { it.attendee }
             .let { stateYouthPlanAttendees.createStateYouthPlanAttendees(it) }
         val out = ByteArrayOutputStream()
         result.save(out)

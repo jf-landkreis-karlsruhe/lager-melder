@@ -1,8 +1,8 @@
 package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.mail.MailSenderService
-import de.kordondev.lagermelder.core.model.Department
-import de.kordondev.lagermelder.core.model.SendTo
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
+import de.kordondev.lagermelder.core.persistence.entry.SendTo
 import de.kordondev.lagermelder.core.security.AuthorityService
 import org.springframework.stereotype.Service
 
@@ -34,7 +34,7 @@ class MailService(
             .count()
     }
 
-    private fun filterDepartmentsBy(department: Department, sendTo: SendTo): Boolean {
+    private fun filterDepartmentsBy(department: DepartmentEntry, sendTo: SendTo): Boolean {
         if (sendTo == SendTo.ALL_DEPARTMENTS) {
             return true
         }

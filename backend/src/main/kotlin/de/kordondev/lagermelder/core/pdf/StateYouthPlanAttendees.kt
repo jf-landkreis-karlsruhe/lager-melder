@@ -1,8 +1,8 @@
 package de.kordondev.lagermelder.core.pdf
 
-import de.kordondev.lagermelder.core.model.Attendee
-import de.kordondev.lagermelder.core.model.Settings
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
+import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
+import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import de.kordondev.lagermelder.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
@@ -63,7 +63,7 @@ class StateYouthPlanAttendees(
 
     val DAYS_OF_EVENT = 5
 
-    fun createStateYouthPlanAttendees(attendees: List<Attendee>): PDDocument {
+    fun createStateYouthPlanAttendees(attendees: List<AttendeeEntry>): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/stateYouthPlanAttendees.pdf")
         val settings = settingsService.getSettings()
 
@@ -118,10 +118,10 @@ class StateYouthPlanAttendees(
 
     fun fillPage(
         pdfDocument: PDDocument,
-        attendees: List<Attendee>,
+        attendees: List<AttendeeEntry>,
         cellIds: List<Int>,
         page: Int,
-        settings: Settings
+        settings: SettingsEntry
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm
@@ -133,9 +133,9 @@ class StateYouthPlanAttendees(
 
     fun fillFirstPage(
         pdfDocument: PDDocument,
-        attendees: List<Attendee>,
+        attendees: List<AttendeeEntry>,
         page: Int,
-        settings: Settings
+        settings: SettingsEntry
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
@@ -148,7 +148,7 @@ class StateYouthPlanAttendees(
         return fields
     }
 
-    fun fillSecondPage(pdfDocument: PDDocument, attendees: List<Attendee>, page: Int): MutableList<PDField> {
+    fun fillSecondPage(pdfDocument: PDDocument, attendees: List<AttendeeEntry>, page: Int): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
         val previousDays = (ATTENDEES_ON_FIRST_PAGE + ATTENDEES_ON_SECOND_PAGE * (page - 2)) * DAYS_OF_EVENT
@@ -159,11 +159,11 @@ class StateYouthPlanAttendees(
     }
 
     private fun fillAttendeeInForm(
-        attendee: Attendee,
+        attendee: AttendeeEntry,
         form: PDAcroForm,
         firstCellId: Int,
         page: Number,
-        settings: Settings
+        settings: SettingsEntry
     ): List<PDField> {
         val fields = mutableListOf<PDField>()
         val nameCellId = firstCellId + 2

@@ -1,6 +1,6 @@
 package de.kordondev.lagermelder.rest.model
 
-import de.kordondev.lagermelder.core.model.Settings
+import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import java.time.Instant
 import java.time.LocalDate
 
@@ -18,7 +18,7 @@ data class RestSettings(
     val startDownloadRegistrationFiles: Instant
 ) {
     companion object {
-        fun of(settings: Settings) = RestSettings(
+        fun of(settings: SettingsEntry) = RestSettings(
             id = settings.id,
             registrationEnd = settings.registrationEnd,
             hostCity = settings.hostCity,
@@ -32,7 +32,7 @@ data class RestSettings(
             startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles
         )
 
-        fun to(settings: RestSettings) = Settings(
+        fun to(settings: RestSettings) = SettingsEntry(
             id = settings.id,
             registrationEnd = settings.registrationEnd,
             hostCity = settings.hostCity,

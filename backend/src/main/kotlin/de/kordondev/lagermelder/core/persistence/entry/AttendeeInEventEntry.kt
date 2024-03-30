@@ -1,6 +1,5 @@
 package de.kordondev.lagermelder.core.persistence.entry
 
-import de.kordondev.lagermelder.core.model.NewAttendeeCodeInEventCode
 import java.time.Instant
 import javax.persistence.*
 
@@ -19,14 +18,4 @@ data class AttendeeInEventEntry(
 
     @Column(name = "time")
     val time: Instant
-) {
-    companion object {
-        fun of(attendeeInEvent: NewAttendeeCodeInEventCode): AttendeeInEventEntry {
-            return AttendeeInEventEntry(
-                attendeeCode = attendeeInEvent.attendeeCode,
-                eventCode = attendeeInEvent.eventCode,
-                time = attendeeInEvent.time
-            )
-        }
-    }
-}
+)

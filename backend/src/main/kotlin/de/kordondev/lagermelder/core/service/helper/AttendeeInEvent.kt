@@ -1,12 +1,6 @@
-package de.kordondev.lagermelder.core.model
+package de.kordondev.lagermelder.core.service.helper
 
 import java.time.Instant
-
-data class NewAttendeeCodeInEventCode(
-    val attendeeCode: String,
-    val eventCode: String,
-    val time: Instant
-)
 
 data class AttendeeInEvent(
     val attendeeFirstName: String,

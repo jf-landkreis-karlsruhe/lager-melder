@@ -1,6 +1,5 @@
 package de.kordondev.lagermelder.core.security
 
-import de.kordondev.lagermelder.core.persistence.entry.UserEntry
 import de.kordondev.lagermelder.core.persistence.repository.UserRepository
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
@@ -15,7 +14,6 @@ class UserDetailsServiceImpl(
 
     override fun loadUserByUsername(userName: String): UserDetails {
         return userRepository.findOneByUserName(userName)
-            ?.let { UserEntry.to(it) }
             ?.let { user -> User(user.userName, user.passWord, listOf()) }
             ?: throw UsernameNotFoundException(userName)
     }

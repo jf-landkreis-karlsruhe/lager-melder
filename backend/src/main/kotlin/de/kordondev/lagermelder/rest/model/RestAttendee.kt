@@ -1,7 +1,7 @@
 package de.kordondev.lagermelder.rest.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import de.kordondev.lagermelder.core.model.Attendee
+import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.Food
 
@@ -20,7 +20,7 @@ data class RestAttendee(
     val status: String
 ) {
     companion object {
-        fun of(attendee: Attendee) = RestAttendee(
+        fun of(attendee: AttendeeEntry) = RestAttendee(
             id = attendee.id,
             firstName = attendee.firstName,
             lastName = attendee.lastName,

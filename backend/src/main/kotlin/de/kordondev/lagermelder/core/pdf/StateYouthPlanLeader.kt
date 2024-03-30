@@ -1,9 +1,9 @@
 package de.kordondev.lagermelder.core.pdf
 
-import de.kordondev.lagermelder.core.model.Attendee
-import de.kordondev.lagermelder.core.model.Settings
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
+import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
+import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import de.kordondev.lagermelder.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
@@ -36,7 +36,7 @@ class StateYouthPlanLeader(
 
     val DAYS_OF_EVENT = 5
 
-    fun createStateYouthPlanLeaderPdf(attendees: List<Attendee>): PDDocument {
+    fun createStateYouthPlanLeaderPdf(attendees: List<AttendeeEntry>): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/stateYouthPlanLeader.pdf")
         val settings = settingsService.getSettings()
 
@@ -70,10 +70,10 @@ class StateYouthPlanLeader(
 
     fun fillPage(
         pdfDocument: PDDocument,
-        attendees: List<Attendee>,
+        attendees: List<AttendeeEntry>,
         cellIds: List<Int>,
         page: Int,
-        settings: Settings
+        settings: SettingsEntry
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
@@ -90,11 +90,11 @@ class StateYouthPlanLeader(
     }
 
     fun fillAttendeeInForm(
-        attendee: Attendee,
+        attendee: AttendeeEntry,
         form: PDAcroForm,
         cellId: Int,
         page: Int,
-        settings: Settings
+        settings: SettingsEntry
     ): List<PDField> {
         val fields = mutableListOf<PDField>()
         val startDateCell = if (cellId == 1) {

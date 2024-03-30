@@ -1,6 +1,6 @@
 package de.kordondev.lagermelder.rest.model.request
 
-import de.kordondev.lagermelder.core.model.Settings
+import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import java.time.Instant
 
 data class RestRegistrationEnd(
@@ -8,7 +8,7 @@ data class RestRegistrationEnd(
     val attendeesCanBeEdited: Boolean
 ) {
     companion object {
-        fun of(settings: Settings, attendeesCanBeEdited: Boolean): RestRegistrationEnd {
+        fun of(settings: SettingsEntry, attendeesCanBeEdited: Boolean): RestRegistrationEnd {
             return RestRegistrationEnd(
                 registrationEnd = settings.registrationEnd,
                 attendeesCanBeEdited = attendeesCanBeEdited

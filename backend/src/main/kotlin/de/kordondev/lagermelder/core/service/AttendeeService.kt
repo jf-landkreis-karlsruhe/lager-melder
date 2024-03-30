@@ -1,8 +1,5 @@
 package de.kordondev.lagermelder.core.service
 
-import de.kordondev.lagermelder.core.model.Attendee
-import de.kordondev.lagermelder.core.model.Department
-import de.kordondev.lagermelder.core.model.NewAttendee
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Roles
@@ -24,42 +21,39 @@ class AttendeeService(
     private val settingsService: SettingsService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AttendeeService::class.java)
-    fun getAttendees(): List<Attendee> {
+    fun getAttendees(): List<AttendeeEntry> {
         return getAllAttendees()
             .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
     }
 
-    fun getAttendee(id: Long): Attendee {
+    fun getAttendee(id: Long): AttendeeEntry {
         return attendeeRepository
             .findByIdOrNull(id)
-            ?.let { AttendeeEntry.to(it) }
             ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
             ?: throw NotFoundException("Attendee with id $id not found")
     }
 
-    fun createAttendee(attendee: NewAttendee): Attendee {
+    fun createAttendee(attendee: AttendeeEntry): AttendeeEntry {
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         checkCanAttendeeBeEdited()
         checkFirstNameAndLastNameAreUnique(attendee)
         val code = PasswordGenerator.generateCode()
         return attendeeRepository
-            .save(AttendeeEntry.of(attendee, code))
-            .let { savedAttendee -> AttendeeEntry.to(savedAttendee) }
+            .save(attendee.copy(code = code))
     }
 
-    fun saveAttendee(id: Long, attendee: NewAttendee): Attendee {
+    fun saveAttendee(id: Long, attendee: AttendeeEntry): AttendeeEntry {
         checkCanAttendeeBeEdited()
         checkFirstNameAndLastNameAreUnique(attendee, id)
 
         return attendeeRepository.findByIdOrNull(id)
             ?.let {
                 authorityService.hasAuthority(
-                    AttendeeEntry.to(it),
+                    it,
                     listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
                 )
-                attendeeRepository.save(AttendeeEntry.of(attendee, it.code, it.id))
+                attendeeRepository.save(attendee.copy(code = it.code, id = it.id))
             }
-            ?.let { AttendeeEntry.to(it) }
             ?: createAttendee(attendee)
     }
 
@@ -68,7 +62,7 @@ class AttendeeService(
         attendeeRepository.findByIdOrNull(id)
             ?.let {
                 authorityService.hasAuthority(
-                    AttendeeEntry.to(it),
+                    it,
                     listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
                 )
                 attendeeRepository.delete(it)
@@ -76,31 +70,28 @@ class AttendeeService(
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
 
-    fun getAttendeesForDepartment(department: Department): List<Attendee> {
+    fun getAttendeesForDepartment(department: DepartmentEntry): List<AttendeeEntry> {
         return attendeeRepository
-            .findByDepartment(DepartmentEntry.of(department))
-            .map { attendee -> AttendeeEntry.to(attendee) }
+            .findByDepartment(department)
             .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
     }
 
-    fun getAttendeeByCode(code: String): Attendee {
+    fun getAttendeeByCode(code: String): AttendeeEntry {
         return attendeeRepository.findByCode(code)
-            ?.let { AttendeeEntry.to(it) }
             ?: throw NotFoundException("No Attendee for code $code found")
     }
 
-    fun getAllAttendees(): List<Attendee> {
-        return attendeeRepository.findAll()
-            .map { AttendeeEntry.to(it) }
+    fun getAllAttendees(): List<AttendeeEntry> {
+        return attendeeRepository.findAll().toList()
     }
 
     fun getAttendeesWithoutYouthPlanRole(): List<AttendeeEntry> {
         return attendeeRepository.findAttendeesWithoutYouthPlanRole()
     }
 
-    private fun checkFirstNameAndLastNameAreUnique(attendee: NewAttendee, id: Long = 0) {
+    private fun checkFirstNameAndLastNameAreUnique(attendee: AttendeeEntry, id: Long = 0) {
         attendeeRepository.findByDepartmentAndFirstNameAndLastName(
-            DepartmentEntry.of(attendee.department),
+            attendee.department,
             attendee.firstName,
             attendee.lastName
         )

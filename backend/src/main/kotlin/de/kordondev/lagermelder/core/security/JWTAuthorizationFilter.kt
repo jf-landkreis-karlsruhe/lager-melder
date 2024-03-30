@@ -2,7 +2,6 @@ package de.kordondev.lagermelder.core.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import de.kordondev.lagermelder.core.persistence.entry.UserEntry
 import de.kordondev.lagermelder.core.persistence.repository.UserRepository
 import de.kordondev.lagermelder.core.security.SecurityConstants.DEPARTMENT_ID_PREFIX
 import de.kordondev.lagermelder.core.security.SecurityConstants.HEADER_STRING
@@ -49,7 +48,6 @@ class JWTAuthorizationFilter(
                 .subject
             if (username != null) {
                 return userRepository.findOneByUserName(username)
-                    ?.let { UserEntry.to(it) }
                     ?.let { user ->
                         UsernamePasswordAuthenticationToken(
                             user.userName,

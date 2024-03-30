@@ -1,4 +1,4 @@
-package de.kordondev.lagermelder.core.model
+package de.kordondev.lagermelder.core.persistence.entry
 
 enum class SendTo {
     ALL_DEPARTMENTS,

@@ -1,6 +1,5 @@
 package de.kordondev.lagermelder.rest.model
 
-import de.kordondev.lagermelder.core.model.Department
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.TentsEntity
 
@@ -24,9 +23,9 @@ data class RestTents(
             sg50 = tents.sg50
         )
 
-        fun to(tents: RestTents, department: Department) = TentsEntity(
+        fun to(tents: RestTents, department: DepartmentEntry) = TentsEntity(
             id = tents.id,
-            department = DepartmentEntry.of(department),
+            department = department,
             sg200 = minZero(tents.sg200),
             sg20 = minZero(tents.sg20),
             sg30 = minZero(tents.sg30),

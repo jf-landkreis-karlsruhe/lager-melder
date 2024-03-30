@@ -1,6 +1,6 @@
 package de.kordondev.lagermelder.rest.model
 
-import de.kordondev.lagermelder.core.model.AttendeeInEvent
+import de.kordondev.lagermelder.core.service.helper.AttendeeInEvent
 import java.time.Instant
 
 data class RestAttendeeInEvent(

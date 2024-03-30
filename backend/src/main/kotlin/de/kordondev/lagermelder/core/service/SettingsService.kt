@@ -1,6 +1,5 @@
 package de.kordondev.lagermelder.core.service
 
-import de.kordondev.lagermelder.core.model.Settings
 import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import de.kordondev.lagermelder.core.persistence.repository.SettingsRepository
@@ -19,12 +18,11 @@ class SettingsService(
 
     private val SETTINGS_ID = 1L
 
-    fun getSettings(): Settings {
-        val settingsList = settingsRepository.findAll()
-            .map { SettingsEntry.to(it) }
+    fun getSettings(): SettingsEntry {
+        val settingsList = settingsRepository.findAll().toList()
         if (settingsList.isEmpty()) {
             return saveSettings(
-                Settings(
+                SettingsEntry(
                     id = SETTINGS_ID,
                     registrationEnd = Instant.now().plus(30, ChronoUnit.DAYS),
                     startDownloadRegistrationFiles = Instant.now().plus(45, ChronoUnit.DAYS),
@@ -42,13 +40,12 @@ class SettingsService(
         return settingsList.first()
     }
 
-    fun saveSettings(settings: Settings): Settings {
+    fun saveSettings(settings: SettingsEntry): SettingsEntry {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         if (settings.registrationEnd.isAfter(settings.startDownloadRegistrationFiles)) {
             throw BadRequestException("Registrierungsende muss vor dem Start der Downloads der Anmeldeunterlagen sein.")
         }
-        return settingsRepository.save(SettingsEntry.of(settings, SETTINGS_ID))
-            .let { SettingsEntry.to(it) }
+        return settingsRepository.save(settings.copy(id = SETTINGS_ID))
     }
 
 

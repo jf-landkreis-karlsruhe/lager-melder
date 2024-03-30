@@ -1,10 +1,6 @@
 package de.kordondev.lagermelder.rest.model.request
 
-import de.kordondev.lagermelder.core.model.Department
-import de.kordondev.lagermelder.core.model.NewAttendee
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
-import de.kordondev.lagermelder.core.persistence.entry.Food
-import de.kordondev.lagermelder.core.persistence.entry.TShirtSize
+import de.kordondev.lagermelder.core.persistence.entry.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
@@ -28,8 +24,9 @@ data class RestAttendeeRequest(
     val role: AttendeeRole
 ) {
     companion object {
-        fun to(attendee: RestAttendeeRequest, department: Department): NewAttendee {
-            return NewAttendee(
+        fun to(attendee: RestAttendeeRequest, department: DepartmentEntry): AttendeeEntry {
+            return AttendeeEntry(
+                id = 0,
                 firstName = attendee.firstName,
                 lastName = attendee.lastName,
                 birthday = attendee.birthday,
@@ -37,7 +34,9 @@ data class RestAttendeeRequest(
                 tShirtSize = TShirtSize.fromString(attendee.tShirtSize),
                 additionalInformation = attendee.additionalInformation,
                 role = attendee.role,
-                department = department
+                department = department,
+                code = "",
+                status = null
             )
         }
     }

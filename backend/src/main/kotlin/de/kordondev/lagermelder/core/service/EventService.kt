@@ -1,12 +1,12 @@
 package de.kordondev.lagermelder.core.service
 
-import de.kordondev.lagermelder.core.model.*
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeInEventRepository
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeRepository
 import de.kordondev.lagermelder.core.persistence.repository.EventRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
+import de.kordondev.lagermelder.core.service.helper.AttendeeInEvent
 import de.kordondev.lagermelder.exception.NotDeletableException
 import de.kordondev.lagermelder.exception.NotFoundException
 import de.kordondev.lagermelder.rest.model.Distribution
@@ -23,42 +23,37 @@ class EventService(
     val attendeeRepository: AttendeeRepository,
     val departmentService: DepartmentService
 ) {
-    fun getEventByCode(code: String): Event {
+    fun getEventByCode(code: String): EventEntry {
         return eventRepository.findByCodeAndTrashedIsFalse(code)
-            ?.let { EventEntry.to(it) }
             ?: throw NotFoundException("Event not found for code $code")
     }
 
-    fun getEventByType(type: EventType): Event {
+    fun getEventByType(type: EventType): EventEntry {
         return eventRepository.findByTypeAndTrashedIsFalse(type)
-            ?.let { EventEntry.to(it) }
             ?: throw NotFoundException("Event not found for type $type")
     }
 
-    fun getEvent(id: Long): Event {
-        return eventRepository.findByIdAndTrashedIsFalse(id)?.let { EventEntry.to(it) }
+    fun getEvent(id: Long): EventEntry {
+        return eventRepository.findByIdAndTrashedIsFalse(id)
             ?: throw NotFoundException("Event with $id not found")
     }
 
-    fun getEvents(): List<Event> {
+    fun getEvents(): List<EventEntry> {
         return eventRepository.findAllByTrashedIsFalse()
-            .map { EventEntry.to(it) }
     }
 
-    fun createEvent(event: NewEvent): Event {
+    fun createEvent(event: EventEntry): EventEntry {
         authorityService.hasRole(listOf(Roles.USER, Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         val code = PasswordGenerator.generateCode()
-        return eventRepository.save(EventEntry.of(event, code))
-            .let { EventEntry.to(it) }
+        return eventRepository.save(event.copy(code = code))
     }
 
-    fun saveEvent(id: Long, event: NewEvent): Event {
+    fun saveEvent(id: Long, event: EventEntry): EventEntry {
         authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         return eventRepository.findByIdAndTrashedIsFalse(id)
             ?.let {
-                eventRepository.save(EventEntry.of(event, it.code, id, it.type))
+                eventRepository.save(event.copy(code = it.code, id = id, type = it.type))
             }
-            ?.let { EventEntry.to(it) }
             ?: createEvent(event)
     }
 
@@ -68,25 +63,34 @@ class EventService(
             if (it.type != EventType.Location) {
                 throw NotDeletableException("Das Event ${it.name} kann nicht gelöscht werden")
             }
-            val trashEvent = it.copy(trashed = true)
-            eventRepository.save(EventEntry.of(trashEvent, trashEvent.code))
+            eventRepository.save(it.copy(trashed = true))
         }
     }
 
 
     fun addAttendeeToEvent(eventCode: String, attendeeCode: String): AttendeeInEvent {
-        val event: Event = getEventByCode(eventCode)
-        val attendee: Attendee = attendeeService.getAttendeeByCode(attendeeCode)
-        val attendeeInEvent = NewAttendeeCodeInEventCode(attendeeCode, eventCode, Instant.now())
+        val event = getEventByCode(eventCode)
+        val attendee: AttendeeEntry = attendeeService.getAttendeeByCode(attendeeCode)
+        val attendeeInEvent = AttendeeInEventEntry(id = 0, attendeeCode, eventCode, Instant.now())
+        var attendeeStatus: AttendeeStatus? = null
         if (event.type == EventType.GlobalEnter) {
-            attendee.status = AttendeeStatus.ENTERED
+            attendeeStatus = AttendeeStatus.ENTERED
         }
         if (event.type == EventType.GlobalLeave) {
-            attendee.status = AttendeeStatus.LEFT
+            attendeeStatus = AttendeeStatus.LEFT
         }
-        attendeeRepository.save(AttendeeEntry.of(attendee, attendee.status))
-        return attendeeInEventRepository.save(AttendeeInEventEntry.of(attendeeInEvent))
-            .let { AttendeeInEvent(attendee.firstName, attendee.lastName, event.name, it.time) }
+        if (attendeeStatus != null) {
+            attendeeRepository.save(attendee.copy(status = attendeeStatus))
+        }
+        return attendeeInEventRepository.save(attendeeInEvent)
+            .let {
+                AttendeeInEvent(
+                    attendeeFirstName = attendee.firstName,
+                    attendeeLastName = attendee.lastName,
+                    eventName = event.name,
+                    time = attendeeInEvent.time
+                )
+            }
     }
 
     fun getGlobalEventSummary(): RestGlobalEventSummary {
@@ -99,7 +103,7 @@ class EventService(
         )
     }
 
-    private fun sumUp(attendees: List<Attendee>, name: String): Distribution {
+    private fun sumUp(attendees: List<AttendeeEntry>, name: String): Distribution {
         val groupedAttendees = attendees.groupBy { attendeeRoleStatus(it.status, it.role) }
         return Distribution(
             name = name,

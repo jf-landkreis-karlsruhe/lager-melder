@@ -1,7 +1,5 @@
 package de.kordondev.lagermelder.core.persistence.entry
 
-import de.kordondev.lagermelder.core.model.Attendee
-import de.kordondev.lagermelder.core.model.NewAttendee
 import org.hibernate.Hibernate
 import java.util.*
 import javax.persistence.*
@@ -50,55 +48,6 @@ data class AttendeeEntry(
     val status: AttendeeStatus?
 
 ) {
-    companion object {
-        fun of(attendee: Attendee, status: AttendeeStatus?): AttendeeEntry {
-            return AttendeeEntry(
-                id = attendee.id,
-                firstName = attendee.firstName,
-                lastName = attendee.lastName,
-                department = DepartmentEntry.of(attendee.department),
-                birthday = attendee.birthday,
-                food = attendee.food,
-                tShirtSize = attendee.tShirtSize,
-                additionalInformation = attendee.additionalInformation,
-                role = attendee.role,
-                code = attendee.code,
-                status = status,
-            )
-        }
-
-        fun of(attendee: NewAttendee, code: String, id: Long = 0) = AttendeeEntry(
-            id = id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            department = DepartmentEntry.of(attendee.department),
-            birthday = attendee.birthday,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            code = code,
-            status = null
-        )
-
-        fun to(attendeeEntry: AttendeeEntry): Attendee {
-            return Attendee(
-                id = attendeeEntry.id,
-                firstName = attendeeEntry.firstName,
-                lastName = attendeeEntry.lastName,
-                department = DepartmentEntry.to(attendeeEntry.department),
-                birthday = attendeeEntry.birthday,
-                food = attendeeEntry.food,
-                tShirtSize = attendeeEntry.tShirtSize,
-                additionalInformation = attendeeEntry.additionalInformation,
-                role = attendeeEntry.role,
-                code = attendeeEntry.code,
-                status = attendeeEntry.status
-            )
-        }
-
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
