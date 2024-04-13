@@ -46,6 +46,7 @@ onMounted(() => {
                   prepend-icon="mdi-account"
                   v-model="username"
                   label="Benutzername"
+                  type="email"
                 />
                 <v-text-field
                   type="password"
@@ -66,6 +67,9 @@ onMounted(() => {
               </v-card-actions>
             </form>
           </v-card>
+          <router-link to="/password-vergessen" class="account">
+            <span>Password vergessen</span>
+          </router-link>
         </v-col>
       </v-row>
     </LmContainer>

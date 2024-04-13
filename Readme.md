@@ -37,3 +37,12 @@ Then just: `./run.sh`
 See https://github.com/KordonDev/lager-melder/blob/main/backend/src/main/kotlin/de/kordondev/lagermelder/AttendeeApplication.kt
 
 Event: <frontendUrl>/scanner/event001
+
+## Backup
+docker exec lm-database-prod sh -c 'exec mysqldump -ulager_melder_user -pPASSWORD --no-tablespaces lager_melder' > ./lm-database.sql
+
+
+scp username@remote:/file/to/send /where/to/put
+
+la@email.de
+QO7zaZGwC2a0

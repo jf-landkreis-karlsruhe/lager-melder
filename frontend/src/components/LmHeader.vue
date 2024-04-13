@@ -29,7 +29,7 @@ const checkToken = () => {
   const token = getTokenData()
   if (!token) {
     loggedIn.value = false
-    route.path !== '/login' && router.push('/login')
+    !['/login', '/password-vergessen'].includes(window.location.pathname) && router.push('/login')
     return
   }
   loggedIn.value = true

@@ -3,6 +3,7 @@ package de.kordondev.lagermelder.rest.controller
 import de.kordondev.lagermelder.core.service.DepartmentService
 import de.kordondev.lagermelder.core.service.SecurityService
 import de.kordondev.lagermelder.core.service.UserService
+import de.kordondev.lagermelder.rest.model.RestOk
 import de.kordondev.lagermelder.rest.model.RestUser
 import de.kordondev.lagermelder.rest.model.request.RestPasswordPasswordTokenRequest
 import de.kordondev.lagermelder.rest.model.request.RestResetPasswordTokenRequest
@@ -75,7 +76,7 @@ class UserController(
     @PutMapping("/users/forgotPasswordToken")
     fun sendForgotPasswordEmail(
         @RequestBody(required = true) @Valid passwordPasswordTokenRequest: RestPasswordPasswordTokenRequest
-    ) {
+    ): RestOk {
         return securityService.sendResetPasswordLink(
             passwordPasswordTokenRequest.username,
             passwordPasswordTokenRequest.linkAddress
@@ -85,7 +86,7 @@ class UserController(
     @PutMapping("/users/resetPasswordWithToken")
     fun resetPasswordWithToken(
         @RequestBody(required = true) @Valid resetPasswordRequest: RestResetPasswordTokenRequest
-    ) {
+    ): RestOk {
         return securityService.resetPasswordWithToken(resetPasswordRequest.token, resetPasswordRequest.password)
     }
 }

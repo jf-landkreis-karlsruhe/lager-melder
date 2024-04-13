@@ -1,4 +1,4 @@
-import { postData } from '../helper/fetch'
+import {postData, putData} from '../helper/fetch'
 
 const TOKEN_STORAGE = 'access_token'
 
@@ -52,6 +52,28 @@ export const login = async (username: string, password: string) => {
       window && window.dispatchEvent(loggoutEvent)
       return decodeJWT(response)
     })
+}
+
+export const forgotPassword = async (username: string) => {
+  return putData<{}>(
+      'users/forgotPasswordToken',
+      {},
+      {
+        username,
+        linkAddress: window.location.origin,
+      }
+  )
+}
+
+export const resetPasswordWithToken = async (token: string, password: string) => {
+  return putData<{}>(
+      'users/resetPasswordWithToken',
+      {},
+      {
+        token,
+        password,
+      }
+  )
 }
 
 export const logout = () => {

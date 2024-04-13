@@ -16,11 +16,12 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId
 import javax.mail.SendFailedException
+import javax.mail.internet.MimeMessage
 
 
 @Service("MailSenderService")
 class MailSenderService(
-    @Value("\${application.mail.send}") private val sendMail: Boolean,
+    @Value("\${application.mail.send}") private val shouldSendMail: Boolean,
     @Value("\${spring.mail.from}") private val sendFrom: String,
     private val authorityService: AuthorityService,
     private val mailSender: JavaMailSender,
@@ -51,20 +52,18 @@ class MailSenderService(
             cxt.setVariable("username", username)
             cxt.setVariable("password", password)
             cxt.setVariable("headerLogo", headerLogoName);
+            val htmlContent = this.htmlTemplateEngine.process(newUserMailTemplate, cxt)
 
             val mimeMessage = this.mailSender.createMimeMessage()
             val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
             message.setFrom(sendFrom)
             message.setSubject("Onlineanmeldung Kreiszeltlager in ${settings.hostCity} eröffnet")
             message.setTo(to)
-            val htmlContent = this.htmlTemplateEngine.process(newUserMailTemplate, cxt)
             message.setText(htmlContent, true)
             message.addInline(headerLogoName, headerLogo);
 
             logger.info("RegistrationMail send to $to")
-            if (sendMail) {
-                this.mailSender.send(mimeMessage)
-            }
+            sendMail(mimeMessage, htmlContent)
         } catch (exception: SendFailedException) {
             logger.error(exception.message)
         }
@@ -96,9 +95,7 @@ class MailSenderService(
             message.addInline(headerLogoName, headerLogo);
 
             logger.info("Reminder mail send to $to")
-            if (sendMail) {
-                this.mailSender.send(mimeMessage)
-            }
+            sendMail(mimeMessage, htmlContent)
             return true
         } catch (exception: SendFailedException) {
             logger.error(exception.message)
@@ -127,9 +124,7 @@ class MailSenderService(
             message.addInline(headerLogoName, headerLogo);
 
             logger.info("Registration finished mail send to $to")
-            if (sendMail) {
-                this.mailSender.send(mimeMessage)
-            }
+            sendMail(mimeMessage, htmlContent)
             return true
         } catch (exception: SendFailedException) {
             logger.error(exception.message)
@@ -153,13 +148,29 @@ class MailSenderService(
           message.setText(htmlContent, true)
           message.addInline(headerLogoName, headerLogo);
           logger.info("Forgot password mail send to $to")
-          if (sendMail) {
-              this.mailSender.send(mimeMessage)
-          }
+          sendMail(mimeMessage, htmlContent)
           return true
       } catch (exception: SendFailedException) {
           logger.error(exception.message)
           return false
       }
     }
+
+    private fun sendMail(mimeMessage: MimeMessage, content: String) {
+        if (shouldSendMail) {
+            this.mailSender.send(mimeMessage)
+        } else {
+            logger.info("Mail send ${mimeMessageToString(mimeMessage, content)}")
+        }
+    }
+
+    private fun mimeMessageToString(mimeMessage: MimeMessage, content: String): String {
+        return """
+            From: ${mimeMessage.from.map { it.toString() }}
+            To: ${mimeMessage.allRecipients.map { it.toString() }}
+            Subject: ${mimeMessage.subject}
+            Message: $content
+        """.trimIndent()
+    }
+
 }
