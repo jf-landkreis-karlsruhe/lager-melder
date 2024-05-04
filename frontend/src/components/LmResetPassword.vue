@@ -22,10 +22,11 @@ const resetPasswordHandler = async () => {
   loading.value = true
   const success = await resetPasswordWithToken(route.params.token as string, password.value).catch(() => {
     loading.value = false
-    toast.error('Der Login war nicht erfolgreich. Benutzername oder Passwort falsch.')
+    toast.error('Password konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.')
     return undefined
   })
   if (success) {
+    toast.success('Password erfolgreich zurückgesetzt.')
     loading.value = false
     router.push('/login')
   }
