@@ -44,5 +44,3 @@ docker exec lm-database-prod sh -c 'exec mysqldump -ulager_melder_user -pPASSWOR
 
 scp username@remote:/file/to/send /where/to/put
 
-la@email.de
-QO7zaZGwC2a0

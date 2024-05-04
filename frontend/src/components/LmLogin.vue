@@ -67,7 +67,7 @@ onMounted(() => {
               </v-card-actions>
             </form>
           </v-card>
-          <router-link to="/password-vergessen" class="account">
+          <router-link to="/passwort-vergessen" class="account">
             <span>Password vergessen</span>
           </router-link>
         </v-col>

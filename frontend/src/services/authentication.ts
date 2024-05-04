@@ -60,7 +60,7 @@ export const forgotPassword = async (username: string) => {
       {},
       {
         username,
-        linkAddress: window.location.origin,
+        linkAddress: window.location.origin + '/passwort-zuruecksetzen',
       }
   )
 }

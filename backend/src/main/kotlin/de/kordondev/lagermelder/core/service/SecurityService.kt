@@ -34,7 +34,7 @@ class SecurityService(
             ?: throw NotFoundException("Token not found")
 
         val user = userService.getUser(resetToken.userId)
-        userService.saveUpdatePassword(user.copy(passWord = password))
+        userService.saveResetPassword(user.copy(passWord = password))
         resetTokenRepository.delete(resetToken)
         return RestOk(true)
     }
