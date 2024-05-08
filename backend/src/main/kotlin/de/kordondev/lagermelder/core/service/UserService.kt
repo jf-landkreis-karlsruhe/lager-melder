@@ -11,10 +11,10 @@ import de.kordondev.lagermelder.core.security.PasswordGenerator
 import de.kordondev.lagermelder.core.security.SecurityConstants.USER_ID_PREFIX
 import de.kordondev.lagermelder.exception.NotFoundException
 import de.kordondev.lagermelder.exception.ResourceAlreadyExistsException
+import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import javax.transaction.Transactional
 
 
 @Service

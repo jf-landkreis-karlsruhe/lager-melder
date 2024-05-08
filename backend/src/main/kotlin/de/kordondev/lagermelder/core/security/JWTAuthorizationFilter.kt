@@ -9,19 +9,17 @@ import de.kordondev.lagermelder.core.security.SecurityConstants.ROLE_PREFIX
 import de.kordondev.lagermelder.core.security.SecurityConstants.SECRET
 import de.kordondev.lagermelder.core.security.SecurityConstants.TOKEN_PREFIX
 import de.kordondev.lagermelder.core.security.SecurityConstants.USER_ID_PREFIX
-import org.springframework.security.authentication.AuthenticationManager
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
-import javax.servlet.FilterChain
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import org.springframework.web.filter.OncePerRequestFilter
 
 class JWTAuthorizationFilter(
-    authenticationManager: AuthenticationManager,
     private val userRepository: UserRepository
-) : BasicAuthenticationFilter(authenticationManager) {
+) : OncePerRequestFilter() {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val header = request.getHeader(HEADER_STRING)

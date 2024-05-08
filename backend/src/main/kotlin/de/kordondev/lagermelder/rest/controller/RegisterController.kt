@@ -7,12 +7,12 @@ import de.kordondev.lagermelder.core.service.UserService
 import de.kordondev.lagermelder.exception.ResourceAlreadyExistsException
 import de.kordondev.lagermelder.rest.model.RestDepartmentWithUser
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentWithUserRequest
+import jakarta.validation.Valid
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import javax.validation.Valid
 
 @RestController
 class RegisterController(

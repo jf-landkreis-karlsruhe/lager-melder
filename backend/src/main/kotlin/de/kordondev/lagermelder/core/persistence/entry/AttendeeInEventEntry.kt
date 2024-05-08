@@ -1,7 +1,7 @@
 package de.kordondev.lagermelder.core.persistence.entry
 
+import jakarta.persistence.*
 import java.time.Instant
-import javax.persistence.*
 
 @Entity
 @Table(name = "attendee_in_event")

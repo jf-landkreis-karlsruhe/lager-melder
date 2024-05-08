@@ -1,8 +1,8 @@
 package de.kordondev.lagermelder.rest.model.request
 
 import de.kordondev.lagermelder.core.persistence.entry.*
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 
 data class RestAttendeeRequest(
     @field:NotNull(message = "firstName cannot be missing")

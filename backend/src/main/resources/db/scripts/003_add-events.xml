@@ -21,7 +21,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addAutoIncrement tableName="events" columnName="id" columnDataType="bigint" startWith="10" incrementBy="0"/>
+        <addAutoIncrement tableName="events" columnName="id" columnDataType="bigint" startWith="10"/>
         <createIndex indexName="unique_events_code" tableName="events">
             <column name="code"/>
         </createIndex>
@@ -44,7 +44,7 @@
             </column>
         </createTable>
         <addAutoIncrement tableName="attendee_in_event" columnName="id" columnDataType="bigint" startWith="100"
-                          incrementBy="1"/>
+        />
         <addForeignKeyConstraint baseTableName="attendee_in_event" baseColumnNames="attendee_code"
                                  constraintName="attendee_in_event_attendee_code_constraint"
                                  referencedTableName="attendees" referencedColumnNames="code"/>

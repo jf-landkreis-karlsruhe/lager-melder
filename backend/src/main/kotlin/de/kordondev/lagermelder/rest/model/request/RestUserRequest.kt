@@ -3,10 +3,10 @@ package de.kordondev.lagermelder.rest.model.request
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.UserEntry
 import de.kordondev.lagermelder.exception.BadRequestException
-import javax.validation.constraints.Email
-import javax.validation.constraints.NotNull
-import javax.validation.constraints.Pattern
-import javax.validation.constraints.Size
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 
 data class RestUserRequest(
     @field:Email(message = "username needs to be an email")

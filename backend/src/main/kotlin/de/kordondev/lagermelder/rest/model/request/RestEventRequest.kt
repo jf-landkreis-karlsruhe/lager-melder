@@ -2,8 +2,8 @@ package de.kordondev.lagermelder.rest.model.request
 
 import de.kordondev.lagermelder.core.persistence.entry.EventEntry
 import de.kordondev.lagermelder.core.persistence.entry.EventType
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 
 data class RestEventRequest(
     @field:NotNull(message = "name cannot be missing")

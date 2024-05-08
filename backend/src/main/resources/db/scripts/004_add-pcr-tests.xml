@@ -24,8 +24,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addAutoIncrement tableName="pcr_test_series" columnName="id" columnDataType="bigint" startWith="10"
-                          incrementBy="1"/>
+        <addAutoIncrement tableName="pcr_test_series" columnName="id" columnDataType="bigint" startWith="10"/>
     </changeSet>
 
 
@@ -44,7 +43,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addAutoIncrement tableName="pcr_tests" columnName="id" columnDataType="bigint" startWith="10" incrementBy="1"/>
+        <addAutoIncrement tableName="pcr_tests" columnName="id" columnDataType="bigint" startWith="10"/>
 
         <addForeignKeyConstraint baseTableName="pcr_tests" baseColumnNames="pcr_test_series_id"
                                  constraintName="pcr_tests_pcr_test_series_constraint"

@@ -30,7 +30,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addAutoIncrement tableName="tents" columnName="id" columnDataType="bigint" startWith="10" incrementBy="1"/>
+        <addAutoIncrement tableName="tents" columnName="id" columnDataType="bigint" startWith="10" />
         <addUniqueConstraint tableName="tents" columnNames="department_id"/>
         <addForeignKeyConstraint baseTableName="tents" baseColumnNames="department_id"
                                  constraintName="tents_department_id_constraint"

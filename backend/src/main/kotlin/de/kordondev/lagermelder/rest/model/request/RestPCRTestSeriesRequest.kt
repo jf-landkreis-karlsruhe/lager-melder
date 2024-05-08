@@ -2,9 +2,9 @@ package de.kordondev.lagermelder.rest.model.request
 
 import de.kordondev.lagermelder.core.persistence.entry.PCRTestSeriesEntry
 import de.kordondev.lagermelder.rest.model.RestPCRTestSeries
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import java.time.ZonedDateTime
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 
 data class RestPCRTestSeriesRequest(
     @NotNull

@@ -6,8 +6,8 @@ import de.kordondev.lagermelder.rest.model.RestAttendeeInEvent
 import de.kordondev.lagermelder.rest.model.RestEvent
 import de.kordondev.lagermelder.rest.model.RestGlobalEventSummary
 import de.kordondev.lagermelder.rest.model.request.RestEventRequest
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @RestController
 class EventController(

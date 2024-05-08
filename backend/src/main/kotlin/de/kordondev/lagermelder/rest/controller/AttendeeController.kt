@@ -4,8 +4,8 @@ import de.kordondev.lagermelder.core.service.AttendeeService
 import de.kordondev.lagermelder.core.service.DepartmentService
 import de.kordondev.lagermelder.rest.model.RestAttendee
 import de.kordondev.lagermelder.rest.model.request.RestAttendeeRequest
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @RestController
 class AttendeeController(

@@ -5,6 +5,7 @@ import de.kordondev.lagermelder.core.security.SecurityConstants
 import de.kordondev.lagermelder.helper.Entities
 import de.kordondev.lagermelder.helper.WebTestHelper
 import de.kordondev.lagermelder.rest.model.RestDepartment
+import jakarta.transaction.Transactional
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
-import javax.transaction.Transactional
 
 @Transactional
 @SpringBootTest

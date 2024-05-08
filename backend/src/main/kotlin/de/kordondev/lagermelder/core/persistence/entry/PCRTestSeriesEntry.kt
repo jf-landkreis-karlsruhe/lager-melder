@@ -1,9 +1,9 @@
 package de.kordondev.lagermelder.core.persistence.entry
 
 import de.kordondev.lagermelder.rest.model.RestPCRTestSeries
+import jakarta.persistence.*
 import org.hibernate.Hibernate
 import java.time.ZonedDateTime
-import javax.persistence.*
 
 @Entity
 @Table(name = "pcr_test_series")

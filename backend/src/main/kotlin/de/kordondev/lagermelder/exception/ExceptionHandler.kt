@@ -3,6 +3,7 @@ package de.kordondev.lagermelder.exception
 import de.kordondev.lagermelder.exception.ErrorConstants.ACCESS_DENIED_ERROR
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -60,9 +61,9 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     override fun handleMethodArgumentNotValid(
         ex: MethodArgumentNotValidException,
         headers: HttpHeaders,
-        status: HttpStatus,
+        status: HttpStatusCode,
         request: WebRequest
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<Any>? {
         val messages: List<ErrorMessage> = ex.bindingResult
             .fieldErrors.mapNotNull { ErrorMessage(it.defaultMessage, it.field) }
         return exceptionResponse(

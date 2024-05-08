@@ -1,11 +1,11 @@
 package de.kordondev.lagermelder.rest.model.request;
 
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
+import jakarta.validation.constraints.FutureOrPresent
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import java.time.Instant
 import java.time.LocalDate
-import javax.validation.constraints.FutureOrPresent
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 
 data class RestSettingsRequest(
     @NotNull

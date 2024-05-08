@@ -5,11 +5,11 @@ import de.kordondev.lagermelder.rest.model.RestSettings
 import de.kordondev.lagermelder.rest.model.request.RestRegistrationEnd
 import de.kordondev.lagermelder.rest.model.request.RestSettingsRequest
 import de.kordondev.lagermelder.rest.model.request.RestStartDownloadRegistrationFiles
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import javax.validation.Valid
 
 @RestController
 class SettingsController(
