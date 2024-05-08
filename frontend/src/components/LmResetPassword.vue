@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {ref} from 'vue'
-import {useRoute, useRouter} from 'vue-router'
-import {useToast} from 'vue-toastification'
-import {resetPasswordWithToken} from '../services/authentication'
+import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
+import { resetPasswordWithToken } from '../services/authentication'
 import LmContainer from './LmContainer.vue'
 
 const router = useRouter()
@@ -20,11 +20,13 @@ const resetPasswordHandler = async () => {
     return
   }
   loading.value = true
-  const success = await resetPasswordWithToken(route.params.token as string, password.value).catch(() => {
-    loading.value = false
-    toast.error('Password konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.')
-    return undefined
-  })
+  const success = await resetPasswordWithToken(route.params.token as string, password.value).catch(
+    () => {
+      loading.value = false
+      toast.error('Password konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.')
+      return undefined
+    }
+  )
   if (success) {
     toast.success('Password erfolgreich zurückgesetzt.')
     loading.value = false
@@ -32,10 +34,12 @@ const resetPasswordHandler = async () => {
   }
 }
 
-const formChanged = () => {
-  password_differs.value = false
-}
-
+watch(
+  () => [password.value, password_repeat.value],
+  () => {
+    password_differs.value = false
+  }
+)
 </script>
 
 <template>
@@ -48,19 +52,19 @@ const formChanged = () => {
             <form @submit.prevent="resetPasswordHandler">
               <v-card-text>
                 <v-text-field
-                    type="password"
-                    prepend-icon="mdi-lock"
-                    v-model="password"
-                    label="Passwort"
-                    variant="underlined"
+                  type="password"
+                  prepend-icon="mdi-lock"
+                  v-model="password"
+                  label="Passwort"
+                  variant="underlined"
                 />
                 <v-text-field
-                    type="password"
-                    prepend-icon="mdi-lock"
-                    v-model="password_repeat"
-                    label="Passwort wiederholen"
-                    variant="underlined"
-                    :error-messages=" password_differs.value ? '' : 'Passworter stimmen nicht überein.'"
+                  type="password"
+                  prepend-icon="mdi-lock"
+                  v-model="password_repeat"
+                  label="Passwort wiederholen"
+                  variant="underlined"
+                  :error-messages="password_differs ? 'Passwörter stimmen nicht überein.' : ''"
                 />
               </v-card-text>
               <v-card-actions>
