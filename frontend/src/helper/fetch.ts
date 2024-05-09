@@ -1,4 +1,4 @@
-import { createToastInterface } from 'vue-toastification'
+import {createToastInterface, type ToastInterface} from 'vue-toastification'
 import { BASE_URL } from '../assets/config'
 import type { ErrorResponse } from '@/services/errorConstants'
 
@@ -53,19 +53,41 @@ export const fetchData = async (relativeUrl: string, config: RequestInit): Promi
       }
       return res
     })
-    .catch(async (err: Response) => {
-      const errObj = await err.json()
-      if (isValidatedErrorResponse(errObj)) {
-        toast.error(errObj.messages[0].message)
-      } else if (errObj.path.endsWith('login') && errObj.status === 401) {
-        toast.error('Benutzername oder Passwort sind falsch')
-      } else {
-        const httpRes: Response = errObj as Response
-        const commonErrMsg = `Es ist leider etwas schief gegangen. (Code: ${httpRes.status})`
-        toast.error(commonErrMsg)
-      }
-      throw errObj
-    })
+}
+
+export const getErrorMessage = async (err: Response, defaultMessage?: string): Promise<{
+  key: string | undefined,
+  message: string
+}> => {
+  const errObj = await err.json()
+  if (isValidatedErrorResponse(errObj)) {
+    return {
+      key: errObj.key,
+      message: errObj.messages.map(m => m.message).join('\n')
+    }
+  }
+  if (errObj.path.endsWith('login') && errObj.status === 401) {
+    return {
+      key: errObj.key,
+      message: 'Benutzername oder Passwort sind falsch'
+    }
+  }
+  if (defaultMessage) {
+    return {
+      key: undefined,
+      message: defaultMessage
+    }
+  }
+  const httpRes: Response = errObj as Response
+  return {
+    key: undefined,
+    message: `Es ist leider etwas schief gegangen. (Code: ${httpRes.status})`
+  }
+}
+
+export const showErrorToast = async (toast: ToastInterface, error: Response, defaultMessage?: string) => {
+  const err = await getErrorMessage(error, defaultMessage)
+  toast.error(err.message)
 }
 
 const isValidatedErrorResponse = (err: Record<string, any>): err is ErrorResponse => {

@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { resetPasswordWithToken } from '../services/authentication'
 import LmContainer from './LmContainer.vue'
+import { showErrorToast } from '@/helper/fetch'
 
 const router = useRouter()
 const route = useRoute()
@@ -21,9 +22,13 @@ const resetPasswordHandler = async () => {
   }
   loading.value = true
   const success = await resetPasswordWithToken(route.params.token as string, password.value).catch(
-    () => {
+    async (err) => {
       loading.value = false
-      toast.error('Password konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.')
+      await showErrorToast(
+        toast,
+        err,
+        'Password konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.'
+      )
       return undefined
     }
   )

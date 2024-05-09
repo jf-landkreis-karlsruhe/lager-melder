@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { login, isLoggedIn } from '../services/authentication'
 import LmContainer from './LmContainer.vue'
+import {showErrorToast} from "@/helper/fetch";
 
 const router = useRouter()
 const toast = useToast()
@@ -15,9 +16,9 @@ const loading = ref<boolean>(false)
 
 const loginHandler = async () => {
   loading.value = true
-  const success = await login(username.value, password.value).catch(() => {
+  const success = await login(username.value, password.value).catch(async (err) => {
     loading.value = false
-    toast.error('Der Login war nicht erfolgreich. Benutzername oder Passwort falsch.')
+    await showErrorToast(toast, err, 'Der Login war nicht erfolgreich. Benutzername oder Passwort falsch.')
     return undefined
   })
   if (success) {
