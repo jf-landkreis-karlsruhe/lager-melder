@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import type { Department } from '../services/department'
 import { registerNewDepartmentAndUser } from '../services/user'
 import { useToast } from 'vue-toastification'
+import { showErrorToast } from '@/helper/fetch'
 
 const toast = useToast()
 
@@ -42,9 +43,9 @@ const addDepartmentAndUser = () => {
       leaderMail.value = ''
       username.value = ''
     })
-    .catch((e: any) => {
+    .catch(async (err) => {
       loading.value = false
-      toast.error(`Feuerwehr konnte nicht angelegt werden. (${e})`)
+      await showErrorToast(toast, err, 'Feuerwehr konnte nicht angelegt werden.')
     })
 }
 </script>

@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { getTentsForDepartment, updateTents } from '@/services/tents'
 import type { Tents } from '@/services/tents'
 import { useToast } from 'vue-toastification'
+import { showErrorToast } from '@/helper/fetch'
 
 const toast = useToast()
 
@@ -17,9 +18,9 @@ const saving = ref<boolean>(false)
 const saveTents = async () => {
   if (!tents.value) return
   saving.value = true
-  const newTents = await updateTents(tents.value).catch(() => {
+  const newTents = await updateTents(tents.value).catch(async (error) => {
     saving.value = false
-    toast.error('Fehler beim speichern der Zelte.')
+    await showErrorToast(toast, error, 'Fehler beim speichern der Zelte.')
   })
   if (!newTents) return
 

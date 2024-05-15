@@ -13,6 +13,16 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue')
     },
     {
+      path: '/passwort-vergessen',
+      name: 'Passwort vergessen',
+      component: () => import('../views/ForgotPasswordView.vue')
+    },
+    {
+      path: '/passwort-zuruecksetzen/:token',
+      name: 'Password zurücksetzen',
+      component: () => import('../views/ResetPasswordView.vue')
+    },
+    {
       path: '/teilnehmer',
       name: 'AttendeesRegistration',
       component: () => import('../views/AttendeesRegistrationView.vue')
@@ -54,5 +64,11 @@ const router = createRouter({
     }
   ]
 })
+
+export const pathNeedsAuthentication = (path: string) => {
+  return !(
+      path.startsWith('/passwort-zuruecksetzen') || ['/login', '/passwort-vergessen'].includes(path)
+  )
+}
 
 export default router

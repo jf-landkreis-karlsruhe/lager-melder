@@ -1,8 +1,12 @@
 package de.kordondev.lagermelder.rest.controller
 
 import de.kordondev.lagermelder.core.service.DepartmentService
+import de.kordondev.lagermelder.core.service.SecurityService
 import de.kordondev.lagermelder.core.service.UserService
+import de.kordondev.lagermelder.rest.model.RestOk
 import de.kordondev.lagermelder.rest.model.RestUser
+import de.kordondev.lagermelder.rest.model.request.RestPasswordPasswordTokenRequest
+import de.kordondev.lagermelder.rest.model.request.RestResetPasswordTokenRequest
 import de.kordondev.lagermelder.rest.model.request.RestUserRequest
 import de.kordondev.lagermelder.rest.model.request.RestUserRoleRequest
 import org.springframework.web.bind.annotation.*
@@ -11,7 +15,8 @@ import javax.validation.Valid
 @RestController
 class UserController(
     private val userService: UserService,
-    private val departmentService: DepartmentService
+    private val departmentService: DepartmentService,
+    private val securityService: SecurityService
 ) {
 
     @GetMapping("/users/me")
@@ -59,10 +64,29 @@ class UserController(
     }
 
     @PutMapping("/users/{id}/role")
-    fun updateRole(@PathVariable("id") id:Long, @RequestBody(required = true) @Valid userRole: RestUserRoleRequest): RestUser {
+    fun updateRole(
+        @PathVariable("id") id: Long,
+        @RequestBody(required = true) @Valid userRole: RestUserRoleRequest
+    ): RestUser {
         return userService
             .updateRole(id, userRole.role)
             .let { RestUser.of(it)}
     }
 
+    @PutMapping("/users/forgotPasswordToken")
+    fun sendForgotPasswordEmail(
+        @RequestBody(required = true) @Valid passwordPasswordTokenRequest: RestPasswordPasswordTokenRequest
+    ): RestOk {
+        return securityService.sendResetPasswordLink(
+            passwordPasswordTokenRequest.username,
+            passwordPasswordTokenRequest.linkAddress
+        )
+    }
+
+    @PutMapping("/users/resetPasswordWithToken")
+    fun resetPasswordWithToken(
+        @RequestBody(required = true) @Valid resetPasswordRequest: RestResetPasswordTokenRequest
+    ): RestOk {
+        return securityService.resetPasswordWithToken(resetPasswordRequest.token, resetPasswordRequest.password)
+    }
 }

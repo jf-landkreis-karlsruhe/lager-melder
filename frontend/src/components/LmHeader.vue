@@ -7,11 +7,11 @@ import {
   hasAdministrationRole,
   isLoggedIn
 } from '../services/authentication'
+import {pathNeedsAuthentication} from "@/router";
 
 let timeoutId = 0
 const loggedIn = ref<boolean>(false)
 const router = useRouter()
-const route = useRoute()
 
 onMounted(() => {
   window.addEventListener('focus', checkToken)
@@ -29,7 +29,9 @@ const checkToken = () => {
   const token = getTokenData()
   if (!token) {
     loggedIn.value = false
-    route.path !== '/login' && router.push('/login')
+    if (pathNeedsAuthentication(window.location.pathname)) {
+      router.push('/login')
+    }
     return
   }
   loggedIn.value = true

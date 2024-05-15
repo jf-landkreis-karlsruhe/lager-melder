@@ -50,6 +50,11 @@ class UserService(
         return user
     }
 
+    fun getUserByUsername(username: String): UserEntry {
+        return userRepository.findOneByUserName(username)?.copy(passWord = "")
+            ?: throw NotFoundException("user with username $username not found")
+    }
+
     fun createUser(newUser: UserEntry): UserEntry {
         authorityService.isSpecializedFieldDirector()
         if (newUser.role != Roles.USER) {
@@ -67,8 +72,16 @@ class UserService(
             .also { sendEmail(it, newUser.passWord, settings) }
     }
 
+    fun saveResetPassword(userToChange: UserEntry): UserEntry {
+        return savePassword(userToChange)
+    }
+
     fun saveUpdatePassword(userToChange: UserEntry): UserEntry {
         authorityService.hasAuthority(userToChange, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        return savePassword(userToChange)
+    }
+
+    private fun savePassword(userToChange: UserEntry): UserEntry {
         return userRepository.findByIdOrNull(userToChange.id)
             ?.copy(passWord = bCryptPasswordEncoder.encode(userToChange.passWord))
             ?.let { userRepository.save(it) }

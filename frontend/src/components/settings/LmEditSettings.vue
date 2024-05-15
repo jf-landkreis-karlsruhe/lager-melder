@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { getSettings, updateSettings } from '../../services/settings'
 import type { Settings } from '../../services/settings'
 import { useToast } from 'vue-toastification'
+import { showErrorToast } from '@/helper/fetch'
 
 const toast = useToast()
 
@@ -24,9 +25,9 @@ const saveSettings = (settings: Settings) => {
       loading.value = false
       toast.success('Einstellungen gespeichert.')
     })
-    .catch(() => {
+    .catch(async (err) => {
       loading.value = false
-      toast.error('Fehler beim Speichern der Einstellungen.')
+      await showErrorToast(toast, err, 'Fehler beim Speichern der Einstellungen.')
     })
 }
 

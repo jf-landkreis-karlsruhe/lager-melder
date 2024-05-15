@@ -6,6 +6,7 @@ import type { Department } from '../services/department'
 import { sendRegistrationMail, userForDepartment, updateRole } from '../services/user'
 import type { User } from '../services/user'
 import { useToast } from 'vue-toastification'
+import { showErrorToast } from '@/helper/fetch'
 
 const toast = useToast()
 
@@ -51,7 +52,7 @@ const onUpdateDepartment = () => {
     ...props.department,
     leaderName: leaderName.value,
     leaderEMail: leaderEmail.value
-  };
+  }
   updateDepartment(updatedDepartment)
     .then(() => {
       loading.value = false
@@ -74,9 +75,11 @@ const onUpdateRole = () => {
           `Rolle ${rolesTitle(updatedUser.role)} für ${updatedUser.username} gepeichert.`
         )
       })
-      .catch(() => {
+      .catch(async (err) => {
         roleLoading.value = false
-        toast.error(
+        await showErrorToast(
+          toast,
+          err,
           `Rolle ${rolesTitle(user.value.role)} konnte für ${
             user.value.username
           } nicht gepeichert werden.`

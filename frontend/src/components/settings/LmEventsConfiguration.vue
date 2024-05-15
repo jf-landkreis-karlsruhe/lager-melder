@@ -5,6 +5,7 @@ import type { Event } from '../../services/event'
 import { getEventCodes } from '../../services/adminFiles'
 import { showFile } from '../../services/filesHelper'
 import { useToast } from 'vue-toastification'
+import { showErrorToast } from '@/helper/fetch'
 
 const toast = useToast()
 
@@ -34,8 +35,8 @@ const createEventInternal = () => {
       return getEvents()
     })
     .then((data) => (events.value = data))
-    .catch(() => {
-      toast.error('Neues Event konnte nicht gespeichert werden.')
+    .catch(async (err) => {
+      await showErrorToast(toast, err, 'Neues Event konnte nicht gespeichert werden.')
     })
 }
 
@@ -48,8 +49,8 @@ const saveEvent = (event: Event) => {
       loadingEventId.value = ''
       toast.success(`${event.name} gespeichert.`)
     })
-    .catch(() => {
-      toast.error('Event konnte nicht gespeichert werden.')
+    .catch(async (err) => {
+      await showErrorToast(toast, err, 'Event konnte nicht gespeichert werden.')
     })
 }
 
@@ -57,10 +58,10 @@ const createFormName = (event: Event) => {
   return `form-event-${event.id}`
 }
 
-const deleteEventInteral = (id: string) => {
+const deleteEventInternal = (id: string) => {
   deleteEvent(id)
     .then(() => toast.success('Event wurde gelöscht.'))
-    .catch(() => toast.error('Event konnte nicht gelöscht werden.'))
+    .catch((err) => showErrorToast(toast, err, 'Event konnte nicht gelöscht werden.'))
     .then(() => getEvents())
     .then((data) => {
       events.value = data
@@ -164,7 +165,7 @@ const downloadEventsPDF = () => {
                     </div>
                     <v-icon
                       medium
-                      @click.prevent="deleteEventInteral(event.id)"
+                      @click.prevent="deleteEventInternal(event.id)"
                       v-if="event.type === eventTypeLocation"
                     >
                       mdi-delete
