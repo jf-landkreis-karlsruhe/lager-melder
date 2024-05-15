@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { getTentsForDepartment, updateTents } from '@/services/tents'
 import type { Tents } from '@/services/tents'
 import { useToast } from 'vue-toastification'
-import { getErrorMessage, showErrorToast } from '@/helper/fetch'
+import { showErrorToast } from '@/helper/fetch'
 
 const toast = useToast()
 

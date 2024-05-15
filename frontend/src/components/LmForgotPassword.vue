@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import {ref} from 'vue'
-import {useToast} from 'vue-toastification'
-import {forgotPassword} from '../services/authentication'
+import { ref } from 'vue'
+import { useToast } from 'vue-toastification'
+import { forgotPassword } from '../services/authentication'
 import LmContainer from './LmContainer.vue'
+import { showErrorToast } from '@/helper/fetch'
 
 const toast = useToast()
 
@@ -11,8 +12,13 @@ const loading = ref<boolean>(false)
 
 const forgotPasswordHandler = async () => {
   loading.value = true
-  const success = await forgotPassword(username.value).catch(() => {
+  const success = await forgotPassword(username.value).catch(async (error) => {
     loading.value = false
+    await showErrorToast(
+      toast,
+      error,
+      '"Passwort vergessen"-Mail konnte nicht versendet werden. Bitte versuchen Sie es erneut.'
+    )
   })
   if (success) {
     loading.value = false

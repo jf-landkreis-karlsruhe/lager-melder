@@ -44,3 +44,7 @@ docker exec lm-database-prod sh -c 'exec mysqldump -ulager_melder_user -pPASSWOR
 
 scp username@remote:/file/to/send /where/to/put
 
+## Customization
+
+- in the backend in `resource/static/kreiszeltlager-logo.jpg` paste the current logo for the email header
+- For the header past the new image to `src/assets/logo.jpg` and fix styles in `Header.vue`.
