@@ -23,21 +23,21 @@ import java.io.IOException
 import java.util.*
 
 @Service
-class JWTAuthenticationFilter(
-    private val auth: AuthenticationManager,
-    private val userRepository: UserRepository
-) : UsernamePasswordAuthenticationFilter() {
+class CreateJWTAuthentication(
+    private val userRepository: UserRepository,
+    private val authenticationManager: AuthenticationManager
+) : UsernamePasswordAuthenticationFilter(authenticationManager) {
+
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         return try {
             val user = jacksonObjectMapper().readValue<RestLoginUser>(request.inputStream)
-            auth.authenticate(
-                UsernamePasswordAuthenticationToken(
-                    user.username,
-                    user.password,
-                    listOf()
-                )
+            val authenticationToken = UsernamePasswordAuthenticationToken(
+                user.username,
+                user.password,
+                listOf()
             )
+            this.authenticationManager.authenticate(authenticationToken)
         } catch (e: IOException) {
             throw RuntimeException(e)
         }

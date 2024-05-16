@@ -4,7 +4,11 @@ import de.kordondev.lagermelder.core.persistence.repository.UserRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -17,6 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 class SpringSecurityConfig(
     private val userDetailsService: UserDetailsServiceImpl,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
@@ -40,17 +45,22 @@ class SpringSecurityConfig(
             .cors { cors -> cors.configurationSource(corsConfigurationSource()) }
             .formLogin { formLogin -> formLogin.disable() }
             .authenticationProvider(authenticationProvider())
-            .addFilter(JWTAuthenticationFilter(authenticationManager(), userRepository)
-            .addFilterBefore(JWTAuthorizationFilter(userRepository), JWTAuthenticationFilter::class.java)
+            .addFilterBefore(JWTAuthorizationFilter(userRepository), CreateJWTAuthentication::class.java)
             .build()
     }
 
     @Bean
-    fun authenticationProvider(): DaoAuthenticationProvider {
+    fun authenticationProvider(): AuthenticationProvider {
         val authenticationProvider = DaoAuthenticationProvider()
         authenticationProvider.setUserDetailsService(userDetailsService)
         authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder)
         return authenticationProvider
+    }
+
+    @Bean
+    @Throws(Exception::class)
+    fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager {
+        return config.authenticationManager
     }
 
     @Bean
