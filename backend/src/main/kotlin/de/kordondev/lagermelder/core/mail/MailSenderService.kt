@@ -75,8 +75,7 @@ class MailSenderService(
             val headerLogoName = "kreiszeltlager-logo.jpg"
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
             val registrationDeadlineDate = LocalDate.ofInstant(settings.registrationEnd, ZoneId.of("Europe/Berlin"))
-            val daysLeft =
-                Duration.between(registrationDeadlineDate.atStartOfDay(), LocalDate.now().atStartOfDay()).toDays()
+            val daysLeft = daysUntilEnd(LocalDate.now(), registrationDeadlineDate)
 
             val cxt = Context()
             cxt.setVariable("leaderName", leaderName)
@@ -108,11 +107,14 @@ class MailSenderService(
             authorityService.isAdmin()
             val headerLogoName = "kreiszeltlager-logo.jpg"
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
+            val startDownloadRegistrationFiles =
+                LocalDate.ofInstant(settings.startDownloadRegistrationFiles, ZoneId.of("Europe/Berlin"))
 
             val cxt = Context()
             cxt.setVariable("leaderName", leaderName)
             cxt.setVariable("hostCity", settings.hostCity)
             cxt.setVariable("headerLogo", headerLogoName)
+            cxt.setVariable("startDownloadRegistrationFiles", startDownloadRegistrationFiles.format(germanDate))
 
             val mimeMessage = this.mailSender.createMimeMessage()
             val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
@@ -171,6 +173,13 @@ class MailSenderService(
             Subject: ${mimeMessage.subject}
             Message: $content
         """.trimIndent()
+    }
+
+    private fun daysUntilEnd(today: LocalDate, end: LocalDate): Long {
+        if (today.isAfter(end)) {
+            return 0
+        }
+        return Duration.between(today.atStartOfDay(), end.atStartOfDay()).toDays()
     }
 
 }

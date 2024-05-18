@@ -8,7 +8,10 @@
 <img style="max-width: 100%; max-height: 250px" src="logo.jpg" th:src="|cid:${headerLogo}|" />
 <p>
     Hallo <span th:text="${leaderName}"></span>,<br/>
-    die Onlineanmeldung zum Kreiszeltlager der Jugendfeuerwehr Landkreis Karlsruhe in <span th:text="${hostCity}"></span> ist nun abgeschlossen. Falls du eine Liste mit deinen angemeldeten Betreuern und Teilnehmern benötigst, logge dich bitte ein und drucke die Seite mit den Anmeldungen aus.
+    die Onlineanmeldung zum Kreiszeltlager der Jugendfeuerwehr Landkreis Karlsruhe in <span
+        th:text="${hostCity}"></span> ist nun abgeschlossen.<br/>
+    Ab dem <span th:text="${startDownloadRegistrationFiles}"></span> kannst du die Anmeldungeunterlagen für deiner
+    Feuerwehr herunterladen. Bring diese zur Anmeldung am Zeltlager mit.<br/>
 </p>
 <p>
     Kameradschaftliche Grüße,<br/>

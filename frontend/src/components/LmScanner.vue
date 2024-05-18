@@ -107,8 +107,8 @@ const stopQuagga = () => {
 const initQuagga = (config: any) => {
   Quagga.init(config, (err: any) => {
     if (err) {
-      console.error(err)
-      toast(err)
+      console.error(err.toString())
+      toast(err.toString())
       return
     }
     console.log('Initialization finished. Ready to start')
