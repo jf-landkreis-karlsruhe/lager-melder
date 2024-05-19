@@ -174,7 +174,7 @@ class EventControllerTest(val context: WebApplicationContext) {
 
         val event = Entities.event()
 
-        var createdEvent = webTestHelper.toObject(
+        val createdEvent = webTestHelper.toObject(
             restMockMvc.perform(webTestHelper.post("/events", event))
                 .andExpect(MockMvcResultMatchers.status().isOk),
             RestEvent::class.java

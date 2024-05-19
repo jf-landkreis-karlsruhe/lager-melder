@@ -42,7 +42,7 @@ class RegisterControllerTest(val context: WebApplicationContext) {
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.userId").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$.departmentId").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(Roles.USER.toString()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(Roles.USER))
             .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(departmentWithUserRequest.username))
             .andExpect(
                 MockMvcResultMatchers.jsonPath("$.departmentName").value(departmentWithUserRequest.departmentName)
