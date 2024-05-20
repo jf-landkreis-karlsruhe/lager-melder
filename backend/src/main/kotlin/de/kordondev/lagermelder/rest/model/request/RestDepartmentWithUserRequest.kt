@@ -6,10 +6,9 @@ import de.kordondev.lagermelder.core.persistence.entry.UserEntry
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Size
 
 data class RestDepartmentWithUserRequest(
-    @field: Size(min = 4, max = 40, message = "username needs to be between 4 and 40 chars long")
+    @field:Email(message = "username needs to be an email")
     val username: String,
     @field:NotNull(message = "departmen name cannot be missing")
     @field:NotBlank(message = "departmen name cannot be blank")

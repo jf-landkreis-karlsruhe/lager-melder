@@ -47,7 +47,7 @@ class Entities() {
 
         fun restUserRequest(departmentId: Long = department().id): RestUserRequest {
             return RestUserRequest(
-                username = "username",
+                username = "username@email.de",
                 password = "password",
                 departmentId = departmentId,
                 role = Roles.USER
@@ -59,14 +59,14 @@ class Entities() {
                 id = 1L,
                 role = Roles.USER,
                 department = departmentEntry(),
-                userName = "user",
+                userName = "user@email.de",
                 passWord = "pass"
             )
         }
 
         fun restDepartmentWithUserRequest(): RestDepartmentWithUserRequest {
             return RestDepartmentWithUserRequest(
-                username = "username",
+                username = "username@email.de",
                 departmentName = "department",
                 leaderName = "leaderName",
                 leaderEMail = "leader@department.de"
