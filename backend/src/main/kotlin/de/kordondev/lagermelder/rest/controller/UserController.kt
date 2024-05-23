@@ -9,8 +9,8 @@ import de.kordondev.lagermelder.rest.model.request.RestPasswordPasswordTokenRequ
 import de.kordondev.lagermelder.rest.model.request.RestResetPasswordTokenRequest
 import de.kordondev.lagermelder.rest.model.request.RestUserRequest
 import de.kordondev.lagermelder.rest.model.request.RestUserRoleRequest
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @RestController
 class UserController(

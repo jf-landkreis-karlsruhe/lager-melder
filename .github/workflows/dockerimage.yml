@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: "temurin" # See 'Supported distributions' for available options
-          java-version: "17"
+          java-version: "21"
           cache: "maven"
       - name: Install dependencies
         run: mvn install
@@ -53,7 +53,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 17
+          node-version: 20
       - name: Install Dependencies
         run: npm install
         working-directory: ./frontend

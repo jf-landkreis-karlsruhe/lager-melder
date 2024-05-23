@@ -1,9 +1,9 @@
 package de.kordondev.lagermelder.core.persistence.entry
 
+import jakarta.persistence.*
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Cascade
 import org.hibernate.annotations.CascadeType
-import javax.persistence.*
 
 @Entity
 @Table(name = "youthPlanAttendeeRoles")

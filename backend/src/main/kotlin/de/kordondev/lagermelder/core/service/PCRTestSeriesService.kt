@@ -7,9 +7,9 @@ import de.kordondev.lagermelder.exception.BadRequestException
 import de.kordondev.lagermelder.exception.NotFoundException
 import de.kordondev.lagermelder.rest.model.RestPCRTestSeries
 import de.kordondev.lagermelder.rest.model.request.RestPCRTestSeriesRequest
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
-import javax.transaction.Transactional
 
 @Service
 class PCRTestSeriesService(

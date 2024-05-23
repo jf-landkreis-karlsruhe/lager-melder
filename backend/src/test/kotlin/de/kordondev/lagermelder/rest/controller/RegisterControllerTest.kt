@@ -4,6 +4,7 @@ import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.security.SecurityConstants.ROLE_PREFIX
 import de.kordondev.lagermelder.helper.Entities
 import de.kordondev.lagermelder.helper.WebTestHelper
+import jakarta.transaction.Transactional
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,7 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
-import javax.transaction.Transactional
 
 @Transactional
 @SpringBootTest
@@ -42,7 +42,7 @@ class RegisterControllerTest(val context: WebApplicationContext) {
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.userId").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$.departmentId").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(Roles.USER.toString()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(Roles.USER))
             .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(departmentWithUserRequest.username))
             .andExpect(
                 MockMvcResultMatchers.jsonPath("$.departmentName").value(departmentWithUserRequest.departmentName)

@@ -1,10 +1,10 @@
 package de.kordondev.lagermelder.rest.controller
 
 import de.kordondev.lagermelder.core.service.AdminFilesService
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.*
 import java.io.IOException
-import javax.servlet.http.HttpServletResponse
 
 @RestController
 class AdminFilesController(

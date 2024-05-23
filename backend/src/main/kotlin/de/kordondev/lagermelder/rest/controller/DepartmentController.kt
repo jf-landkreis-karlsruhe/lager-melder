@@ -7,8 +7,8 @@ import de.kordondev.lagermelder.rest.model.RestAttendee
 import de.kordondev.lagermelder.rest.model.RestDepartment
 import de.kordondev.lagermelder.rest.model.RestTents
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRequest
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @RestController
 class DepartmentController(

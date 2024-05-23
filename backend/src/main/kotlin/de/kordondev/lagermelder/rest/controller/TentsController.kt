@@ -3,8 +3,8 @@ package de.kordondev.lagermelder.rest.controller
 import de.kordondev.lagermelder.core.service.DepartmentService
 import de.kordondev.lagermelder.core.service.TentsService
 import de.kordondev.lagermelder.rest.model.RestTents
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @RestController()
 class TentsController(

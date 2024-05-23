@@ -1,9 +1,9 @@
 package de.kordondev.lagermelder.core.persistence.entry
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import jakarta.persistence.*
 import org.hibernate.Hibernate
 import java.util.*
-import javax.persistence.*
 
 @Entity
 @Table(name = "pcr_tests")

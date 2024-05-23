@@ -1,8 +1,8 @@
 package de.kordondev.lagermelder.core.persistence.entry
 
+import jakarta.persistence.*
 import org.hibernate.Hibernate
 import java.util.*
-import javax.persistence.*
 
 @Entity
 @Table(name = "attendees")

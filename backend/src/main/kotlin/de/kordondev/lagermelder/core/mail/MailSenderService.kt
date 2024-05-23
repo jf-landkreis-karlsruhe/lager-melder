@@ -3,9 +3,11 @@ package de.kordondev.lagermelder.core.mail
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import de.kordondev.lagermelder.core.security.AuthorityService
+import jakarta.mail.internet.MimeMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
@@ -15,8 +17,6 @@ import org.thymeleaf.context.Context
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId
-import javax.mail.SendFailedException
-import javax.mail.internet.MimeMessage
 
 
 @Service("MailSenderService")
@@ -51,7 +51,7 @@ class MailSenderService(
             cxt.setVariable("registrationDeadline", registrationDeadlineDate.format(germanDate))
             cxt.setVariable("username", username)
             cxt.setVariable("password", password)
-            cxt.setVariable("headerLogo", headerLogoName);
+            cxt.setVariable("headerLogo", headerLogoName)
             val htmlContent = this.htmlTemplateEngine.process(newUserMailTemplate, cxt)
 
             val mimeMessage = this.mailSender.createMimeMessage()
@@ -60,11 +60,11 @@ class MailSenderService(
             message.setSubject("Onlineanmeldung Kreiszeltlager in ${settings.hostCity} eröffnet")
             message.setTo(to)
             message.setText(htmlContent, true)
-            message.addInline(headerLogoName, headerLogo);
+            message.addInline(headerLogoName, headerLogo)
 
             logger.info("RegistrationMail send to $to")
             sendMail(mimeMessage, htmlContent)
-        } catch (exception: SendFailedException) {
+        } catch (exception: MailException) {
             logger.error(exception.message)
         }
     }
@@ -75,15 +75,14 @@ class MailSenderService(
             val headerLogoName = "kreiszeltlager-logo.jpg"
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
             val registrationDeadlineDate = LocalDate.ofInstant(settings.registrationEnd, ZoneId.of("Europe/Berlin"))
-            val daysLeft =
-                Duration.between(registrationDeadlineDate.atStartOfDay(), LocalDate.now().atStartOfDay()).toDays()
+            val daysLeft = daysUntilEnd(LocalDate.now(), registrationDeadlineDate)
 
             val cxt = Context()
             cxt.setVariable("leaderName", leaderName)
             cxt.setVariable("hostCity", settings.hostCity)
             cxt.setVariable("registrationDeadline", registrationDeadlineDate.format(germanDate))
             cxt.setVariable("daysLeft", daysLeft)
-            cxt.setVariable("headerLogo", headerLogoName);
+            cxt.setVariable("headerLogo", headerLogoName)
 
             val mimeMessage = this.mailSender.createMimeMessage()
             val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
@@ -92,12 +91,12 @@ class MailSenderService(
             message.setTo(to)
             val htmlContent = this.htmlTemplateEngine.process(reminderMailTemplate, cxt)
             message.setText(htmlContent, true)
-            message.addInline(headerLogoName, headerLogo);
+            message.addInline(headerLogoName, headerLogo)
 
             logger.info("Reminder mail send to $to")
             sendMail(mimeMessage, htmlContent)
             return true
-        } catch (exception: SendFailedException) {
+        } catch (exception: MailException) {
             logger.error(exception.message)
             return false
         }
@@ -108,11 +107,14 @@ class MailSenderService(
             authorityService.isAdmin()
             val headerLogoName = "kreiszeltlager-logo.jpg"
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
+            val startDownloadRegistrationFiles =
+                LocalDate.ofInstant(settings.startDownloadRegistrationFiles, ZoneId.of("Europe/Berlin"))
 
             val cxt = Context()
             cxt.setVariable("leaderName", leaderName)
             cxt.setVariable("hostCity", settings.hostCity)
-            cxt.setVariable("headerLogo", headerLogoName);
+            cxt.setVariable("headerLogo", headerLogoName)
+            cxt.setVariable("startDownloadRegistrationFiles", startDownloadRegistrationFiles.format(germanDate))
 
             val mimeMessage = this.mailSender.createMimeMessage()
             val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
@@ -121,12 +123,12 @@ class MailSenderService(
             message.setTo(to)
             val htmlContent = this.htmlTemplateEngine.process(registrationFinishedTemplate, cxt)
             message.setText(htmlContent, true)
-            message.addInline(headerLogoName, headerLogo);
+            message.addInline(headerLogoName, headerLogo)
 
             logger.info("Registration finished mail send to $to")
             sendMail(mimeMessage, htmlContent)
             return true
-        } catch (exception: SendFailedException) {
+        } catch (exception: MailException) {
             logger.error(exception.message)
             return false
         }
@@ -138,7 +140,7 @@ class MailSenderService(
           val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
 
           val cxt = Context()
-          cxt.setVariable("headerLogo", headerLogoName);
+          cxt.setVariable("headerLogo", headerLogoName)
           cxt.setVariable("changePasswordLink", changePasswordLink)
           val mimeMessage = this.mailSender.createMimeMessage()
           val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
@@ -146,11 +148,11 @@ class MailSenderService(
           message.setTo(to)
           val htmlContent = this.htmlTemplateEngine.process("forgot-password", cxt)
           message.setText(htmlContent, true)
-          message.addInline(headerLogoName, headerLogo);
+          message.addInline(headerLogoName, headerLogo)
           logger.info("Forgot password mail send to $to")
           sendMail(mimeMessage, htmlContent)
           return true
-      } catch (exception: SendFailedException) {
+      } catch (exception: MailException) {
           logger.error(exception.message)
           return false
       }
@@ -171,6 +173,13 @@ class MailSenderService(
             Subject: ${mimeMessage.subject}
             Message: $content
         """.trimIndent()
+    }
+
+    private fun daysUntilEnd(today: LocalDate, end: LocalDate): Long {
+        if (today.isAfter(end)) {
+            return 0
+        }
+        return Duration.between(today.atStartOfDay(), end.atStartOfDay()).toDays()
     }
 
 }

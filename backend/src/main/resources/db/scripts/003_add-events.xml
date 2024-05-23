@@ -12,7 +12,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="code" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
@@ -21,7 +21,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addAutoIncrement tableName="events" columnName="id" columnDataType="bigint" startWith="10" incrementBy="0"/>
+        <addAutoIncrement tableName="events" columnName="id" columnDataType="bigint" startWith="10"/>
         <createIndex indexName="unique_events_code" tableName="events">
             <column name="code"/>
         </createIndex>
@@ -44,13 +44,13 @@
             </column>
         </createTable>
         <addAutoIncrement tableName="attendee_in_event" columnName="id" columnDataType="bigint" startWith="100"
-                          incrementBy="1"/>
-        <addForeignKeyConstraint baseTableName="attendee_in_event" baseColumnNames="attendee_code"
-                                 constraintName="attendee_in_event_attendee_code_constraint"
-                                 referencedTableName="attendees" referencedColumnNames="code"/>
+        />
         <addForeignKeyConstraint baseTableName="attendee_in_event" baseColumnNames="event_code"
                                  constraintName="attendee_in_event_event_code_constraint"
                                  referencedTableName="events" referencedColumnNames="code"/>
+        <addForeignKeyConstraint baseTableName="attendee_in_event" baseColumnNames="attendee_code"
+                                 constraintName="attendee_in_event_attendee_code_constraint"
+                                 referencedTableName="attendees" referencedColumnNames="code"/>
     </changeSet>
 
 </databaseChangeLog>

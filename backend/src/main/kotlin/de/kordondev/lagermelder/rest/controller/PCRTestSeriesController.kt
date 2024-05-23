@@ -4,8 +4,8 @@ import de.kordondev.lagermelder.core.service.PCRTestSeriesService
 import de.kordondev.lagermelder.core.service.PCRTestService
 import de.kordondev.lagermelder.rest.model.RestPCRTestSeries
 import de.kordondev.lagermelder.rest.model.request.RestPCRTestSeriesRequest
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @RestController
 class PCRTestSeriesController(
