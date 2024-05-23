@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
-import org.testng.annotations.Ignore
 
 
 @Transactional
@@ -91,8 +90,6 @@ class EventControllerTest(val context: WebApplicationContext) {
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(createdEvent.code))
     }
 
-    @Test
-    @Ignore
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun addAttendeeToEvent() {
         val event = Entities.event()
@@ -117,8 +114,6 @@ class EventControllerTest(val context: WebApplicationContext) {
             .andExpect(MockMvcResultMatchers.jsonPath("$.time").isNotEmpty)
     }
 
-    @Test
-    @Ignore
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun addInvalidAttendeeToEvent() {
         val event = Entities.event()
@@ -139,8 +134,6 @@ class EventControllerTest(val context: WebApplicationContext) {
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
-    @Test
-    @Ignore
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun addAttendeeToInvalidEvent() {
         val event = Entities.event()

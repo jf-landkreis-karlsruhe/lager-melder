@@ -30,7 +30,6 @@ class SpringMailConfig: ApplicationContextAware, EnvironmentAware {
     @Bean
     fun mailTemplateEngine(): TemplateEngine {
         val templateEngine = SpringTemplateEngine()
-        // templateEngine.addDialect(Java8TimeDialect()) FixMe: is that still needed?
         templateEngine.addTemplateResolver(htmlTemplateResolver())
         return templateEngine
     }
