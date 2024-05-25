@@ -7,7 +7,6 @@
     <include file="classpath:db/scripts/001_add-attendees-users-departments.xml"/>
     <include file="classpath:db/scripts/002_add-settings.xml"/>
     <include file="classpath:db/scripts/003_add-events.xml"/>
-    <include file="classpath:db/scripts/004_add-pcr-tests.xml"/>
     <include file="classpath:db/scripts/005_add-mock-data.xml"/>
     <include file="classpath:db/scripts/006_add-event-type.xml"/>
     <include file="classpath:db/scripts/007_add-attendee-status.xml"/>
