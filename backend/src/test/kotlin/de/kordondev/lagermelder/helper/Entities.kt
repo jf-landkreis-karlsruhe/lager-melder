@@ -2,7 +2,6 @@ package de.kordondev.lagermelder.helper
 
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.rest.model.request.*
-import java.time.ZonedDateTime
 
 
 class Entities() {
@@ -85,18 +84,5 @@ class Entities() {
             return RestEventRequest("event")
         }
 
-        fun restPCRTestSeriesRequest(
-            pcrTestCodes: List<String> = listOf(
-                "testcode1",
-                "testcode2"
-            )
-        ): RestPCRTestSeriesRequest {
-            return RestPCRTestSeriesRequest(
-                name = "test series",
-                start = ZonedDateTime.now(),
-                end = ZonedDateTime.now().plusDays(1),
-                testCodes = pcrTestCodes
-            )
-        }
     }
 }
