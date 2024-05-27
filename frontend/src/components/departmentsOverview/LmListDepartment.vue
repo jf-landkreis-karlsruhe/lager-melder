@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-import { hasAdministrationRole } from '../services/authentication'
-import { getDepartments, getMyDepartment } from '../services/department'
-import type { Department } from '../services/department'
-import { getMe } from '../services/user'
-import type { User } from '../services/user'
+import { onMounted, ref, watch } from 'vue'
+import { hasAdministrationRole } from '../../services/authentication'
+import type { Department } from '../../services/department'
+import { getDepartments, getMyDepartment } from '../../services/department'
+import type { User } from '../../services/user'
+import { getMe } from '../../services/user'
 import EditDepartment from './LmEditDepartment.vue'
-import AddDepartment from './LmAddDepartment.vue'
-import LmContainer from './LmContainer.vue'
+import AddDepartment from '../LmAddDepartment.vue'
+import AttendeesShort from './LMAttendeesShort.vue'
+import LmContainer from '../LmContainer.vue'
+import TentsShort from './LMTentsShort.vue'
 
 const myDepartment = ref<Department>({} as Department)
 const departments = ref<Department[]>([])
@@ -48,7 +50,10 @@ onMounted(async () => {
         <h1>Feuerwehren</h1>
         <div v-for="department in departments" :key="department.id">
           <h2>{{ department.name }}</h2>
-          <EditDepartment :department="department" class="mb-8" />
+          <EditDepartment :department="department" />
+          <AttendeesShort :department-id="department.id" />
+          <TentsShort :department-id="department.id" />
+          <v-divider class="mt-8 mb-16 border-opacity-15"></v-divider>
         </div>
       </LmContainer>
     </div>

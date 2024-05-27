@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { Roles, rolesText as rolesTitle } from '@/services/authentication'
-import type { Department } from '../services/department'
-import { updateDepartment } from '../services/department'
-import type { User } from '../services/user'
-import { updateRole, userForDepartment } from '../services/user'
+import type { Department } from '../../services/department'
+import { updateDepartment } from '../../services/department'
+import type { User } from '../../services/user'
+import { updateRole, userForDepartment } from '../../services/user'
 import { useToast } from 'vue-toastification'
 import { showErrorToast } from '@/helper/fetch'
 
@@ -143,7 +143,6 @@ onMounted(async () => {
             </v-btn>
           </div>
         </v-row>
-        <v-divider class="mt-16 mb-8 border-opacity-15"></v-divider>
       </v-container>
     </form>
   </div>
