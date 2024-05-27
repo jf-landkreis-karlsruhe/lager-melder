@@ -89,6 +89,10 @@ class AttendeeService(
         return attendeeRepository.findAttendeesWithoutYouthPlanRole()
     }
 
+    fun getDepartmentIdsForAllAttendees(): List<Long> {
+        return attendeeRepository.findDistinctDepartmentIdsFromAllAttendees()
+    }
+
     private fun checkFirstNameAndLastNameAreUnique(attendee: AttendeeEntry, id: Long = 0) {
         attendeeRepository.findByDepartmentAndFirstNameAndLastName(
             attendee.department,

@@ -17,9 +17,9 @@ class DepartmentController(
     private val tentsService: TentsService
 ) {
     @GetMapping("/departments")
-    fun getDepartments(): List<RestDepartment> {
+    fun getDepartments(@RequestParam(defaultValue = "false") onlyWithAttendees: Boolean): List<RestDepartment> {
         return departmentService
-                .getDepartments()
+            .getDepartments(onlyWithAttendees)
                 .map{ RestDepartment.of(it)}
     }
 

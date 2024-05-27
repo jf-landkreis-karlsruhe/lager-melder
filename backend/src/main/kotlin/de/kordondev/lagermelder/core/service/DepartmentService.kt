@@ -15,10 +15,18 @@ class DepartmentService(
     private val attendeeService: AttendeeService,
     private val authorityService: AuthorityService
 ) {
-    fun getDepartments(): List<DepartmentEntry> {
-        return departmentRepository
+    fun getDepartments(onlyWithAttendees: Boolean = false): List<DepartmentEntry> {
+        val departments = departmentRepository
             .findAll()
             .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
+
+        if (onlyWithAttendees) {
+            val departmentsWithAttendees = attendeeService.getDepartmentIdsForAllAttendees()
+            return departments
+                .filter { departmentsWithAttendees.contains(it.id) }
+        }
+
+        return departments
     }
 
     fun getDepartment(id: Long): DepartmentEntry {
