@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { computed, ref, onBeforeMount, onMounted } from 'vue'
-import { getAttendeesForMyDepartment, AttendeeRole } from '../services/attendee'
-import type { Attendee } from '../services/attendee'
-import { getMyDepartment } from '../services/department'
+import { computed, onBeforeMount, onMounted, ref } from 'vue'
+import { type Attendee, AttendeeRole, getAttendeesForDepartment } from '../services/attendee'
 import type { Department } from '../services/department'
 import {
-  youthLeaderAttendees,
+  filterEnteredAttendees,
   youthAttendees,
-  filterEnteredAttendees
+  youthLeaderAttendees
 } from '../helper/filterHelper'
 import AttendeesTable from './LmAttendeesTable.vue'
 import TentsPreregistration from './LmTentsPreregistration.vue'
 import { getRegistrationEnd } from '@/services/settings'
 import { dateTimeLocalized } from '@/helper/displayDate'
 
+const props = defineProps<{
+  department: Department
+}>()
+
 const attendees = ref<Attendee[]>([] as Attendee[])
-const department = ref<Department>({} as Department)
 const filterInput = ref<string>('')
 const attendeeRoleYouth = ref<AttendeeRole>(AttendeeRole.YOUTH)
 const attendeeRoleYouthLeader = ref<AttendeeRole>(AttendeeRole.YOUTH_LEADER)
@@ -27,17 +28,17 @@ let registrationEndLocalized: string = ''
 let attendeesCanBeEdited: boolean = false
 
 const youthAttendeeList = computed<Attendee[]>(() => {
-  if (!department.value || !department.value.id) {
+  if (!props.department || !props.department.id) {
     return []
   }
-  return youthAttendees(department.value.id, attendees.value, filterInput.value)
+  return youthAttendees(props.department.id, attendees.value, filterInput.value)
 })
 
 const youthLeaderAttendeeList = computed<Attendee[]>(() => {
-  if (!department.value || !department.value.id) {
+  if (!props.department || !props.department.id) {
     return []
   }
-  return youthLeaderAttendees(department.value.id, attendees.value, filterInput.value)
+  return youthLeaderAttendees(props.department.id, attendees.value, filterInput.value)
 })
 
 const enteredAttendeesCount = computed<number>(() => {
@@ -82,11 +83,10 @@ onBeforeMount(async () => {
 })
 
 onMounted(() => {
-  getAttendeesForMyDepartment().then((newAttendees) => {
-    attendees.value = newAttendees
-    totalAttendeeCount.value = newAttendees.length
+  getAttendeesForDepartment(props.department.id).then((attendeeList) => {
+    attendees.value = attendeeList
+    totalAttendeeCount.value = attendeeList.length
   })
-  getMyDepartment().then((newDepartment) => (department.value = newDepartment))
 })
 </script>
 

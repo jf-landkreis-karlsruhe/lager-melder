@@ -1,22 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { hasAdministrationRole } from '../../services/authentication'
 import type { Department } from '../../services/department'
-import { getDepartments, getMyDepartment } from '../../services/department'
-import type { User } from '../../services/user'
-import { getMe } from '../../services/user'
+import { getDepartments } from '../../services/department'
 import EditDepartment from './LmEditDepartment.vue'
 import AddDepartment from '../LmAddDepartment.vue'
 import AttendeesShort from './LMAttendeesShort.vue'
 import LmContainer from '../LmContainer.vue'
 import TentsShort from './LMTentsShort.vue'
 
-const myDepartment = ref<Department>({} as Department)
 const departments = ref<Department[]>([])
-const password = ref<string>('')
-const repeatPassword = ref<string>('')
-const user = ref<User>({} as User)
-const showPasswordError = ref<boolean>(false)
 
 const onDepartmentCreated = (newDepartment: Department) => {
   if (departments.value.find((dep) => dep.id === newDepartment.id)) {
@@ -25,21 +18,8 @@ const onDepartmentCreated = (newDepartment: Department) => {
   departments.value.push(newDepartment)
 }
 
-watch([password, repeatPassword], () => {
-  showPasswordError.value = false
-})
-
 onMounted(async () => {
-  const newUser = await getMe()
-  user.value = newUser
-  const newDepartment = await getMyDepartment()
-  myDepartment.value = newDepartment
-  if (hasAdministrationRole()) {
-    const newDepartments = await getDepartments()
-    departments.value = (newDepartments || []).filter(
-      (newDepartment) => newDepartment.id !== myDepartment.value.id
-    )
-  }
+  departments.value = await getDepartments()
 })
 </script>
 
@@ -53,6 +33,7 @@ onMounted(async () => {
           <EditDepartment :department="department" />
           <AttendeesShort :department-id="department.id" />
           <TentsShort :department-id="department.id" />
+          <router-link :to="'/feuerwehr/' + department.id">Details</router-link>
           <v-divider class="mt-8 mb-16 border-opacity-15"></v-divider>
         </div>
       </LmContainer>
