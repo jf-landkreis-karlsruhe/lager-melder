@@ -18,18 +18,18 @@ const localizedStartDate = ref<string | null>(null)
 
 onMounted(() => {
   getMyDepartment()
-    .then((newDepartment) => {
-      departmentName.value = newDepartment.name
-      departmentId.value = newDepartment.id
+    .then((myDepartment) => {
+      departmentName.value = myDepartment.name
+      departmentId.value = myDepartment.id
     })
     .then(() => {
       if (hasAdministrationRole()) {
-        return getDepartments()
+        return getDepartments({ onlyWithAttendees: true })
       }
     })
-    .then((newDepartments) => {
+    .then((allDepartments) => {
       departments.value =
-        newDepartments?.filter((newDepartment) => newDepartment.id !== departmentId.value) ?? []
+        allDepartments?.filter((department) => department.id !== departmentId.value) ?? []
     })
 
   getStartDownloadRegistrationFiles().then((newStartDownloadRegistrationFiles) => {

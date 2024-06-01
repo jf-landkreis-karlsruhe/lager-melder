@@ -1,7 +1,11 @@
 import { getData, putData } from '../helper/fetch'
 import { withAuthenticationHeader, getTokenData } from './authentication'
 
-export const getDepartments = () => getData<Department[]>('departments', withAuthenticationHeader())
+export const getDepartments = (query?: { onlyWithAttendees?: boolean }) =>
+  getData<Department[]>(
+    `departments${query?.onlyWithAttendees ? '?onlyWithAttendees=true' : ''}`,
+    withAuthenticationHeader()
+  )
 
 export const getDepartment = (id: number) =>
   getData<Department>(`departments/${id}`, withAuthenticationHeader())

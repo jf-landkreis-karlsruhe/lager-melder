@@ -16,6 +16,9 @@ interface AttendeeRepository : CrudRepository<AttendeeEntry, Long> {
 
     fun findByCode(code: String): AttendeeEntry?
 
+    @Query("SELECT a.department.id FROM AttendeeEntry a GROUP BY a.department.id")
+    fun findDistinctDepartmentIdsFromAllAttendees(): List<Long>
+
     @Query(
         "Select a from AttendeeEntry a LEFT JOIN YouthPlanAttendeeRoleEntry ypa ON a.id = ypa.attendeeId where ypa.attendeeId is NULL",
     )
