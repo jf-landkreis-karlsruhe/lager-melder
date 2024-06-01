@@ -8,8 +8,12 @@ import AddDepartment from '../LmAddDepartment.vue'
 import AttendeesShort from './LMAttendeesShort.vue'
 import LmContainer from '../LmContainer.vue'
 import TentsShort from './LMTentsShort.vue'
+import { checkinDepartmentToEvent, type Event, EventType, getEventByType } from '@/services/event'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const departments = ref<Department[]>([])
+const enterEvent = ref<Event>({} as Event)
 
 const onDepartmentCreated = (newDepartment: Department) => {
   if (departments.value.find((dep) => dep.id === newDepartment.id)) {
@@ -20,7 +24,14 @@ const onDepartmentCreated = (newDepartment: Department) => {
 
 onMounted(async () => {
   departments.value = await getDepartments()
+  getEventByType(EventType.GLOBAL_ENTER).then((event: Event) => (enterEvent.value = event))
 })
+
+const checkinDepartment = (department: Department) => {
+  checkinDepartmentToEvent(enterEvent.value, department.id).then(() =>
+    toast.success(` ${department.name} erfolgreich eingecheckt`)
+  )
+}
 </script>
 
 <template>
@@ -34,6 +45,11 @@ onMounted(async () => {
           <AttendeesShort :department-id="department.id" />
           <TentsShort :department-id="department.id" />
           <router-link :to="'/feuerwehr/' + department.id">Details</router-link>
+          <div class="d-flex justify-end align-center flex-grow-1">
+            <v-btn @click="checkinDepartment(department)" class="checkin" rounded>
+              ⛺ Teilnehmer {{ department.name }} einchecken
+            </v-btn>
+          </div>
           <v-divider class="mt-8 mb-16 border-opacity-15"></v-divider>
         </div>
       </LmContainer>
