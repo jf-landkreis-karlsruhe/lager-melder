@@ -1,4 +1,4 @@
-import {createToastInterface, type ToastInterface} from 'vue-toastification'
+import { createToastInterface, type ToastInterface } from 'vue-toastification'
 import { BASE_URL } from '../assets/config'
 import type { ErrorResponse } from '@/services/errorConstants'
 
@@ -55,15 +55,18 @@ export const fetchData = async (relativeUrl: string, config: RequestInit): Promi
     })
 }
 
-export const getErrorMessage = async (err: Response, defaultMessage?: string): Promise<{
-  key: string | undefined,
+export const getErrorMessage = async (
+  err: Response,
+  defaultMessage?: string
+): Promise<{
+  key: string | undefined
   message: string
 }> => {
-  const errObj = await err.json()
+  const errObj = await err.json().catch(() => ({ path: '' }))
   if (isValidatedErrorResponse(errObj)) {
     return {
       key: errObj.key,
-      message: errObj.messages.map(m => m.message).join('\n')
+      message: errObj.messages.map((m) => m.message).join('\n')
     }
   }
   if (errObj.path.endsWith('login') && errObj.status === 401) {

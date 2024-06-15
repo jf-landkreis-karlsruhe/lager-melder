@@ -24,6 +24,7 @@ onMounted(async () => {
       <div>SG30: {{ tents.sg30 }}</div>
       <div>SG40: {{ tents.sg40 }}</div>
       <div>SG50: {{ tents.sg50 }}</div>
+      <div>Total: {{ tents.sg200 + tents.sg20 + tents.sg30 + tents.sg40 + tents.sg50 }}</div>
     </v-row>
   </v-container>
 </template>

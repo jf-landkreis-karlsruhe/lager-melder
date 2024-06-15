@@ -16,7 +16,6 @@ const props = defineProps<{
 
 const error = ref<boolean>(false)
 const loading = ref<boolean>(false)
-const saved = ref<boolean>(false)
 const roleLoading = ref<boolean>(false)
 const user = ref<User>({} as User)
 const leaderName = ref<string>(props.department.leaderName)
@@ -39,11 +38,11 @@ const onUpdateDepartment = () => {
   updateDepartment(updatedDepartment)
     .then(() => {
       loading.value = false
-      saved.value = true
-      setTimeout(() => (saved.value = false), 2000)
+      toast.success(`${updatedDepartment.name} gespeichert.`)
     })
-    .catch(() => {
+    .catch(async (err) => {
       loading.value = false
+      await showErrorToast(toast, err, `${updatedDepartment.name} konnte nicht gepeichert werden.`)
     })
 }
 
