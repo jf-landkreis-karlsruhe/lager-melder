@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-import { logout, isLoggedIn } from '@/services/authentication'
-import { getMyDepartment } from '@/services/department'
+import { onMounted, ref, watch } from 'vue'
+import { isLoggedIn, logout } from '@/services/authentication'
 import type { Department } from '@/services/department'
-import { changePassword, getMe } from '@/services/user'
+import { getMyDepartment } from '@/services/department'
 import type { User } from '@/services/user'
-import EditDepartment from '../components/LmEditDepartment.vue'
+import { changePassword, getMe } from '@/services/user'
+import EditDepartment from '../components/departmentsOverview/LmEditDepartment.vue'
 import LmContainer from '@/components/LmContainer.vue'
 
 const myDepartment = ref<Department>({} as Department)

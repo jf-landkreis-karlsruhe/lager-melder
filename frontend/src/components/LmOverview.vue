@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { getAttendees, AttendeeRole, AttendeeStatus } from '../services/attendee'
+import { computed, onMounted, ref } from 'vue'
 import type { Attendee } from '../services/attendee'
-import { checkinDepartmentToEvent, EventType, getEventByType } from '../services/event'
-import type { Event } from '../services/event'
-import { getDepartments } from '../services/department'
+import { getAttendees } from '../services/attendee'
 import type { Department } from '../services/department'
+import { getDepartments } from '../services/department'
 import {
-  youthLeaderAttendees,
+  filterEnteredAttendees,
   youthAttendees,
-  filterEnteredAttendees
+  youthLeaderAttendees
 } from '../helper/filterHelper'
 import { hasAdministrationRole as hasAdministrationRole } from '../services/authentication'
 import { getBatches, getDepartmentOverview, getFoodPDF, getTShirtPDF } from '../services/adminFiles'
 import { showFile } from '../services/filesHelper'
-import { getTents } from '@/services/tents'
 import type { Tents } from '@/services/tents'
-import AttendeesTable from './LmAttendeesTable.vue'
+import { getTents } from '@/services/tents'
 import LmContainer from './LmContainer.vue'
 
 interface DepartmentWithAttendees {
@@ -28,10 +25,7 @@ interface DepartmentWithAttendees {
 const attendees = ref<Attendee[]>([])
 const departments = ref<Department[]>([])
 const filterInput = ref<string>('')
-const attendeeRoleYouth = ref<AttendeeRole>(AttendeeRole.YOUTH)
-const attendeeRoleYouthLeader = ref<AttendeeRole>(AttendeeRole.YOUTH_LEADER)
 const totalTents = ref<Tents>({} as Tents)
-const enterEvent = ref<Event>({} as Event)
 const initialLoading = ref<boolean>(true)
 const loadingBatches = ref<boolean>(false)
 const loadingFood = ref<boolean>(false)
@@ -93,23 +87,11 @@ const enteredAttendeesCount = computed<number>(() => {
   return attendees.value.filter(filterEnteredAttendees).length
 })
 
-const checkinDepartment = (departmentId: number) => {
-  checkinDepartmentToEvent(enterEvent.value, departmentId).then(() => {
-    attendees.value = attendees.value.map((att) => {
-      if (att.departmentId === departmentId) {
-        att.status = AttendeeStatus.ENTERED
-      }
-      return att
-    })
-  })
-}
-
 onMounted(() => {
   getAttendees().then((newAttendees) => {
     attendees.value = newAttendees
   })
   getDepartments().then((newDepartments) => (departments.value = newDepartments))
-  getEventByType(EventType.GLOBAL_ENTER).then((event: Event) => (enterEvent.value = event))
   getTents().then((tentsList) => {
     initialLoading.value = false
     totalTents.value = tentsList.reduce(
@@ -259,7 +241,6 @@ onMounted(() => {
         </section>
       </div>
     </div>
-    <!-- <Distribution :attendees="attendees" /> -->
   </LmContainer>
 
   <section class="mx-12 mb-12">
@@ -292,25 +273,6 @@ onMounted(() => {
           Gesamt Teilnehmerzahl:
           {{ registration.youthAttendees.length + registration.youthLeader.length }}
         </div>
-        <div class="d-flex justify-end align-center flex-grow-1">
-          <v-btn @click="checkinDepartment(registration.department.id)" class="checkin" rounded>
-            ⛺ Teilnehmer {{ registration.department.name }} einchecken
-          </v-btn>
-        </div>
-      </div>
-      <div class="indented-2">
-        <AttendeesTable
-          headlineText="Jugendliche"
-          :attendees="registration.youthAttendees"
-          :departmentId="registration.department.id"
-          :role="attendeeRoleYouth"
-        />
-        <AttendeesTable
-          headlineText="Jugendleiter"
-          :attendees="registration.youthLeader"
-          :departmentId="registration.department.id"
-          :role="attendeeRoleYouthLeader"
-        />
       </div>
     </div>
   </section>

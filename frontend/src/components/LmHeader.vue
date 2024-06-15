@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
-  getTokenData,
   AuthenticationChangedEvent,
+  getTokenData,
   hasAdministrationRole,
   isLoggedIn
 } from '../services/authentication'
-import {pathNeedsAuthentication} from "@/router";
+import { pathNeedsAuthentication } from '@/router'
 
 let timeoutId = 0
 const loggedIn = ref<boolean>(false)

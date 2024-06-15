@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ListDepartment from '../components/LmListDepartment.vue'
+import ListDepartment from '../components/departmentsOverview/LmListDepartment.vue'
 </script>
 
 <template>

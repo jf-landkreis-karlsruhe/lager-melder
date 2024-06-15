@@ -39,8 +39,13 @@ const router = createRouter({
     },
     {
       path: '/feuerwehr',
-      name: 'Meine Feuerwehr',
+      name: 'Feuerwehren',
       component: () => import('../views/ListDepartmentView.vue')
+    },
+    {
+      path: '/feuerwehr/:id',
+      name: 'Feuerwehr Detail',
+      component: () => import('../views/DepartmentDetailView.vue')
     },
     {
       path: '/events/:eventCode',
