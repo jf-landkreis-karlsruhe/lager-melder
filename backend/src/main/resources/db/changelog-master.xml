@@ -14,5 +14,6 @@
     <include file="classpath:db/scripts/009_add-youth-plan-attendee-roles.xml"/>
     <include file="classpath:db/scripts/010_add-start-of-registration-files-date.xml"/>
     <include file="classpath:db/scripts/011_add-reset-token-table.xml"/>
+    <include file="classpath:db/scripts/012_extend-department.xml"/>
 
 </databaseChangeLog>

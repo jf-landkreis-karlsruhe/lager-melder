@@ -1,5 +1,6 @@
 import { getData, putData } from '../helper/fetch'
-import { withAuthenticationHeader, getTokenData } from './authentication'
+import { getTokenData, withAuthenticationHeader } from './authentication'
+import type { Tents } from '@/services/tents'
 
 export const getDepartments = (query?: { onlyWithAttendees?: boolean }) =>
   getData<Department[]>(
@@ -23,4 +24,19 @@ export interface Department {
   name: string
   leaderName: string
   leaderEMail: string
+  phoneNumber: string
+  shortName: string
+}
+
+export const updateRegistration = (registration: RegistrationData) =>
+  putData<Tents>(
+    `departments/registration/${registration.departmentId}`,
+    withAuthenticationHeader(),
+    registration
+  )
+
+export interface RegistrationData {
+  departmentId: number
+  tents: Tents
+  departmentPhoneNumber: string
 }

@@ -69,7 +69,7 @@ export const getErrorMessage = async (
       message: errObj.messages.map((m) => m.message).join('\n')
     }
   }
-  if (errObj.path.endsWith('login') && errObj.status === 401) {
+  if (errObj.path && errObj.path.endsWith('login') && errObj.status === 401) {
     return {
       key: errObj.key,
       message: 'Benutzername oder Passwort sind falsch'

@@ -24,7 +24,9 @@ data class RestDepartmentWithUserRequest(
             id = 0,
             name = departmentWithUser.departmentName,
             leaderName = departmentWithUser.leaderName,
-            leaderEMail = departmentWithUser.leaderEMail
+            leaderEMail = departmentWithUser.leaderEMail,
+            phoneNumber = "",
+            shortName = ""
         )
 
         fun toUser(departmentWithUser: RestDepartmentWithUserRequest, department: DepartmentEntry) = UserEntry(

@@ -16,5 +16,11 @@ data class DepartmentEntry (
         val leaderName: String,
 
         @Column(name = "leader_email")
-        val leaderEMail: String
+        val leaderEMail: String,
+
+        @Column(name = "phone_number")
+        val phoneNumber: String = "",
+
+        @Column(name = "short_name")
+        val shortName: String = ""
 )

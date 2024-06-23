@@ -8,7 +8,7 @@ import {
   youthLeaderAttendees
 } from '../helper/filterHelper'
 import AttendeesTable from './LmAttendeesTable.vue'
-import TentsPreregistration from './LmTentsPreregistration.vue'
+import TentsPreregistration from './LmRegistrationInformation.vue'
 import { getRegistrationEnd } from '@/services/settings'
 import { dateTimeLocalized } from '@/helper/displayDate'
 
@@ -149,7 +149,10 @@ onMounted(() => {
     />
 
     <div v-if="department && department.id">
-      <TentsPreregistration :departmentId="department.id" />
+      <TentsPreregistration
+        :departmentId="department.id"
+        :department-phone-number="department.phoneNumber"
+      />
     </div>
   </v-container>
 </template>

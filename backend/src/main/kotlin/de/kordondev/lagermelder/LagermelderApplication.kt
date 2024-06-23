@@ -40,7 +40,9 @@ class LagermelderApplication {
         val adminDepartment = DepartmentEntry(
             name = "admin",
             leaderName = "KordonDev",
-            leaderEMail = "KordonDev@mail.ka"
+            leaderEMail = "KordonDev@mail.ka",
+            phoneNumber = "",
+            shortName = ""
         )
         departmentRepository.save(adminDepartment)
 
