@@ -27,7 +27,7 @@ const saveRegistrationInformation = async () => {
   }
   tents.value = await updateRegistration(registrationData).catch(async (error) => {
     saving.value = false
-    await showErrorToast(toast, error, 'Fehler beim speichern der Anmeldeinformationen.')
+    await showErrorToast(toast, error, 'Fehler beim Speichern der Anmeldeinformationen.')
     return registrationData.tents
   })
   saving.value = false
