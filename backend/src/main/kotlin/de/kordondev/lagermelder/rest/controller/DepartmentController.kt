@@ -6,6 +6,7 @@ import de.kordondev.lagermelder.core.service.TentsService
 import de.kordondev.lagermelder.rest.model.RestAttendee
 import de.kordondev.lagermelder.rest.model.RestDepartment
 import de.kordondev.lagermelder.rest.model.RestTents
+import de.kordondev.lagermelder.rest.model.request.RestDepartmentRegistrationRequest
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRequest
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
@@ -67,4 +68,18 @@ class DepartmentController(
             .let(tentsService::getForDepartment)
             .let { RestTents.of(it) }
     }
+
+    @PutMapping("departments/registration/{id}")
+    fun registerDepartment(
+        @PathVariable("id") id: Long,
+        @RequestBody(required = true) @Valid registrationRequest: RestDepartmentRegistrationRequest
+    ): RestTents {
+        val department = departmentService.getDepartment(id)
+        departmentService
+            .saveDepartment(department.copy(phoneNumber = registrationRequest.departmentPhoneNumber))
+        return tentsService
+            .saveForDepartment(RestTents.to(registrationRequest.tents, department))
+            .let { RestTents.of(it) }
+    }
+
 }

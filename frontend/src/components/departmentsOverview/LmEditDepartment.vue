@@ -20,6 +20,8 @@ const roleLoading = ref<boolean>(false)
 const user = ref<User>({} as User)
 const leaderName = ref<string>(props.department.leaderName)
 const leaderEmail = ref<string>(props.department.leaderEMail)
+const shortName = ref<string>(props.department.shortName)
+const phoneNumber = ref<string>(props.department.phoneNumber)
 const rolesList = ref<{ value: Roles; title: string }[]>([
   { value: Roles.USER, title: rolesTitle(Roles.USER) },
   {
@@ -33,7 +35,9 @@ const onUpdateDepartment = () => {
   const updatedDepartment = {
     ...props.department,
     leaderName: leaderName.value,
-    leaderEMail: leaderEmail.value
+    leaderEMail: leaderEmail.value,
+    shortName: shortName.value,
+    phoneNumber: phoneNumber.value
   }
   updateDepartment(updatedDepartment)
     .then(() => {
@@ -85,8 +89,20 @@ onMounted(async () => {
   <div v-if="!error">
     <form v-on:submit.prevent="onUpdateDepartment">
       <v-container>
-        <v-row>
-          <h4>Kontakt</h4>
+        <v-row align="baseline" justify="space-between">
+          <div>
+            <h4>Stammdaten</h4>
+          </div>
+          <div>
+            <v-btn type="submit" :loading="loading" variant="text">
+              <v-icon medium class="mr-2"> mdi-content-save</v-icon>
+            </v-btn>
+          </div>
+        </v-row>
+        <v-row align="center" justify="center" wrap="wrap" style="gap: 20px">
+          <div class="flex-grow">
+            <v-text-field variant="underlined" v-model="shortName" label="Name kurz" />
+          </div>
         </v-row>
         <v-row align="center" justify="end" wrap="wrap" style="gap: 20px">
           <div class="fixed-width">
@@ -101,10 +117,10 @@ onMounted(async () => {
               required
             />
           </div>
-          <div>
-            <v-btn type="submit" :loading="loading" variant="text">
-              <v-icon medium class="mr-2"> mdi-content-save</v-icon>
-            </v-btn>
+        </v-row>
+        <v-row align="center" justify="center" wrap="wrap" style="gap: 20px">
+          <div class="flex-grow">
+            <v-text-field variant="underlined" v-model="phoneNumber" label="Kontaktnummer" />
           </div>
         </v-row>
       </v-container>

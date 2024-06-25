@@ -5,6 +5,7 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.client.j2se.MatrixToImageWriter
 import com.google.zxing.common.BitMatrix
 import com.lowagie.text.*
+import com.lowagie.text.List
 import com.lowagie.text.pdf.*
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
@@ -95,7 +96,11 @@ class AdminFilesService(
         val xValue = 335F
         val yValue = 723F
         content.setTextMatrix(xValue, yValue - yDistanceBetweenBatches * attendeesOnPage)
-        content.showText(attendee.department.name)
+        if (attendee.department.shortName.isNotEmpty()) {
+            content.showText(attendee.department.shortName)
+        } else {
+            content.showText(attendee.department.name)
+        }
         content.endText()
     }
 
@@ -178,7 +183,7 @@ class AdminFilesService(
         writer.isCloseStream = false
         document.open()
 
-        val globalDepartments = DepartmentEntry(0, "Zeltlager gesamt", "", "")
+        val globalDepartments = DepartmentEntry(0, "Zeltlager gesamt", "", "", "", "")
         val allAttendees = attendeeService.getAttendees()
         val totalTShirtCount = countTShirtPerSize(allAttendees)
         val eventStart = settingsService.getSettings().eventStart

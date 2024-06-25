@@ -13,21 +13,27 @@ data class RestDepartmentRequest(
     @field:NotBlank(message = "leaderName cannot be blank")
     val leaderName: String,
     @field:Email(message = "leaderEMail needs to be an email")
-    val leaderEMail: String
+    val leaderEMail: String,
+    val phoneNumber: String,
+    val shortName: String
 ) {
     companion object {
         fun to(department: RestDepartmentRequest) = DepartmentEntry(
             id = 0,
             name = department.name,
             leaderName = department.leaderName,
-            leaderEMail = department.leaderEMail
+            leaderEMail = department.leaderEMail,
+            phoneNumber = department.phoneNumber,
+            shortName = department.shortName
         )
 
         fun to(department: RestDepartmentRequest, id: Long) = DepartmentEntry(
             id = id,
             name = department.name,
             leaderName = department.leaderName,
-            leaderEMail = department.leaderEMail
+            leaderEMail = department.leaderEMail,
+            phoneNumber = department.phoneNumber,
+            shortName = department.shortName
         )
     }
 }

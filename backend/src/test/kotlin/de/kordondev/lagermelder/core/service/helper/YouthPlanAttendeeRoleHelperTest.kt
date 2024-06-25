@@ -278,7 +278,7 @@ class YouthPlanAttendeeRoleHelperTest {
             tShirtSize = TShirtSize.L,
             additionalInformation = "",
             role = role,
-            department = DepartmentEntry(4L, "", "", ""),
+            department = DepartmentEntry(4L, "", "", "", "", ""),
             code = "",
             status = AttendeeStatus.ENTERED,
         )

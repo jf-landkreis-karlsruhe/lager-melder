@@ -7,11 +7,11 @@ import de.kordondev.lagermelder.rest.model.request.*
 class Entities() {
     companion object {
         fun department(): DepartmentEntry {
-            return DepartmentEntry(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+            return DepartmentEntry(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com", "", "")
         }
 
         fun departmentEntry(): DepartmentEntry {
-            return DepartmentEntry(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com")
+            return DepartmentEntry(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com", "", "")
         }
 
         fun attendee(): AttendeeEntry {
@@ -76,7 +76,9 @@ class Entities() {
             return RestDepartmentRequest(
                 name = "department",
                 leaderEMail = "leader@mail.de",
-                leaderName = "leader"
+                leaderName = "leader",
+                phoneNumber = "",
+                shortName = ""
             )
         }
 
