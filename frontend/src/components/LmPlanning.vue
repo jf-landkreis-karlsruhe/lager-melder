@@ -126,8 +126,9 @@ onMounted(() => {
 
 <template>
   <LmContainer v-if="hasAdministrationRole()">
+    <h1>Planung</h1>
     <section class="mb-12">
-      <h1>Lagerausweise</h1>
+      <h2>Lagerausweise</h2>
       <div class="d-flex align-center justify-space-between">
         <p class="mr-8">
           Hier können alle Lagerausweise heruntergeladen werden.
@@ -153,7 +154,7 @@ onMounted(() => {
     </section>
 
     <section class="mb-12">
-      <h1>Essensübersicht</h1>
+      <h2>Essensübersicht</h2>
       <div class="d-flex align-center justify-space-between">
         <p class="mr-8">
           Hier kann die Liste der Essen heruntergeladen werden.
@@ -167,7 +168,7 @@ onMounted(() => {
     </section>
 
     <section class="mb-12">
-      <h1>Anmerkungsübersicht</h1>
+      <h2>Anmerkungsübersicht</h2>
       <div class="d-flex align-center justify-space-between">
         <p class="mr-8">
           Hier kann die Liste aller Anmerkungen der Teilnehmer heruntergeladen werden.
@@ -186,7 +187,7 @@ onMounted(() => {
     </section>
 
     <section class="mb-12">
-      <h1>T-Shirt- und Armbandübersicht</h1>
+      <h2>T-Shirt- und Armbandübersicht</h2>
       <div class="d-flex align-center justify-space-between">
         <p class="mr-8">
           Hier kann die Liste der TShirts und Armbänder pro Feuerwehr heruntergeladen werden.
@@ -205,7 +206,7 @@ onMounted(() => {
     </section>
 
     <section class="mb-12">
-      <h1>Feuerwehr T-Shirt- und Armbandverteilliste</h1>
+      <h2>Feuerwehr T-Shirt- und Armbandverteilliste</h2>
       <div class="d-flex align-center justify-space-between">
         <p class="mr-8">
           Hier kann eine Liste pro Feuerwehr zur Verteilung der TShirts und Armbänder
@@ -230,7 +231,7 @@ onMounted(() => {
       </div>
       <div v-else>
         <section class="mb-12">
-          <h1>Zeltübersicht</h1>
+          <h2>Zeltübersicht</h2>
           <div>
             <p class="mr-8">Hier stehen wie viele Zelte insgesamt angemeldet wurden.</p>
             <v-simple-table>
@@ -273,7 +274,7 @@ onMounted(() => {
 
   <section class="mx-12 mb-12">
     <div class="d-flex align-baseline">
-      <h1 class="mr-4 mb-2">Teilnehmer</h1>
+      <h2 class="mr-4 mb-2">Teilnehmer</h2>
       <div class="department-count">
         Gesamt: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})
       </div>

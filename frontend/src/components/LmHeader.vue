@@ -62,7 +62,7 @@ const checkToken = () => {
                 <router-link to="/feuerwehr">Feuerwehren</router-link>
               </li>
               <li class="nav-item admin" v-if="hasAdministrationRole()">
-                <router-link to="/overview"> Übersicht </router-link>
+                <router-link to="/planung"> Planung</router-link>
               </li>
               <li class="nav-item admin" v-if="hasAdministrationRole()">
                 <router-link to="/anwesend"> Anwesend </router-link>
