@@ -1,20 +1,25 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, type Ref, ref } from 'vue'
 import type { Attendee } from '../services/attendee'
 import { getAttendees } from '../services/attendee'
 import type { Department } from '../services/department'
 import { getDepartments } from '../services/department'
-import {
-  filterEnteredAttendees,
-  youthAttendees,
-  youthLeaderAttendees
-} from '../helper/filterHelper'
+import { filterEnteredAttendees, youthAttendees, youthLeaderAttendees } from '@/helper/filterHelper'
 import { hasAdministrationRole as hasAdministrationRole } from '../services/authentication'
-import { getBatches, getDepartmentOverview, getFoodPDF, getTShirtPDF } from '../services/adminFiles'
-import { showFile } from '../services/filesHelper'
+import {
+  getBatches,
+  getDepartmentOverview,
+  getFoodPDF,
+  getTShirtPDF,
+  getAdditionalInformationPDF
+} from '@/services/adminFiles'
+import { showFile } from '@/services/filesHelper'
 import type { Tents } from '@/services/tents'
 import { getTents } from '@/services/tents'
 import LmContainer from './LmContainer.vue'
+import { useToast } from 'vue-toastification'
+import { showErrorToast } from '@/helper/fetch'
+import type { FileReponse } from '@/services/filesHelper'
 
 interface DepartmentWithAttendees {
   department: Department
@@ -29,8 +34,11 @@ const totalTents = ref<Tents>({} as Tents)
 const initialLoading = ref<boolean>(true)
 const loadingBatches = ref<boolean>(false)
 const loadingFood = ref<boolean>(false)
+const loadingAdditionalInformation = ref<boolean>(false)
 const loadingTshirt = ref<boolean>(false)
 const loadingDepartmentOverview = ref<boolean>(false)
+
+const toast = useToast()
 
 const departmentWithAttendees = computed<DepartmentWithAttendees[]>(() => {
   return departments.value
@@ -48,35 +56,36 @@ const departmentWithAttendees = computed<DepartmentWithAttendees[]>(() => {
 })
 
 const downloadBatchesPDF = () => {
-  loadingBatches.value = true
-  getBatches().then((fileData) => {
-    loadingBatches.value = false
-    showFile(fileData.data, fileData.fileName)
-  })
+  loadFile(getBatches, loadingBatches)
 }
 
 const downloadFoodPDF = () => {
-  loadingFood.value = true
-  getFoodPDF().then((fileData) => {
-    loadingFood.value = false
-    showFile(fileData.data, fileData.fileName)
-  })
+  loadFile(getFoodPDF, loadingFood)
+}
+
+const downloadAdditionalInformationPDF = () => {
+  loadFile(getAdditionalInformationPDF, loadingAdditionalInformation)
 }
 
 const downloadTShirtsPDF = () => {
-  loadingTshirt.value = true
-  getTShirtPDF().then((fileData) => {
-    loadingTshirt.value = false
-    showFile(fileData.data, fileData.fileName)
-  })
+  loadFile(getTShirtPDF, loadingTshirt)
 }
 
 const downloadDepartmentOverview = () => {
-  loadingDepartmentOverview.value = true
-  getDepartmentOverview().then((fileData) => {
-    loadingDepartmentOverview.value = false
-    showFile(fileData.data, fileData.fileName)
-  })
+  loadFile(getDepartmentOverview, loadingDepartmentOverview)
+}
+
+const loadFile = (request: () => Promise<FileReponse>, loading: Ref<boolean>) => {
+  loading.value = true
+  request()
+    .then((fileData) => {
+      loading.value = false
+      showFile(fileData.data, fileData.fileName)
+    })
+    .catch((err) => {
+      loading.value = false
+      showErrorToast(toast, err)
+    })
 }
 
 const totalAttendeeCount = computed<number>(() => {
@@ -147,11 +156,30 @@ onMounted(() => {
       <h1>Essensübersicht</h1>
       <div class="d-flex align-center justify-space-between">
         <p class="mr-8">
-          Hier kann die Liste der Essen, die nicht Fleisch sind heruntergeladen werden.
+          Hier kann die Liste der Essen heruntergeladen werden.
           <br />
           <v-btn color="var(--lm-c-accent)" @click="downloadFoodPDF" small :loading="loadingFood">
             Herunterladen
             <v-icon right dark> mdi-cloud-download </v-icon>
+          </v-btn>
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h1>Anmerkungsübersicht</h1>
+      <div class="d-flex align-center justify-space-between">
+        <p class="mr-8">
+          Hier kann die Liste aller Anmerkungen der Teilnehmer heruntergeladen werden.
+          <br />
+          <v-btn
+            color="var(--lm-c-accent)"
+            @click="downloadAdditionalInformationPDF"
+            small
+            :loading="loadingAdditionalInformation"
+          >
+            Herunterladen
+            <v-icon right dark> mdi-cloud-download</v-icon>
           </v-btn>
         </p>
       </div>
