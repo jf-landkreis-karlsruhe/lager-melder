@@ -31,6 +31,19 @@ export const getEventCodes = (): Promise<FileReponse> => {
     }))
 }
 
+export const getAdditionalInformationPDF = (): Promise<FileReponse> => {
+  return fetchData(`admin-files/additionalInformation`, {
+    headers: {
+      ...withAuthenticationHeader()
+    }
+  })
+    .then((r) => r.blob())
+    .then((blob) => ({
+      data: blob,
+      fileName: `anmerkungen.pdf`
+    }))
+}
+
 export const getFoodPDF = (): Promise<FileReponse> => {
   return fetchData(`admin-files/food`, {
     headers: {

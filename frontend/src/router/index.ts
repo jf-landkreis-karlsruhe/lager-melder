@@ -28,9 +28,9 @@ const router = createRouter({
       component: () => import('../views/AttendeesRegistrationView.vue')
     },
     {
-      path: '/overview',
-      name: 'Lagerübersicht',
-      component: () => import('../views/OverviewView.vue')
+      path: '/planung',
+      name: 'Planung',
+      component: () => import('../views/PlanningView.vue')
     },
     {
       path: '/files',

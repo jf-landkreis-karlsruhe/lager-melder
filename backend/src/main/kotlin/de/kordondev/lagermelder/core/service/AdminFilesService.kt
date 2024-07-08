@@ -313,22 +313,61 @@ class AdminFilesService(
         document.add(Paragraph("Kreiszeltlager - Essen", headlineFont))
         for (food in Food.values()) {
             document.add(Paragraph("${food.toString()} (${foodAttendees[food]!!.size})", headlineFont))
-            if (food != Food.MEAT) {
-                val list = List()
-                list.setListSymbol("\u2022")
-                for (att in foodAttendees[food]!!) {
-                    if (food == Food.SPECIAL) {
-                        list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}. Kommentar: ${att.additionalInformation}. (Jugendwart: ${att.department.leaderEMail}, EMail: ${att.department.leaderEMail})")
-                    } else {
-                        list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}")
-                    }
+            val list = List()
+            list.setListSymbol("\u2022")
+            for (att in foodAttendees[food]!!) {
+                if (att.additionalInformation.isNotEmpty()) {
+                    list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}. Kommentar: ${att.additionalInformation}. (Jugendwart: ${att.department.leaderEMail}, EMail: ${att.department.leaderEMail})")
+                } else if (food != Food.MEAT) {
+                    list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}")
                 }
-                document.add(list)
             }
+            document.add(list)
         }
 
         document.close()
         return out.toByteArray()
+    }
+
+    fun createAdditionalInformationPDF(): ByteArray {
+        authorityService.isSpecializedFieldDirector()
+        val out = ByteArrayOutputStream()
+
+        val document = Document(PageSize.A4)
+        val writer = PdfWriter.getInstance(document, out)
+
+        val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
+        writer.isCloseStream = false
+        document.open()
+        val attendees = attendeeService.getAttendees()
+        val departmentAttendees = mutableMapOf<DepartmentEntry, MutableList<AttendeeEntry>>()
+
+        for (attendee in attendees) {
+            if (attendee.additionalInformation.isEmpty()) {
+                continue;
+            }
+            if (departmentAttendees[attendee.department] == null) {
+                departmentAttendees[attendee.department] = mutableListOf()
+            }
+            departmentAttendees[attendee.department]?.add(attendee)
+        }
+
+        val departments = departmentAttendees.keys.toList().sortedBy { it.name }
+        document.add(Paragraph("Kreiszeltlager - Kommentare", headlineFont))
+        for (department in departments) {
+            document.add(Paragraph(department.name, headlineFont))
+            document.add(Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}"))
+            val list = List()
+            list.setListSymbol("\u2022")
+            for (att in departmentAttendees[department]!!) {
+                list.add(" ${att.firstName} ${att.lastName}: ${att.additionalInformation}")
+            }
+            document.add(list)
+        }
+
+        document.close()
+        return out.toByteArray()
+
     }
 
     fun createOverviewForEachDepartment(): ByteArray {

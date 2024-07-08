@@ -48,6 +48,14 @@ class AdminFilesController(
 
     @ResponseBody
     @Throws(IOException::class)
+    @GetMapping(value = ["/admin-files/additionalInformation"], produces = ["application/pdf"])
+    fun getCommentsPDF(response: HttpServletResponse): ByteArray? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=anmerkungen.pdf")
+        return adminFilesService.createAdditionalInformationPDF()
+    }
+
+    @ResponseBody
+    @Throws(IOException::class)
     @GetMapping(value = ["/admin-files/overviewForDepartment"], produces = ["application/pdf"])
     fun getOverviewForDepartment(response: HttpServletResponse): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=übersichtÜberFeuerwehr.pdf")
