@@ -26,8 +26,7 @@ data class AttendeeEntry(
     val food: Food,
 
     @Column(name = "t_shirt_size")
-    @Enumerated(EnumType.STRING)
-    val tShirtSize: TShirtSize,
+    val tShirtSize: String,
 
     @Column(name = "additional_information")
     val additionalInformation: String,

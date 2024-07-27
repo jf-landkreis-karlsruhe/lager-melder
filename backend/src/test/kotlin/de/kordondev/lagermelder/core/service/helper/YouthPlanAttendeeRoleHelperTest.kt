@@ -1,6 +1,7 @@
 package de.kordondev.lagermelder.core.service.helper
 
 import de.kordondev.lagermelder.core.persistence.entry.*
+import de.kordondev.lagermelder.helper.Entities
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -275,7 +276,7 @@ class YouthPlanAttendeeRoleHelperTest {
             lastName = "name",
             birthday = birthday,
             food = Food.MEAT,
-            tShirtSize = TShirtSize.L,
+            tShirtSize = Entities.TShirtSizeMock.L.size,
             additionalInformation = "",
             role = role,
             department = DepartmentEntry(4L, "", "", "", "", ""),

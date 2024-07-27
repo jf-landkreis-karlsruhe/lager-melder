@@ -111,4 +111,11 @@ class AttendeeService(
             throw WrongTimeException("Registrierungsende wurde überschritten")
         }
     }
+
+    fun replaceTShirtSize(oldSize: String, newSize: String) {
+        attendeeRepository.findAllBytShirtSize(oldSize).forEach {
+            attendeeRepository.save(it.copy(tShirtSize = newSize))
+        }
+
+    }
 }

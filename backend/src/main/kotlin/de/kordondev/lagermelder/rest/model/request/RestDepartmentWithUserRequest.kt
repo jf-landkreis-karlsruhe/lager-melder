@@ -10,8 +10,8 @@ import jakarta.validation.constraints.NotNull
 data class RestDepartmentWithUserRequest(
     @field:Email(message = "username needs to be an email")
     val username: String,
-    @field:NotNull(message = "departmen name cannot be missing")
-    @field:NotBlank(message = "departmen name cannot be blank")
+    @field:NotNull(message = "department name cannot be missing")
+    @field:NotBlank(message = "department name cannot be blank")
     val departmentName: String,
     @field:NotNull(message = "leaderName cannot be missing")
     @field:NotBlank(message = "leaderName cannot be blank")

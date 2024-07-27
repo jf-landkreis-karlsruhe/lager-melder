@@ -26,7 +26,7 @@ data class RestAttendee(
             lastName = attendee.lastName,
             birthday = attendee.birthday,
             food = attendee.food,
-            tShirtSize = attendee.tShirtSize.toString(),
+            tShirtSize = attendee.tShirtSize,
             additionalInformation = attendee.additionalInformation,
             role = attendee.role,
             departmentId = attendee.department.id,

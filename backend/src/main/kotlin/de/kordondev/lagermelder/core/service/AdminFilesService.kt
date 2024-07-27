@@ -11,7 +11,6 @@ import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
-import de.kordondev.lagermelder.core.persistence.entry.TShirtSize
 import de.kordondev.lagermelder.core.security.AuthorityService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -30,6 +29,7 @@ class AdminFilesService(
     private val departmentService: DepartmentService,
     private val authorityService: AuthorityService,
     private val settingsService: SettingsService,
+    private val tShirtSizeService: TShirtSizeService
 ) {
     private val yDistanceBetweenBatches = 141F
     private val logger: Logger = LoggerFactory.getLogger(AdminFilesService::class.java)
@@ -188,8 +188,15 @@ class AdminFilesService(
         val totalTShirtCount = countTShirtPerSize(allAttendees)
         val eventStart = settingsService.getSettings().eventStart
         val totalBraceletCount = countBracelet(allAttendees, eventStart)
+        val tShirtSizes = tShirtSizeService.getTShirtSizes().map { it.size }.toMutableList()
 
-        addTShirtsAndBraceletForDepartment(globalDepartments, totalTShirtCount, totalBraceletCount, document)
+        addTShirtsAndBraceletForDepartment(
+            globalDepartments,
+            tShirtSizes,
+            totalTShirtCount,
+            totalBraceletCount,
+            document
+        )
 
         val departments = departmentService.getDepartments()
         for (department in departments) {
@@ -197,7 +204,7 @@ class AdminFilesService(
             if (attendees.isNotEmpty()) {
                 val tShirtCount = countTShirtPerSize(attendees)
                 val braceletCount = countBracelet(attendees, eventStart)
-                addTShirtsAndBraceletForDepartment(department, tShirtCount, braceletCount, document)
+                addTShirtsAndBraceletForDepartment(department, tShirtSizes, tShirtCount, braceletCount, document)
             }
         }
         document.close()
@@ -206,7 +213,8 @@ class AdminFilesService(
 
     private fun addTShirtsAndBraceletForDepartment(
         department: DepartmentEntry,
-        tShirtCount: MutableMap<TShirtSize, Int>,
+        tShirtSizes: MutableList<String>,
+        tShirtCount: MutableMap<String, Int>,
         braceletCount: MutableMap<Color, Int>,
         document: Document
     ) {
@@ -222,8 +230,8 @@ class AdminFilesService(
         table.addCell("Größe:")
         table.addCell("Anzahl:")
         table.endHeaders()
-        for (size in TShirtSize.values()) {
-            table.addCell(size.toString())
+        for (size in tShirtSizes) {
+            table.addCell(size)
             table.addCell("${tShirtCount[size] ?: 0}")
         }
         document.add(table)
@@ -247,8 +255,8 @@ class AdminFilesService(
         document.newPage()
     }
 
-    private fun countTShirtPerSize(attendees: kotlin.collections.List<AttendeeEntry>): MutableMap<TShirtSize, Int> {
-        val tShirtCount = mutableMapOf<TShirtSize, Int>()
+    private fun countTShirtPerSize(attendees: kotlin.collections.List<AttendeeEntry>): MutableMap<String, Int> {
+        val tShirtCount = mutableMapOf<String, Int>()
         for (attendee in attendees) {
             val currentCount = tShirtCount[attendee.tShirtSize] ?: 0
             tShirtCount[attendee.tShirtSize] = (currentCount + 1)
@@ -302,7 +310,7 @@ class AdminFilesService(
         document.open()
         val attendees = attendeeService.getAttendees()
         val foodAttendees = mutableMapOf<Food, MutableList<AttendeeEntry>>()
-        for (food in Food.values()) {
+        for (food in Food.entries) {
             foodAttendees[food] = mutableListOf()
         }
 
@@ -311,7 +319,7 @@ class AdminFilesService(
         }
 
         document.add(Paragraph("Kreiszeltlager - Essen", headlineFont))
-        for (food in Food.values()) {
+        for (food in Food.entries) {
             document.add(Paragraph("${food.toString()} (${foodAttendees[food]!!.size})", headlineFont))
             val list = List()
             list.setListSymbol("\u2022")
@@ -344,7 +352,7 @@ class AdminFilesService(
 
         for (attendee in attendees) {
             if (attendee.additionalInformation.isEmpty()) {
-                continue;
+                continue
             }
             if (departmentAttendees[attendee.department] == null) {
                 departmentAttendees[attendee.department] = mutableListOf()
@@ -401,7 +409,7 @@ class AdminFilesService(
             table.endHeaders()
             for (attendee in attendees) {
                 table.addCell("${attendee.firstName} ${attendee.lastName}")
-                table.addCell(attendee.tShirtSize.toString())
+                table.addCell(attendee.tShirtSize)
                 table.addCell(colorToString(colorForAgeGroup(attendee, eventStart)))
             }
             document.add(table)

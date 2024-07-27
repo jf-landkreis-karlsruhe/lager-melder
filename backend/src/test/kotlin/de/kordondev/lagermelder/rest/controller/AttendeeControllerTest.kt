@@ -3,7 +3,6 @@ package de.kordondev.lagermelder.rest.controller
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.Food
 import de.kordondev.lagermelder.core.persistence.entry.Roles
-import de.kordondev.lagermelder.core.persistence.entry.TShirtSize
 import de.kordondev.lagermelder.core.security.SecurityConstants
 import de.kordondev.lagermelder.helper.Entities
 import de.kordondev.lagermelder.helper.WebTestHelper
@@ -74,7 +73,7 @@ class AttendeeControllerTest(val context: WebApplicationContext) {
             departmentId = department.id,
             birthday = "05-09-2006",
             food = Food.VEGETARIAN,
-            tShirtSize = TShirtSize.M.toString(),
+            tShirtSize = Entities.TShirtSizeMock.M.size,
             additionalInformation = "no",
             role = AttendeeRole.YOUTH_LEADER,
         )

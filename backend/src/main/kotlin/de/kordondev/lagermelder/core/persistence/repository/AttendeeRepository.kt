@@ -23,4 +23,6 @@ interface AttendeeRepository : CrudRepository<AttendeeEntry, Long> {
         "Select a from AttendeeEntry a LEFT JOIN YouthPlanAttendeeRoleEntry ypa ON a.id = ypa.attendeeId where ypa.attendeeId is NULL",
     )
     fun findAttendeesWithoutYouthPlanRole(): List<AttendeeEntry>
+
+    fun findAllBytShirtSize(tShirtSize: String): List<AttendeeEntry>
 }
