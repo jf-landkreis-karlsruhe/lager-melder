@@ -6,6 +6,7 @@ import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
+import de.kordondev.lagermelder.core.service.helper.TShirtSizeValidator
 import de.kordondev.lagermelder.exception.NotFoundException
 import de.kordondev.lagermelder.exception.UniqueException
 import de.kordondev.lagermelder.exception.WrongTimeException
@@ -18,7 +19,8 @@ import org.springframework.stereotype.Service
 class AttendeeService(
     private val attendeeRepository: AttendeeRepository,
     private val authorityService: AuthorityService,
-    private val settingsService: SettingsService
+    private val settingsService: SettingsService,
+    private val tShirtSizeValidator: TShirtSizeValidator
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AttendeeService::class.java)
     fun getAttendees(): List<AttendeeEntry> {
@@ -37,6 +39,8 @@ class AttendeeService(
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         checkCanAttendeeBeEdited()
         checkFirstNameAndLastNameAreUnique(attendee)
+        tShirtSizeValidator.validate(attendee.tShirtSize)
+
         val code = PasswordGenerator.generateCode()
         return attendeeRepository
             .save(attendee.copy(code = code))
@@ -45,6 +49,7 @@ class AttendeeService(
     fun saveAttendee(id: Long, attendee: AttendeeEntry): AttendeeEntry {
         checkCanAttendeeBeEdited()
         checkFirstNameAndLastNameAreUnique(attendee, id)
+        tShirtSizeValidator.validate(attendee.tShirtSize)
 
         return attendeeRepository.findByIdOrNull(id)
             ?.let {
