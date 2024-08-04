@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { AttendeeStatus, updateAttendee } from '../services/attendee'
-import { tShirtSizeText, foodText, birthdayText } from '../helper/displayText'
-import { Food, TShirtSize, AttendeeRole, createAttendee } from '../services/attendee'
+import { foodText, birthdayText } from '../helper/displayText'
+import { Food, AttendeeRole, createAttendee } from '../services/attendee'
 import type { Attendee } from '../services/attendee'
 import { deleteAttendee as deleteAttendeeService } from '../services/attendee'
 import { filterEnteredAttendees } from '@/helper/filterHelper'
 import { computed } from 'vue'
+import { getTShirtSizes, type TShirtSize } from '@/services/tShirtSizes'
 
 interface AttendeeWithValidation extends Attendee {
   tShirtSizeError: boolean
@@ -41,6 +42,11 @@ const headers = ref<{ title: string; value: string; sortable?: boolean }[]>([
   { title: 'Anmerkung', value: 'additionalInformation' },
   { title: '', value: 'actions', sortable: false }
 ])
+const tShirtSizes = ref<TShirtSize[]>([])
+
+onMounted(() => {
+  getTShirtSizes().then((data) => (tShirtSizes.value = data))
+})
 
 const deleteAttendee = (att: Attendee) => {
   deletingAttendees.value.push(att.id)
@@ -93,13 +99,6 @@ const statusClass = (item: any): string => {
   }
   return 'icon-first'
 }
-
-const tShirtSizes = computed<{ value: TShirtSize; title: string }[]>(() => {
-  return Object.values(TShirtSize).map((value) => ({
-    value,
-    title: tShirtSizeText(value)
-  }))
-})
 
 const foods = computed<{ value: Food; title: string }[]>(() => {
   return Object.values(Food).map((value) => ({
@@ -190,7 +189,7 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
           <template v-slot:[`item.tShirtSize`]="{ item }">
             <div style="max-width: 190px">
               <div v-if="!editingAttendeeIds.includes(item.id)">
-                {{ tShirtSizeText(item.tShirtSize) }}
+                {{ item.tShirtSize }}
               </div>
               <div v-if="editingAttendeeIds.includes(item.id)">
                 <v-select

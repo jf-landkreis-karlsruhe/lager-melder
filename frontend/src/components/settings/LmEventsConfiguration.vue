@@ -126,7 +126,7 @@ const downloadEventsPDF = () => {
                   <div v-if="!editingEventIds.includes(event.id)">
                     {{ event.name }}
                   </div>
-                  <div v-if="editingEventIds.includes(event.id)">
+                  <div v-if="editingEventIds.includes(event.id)" style="width: 100%">
                     <v-text-field
                       type="text"
                       v-model="event.name"

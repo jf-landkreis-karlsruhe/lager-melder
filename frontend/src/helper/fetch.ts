@@ -35,9 +35,10 @@ export const putData = async <T>(relativeUrl: string, headers: HeadersInit, body
   }).then((res) => res.json() as Promise<T>)
 }
 
-export const deleteData = (relativeUrl: string, headers: HeadersInit) => {
+export const deleteData = (relativeUrl: string, headers: HeadersInit, body: object = {}) => {
   return fetchData(relativeUrl, {
     method: 'DELETE',
+    body: JSON.stringify(body),
     headers: {
       'Content-Type': 'application/json',
       ...headers

@@ -1,4 +1,4 @@
-import { AttendeeRole, TShirtSize, Food, AttendeeStatus } from '../services/attendee'
+import { AttendeeRole, Food, AttendeeStatus } from '../services/attendee'
 import type { Attendee } from '../services/attendee'
 
 export const youthLeaderAttendees = (
@@ -33,24 +33,6 @@ export const filterByFilterInput = (attendee: Attendee, filterInput: string) => 
   }
   return true
 }
-
-export const FoodSortOrder = [Food.MEAT, Food.MUSLIM, Food.SPECIAL, Food.VEGETARIAN, Food.NONE]
-
-export const TShirtSizeSortOrder = [
-  TShirtSize.S104110,
-  TShirtSize.S116128,
-  TShirtSize.S140152,
-  TShirtSize.S164,
-  TShirtSize.S176,
-  TShirtSize.S,
-  TShirtSize.M,
-  TShirtSize.L,
-  TShirtSize.XL,
-  TShirtSize.XXL,
-  TShirtSize.X3L,
-  TShirtSize.X4L,
-  TShirtSize.X5L
-]
 
 export const filterEnteredAttendees = (attendee: Attendee): boolean => {
   return attendee.status === AttendeeStatus.ENTERED
