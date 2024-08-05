@@ -1,7 +1,7 @@
 import { getData, postData, deleteData } from '../helper/fetch'
 import { withAuthenticationHeader } from './authentication'
 
-export const getTShirtSizes = () => getData<TShirtSize[]>('tShirtSizes', withAuthenticationHeader())
+export const getTShirtSizes = () => getData<string[]>('tShirtSizes', withAuthenticationHeader())
 
 export const createTShirtSize = (tShirtSize: TShirtSize) =>
   postData<TShirtSize>(`tShirtSizes`, withAuthenticationHeader(), tShirtSize)

@@ -42,7 +42,7 @@ const headers = ref<{ title: string; value: string; sortable?: boolean }[]>([
   { title: 'Anmerkung', value: 'additionalInformation' },
   { title: '', value: 'actions', sortable: false }
 ])
-const tShirtSizes = ref<TShirtSize[]>([])
+const tShirtSizes = ref<string[]>([])
 
 onMounted(() => {
   getTShirtSizes().then((data) => (tShirtSizes.value = data))
@@ -123,7 +123,7 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
         lastName: '',
         birthday: '',
         food: Food.MEAT,
-        tShirtSize: '' as TShirtSize,
+        tShirtSize: '',
         additionalInformation: '',
         role: props.role,
         departmentId: props.departmentId

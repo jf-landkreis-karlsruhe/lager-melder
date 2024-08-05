@@ -43,7 +43,7 @@ export interface NewAttendee {
   departmentId: number
   birthday: string
   food: Food
-  tShirtSize: TShirtSize
+  tShirtSize: string
   additionalInformation: string
   role: AttendeeRole
 }
