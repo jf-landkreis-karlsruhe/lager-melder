@@ -22,19 +22,18 @@ onMounted(() => {
 const createTShirtSizeInternal = () => {
   loadingTShirtSize.value = newTShirtSize.value
   createTShirtSize({ size: newTShirtSize.value })
+    .catch(async (err) => {
+      await showErrorToast(toast, err, 'Neue TShirtgröße konnte nicht gespeichert werden.')
+    })
     .then(() => {
       newTShirtSize.value = ''
       toast.success(`Neue TShirtgröße gespeichert.`)
       return getTShirtSizes()
     })
     .then((data) => (tShirtSizes.value = data))
-    .catch(async (err) => {
-      await showErrorToast(toast, err, 'Neue TShirtgröße konnte nicht gespeichert werden.')
-    })
 }
 
 const openDeleteDialog = (tShirtSize: string) => {
-  console.log(tShirtSize)
   tShirtSizeToDelete.value = tShirtSize
   deleteModal.value = true
 }
