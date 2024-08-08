@@ -21,6 +21,7 @@ const user = ref<User>({} as User)
 const leaderName = ref<string>(props.department.leaderName)
 const leaderEmail = ref<string>(props.department.leaderEMail)
 const shortName = ref<string>(props.department.shortName)
+const headDepartmentName = ref<string>(props.department.headDepartmentName)
 const phoneNumber = ref<string>(props.department.phoneNumber)
 const rolesList = ref<{ value: Roles; title: string }[]>([
   { value: Roles.USER, title: rolesTitle(Roles.USER) },
@@ -37,7 +38,8 @@ const onUpdateDepartment = () => {
     leaderName: leaderName.value,
     leaderEMail: leaderEmail.value,
     shortName: shortName.value,
-    phoneNumber: phoneNumber.value
+    phoneNumber: phoneNumber.value,
+    headDepartmentName: headDepartmentName.value
   }
   updateDepartment(updatedDepartment)
     .then(() => {
@@ -100,8 +102,11 @@ onMounted(async () => {
           </div>
         </v-row>
         <v-row align="center" justify="center" wrap="wrap" style="gap: 20px">
-          <div class="flex-grow">
+          <div class="flex-grow-1" style="min-width: 200px">
             <v-text-field variant="underlined" v-model="shortName" label="Name kurz" />
+          </div>
+          <div class="flex-grow-1" style="min-width: 300px">
+            <v-text-field variant="underlined" v-model="headDepartmentName" label="Gemeinde" />
           </div>
         </v-row>
         <v-row align="center" justify="end" wrap="wrap" style="gap: 20px">
@@ -175,10 +180,10 @@ onMounted(async () => {
 
 <style scoped>
 .fixed-width {
-  flex: 1 1 200px;
+  flex: 1 1 300px;
 }
 
 .flex-grow {
-  flex: 2 1 200px;
+  flex: 2 1 300px;
 }
 </style>

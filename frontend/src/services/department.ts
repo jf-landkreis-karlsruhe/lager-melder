@@ -27,6 +27,7 @@ export interface Department {
   phoneNumber: string
   shortName: string
   features: DepartmentFeatures[]
+  headDepartmentName: string
 }
 
 export enum DepartmentFeatures {
