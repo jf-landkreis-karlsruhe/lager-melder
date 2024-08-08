@@ -1,12 +1,8 @@
 import { getData, postData, putData, deleteData } from '../helper/fetch'
 import { withAuthenticationHeader, getTokenData } from './authentication'
+import type { TShirtSize } from '@/services/tShirtSizes'
 
 export const getAttendees = () => getData<Attendee[]>('attendees', withAuthenticationHeader())
-
-export const getAttendeesForMyDepartment = () => {
-  const departmentId = getTokenData().departmentId
-  return getAttendeesForDepartment(departmentId)
-}
 
 export const getAttendeesForDepartment = (departmentId: number) =>
   getData<Attendee[]>(`departments/${departmentId}/attendees`, withAuthenticationHeader())
@@ -36,22 +32,6 @@ export enum Food {
   MUSLIM = 'MUSLIM'
 }
 
-export enum TShirtSize {
-  S104110 = '104/110',
-  S116128 = '116/128',
-  S140152 = '140/152',
-  S164 = '164',
-  S176 = '176',
-  S = 'S',
-  M = 'M',
-  L = 'L',
-  XL = 'XL',
-  XXL = 'XXL',
-  X3L = '3XL',
-  X4L = '4XL',
-  X5L = '5XL'
-}
-
 export enum AttendeeStatus {
   ENTERED = 'ENTERED',
   LEFT = 'LEFT'
@@ -63,7 +43,7 @@ export interface NewAttendee {
   departmentId: number
   birthday: string
   food: Food
-  tShirtSize: TShirtSize
+  tShirtSize: string
   additionalInformation: string
   role: AttendeeRole
 }

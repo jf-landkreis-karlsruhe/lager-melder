@@ -5,6 +5,11 @@ import de.kordondev.lagermelder.rest.model.request.*
 
 
 class Entities() {
+    enum class TShirtSizeMock(val size: String) {
+        S164("164"),
+        M("M"),
+        L("L"),
+    }
     companion object {
         fun department(): DepartmentEntry {
             return DepartmentEntry(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com", "", "")
@@ -21,7 +26,7 @@ class Entities() {
                 "endee",
                 "20-09-2005",
                 Food.MEAT,
-                TShirtSize.S164,
+                TShirtSizeMock.S164.size,
                 "",
                 "code",
                 AttendeeRole.YOUTH,
@@ -37,7 +42,7 @@ class Entities() {
                 departmentId = departmentId,
                 birthday = "05-09-2005",
                 food = Food.MEAT,
-                tShirtSize = TShirtSize.S164.toString(),
+                tShirtSize = TShirtSizeMock.S164.size,
                 additionalInformation = "n",
                 role = AttendeeRole.YOUTH,
             )
