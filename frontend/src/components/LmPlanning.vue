@@ -295,7 +295,7 @@ onMounted(() => {
         <v-text-field
           prepend-icon="mdi-magnify"
           v-model="filterInput"
-          label="Filter nach Teilnehmer"
+          label="Filter nach Feuerwehr"
           variant="underlined"
           class="w"
         />
@@ -307,8 +307,13 @@ onMounted(() => {
       :key="registration.department.id"
       class="indented-1"
     >
-      <div class="d-flex align-baseline">
-        <h2 class="mr-4 my-8">Feuerwehr {{ registration.department.name }}</h2>
+      <div>
+        <h2 class="mr-4 mt-8 mb-2">
+          Feuerwehr {{ registration.department.name }}
+          <span v-if="registration.department.headDepartmentName"
+            >({{ registration.department.headDepartmentName }})</span
+          >
+        </h2>
         <div class="department-count">
           Gesamt Teilnehmerzahl:
           {{ registration.youthAttendees.length + registration.youthLeader.length }}
