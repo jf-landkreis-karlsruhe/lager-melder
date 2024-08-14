@@ -3,7 +3,9 @@ package de.kordondev.lagermelder.core.service
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Roles
+import de.kordondev.lagermelder.core.persistence.entry.YouthEntry
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeRepository
+import de.kordondev.lagermelder.core.persistence.repository.YouthRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
 import de.kordondev.lagermelder.core.service.helper.TShirtSizeValidator
@@ -20,12 +22,35 @@ class AttendeeService(
     private val attendeeRepository: AttendeeRepository,
     private val authorityService: AuthorityService,
     private val settingsService: SettingsService,
-    private val tShirtSizeValidator: TShirtSizeValidator
+    private val tShirtSizeValidator: TShirtSizeValidator,
+    private val youthRepository: YouthRepository
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AttendeeService::class.java)
+    fun getYouth(): List<YouthEntry> {
+        return youthRepository
+            .findAll()
+            .toList()
+    }
+
+    fun youthToAttendee(youth: YouthEntry): AttendeeEntry {
+        return AttendeeEntry(
+            id = kotlin.random.Random.nextLong(),
+            firstName = youth.firstName,
+            lastName = youth.lastName,
+            birthday = youth.birthday,
+            food = youth.food,
+            tShirtSize = youth.tShirtSize,
+            additionalInformation = youth.additionalInformation,
+            code = youth.code,
+            role = youth.role,
+            department = youth.department,
+            status = youth.status
+        )
+    }
     fun getAttendees(): List<AttendeeEntry> {
-        return getAllAttendees()
-            .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
+        return getYouth()
+            .map { youthToAttendee(it) }
+            .toList()
     }
 
     fun getAttendee(id: Long): AttendeeEntry {
@@ -76,8 +101,8 @@ class AttendeeService(
     }
 
     fun getAttendeesForDepartment(department: DepartmentEntry): List<AttendeeEntry> {
-        return attendeeRepository
-            .findByDepartment(department)
+        return youthRepository.findByDepartment(department.id)
+            .map { youthToAttendee(it) }
             .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
     }
 

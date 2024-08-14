@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+
+    <changeSet id="20240811-0" author="kordon">
+        <sql>
+            ALTER TABLE attendees
+                ADD uuid varchar(36);
+            UPDATE attendees
+            SET attendees.uuid = UUID()
+            where uuid is null;
+
+            CREATE TABLE base_attendees
+            (
+                id                     VARCHAR(36) PRIMARY KEY NOT NULL,
+                department_id          BIGINT                  NOT NULL,
+                code                   VARCHAR(255)            NOT NULL UNIQUE,
+                food                   VARCHAR(255)            NOT NULL,
+                first_name             VARCHAR(255)            NOT NULL,
+                last_name              VARCHAR(255)            NOT NULL,
+                t_shirt_size           VARCHAR(255)            NOT NULL,
+                additional_information TEXT,
+                role                   VARCHAR(255)            NOT NULL,
+                status                 VARCHAR(255),
+                FOREIGN KEY (department_id) REFERENCES departments (id)
+            );
+            CREATE UNIQUE INDEX base_attendees_code_unique ON base_attendees (code);
+            CREATE UNIQUE INDEX base_attendees_department_id_firstname_lastname ON base_attendees (first_name, last_name, department_id);
+
+        </sql>
+    </changeSet>
+
+    <changeSet id="20240811-1" author="kordon">
+        <sql>
+            CREATE TABLE youths
+            (
+                base_attendee_id VARCHAR(36) PRIMARY KEY NOT NULL,
+                birthday         VARCHAR(255)            NOT NULL,
+                FOREIGN KEY (base_attendee_id) REFERENCES base_attendees (id)
+            );
+
+            INSERT INTO base_attendees (id,
+                                        department_id,
+                                        code,
+                                        food,
+                                        first_name,
+                                        last_name,
+                                        t_shirt_size,
+                                        additional_information,
+                                        role,
+                                        status)
+            SELECT uuid,
+                   department_id,
+                   code,
+                   food,
+                   first_name,
+                   last_name,
+                   t_shirt_size,
+                   additional_information,
+                   role,
+                   status
+            FROM attendees att
+            where att.role = 'YOUTH';
+
+            INSERT INTO youths (base_attendee_id, birthday)
+            SELECT uuid, birthday
+            FROM attendees att
+            where att.role = 'YOUTH';
+        </sql>
+    </changeSet>
+
+    <changeSet id="20240811-2" author="kordon">
+        <sql>
+            CREATE TABLE youth_leaders
+            (
+                base_attendee_id VARCHAR(36) PRIMARY KEY NOT NULL,
+                birthday         VARCHAR(255)            NOT NULL,
+                FOREIGN KEY (base_attendee_id) REFERENCES base_attendees (id)
+            );
+
+            INSERT INTO base_attendees (id,
+                                        department_id,
+                                        code,
+                                        food,
+                                        first_name,
+                                        last_name,
+                                        t_shirt_size,
+                                        additional_information,
+                                        role,
+                                        status)
+            SELECT uuid,
+                   department_id,
+                   code,
+                   food,
+                   first_name,
+                   last_name,
+                   t_shirt_size,
+                   additional_information,
+                   role,
+                   status
+            FROM attendees att
+            where att.role = 'YOUTH_LEADER';
+
+            INSERT INTO youth_leaders (base_attendee_id, birthday)
+            SELECT uuid, birthday
+            FROM attendees att
+            where att.role = 'YOUTH';
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="20240811-3" author="kordon">
+        <sql>
+            CREATE TABLE z_kids
+            (
+                base_attendee_id         VARCHAR(36) PRIMARY KEY NOT NULL,
+                birthday                 VARCHAR(255)            NOT NULL,
+                belongs_to_department_id BIGINT                  NOT NULL,
+                FOREIGN KEY (base_attendee_id) REFERENCES base_attendees (id),
+                FOREIGN KEY (belongs_to_department_id) REFERENCES departments (id)
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
