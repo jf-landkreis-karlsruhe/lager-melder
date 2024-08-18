@@ -14,7 +14,6 @@ interface AttendeeRepository : CrudRepository<AttendeeEntry, Long> {
 
     fun findByCode(code: String): AttendeeEntry?
 
-    @Deprecated("Use YouthsRepository and YouthLeadersRepository instead")
     @Query("SELECT a.department.id FROM AttendeeEntry a GROUP BY a.department.id")
     fun findDistinctDepartmentIdsFromAllAttendees(): List<Long>
 

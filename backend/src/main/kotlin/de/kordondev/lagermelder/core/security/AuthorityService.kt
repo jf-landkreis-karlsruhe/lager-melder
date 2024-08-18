@@ -38,6 +38,14 @@ class AuthorityService {
         throw AccessDeniedException("You are not allowed to access department with other department id")
     }
 
+    fun hasAuthority(attendee: Attendee, allowedRoles: List<String>): Attendee {
+        if (hasAuthorityFilter(attendee, allowedRoles)) {
+            return attendee
+        }
+        throw AccessDeniedException("You are not allowed to access attendee from other department id")
+    }
+
+    @Deprecated("use Attendee")
     fun hasAuthority(attendee: AttendeeEntry, allowedRoles: List<String>): AttendeeEntry {
         if (hasAuthorityFilter(attendee, allowedRoles)) {
             return attendee

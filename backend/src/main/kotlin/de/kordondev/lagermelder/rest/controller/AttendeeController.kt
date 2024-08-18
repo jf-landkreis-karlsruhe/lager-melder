@@ -20,7 +20,7 @@ class AttendeeController(
     }
 
     @GetMapping("/attendees/{id}")
-    fun getAttendee(@PathVariable(value = "id") id: Long): RestAttendee {
+    fun getAttendee(@PathVariable(value = "id") id: String): RestAttendee {
         return attendeeService
                 .getAttendee(id)
                 .let { RestAttendee.of(it) };

@@ -1,7 +1,9 @@
 package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.persistence.entry.*
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeRepository
+import de.kordondev.lagermelder.core.persistence.repository.BaseAttendeeRepository
 import de.kordondev.lagermelder.core.persistence.repository.YouthLeadersRepository
 import de.kordondev.lagermelder.core.persistence.repository.YouthsRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
@@ -23,7 +25,8 @@ class AttendeeService(
     private val settingsService: SettingsService,
     private val tShirtSizeValidator: TShirtSizeValidator,
     private val youthRepository: YouthsRepository,
-    private val youthLeaderRepository: YouthLeadersRepository
+    private val youthLeaderRepository: YouthLeadersRepository,
+    private val baseAttendeeRepository: BaseAttendeeRepository
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AttendeeService::class.java)
     fun getYouth(): List<YouthEntry> {
@@ -53,9 +56,14 @@ class AttendeeService(
             .toList()
     }
 
-    fun getAttendee(id: Long): AttendeeEntry {
-        return attendeeRepository
-            .findByIdOrNull(id)
+    fun getAttendee(id: String): Attendee {
+        val baseAttendee = baseAttendeeRepository.findByIdOrNull(id)
+            ?: throw NotFoundException("Attendee with id $id not found")
+
+        return when (baseAttendee.role) {
+            AttendeeRole.YOUTH -> youthRepository.findByIdOrNull(baseAttendee.id)
+            AttendeeRole.YOUTH_LEADER -> youthLeaderRepository.findByIdOrNull(baseAttendee.id)
+        }
             ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
             ?: throw NotFoundException("Attendee with id $id not found")
     }
