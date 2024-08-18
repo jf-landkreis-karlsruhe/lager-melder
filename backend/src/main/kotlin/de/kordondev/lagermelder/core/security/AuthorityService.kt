@@ -1,6 +1,7 @@
 package de.kordondev.lagermelder.core.security
 
 import de.kordondev.lagermelder.core.persistence.entry.*
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.security.SecurityConstants.DEPARTMENT_ID_PREFIX
 import de.kordondev.lagermelder.core.security.SecurityConstants.ROLE_PREFIX
 import de.kordondev.lagermelder.core.security.SecurityConstants.USER_ID_PREFIX
@@ -23,6 +24,10 @@ class AuthorityService {
     }
 
     fun hasAuthorityFilter(attendee: AttendeeEntry, allowedRoles: List<String>): Boolean {
+        return hasAuthorityFilter(attendee.department, allowedRoles);
+    }
+
+    fun hasAuthorityFilter(attendee: Attendee, allowedRoles: List<String>): Boolean {
         return hasAuthorityFilter(attendee.department, allowedRoles);
     }
 

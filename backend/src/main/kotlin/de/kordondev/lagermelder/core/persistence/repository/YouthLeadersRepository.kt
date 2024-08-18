@@ -1,12 +1,17 @@
 package de.kordondev.lagermelder.core.persistence.repository
 
 import de.kordondev.lagermelder.core.persistence.entry.YouthEntry
+import de.kordondev.lagermelder.core.persistence.entry.YouthLeaderEntry
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 
-interface YouthRepository : CrudRepository<YouthEntry, Long> {
-    @Query("SELECT y FROM YouthEntry y WHERE y.role = 'YOUTH' AND y.department.id = :departmentId")
-    fun findByDepartment(departmentId: Long): List<YouthEntry>
+interface YouthLeadersRepository : CrudRepository<YouthLeaderEntry, String> {
+    @Query("SELECT y FROM YouthLeaderEntry y WHERE y.department.id = :departmentId")
+    fun findByDepartment(departmentId: Long): List<YouthLeaderEntry>
+
+    @Query("SELECT y FROM YouthEntry y WHERE y.role IN :roles AND y.department.id = :departmentId")
+    fun findByYouths(departmentId: Long): List<Attendee>
 
     @Query("SELECT y FROM YouthEntry y WHERE y.role = 'YOUTH' AND y.department.id = :departmentId AND y.firstName = :firstName AND y.lastName = :lastName")
     fun findByDepartmentAndFirstNameAndLastName(

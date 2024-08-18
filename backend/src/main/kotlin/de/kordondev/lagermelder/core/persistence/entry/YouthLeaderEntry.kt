@@ -7,8 +7,8 @@ import java.util.*
 
 @Entity
 @Table(name = "base_attendees")
-@SecondaryTable(name = "youths", pkJoinColumns = [PrimaryKeyJoinColumn(name = "base_attendee_id")])
-data class YouthEntry(
+@SecondaryTable(name = "youth_leaders", pkJoinColumns = [PrimaryKeyJoinColumn(name = "base_attendee_id")])
+data class YouthLeaderEntry(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,7 @@ data class YouthEntry(
     @Column(name = "last_name")
     override val lastName: String,
 
-    @Column(name = "birthday", table = "youths")
+    @Column(name = "birthday", table = "youth_leaders")
     val birthday: String,
 
     @Column(name = "food")
@@ -52,7 +52,7 @@ data class YouthEntry(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as YouthEntry
+        other as YouthLeaderEntry
 
         return id != null && id == other.id
     }

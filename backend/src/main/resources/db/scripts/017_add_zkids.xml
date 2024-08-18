@@ -10,8 +10,8 @@
             ALTER TABLE attendees
                 ADD uuid varchar(36);
             UPDATE attendees
-            SET attendees.uuid = UUID()
-            where uuid is null;
+            SET uuid = UUID();
+
 
             CREATE TABLE base_attendees
             (
@@ -107,7 +107,7 @@
             INSERT INTO youth_leaders (base_attendee_id, birthday)
             SELECT uuid, birthday
             FROM attendees att
-            where att.role = 'YOUTH';
+            where att.role = 'YOUTH_LEADER';
         </sql>
     </changeSet>
 

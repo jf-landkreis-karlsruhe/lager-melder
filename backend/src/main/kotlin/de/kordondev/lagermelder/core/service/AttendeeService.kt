@@ -1,14 +1,13 @@
 package de.kordondev.lagermelder.core.service
 
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
-import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
-import de.kordondev.lagermelder.core.persistence.entry.Roles
-import de.kordondev.lagermelder.core.persistence.entry.YouthEntry
+import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeRepository
-import de.kordondev.lagermelder.core.persistence.repository.YouthRepository
+import de.kordondev.lagermelder.core.persistence.repository.YouthLeadersRepository
+import de.kordondev.lagermelder.core.persistence.repository.YouthsRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
 import de.kordondev.lagermelder.core.service.helper.TShirtSizeValidator
+import de.kordondev.lagermelder.core.service.models.Attendees
 import de.kordondev.lagermelder.exception.NotFoundException
 import de.kordondev.lagermelder.exception.UniqueException
 import de.kordondev.lagermelder.exception.WrongTimeException
@@ -23,7 +22,8 @@ class AttendeeService(
     private val authorityService: AuthorityService,
     private val settingsService: SettingsService,
     private val tShirtSizeValidator: TShirtSizeValidator,
-    private val youthRepository: YouthRepository
+    private val youthRepository: YouthsRepository,
+    private val youthLeaderRepository: YouthLeadersRepository
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AttendeeService::class.java)
     fun getYouth(): List<YouthEntry> {
@@ -100,6 +100,13 @@ class AttendeeService(
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
 
+    fun getNewAttendeesForDepartment(department: DepartmentEntry): Attendees {
+        return Attendees(
+            youths = getYouthsByDepartmentId(department.id),
+            youthLeaders = getYouthLeadersByDepartmentId(department.id),
+        )
+    }
+
     fun getAttendeesForDepartment(department: DepartmentEntry): List<AttendeeEntry> {
         return youthRepository.findByDepartment(department.id)
             .map { youthToAttendee(it) }
@@ -146,6 +153,27 @@ class AttendeeService(
         attendeeRepository.findAllBytShirtSize(oldSize).forEach {
             attendeeRepository.save(it.copy(tShirtSize = newSize))
         }
+    }
 
+    private fun getYouthsByDepartmentId(departmentId: Long): List<YouthEntry> {
+        return youthRepository.findByDepartment(departmentId)
+            .filter {
+                authorityService.hasAuthorityFilter(
+                    it,
+                    listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
+                )
+            }
+            .toList()
+    }
+
+    private fun getYouthLeadersByDepartmentId(departmentId: Long): List<YouthLeaderEntry> {
+        return youthLeaderRepository.findByDepartment(departmentId)
+            .filter {
+                authorityService.hasAuthorityFilter(
+                    it,
+                    listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
+                )
+            }
+            .toList()
     }
 }
