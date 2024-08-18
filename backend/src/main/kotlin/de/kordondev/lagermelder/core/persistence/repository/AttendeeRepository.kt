@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 
 interface AttendeeRepository : CrudRepository<AttendeeEntry, Long> {
-    fun findByDepartment(department: DepartmentEntry): List<AttendeeEntry>
-
     fun findByDepartmentAndFirstNameAndLastName(
         department: DepartmentEntry,
         firstName: String,
@@ -16,6 +14,7 @@ interface AttendeeRepository : CrudRepository<AttendeeEntry, Long> {
 
     fun findByCode(code: String): AttendeeEntry?
 
+    @Deprecated("Use YouthsRepository and YouthLeadersRepository instead")
     @Query("SELECT a.department.id FROM AttendeeEntry a GROUP BY a.department.id")
     fun findDistinctDepartmentIdsFromAllAttendees(): List<Long>
 
