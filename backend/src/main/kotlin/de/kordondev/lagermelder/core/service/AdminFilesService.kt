@@ -8,10 +8,11 @@ import com.lowagie.text.*
 import com.lowagie.text.List
 import com.lowagie.text.pdf.*
 import de.kordondev.lagermelder.Helper
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.security.AuthorityService
+import de.kordondev.lagermelder.core.service.models.Attendees
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ResourceLoader
@@ -29,10 +30,12 @@ class AdminFilesService(
     private val departmentService: DepartmentService,
     private val authorityService: AuthorityService,
     private val settingsService: SettingsService,
-    private val tShirtSizeService: TShirtSizeService
+    private val tShirtSizeService: TShirtSizeService,
 ) {
     private val yDistanceBetweenBatches = 141F
     private val logger: Logger = LoggerFactory.getLogger(AdminFilesService::class.java)
+    private val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
+
     fun createBatches(): ByteArray {
         authorityService.isSpecializedFieldDirector()
         val documentStream = ByteArrayOutputStream()
@@ -40,7 +43,8 @@ class AdminFilesService(
         val pdfCopy = PdfCopy(document, documentStream)
         document.open()
 
-        val attendees = attendeeService.getAttendees()
+        val attendeesFromDB = attendeeService.getAttendees()
+        val attendees = (attendeesFromDB.youths + attendeesFromDB.youthLeaders).sortedBy { it.department.name }
         logger.info("Creating batches for ${attendees.size} on ${1 + (attendees.size / 5)} pages")
         var attendeeIndex = 0
         while (attendeeIndex < attendees.size) {
@@ -82,7 +86,7 @@ class AdminFilesService(
         return documentStream.toByteArray()
     }
 
-    private fun addName(content: PdfContentByte, attendee: AttendeeEntry, attendeesOnPage: Int) {
+    private fun addName(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         content.beginText()
         val xValue = 345F
         val yValue = 738F
@@ -91,7 +95,7 @@ class AdminFilesService(
         content.endText()
     }
 
-    private fun addDepartment(content: PdfContentByte, attendee: AttendeeEntry, attendeesOnPage: Int) {
+    private fun addDepartment(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         content.beginText()
         val xValue = 335F
         val yValue = 723F
@@ -104,7 +108,7 @@ class AdminFilesService(
         content.endText()
     }
 
-    private fun addBarCode(content: PdfContentByte, attendee: AttendeeEntry, attendeesOnPage: Int) {
+    private fun addBarCode(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
         val barcode = Barcode128()
         barcode.code = attendee.code
         barcode.barHeight = 40F
@@ -122,10 +126,7 @@ class AdminFilesService(
         authorityService.isSpecializedFieldDirector()
         val out = ByteArrayOutputStream()
 
-        val document = Document(PageSize.A4)
-        val writer = PdfWriter.getInstance(document, out)
-
-        writer.isCloseStream = false
+        val document = prepareDocument(out)
 
         val font = Font(
             BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED),
@@ -176,12 +177,7 @@ class AdminFilesService(
     fun createTShirtPDF(): ByteArray {
         authorityService.isSpecializedFieldDirector()
         val out = ByteArrayOutputStream()
-
-        val document = Document(PageSize.A4)
-        val writer = PdfWriter.getInstance(document, out)
-
-        writer.isCloseStream = false
-        document.open()
+        val document = prepareDocument(out)
 
         val globalDepartments = DepartmentEntry(0, "Zeltlager gesamt", "", "", "", "")
         val allAttendees = attendeeService.getAttendees()
@@ -201,7 +197,7 @@ class AdminFilesService(
         val departments = departmentService.getDepartments()
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartment(department)
-            if (attendees.isNotEmpty()) {
+            if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty()) {
                 val tShirtCount = countTShirtPerSize(attendees)
                 val braceletCount = countBracelet(attendees, eventStart)
                 addTShirtsAndBraceletForDepartment(department, tShirtSizes, tShirtCount, braceletCount, document)
@@ -255,21 +251,18 @@ class AdminFilesService(
         document.newPage()
     }
 
-    private fun countTShirtPerSize(attendees: kotlin.collections.List<AttendeeEntry>): MutableMap<String, Int> {
+    private fun countTShirtPerSize(attendees: Attendees): MutableMap<String, Int> {
         val tShirtCount = mutableMapOf<String, Int>()
-        for (attendee in attendees) {
+        for (attendee in (attendees.youths + attendees.youthLeaders)) {
             val currentCount = tShirtCount[attendee.tShirtSize] ?: 0
             tShirtCount[attendee.tShirtSize] = (currentCount + 1)
         }
         return tShirtCount
     }
 
-    private fun countBracelet(
-        attendees: kotlin.collections.List<AttendeeEntry>,
-        eventStart: LocalDate
-    ): MutableMap<Color, Int> {
+    private fun countBracelet(attendees: Attendees, eventStart: LocalDate): MutableMap<Color, Int> {
         val braceletCount = mutableMapOf<Color, Int>()
-        for (attendee in attendees) {
+        for (attendee in (attendees.youths + attendees.youthLeaders)) {
             val color = colorForAgeGroup(attendee, eventStart)
             val currentCount = braceletCount[color] ?: 0
             braceletCount[color] = (currentCount + 1)
@@ -277,8 +270,8 @@ class AdminFilesService(
         return braceletCount
     }
 
-    private fun colorForAgeGroup(attendee: AttendeeEntry, eventStart: LocalDate): Color {
-        val age = Helper.ageAtEvent(attendee.birthday, eventStart)
+    private fun colorForAgeGroup(attendee: Attendee, eventStart: LocalDate): Color {
+        val age = Helper.ageAtEvent(attendee, eventStart)
         if (age < 16) {
             return Color.RED
         }
@@ -301,26 +294,21 @@ class AdminFilesService(
     fun createFoodPDF(): ByteArray {
         authorityService.isSpecializedFieldDirector()
         val out = ByteArrayOutputStream()
+        val document = prepareDocument(out)
 
-        val document = Document(PageSize.A4)
-        val writer = PdfWriter.getInstance(document, out)
-
-        val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
-        writer.isCloseStream = false
-        document.open()
         val attendees = attendeeService.getAttendees()
-        val foodAttendees = mutableMapOf<Food, MutableList<AttendeeEntry>>()
+        val foodAttendees = mutableMapOf<Food, MutableList<Attendee>>()
         for (food in Food.entries) {
             foodAttendees[food] = mutableListOf()
         }
 
-        for (attendee in attendees) {
+        for (attendee in (attendees.youths + attendees.youthLeaders)) {
             foodAttendees[attendee.food]?.add(attendee)
         }
 
         document.add(Paragraph("Kreiszeltlager - Essen", headlineFont))
         for (food in Food.entries) {
-            document.add(Paragraph("${food.toString()} (${foodAttendees[food]!!.size})", headlineFont))
+            document.add(Paragraph("$food (${foodAttendees[food]!!.size})", headlineFont))
             val list = List()
             list.setListSymbol("\u2022")
             for (att in foodAttendees[food]!!) {
@@ -340,17 +328,11 @@ class AdminFilesService(
     fun createAdditionalInformationPDF(): ByteArray {
         authorityService.isSpecializedFieldDirector()
         val out = ByteArrayOutputStream()
-
-        val document = Document(PageSize.A4)
-        val writer = PdfWriter.getInstance(document, out)
-
-        val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
-        writer.isCloseStream = false
-        document.open()
+        val document = prepareDocument(out)
         val attendees = attendeeService.getAttendees()
-        val departmentAttendees = mutableMapOf<DepartmentEntry, MutableList<AttendeeEntry>>()
+        val departmentAttendees = mutableMapOf<DepartmentEntry, MutableList<Attendee>>()
 
-        for (attendee in attendees) {
+        for (attendee in (attendees.youths + attendees.youthLeaders)) {
             if (attendee.additionalInformation.isEmpty()) {
                 continue
             }
@@ -382,18 +364,12 @@ class AdminFilesService(
         authorityService.isSpecializedFieldDirector()
         val eventStart = settingsService.getSettings().eventStart
         val out = ByteArrayOutputStream()
-
-        val document = Document(PageSize.A4)
-        val writer = PdfWriter.getInstance(document, out)
-        val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
-
-        writer.isCloseStream = false
-        document.open()
+        val document = prepareDocument(out)
 
         val departments = departmentService.getDepartments()
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartment(department)
-            if (attendees.isEmpty()) {
+            if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty()) {
                 continue
             }
             document.add(Paragraph("Abteilung: ${department.name}", headlineFont))
@@ -407,7 +383,7 @@ class AdminFilesService(
             table.addCell("T-Shirt")
             table.addCell("Armband")
             table.endHeaders()
-            for (attendee in attendees) {
+            for (attendee in (attendees.youths + attendees.youthLeaders)) {
                 table.addCell("${attendee.firstName} ${attendee.lastName}")
                 table.addCell(attendee.tShirtSize)
                 table.addCell(colorToString(colorForAgeGroup(attendee, eventStart)))
@@ -417,6 +393,16 @@ class AdminFilesService(
         }
         document.close()
         return out.toByteArray()
+    }
+
+    private fun prepareDocument(documentStream: ByteArrayOutputStream): Document {
+        val document = Document(PageSize.A4)
+        val writer = PdfWriter.getInstance(document, documentStream)
+
+        writer.isCloseStream = false
+        document.open()
+
+        return document
     }
 
 }

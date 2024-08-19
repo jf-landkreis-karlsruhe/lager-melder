@@ -29,31 +29,13 @@ class AttendeeService(
     private val baseAttendeeRepository: BaseAttendeeRepository
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AttendeeService::class.java)
-    fun getYouth(): List<YouthEntry> {
-        return youthRepository
-            .findAll()
-            .toList()
-    }
 
-    fun youthToAttendee(youth: YouthEntry): AttendeeEntry {
-        return AttendeeEntry(
-            id = kotlin.random.Random.nextLong(),
-            firstName = youth.firstName,
-            lastName = youth.lastName,
-            birthday = youth.birthday,
-            food = youth.food,
-            tShirtSize = youth.tShirtSize,
-            additionalInformation = youth.additionalInformation,
-            code = youth.code,
-            role = youth.role,
-            department = youth.department,
-            status = youth.status
+    fun getAttendees(): Attendees {
+        val allAttendees = getAllAttendees()
+        return Attendees(
+            youths = allAttendees.youths.filter { byAuthority(it) },
+            youthLeaders = allAttendees.youthLeaders.filter { byAuthority(it) },
         )
-    }
-    fun getAttendees(): List<AttendeeEntry> {
-        return getYouth()
-            .map { youthToAttendee(it) }
-            .toList()
     }
 
     fun getAttendee(id: String): Attendee {
@@ -108,17 +90,11 @@ class AttendeeService(
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
 
-    fun getNewAttendeesForDepartment(department: DepartmentEntry): Attendees {
+    fun getAttendeesForDepartment(department: DepartmentEntry): Attendees {
         return Attendees(
             youths = getYouthsByDepartmentId(department.id),
             youthLeaders = getYouthLeadersByDepartmentId(department.id),
         )
-    }
-
-    fun getAttendeesForDepartment(department: DepartmentEntry): List<AttendeeEntry> {
-        return youthRepository.findByDepartment(department.id)
-            .map { youthToAttendee(it) }
-            .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
     }
 
     fun getAttendeeByCode(code: String): AttendeeEntry {
@@ -126,8 +102,11 @@ class AttendeeService(
             ?: throw NotFoundException("No Attendee for code $code found")
     }
 
-    fun getAllAttendees(): List<AttendeeEntry> {
-        return attendeeRepository.findAll().toList()
+    fun getAllAttendees(): Attendees {
+        return Attendees(
+            youths = youthRepository.findAll().toList(),
+            youthLeaders = youthLeaderRepository.findAll().toList(),
+        )
     }
 
     fun getAttendeesWithoutYouthPlanRole(): List<AttendeeEntry> {
@@ -165,23 +144,17 @@ class AttendeeService(
 
     private fun getYouthsByDepartmentId(departmentId: Long): List<YouthEntry> {
         return youthRepository.findByDepartment(departmentId)
-            .filter {
-                authorityService.hasAuthorityFilter(
-                    it,
-                    listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-                )
-            }
+            .filter { byAuthority(it) }
             .toList()
     }
 
     private fun getYouthLeadersByDepartmentId(departmentId: Long): List<YouthLeaderEntry> {
         return youthLeaderRepository.findByDepartment(departmentId)
-            .filter {
-                authorityService.hasAuthorityFilter(
-                    it,
-                    listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-                )
-            }
+            .filter { byAuthority(it) }
             .toList()
+    }
+
+    private fun byAuthority(attendee: Attendee): Boolean {
+        return authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
     }
 }

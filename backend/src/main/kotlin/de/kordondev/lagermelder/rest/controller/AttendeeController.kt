@@ -3,6 +3,7 @@ package de.kordondev.lagermelder.rest.controller
 import de.kordondev.lagermelder.core.service.AttendeeService
 import de.kordondev.lagermelder.core.service.DepartmentService
 import de.kordondev.lagermelder.rest.model.RestAttendee
+import de.kordondev.lagermelder.rest.model.RestAttendees
 import de.kordondev.lagermelder.rest.model.request.RestAttendeeRequest
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
@@ -13,17 +14,17 @@ class AttendeeController(
         private val departmentService: DepartmentService
 ) {
     @GetMapping("/attendees")
-    fun getAttendees(): List<RestAttendee> {
+    fun getAttendees(): RestAttendees {
         return attendeeService
-                .getAttendees()
-                .map { RestAttendee.of(it) }
+            .getAttendees()
+            .let { RestAttendees.of(it) }
     }
 
     @GetMapping("/attendees/{id}")
     fun getAttendee(@PathVariable(value = "id") id: String): RestAttendee {
         return attendeeService
-                .getAttendee(id)
-                .let { RestAttendee.of(it) };
+            .getAttendee(id)
+            .let { RestAttendee.of(it) }
     }
 
     @PostMapping("/attendees")

@@ -1,6 +1,7 @@
 package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.persistence.entry.*
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeInEventRepository
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeRepository
 import de.kordondev.lagermelder.core.persistence.repository.EventRepository
@@ -94,7 +95,8 @@ class EventService(
     }
 
     fun getGlobalEventSummary(): RestGlobalEventSummary {
-        val allAttendees = attendeeService.getAllAttendees()
+        val attendees = attendeeService.getAllAttendees()
+        val allAttendees = (attendees.youths + attendees.youthLeaders)
         val attendeesByDepartment = allAttendees.groupBy { it.department }
 
         return RestGlobalEventSummary(
@@ -103,7 +105,7 @@ class EventService(
         )
     }
 
-    private fun sumUp(attendees: List<AttendeeEntry>, name: String): Distribution {
+    private fun sumUp(attendees: List<Attendee>, name: String): Distribution {
         val groupedAttendees = attendees.groupBy { attendeeRoleStatus(it.status, it.role) }
         return Distribution(
             name = name,
@@ -139,6 +141,7 @@ class EventService(
     fun addDepartmentToEvent(eventCode: String, departmentId: Long): List<AttendeeInEvent> {
         return departmentService.getDepartment(departmentId)
             .let { attendeeService.getAttendeesForDepartment(it) }
+            .let { it.youths + it.youthLeaders }
             .map { addAttendeeToEvent(eventCode, it.code) }
     }
 }

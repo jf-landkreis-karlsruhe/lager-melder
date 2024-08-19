@@ -10,4 +10,7 @@ interface YouthLeadersRepository : CrudRepository<YouthLeaderEntry, String> {
 
     @Query("SELECT a.department.id FROM AttendeeEntry a WHERE a.role = 'YOUTH' GROUP BY a.department.id")
     fun findDistinctDepartmentIdsFromAllAttendees(): List<Long>
+
+    @Query("SELECT y FROM YouthLeaderEntry y WHERE y.role = 'YOUTH_LEADER'")
+    override fun findAll(): List<YouthLeaderEntry>
 }

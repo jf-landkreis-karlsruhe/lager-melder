@@ -2,9 +2,9 @@ package de.kordondev.lagermelder.core.pdf
 
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDateShort
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
@@ -33,7 +33,7 @@ class AttendeesKarlsruhe(
     private val EVENT_END = "bis"
     private val DAYS_OF_EVENT = 5
 
-    fun createAttendeesKarlsruhePdf(attendees: List<AttendeeEntry>): PDDocument {
+    fun createAttendeesKarlsruhePdf(attendees: List<Attendee>): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/attendees_LRA_KA.pdf")
         val settings = settingsService.getSettings()
 
@@ -86,7 +86,7 @@ class AttendeesKarlsruhe(
 
     fun fillPage(
         pdfDocument: PDDocument,
-        attendees: List<AttendeeEntry>,
+        attendees: List<Attendee>,
         cellIds: List<Int>,
         page: Int,
         settings: SettingsEntry
@@ -101,7 +101,7 @@ class AttendeesKarlsruhe(
 
     fun fillFirstPage(
         pdfDocument: PDDocument,
-        attendees: List<AttendeeEntry>,
+        attendees: List<Attendee>,
         page: Int,
         settings: SettingsEntry
     ): MutableList<PDField> {
@@ -116,7 +116,7 @@ class AttendeesKarlsruhe(
     }
 
     fun fillAttendeeInForm(
-        attendee: AttendeeEntry,
+        attendee: Attendee,
         form: PDAcroForm,
         firstCellId: Int,
         page: Number,
@@ -147,7 +147,8 @@ class AttendeesKarlsruhe(
         val youthLeaderCellId = firstCellId + 699
         pdfHelper.fillField(form, "$nameCellId", "${attendee.lastName}, ${attendee.firstName}", page)
             ?.let { fields.add(it) }
-        pdfHelper.fillField(form, "$birthDateCellId", pdfHelper.formatBirthday(attendee.birthday, germanDate), page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, "$birthDateCellId", pdfHelper.getAndFormatBirthday(attendee, germanDate), page)
+            ?.let { fields.add(it) }
         pdfHelper.fillField(form, "$startCellId", settings.eventStart.format(germanDateShort), page)
             ?.let { fields.add(it) }
         pdfHelper.fillField(form, "$endCellId", settings.eventEnd.format(germanDateShort), page)?.let { fields.add(it) }

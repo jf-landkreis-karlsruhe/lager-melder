@@ -55,7 +55,7 @@ class DepartmentController(
     fun getAttendeesForDepartment(@PathVariable(value = "id") id: Long): RestAttendees {
         return departmentService
                 .getDepartment(id)
-            .let { attendeeService.getNewAttendeesForDepartment(it) }
+            .let { attendeeService.getAttendeesForDepartment(it) }
             .let { RestAttendees.of(it) }
     }
 
