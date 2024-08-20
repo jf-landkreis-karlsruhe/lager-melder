@@ -10,13 +10,17 @@ import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
 import de.kordondev.lagermelder.core.service.helper.TShirtSizeValidator
 import de.kordondev.lagermelder.core.service.models.Attendees
+import de.kordondev.lagermelder.exception.ChangedRoleException
 import de.kordondev.lagermelder.exception.NotFoundException
 import de.kordondev.lagermelder.exception.UniqueException
 import de.kordondev.lagermelder.exception.WrongTimeException
+import jakarta.validation.UnexpectedTypeException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.util.*
+import kotlin.reflect.KClass
 
 @Service
 class AttendeeService(
@@ -39,53 +43,49 @@ class AttendeeService(
     }
 
     fun getAttendee(id: String): Attendee {
-        val baseAttendee = baseAttendeeRepository.findByIdOrNull(id)
-            ?: throw NotFoundException("Attendee with id $id not found")
-
-        return when (baseAttendee.role) {
-            AttendeeRole.YOUTH -> youthRepository.findByIdOrNull(baseAttendee.id)
-            AttendeeRole.YOUTH_LEADER -> youthLeaderRepository.findByIdOrNull(baseAttendee.id)
-        }
-            ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
+        return getAttendeeOrNull(id)
             ?: throw NotFoundException("Attendee with id $id not found")
     }
 
-    fun createAttendee(attendee: AttendeeEntry): AttendeeEntry {
+    fun createAttendee(attendee: Attendee): Attendee {
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         checkCanAttendeeBeEdited()
         checkFirstNameAndLastNameAreUnique(attendee)
         tShirtSizeValidator.validate(attendee.tShirtSize)
 
         val code = PasswordGenerator.generateCode()
-        return attendeeRepository
-            .save(attendee.copy(code = code))
+        val id = UUID.randomUUID().toString()
+        return saveAttendeeToDB(attendee, attendee::class, id, code)
     }
 
-    fun saveAttendee(id: Long, attendee: AttendeeEntry): AttendeeEntry {
+    fun saveAttendee(id: String, attendee: Attendee): Attendee {
         checkCanAttendeeBeEdited()
         checkFirstNameAndLastNameAreUnique(attendee, id)
         tShirtSizeValidator.validate(attendee.tShirtSize)
 
-        return attendeeRepository.findByIdOrNull(id)
+        return getAttendeeOrNull(id)
             ?.let {
                 authorityService.hasAuthority(
                     it,
                     listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
                 )
-                attendeeRepository.save(attendee.copy(code = it.code, id = it.id))
             }
+            ?.let { saveAttendeeToDB(attendee, it::class, it.id, it.code) }
             ?: createAttendee(attendee)
     }
 
-    fun deleteAttendee(id: Long) {
+    fun deleteAttendee(id: String) {
         checkCanAttendeeBeEdited()
-        attendeeRepository.findByIdOrNull(id)
+        getAttendeeOrNull(id)
             ?.let {
                 authorityService.hasAuthority(
                     it,
                     listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
                 )
-                attendeeRepository.delete(it)
+                when (it) {
+                    is YouthEntry -> youthRepository.delete(it)
+                    is YouthLeaderEntry -> youthLeaderRepository.delete(it)
+                }
             }
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
@@ -97,8 +97,9 @@ class AttendeeService(
         )
     }
 
-    fun getAttendeeByCode(code: String): AttendeeEntry {
-        return attendeeRepository.findByCode(code)
+    fun getAttendeeByCode(code: String): Attendee {
+        return baseAttendeeRepository.findByCode(code)
+            ?.let { getAttendee(it.id) }
             ?: throw NotFoundException("No Attendee for code $code found")
     }
 
@@ -114,11 +115,19 @@ class AttendeeService(
     }
 
     fun getDepartmentIdsForAllAttendees(): List<Long> {
-        return attendeeRepository.findDistinctDepartmentIdsFromAllAttendees()
+        return baseAttendeeRepository.findDistinctDepartmentIdsFromAllAttendees()
     }
 
-    private fun checkFirstNameAndLastNameAreUnique(attendee: AttendeeEntry, id: Long = 0) {
-        attendeeRepository.findByDepartmentAndFirstNameAndLastName(
+    fun updateAttendeeStatus(attendee: Attendee, status: AttendeeStatus) {
+        when (attendee) {
+            is YouthEntry -> youthRepository.save(attendee.copy(status = status))
+            is YouthLeaderEntry -> youthLeaderRepository.save(attendee.copy(status = status))
+            else -> throw UnexpectedTypeException("Attendee from db is not of expected type")
+        }
+    }
+
+    private fun checkFirstNameAndLastNameAreUnique(attendee: Attendee, id: String = UUID.randomUUID().toString()) {
+        baseAttendeeRepository.findByDepartmentAndFirstNameAndLastName(
             attendee.department,
             attendee.firstName,
             attendee.lastName
@@ -137,8 +146,8 @@ class AttendeeService(
     }
 
     fun replaceTShirtSize(oldSize: String, newSize: String) {
-        attendeeRepository.findAllBytShirtSize(oldSize).forEach {
-            attendeeRepository.save(it.copy(tShirtSize = newSize))
+        baseAttendeeRepository.findAllBytShirtSize(oldSize).forEach {
+            baseAttendeeRepository.save(it.copy(tShirtSize = newSize))
         }
     }
 
@@ -157,4 +166,32 @@ class AttendeeService(
     private fun byAuthority(attendee: Attendee): Boolean {
         return authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
     }
+
+    private fun getAttendeeOrNull(id: String): Attendee? {
+        return baseAttendeeRepository.findByIdOrNull(id)
+            ?.let {
+                when (it.role) {
+                    AttendeeRole.YOUTH -> youthRepository.findByIdOrNull(it.id)
+                    AttendeeRole.YOUTH_LEADER -> youthLeaderRepository.findByIdOrNull(it.id)
+                }
+            }
+            ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
+    }
+
+    private fun saveAttendeeToDB(
+        toSave: Attendee,
+        dbAttendeeClass: KClass<out Attendee>,
+        id: String,
+        code: String
+    ): Attendee {
+        if (toSave::class != dbAttendeeClass) {
+            throw ChangedRoleException("The role of the attendee to save (${toSave::class}) is not the same as the stored role ($dbAttendeeClass).")
+        }
+        return when (toSave) {
+            is YouthEntry -> youthRepository.save(toSave.copy(code = code, id = id))
+            is YouthLeaderEntry -> youthLeaderRepository.save(toSave.copy(code = code, id = id))
+            else -> throw UnexpectedTypeException("Attendee from db is not of expected type")
+        }
+    }
+
 }

@@ -36,7 +36,10 @@ class AttendeeController(
     }
 
     @PutMapping("/attendees/{id}")
-    fun saveAttendee(@RequestBody(required = true) @Valid attendee: RestAttendeeRequest, @PathVariable("id") id: Long): RestAttendee {
+    fun saveAttendee(
+        @RequestBody(required = true) @Valid attendee: RestAttendeeRequest,
+        @PathVariable("id") id: String
+    ): RestAttendee {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
                 .saveAttendee(id, RestAttendeeRequest.to(attendee, department))
@@ -44,7 +47,7 @@ class AttendeeController(
     }
 
     @DeleteMapping("/attendees/{id}")
-    fun deleteAttendee(@PathVariable(value = "id") id: Long) {
+    fun deleteAttendee(@PathVariable(value = "id") id: String) {
         attendeeService.deleteAttendee(id)
     }
 }

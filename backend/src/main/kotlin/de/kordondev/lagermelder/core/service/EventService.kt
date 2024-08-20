@@ -3,7 +3,6 @@ package de.kordondev.lagermelder.core.service
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeInEventRepository
-import de.kordondev.lagermelder.core.persistence.repository.AttendeeRepository
 import de.kordondev.lagermelder.core.persistence.repository.EventRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
@@ -21,7 +20,6 @@ class EventService(
     val authorityService: AuthorityService,
     val eventRepository: EventRepository,
     val attendeeInEventRepository: AttendeeInEventRepository,
-    val attendeeRepository: AttendeeRepository,
     val departmentService: DepartmentService
 ) {
     fun getEventByCode(code: String): EventEntry {
@@ -71,7 +69,7 @@ class EventService(
 
     fun addAttendeeToEvent(eventCode: String, attendeeCode: String): AttendeeInEvent {
         val event = getEventByCode(eventCode)
-        val attendee: AttendeeEntry = attendeeService.getAttendeeByCode(attendeeCode)
+        val attendee: Attendee = attendeeService.getAttendeeByCode(attendeeCode)
         val attendeeInEvent = AttendeeInEventEntry(id = 0, attendeeCode, eventCode, Instant.now())
         var attendeeStatus: AttendeeStatus? = null
         if (event.type == EventType.GlobalEnter) {
@@ -81,7 +79,7 @@ class EventService(
             attendeeStatus = AttendeeStatus.LEFT
         }
         if (attendeeStatus != null) {
-            attendeeRepository.save(attendee.copy(status = attendeeStatus))
+            attendeeService.updateAttendeeStatus(attendee, attendeeStatus)
         }
         return attendeeInEventRepository.save(attendeeInEvent)
             .let {

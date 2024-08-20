@@ -1,8 +1,10 @@
 package de.kordondev.lagermelder.rest.model.request
 
 import de.kordondev.lagermelder.core.persistence.entry.*
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import java.util.*
 
 data class RestAttendeeRequest(
     @field:NotNull(message = "firstName cannot be missing")
@@ -24,20 +26,37 @@ data class RestAttendeeRequest(
     val role: AttendeeRole
 ) {
     companion object {
-        fun to(attendee: RestAttendeeRequest, department: DepartmentEntry): AttendeeEntry {
-            return AttendeeEntry(
-                id = 0,
-                firstName = attendee.firstName,
-                lastName = attendee.lastName,
-                birthday = attendee.birthday,
-                food = attendee.food,
-                tShirtSize = attendee.tShirtSize,
-                additionalInformation = attendee.additionalInformation,
-                role = attendee.role,
-                department = department,
-                code = "",
-                status = null
-            )
+        fun to(attendee: RestAttendeeRequest, department: DepartmentEntry): Attendee {
+            return when (attendee.role) {
+                AttendeeRole.YOUTH -> YouthEntry(
+                    id = UUID.randomUUID().toString(),
+                    firstName = attendee.firstName,
+                    lastName = attendee.lastName,
+                    birthday = attendee.birthday,
+                    food = attendee.food,
+                    tShirtSize = attendee.tShirtSize,
+                    additionalInformation = attendee.additionalInformation,
+                    role = attendee.role,
+                    department = department,
+                    code = "",
+                    status = null
+                )
+
+                AttendeeRole.YOUTH_LEADER -> YouthLeaderEntry(
+                    id = UUID.randomUUID().toString(),
+                    firstName = attendee.firstName,
+                    lastName = attendee.lastName,
+                    birthday = attendee.birthday,
+                    food = attendee.food,
+                    tShirtSize = attendee.tShirtSize,
+                    additionalInformation = attendee.additionalInformation,
+                    role = attendee.role,
+                    department = department,
+                    code = "",
+                    status = null
+                )
+            }
+
         }
     }
 }

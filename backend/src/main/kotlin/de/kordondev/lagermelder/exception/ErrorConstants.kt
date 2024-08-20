@@ -12,4 +12,5 @@ object ErrorConstants {
     const val NOT_FOUND_ERROR = "NOT_FOUND_ERROR"
     const val NOT_DELETABLE_ERROR = "NOT_DELETABLE_ERROR"
     const val WRONG_TYPE = "WRONG_TYPE"
+    const val CHANGED_ROLE = "CHANGED_ROLE"
 }

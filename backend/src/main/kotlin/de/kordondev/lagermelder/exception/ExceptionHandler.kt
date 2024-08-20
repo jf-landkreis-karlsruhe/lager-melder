@@ -57,6 +57,11 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         return exceptionToBody(ex, HttpStatus.BAD_REQUEST, ex.key)
     }
 
+    @ExceptionHandler(ChangedRoleException::class)
+    fun handleChangedRoleException(ex: ChangedRoleException): ResponseEntity<ErrorResponse> {
+        return exceptionToBody(ex, HttpStatus.BAD_REQUEST, ex.key)
+    }
+
     @ExceptionHandler(UnexpectedTypeException::class)
     fun handleUnexpectedTypeException(ex: UnexpectedTypeException): ResponseEntity<ErrorResponse> {
         return exceptionToBody(ex, HttpStatus.INTERNAL_SERVER_ERROR, WRONG_TYPE)
