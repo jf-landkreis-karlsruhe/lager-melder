@@ -1,7 +1,10 @@
 package de.kordondev.lagermelder.rest.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import de.kordondev.lagermelder.core.persistence.entry.*
+import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
+import de.kordondev.lagermelder.core.persistence.entry.Food
+import de.kordondev.lagermelder.core.persistence.entry.YouthEntry
+import de.kordondev.lagermelder.core.persistence.entry.YouthLeaderEntry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.exception.UnexpectedTypeException
 
@@ -20,20 +23,6 @@ data class RestAttendee(
     val status: String
 ) {
     companion object {
-        @Deprecated("use attendee")
-        fun of(attendee: AttendeeEntry) = RestAttendee(
-            id = attendee.id.toString(),
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            birthday = attendee.birthday,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            departmentId = attendee.department.id,
-            code = attendee.code,
-            status = attendee.status.toString()
-        )
 
         fun of(attendee: Attendee): RestAttendee {
             return when (attendee) {
