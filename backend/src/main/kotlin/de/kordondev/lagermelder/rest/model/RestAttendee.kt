@@ -3,7 +3,7 @@ package de.kordondev.lagermelder.rest.model
 import com.fasterxml.jackson.annotation.JsonProperty
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
-import jakarta.validation.UnexpectedTypeException
+import de.kordondev.lagermelder.exception.UnexpectedTypeException
 
 data class RestAttendee(
     val id: String,

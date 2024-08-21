@@ -60,4 +60,19 @@ data class BaseAttendeeEntry(
     override fun hashCode(): Int {
         return Objects.hash(code)
     }
+
+    companion object {
+        fun of(attendee: Attendee) = BaseAttendeeEntry(
+            id = attendee.id,
+            firstName = attendee.firstName,
+            lastName = attendee.lastName,
+            food = attendee.food,
+            tShirtSize = attendee.tShirtSize,
+            additionalInformation = attendee.additionalInformation,
+            code = attendee.code,
+            role = attendee.role,
+            department = attendee.department,
+            status = attendee.status
+        )
+    }
 }

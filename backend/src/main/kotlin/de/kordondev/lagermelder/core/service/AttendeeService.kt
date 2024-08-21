@@ -2,7 +2,6 @@ package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
-import de.kordondev.lagermelder.core.persistence.repository.AttendeeRepository
 import de.kordondev.lagermelder.core.persistence.repository.BaseAttendeeRepository
 import de.kordondev.lagermelder.core.persistence.repository.YouthLeadersRepository
 import de.kordondev.lagermelder.core.persistence.repository.YouthsRepository
@@ -10,11 +9,7 @@ import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
 import de.kordondev.lagermelder.core.service.helper.TShirtSizeValidator
 import de.kordondev.lagermelder.core.service.models.Attendees
-import de.kordondev.lagermelder.exception.ChangedRoleException
-import de.kordondev.lagermelder.exception.NotFoundException
-import de.kordondev.lagermelder.exception.UniqueException
-import de.kordondev.lagermelder.exception.WrongTimeException
-import jakarta.validation.UnexpectedTypeException
+import de.kordondev.lagermelder.exception.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -24,7 +19,6 @@ import kotlin.reflect.KClass
 
 @Service
 class AttendeeService(
-    private val attendeeRepository: AttendeeRepository,
     private val authorityService: AuthorityService,
     private val settingsService: SettingsService,
     private val tShirtSizeValidator: TShirtSizeValidator,
@@ -110,8 +104,19 @@ class AttendeeService(
         )
     }
 
-    fun getAttendeesWithoutYouthPlanRole(): List<AttendeeEntry> {
-        return attendeeRepository.findAttendeesWithoutYouthPlanRole()
+    fun getAttendeesWithoutYouthPlanRole(): List<Attendee> {
+        return (youthRepository.findAttendeesWithoutYouthPlanRole() + youthLeaderRepository.findAttendeesWithoutYouthPlanRole())
+    }
+
+    fun getAllAttendeesWithIds(ids: List<String>): List<Attendee> {
+        val attendees = baseAttendeeRepository.findAllById(ids)
+        val youthIds = attendees.filter { it.role == AttendeeRole.YOUTH }.map { it.id }
+        val youthLeaderIds = attendees.filter { it.role == AttendeeRole.YOUTH_LEADER }.map { it.id }
+
+        val youths = youthRepository.findAllByIds(youthIds)
+        val youthLeaders = youthLeaderRepository.findAllByIds(youthLeaderIds)
+        return (youths + youthLeaders)
+
     }
 
     fun getDepartmentIdsForAllAttendees(): List<Long> {

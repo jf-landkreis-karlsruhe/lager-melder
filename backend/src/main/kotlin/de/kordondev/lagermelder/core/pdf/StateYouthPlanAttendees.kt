@@ -1,8 +1,9 @@
 package de.kordondev.lagermelder.core.pdf
 
+import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
@@ -63,7 +64,7 @@ class StateYouthPlanAttendees(
 
     val DAYS_OF_EVENT = 5
 
-    fun createStateYouthPlanAttendees(attendees: List<AttendeeEntry>): PDDocument {
+    fun createStateYouthPlanAttendees(attendees: List<Attendee>): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/stateYouthPlanAttendees.pdf")
         val settings = settingsService.getSettings()
 
@@ -118,7 +119,7 @@ class StateYouthPlanAttendees(
 
     fun fillPage(
         pdfDocument: PDDocument,
-        attendees: List<AttendeeEntry>,
+        attendees: List<Attendee>,
         cellIds: List<Int>,
         page: Int,
         settings: SettingsEntry
@@ -133,7 +134,7 @@ class StateYouthPlanAttendees(
 
     fun fillFirstPage(
         pdfDocument: PDDocument,
-        attendees: List<AttendeeEntry>,
+        attendees: List<Attendee>,
         page: Int,
         settings: SettingsEntry
     ): MutableList<PDField> {
@@ -148,7 +149,7 @@ class StateYouthPlanAttendees(
         return fields
     }
 
-    fun fillSecondPage(pdfDocument: PDDocument, attendees: List<AttendeeEntry>, page: Int): MutableList<PDField> {
+    fun fillSecondPage(pdfDocument: PDDocument, attendees: List<Attendee>, page: Int): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
         val previousDays = (ATTENDEES_ON_FIRST_PAGE + ATTENDEES_ON_SECOND_PAGE * (page - 2)) * DAYS_OF_EVENT
@@ -159,7 +160,7 @@ class StateYouthPlanAttendees(
     }
 
     private fun fillAttendeeInForm(
-        attendee: AttendeeEntry,
+        attendee: Attendee,
         form: PDAcroForm,
         firstCellId: Int,
         page: Number,
@@ -176,7 +177,7 @@ class StateYouthPlanAttendees(
         pdfHelper.fillField(
             form,
             "Texteingabe$birthDateCellId",
-            pdfHelper.formatBirthday(attendee.birthday, germanDate),
+            pdfHelper.formatBirthday(Helper.getAge(attendee), germanDate),
             page
         )?.let { fields.add(it) }
         pdfHelper.fillField(form, "Texteingabe$startCellId", settings.eventStart.format(germanDate), page)

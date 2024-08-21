@@ -2,7 +2,6 @@ package de.kordondev.lagermelder.exception
 
 import de.kordondev.lagermelder.exception.ErrorConstants.ACCESS_DENIED_ERROR
 import de.kordondev.lagermelder.exception.ErrorConstants.WRONG_TYPE
-import jakarta.validation.UnexpectedTypeException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode

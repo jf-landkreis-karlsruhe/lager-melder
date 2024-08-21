@@ -12,7 +12,6 @@
             UPDATE attendees
             SET uuid = UUID();
 
-
             CREATE TABLE base_attendees
             (
                 id                     VARCHAR(36) PRIMARY KEY NOT NULL,
@@ -29,6 +28,13 @@
             );
             CREATE UNIQUE INDEX base_attendees_code_unique ON base_attendees (code);
             CREATE UNIQUE INDEX base_attendees_department_id_firstname_lastname ON base_attendees (first_name, last_name, department_id);
+
+            ALTER TABLE youth_plan_attendee_roles DROP CONSTRAINT youth_plan_attendee_role_attendee_id;
+            ALTER TABLE youth_plan_attendee_roles DROP COLUMN attendee_id;
+            ALTER TABLE youth_plan_attendee_roles
+                ADD attendee_id varchar(36);
+            ALTER TABLE youth_plan_attendee_roles
+                ADD CONSTRAINT youth_plan_attendee_role_attendee_id FOREIGN KEY (attendee_id) REFERENCES base_attendees (id);
 
         </sql>
     </changeSet>
