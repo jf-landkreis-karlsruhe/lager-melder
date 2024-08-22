@@ -1,25 +1,13 @@
 import { AttendeeRole, Food, AttendeeStatus } from '../services/attendee'
 import type { Attendee } from '../services/attendee'
 
-export const youthLeaderAttendees = (
-  departmentId: number,
+export const filterByDepartmentAndSearch = (
   attendees: Attendee[],
+  departmentId: number,
   filterInput: string
 ): Attendee[] => {
   return attendees
     .filter((attendee) => attendee.departmentId === departmentId)
-    .filter((attendee) => attendee.role === AttendeeRole.YOUTH_LEADER)
-    .filter((attendees) => filterByFilterInput(attendees, filterInput))
-}
-
-export const youthAttendees = (
-  departmentId: number,
-  attendees: Attendee[],
-  filterInput: string
-): Attendee[] => {
-  return attendees
-    .filter((attendee) => attendee.departmentId === departmentId)
-    .filter((attendee) => attendee.role === AttendeeRole.YOUTH)
     .filter((attendees) => filterByFilterInput(attendees, filterInput))
 }
 

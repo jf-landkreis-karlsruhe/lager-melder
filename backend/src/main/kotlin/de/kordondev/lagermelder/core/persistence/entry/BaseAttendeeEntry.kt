@@ -10,7 +10,6 @@ import java.util.*
 data class BaseAttendeeEntry(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     override val id: String = UUID.randomUUID().toString(),
 
     @Column(name = "first_name")

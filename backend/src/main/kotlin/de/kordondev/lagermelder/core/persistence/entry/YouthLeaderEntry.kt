@@ -11,7 +11,6 @@ import java.util.*
 data class YouthLeaderEntry(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     override val id: String = UUID.randomUUID().toString(),
 
     @Column(name = "first_name")

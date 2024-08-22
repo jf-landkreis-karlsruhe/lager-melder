@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { AttendeeRole, getAttendeesForDepartment } from '../../services/attendee'
+import { getAttendeesForDepartment } from '../../services/attendee'
 
 const distribution = ref<Distribution>({})
 
@@ -10,18 +10,10 @@ const props = defineProps<{
 
 onMounted(async () => {
   const attendees = await getAttendeesForDepartment(props.departmentId)
-  distribution.value = attendees.reduce(
-    (acc, attendee) => {
-      if (attendee.role === AttendeeRole.YOUTH) {
-        acc.youths++
-      }
-      if (attendee.role === AttendeeRole.YOUTH_LEADER) {
-        acc.youthLeader++
-      }
-      return acc
-    },
-    { youths: 0, youthLeader: 0 }
-  )
+  distribution.value = {
+    youths: attendees.youths.length,
+    youthLeader: attendees.youthLeaders.length
+  }
 })
 interface Distribution {
   youths?: number
@@ -43,7 +35,7 @@ interface Distribution {
           </tr>
         </thead>
         <tbody>
-        <tr>
+          <tr>
             <td>{{ distribution.youths }}</td>
             <td>{{ distribution.youthLeader }}</td>
           </tr>

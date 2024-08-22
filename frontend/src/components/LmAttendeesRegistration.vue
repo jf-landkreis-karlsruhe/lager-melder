@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, onMounted, ref } from 'vue'
-import { type Attendee, AttendeeRole, getAttendeesForDepartment } from '../services/attendee'
-import type { Department } from '../services/department'
 import {
-  filterEnteredAttendees,
-  youthAttendees,
-  youthLeaderAttendees
-} from '../helper/filterHelper'
+  type Attendee,
+  AttendeeRole,
+  type Attendees,
+  defaultAttendees,
+  getAttendeesForDepartment
+} from '../services/attendee'
+import type { Department } from '../services/department'
+import { filterByDepartmentAndSearch, filterEnteredAttendees } from '../helper/filterHelper'
 import AttendeesTable from './LmAttendeesTable.vue'
 import RegistrationInformation from './LmRegistrationInformation.vue'
 import { getRegistrationEnd } from '@/services/settings'
@@ -16,7 +18,7 @@ const props = defineProps<{
   department: Department
 }>()
 
-const attendees = ref<Attendee[]>([] as Attendee[])
+const attendees = ref<Attendees>(defaultAttendees)
 const filterInput = ref<string>('')
 const attendeeRoleYouth = ref<AttendeeRole>(AttendeeRole.YOUTH)
 const attendeeRoleYouthLeader = ref<AttendeeRole>(AttendeeRole.YOUTH_LEADER)
@@ -31,18 +33,25 @@ const youthAttendeeList = computed<Attendee[]>(() => {
   if (!props.department || !props.department.id) {
     return []
   }
-  return youthAttendees(props.department.id, attendees.value, filterInput.value)
+  return filterByDepartmentAndSearch(attendees.value.youths, props.department.id, filterInput.value)
 })
 
 const youthLeaderAttendeeList = computed<Attendee[]>(() => {
   if (!props.department || !props.department.id) {
     return []
   }
-  return youthLeaderAttendees(props.department.id, attendees.value, filterInput.value)
+  return filterByDepartmentAndSearch(
+    attendees.value.youthLeaders,
+    props.department.id,
+    filterInput.value
+  )
 })
 
 const enteredAttendeesCount = computed<number>(() => {
-  return attendees.value.filter(filterEnteredAttendees).length
+  return (
+    attendees.value.youths.filter(filterEnteredAttendees).length +
+    attendees.value.youthLeaders.filter(filterEnteredAttendees).length
+  )
 })
 
 const registrationEndDiff = computed<
@@ -85,7 +94,7 @@ onBeforeMount(async () => {
 onMounted(() => {
   getAttendeesForDepartment(props.department.id).then((attendeeList) => {
     attendees.value = attendeeList
-    totalAttendeeCount.value = attendeeList.length
+    totalAttendeeCount.value = attendeeList.youths.length + attendeeList.youthLeaders.length
   })
 })
 </script>

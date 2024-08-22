@@ -1,11 +1,10 @@
 import { getData, postData, putData, deleteData } from '../helper/fetch'
-import { withAuthenticationHeader, getTokenData } from './authentication'
-import type { TShirtSize } from '@/services/tShirtSizes'
+import { withAuthenticationHeader } from './authentication'
 
-export const getAttendees = () => getData<Attendee[]>('attendees', withAuthenticationHeader())
+export const getAttendees = () => getData<Attendees>('attendees', withAuthenticationHeader())
 
 export const getAttendeesForDepartment = (departmentId: number) =>
-  getData<Attendee[]>(`departments/${departmentId}/attendees`, withAuthenticationHeader())
+  getData<Attendees>(`departments/${departmentId}/attendees`, withAuthenticationHeader())
 
 export const getAttendee = (id: number) =>
   getData<Attendee>(`attendees/${id}`, withAuthenticationHeader())
@@ -51,4 +50,18 @@ export interface NewAttendee {
 export interface Attendee extends NewAttendee {
   id: string
   status: AttendeeStatus | null
+}
+
+export interface Youth extends Attendee {}
+
+export interface YouthLeader extends Attendee {}
+
+export interface Attendees {
+  youths: Youth[]
+  youthLeaders: YouthLeader[]
+}
+
+export const defaultAttendees: Attendees = {
+  youths: [],
+  youthLeaders: []
 }
