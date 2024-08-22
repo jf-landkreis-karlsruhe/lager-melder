@@ -3,6 +3,7 @@ package de.kordondev.lagermelder.core.persistence.entry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import jakarta.persistence.*
 import org.hibernate.Hibernate
+import java.time.Instant
 import java.util.*
 
 @Entity
@@ -45,7 +46,10 @@ data class YouthEntry(
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    override val status: AttendeeStatus?
+    override val status: AttendeeStatus?,
+
+    @Column(name = "created_at")
+    override val createdAt: Instant = Instant.now()
 
 ) : Attendee {
     override fun equals(other: Any?): Boolean {

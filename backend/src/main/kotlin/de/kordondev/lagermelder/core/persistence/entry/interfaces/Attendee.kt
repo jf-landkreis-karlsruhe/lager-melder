@@ -4,6 +4,7 @@ import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeStatus
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
+import java.time.Instant
 
 interface Attendee {
     val id: String
@@ -16,4 +17,5 @@ interface Attendee {
     val role: AttendeeRole
     val department: DepartmentEntry
     val status: AttendeeStatus?
+    val createdAt: Instant
 }

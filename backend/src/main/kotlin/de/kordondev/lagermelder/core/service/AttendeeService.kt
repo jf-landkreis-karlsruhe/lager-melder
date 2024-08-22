@@ -14,6 +14,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -49,7 +50,7 @@ class AttendeeService(
 
         val code = PasswordGenerator.generateCode()
         val id = UUID.randomUUID().toString()
-        return saveAttendeeToDB(attendee, attendee::class, id, code)
+        return saveAttendeeToDB(attendee, attendee::class, id, code, Instant.now())
     }
 
     fun saveAttendee(id: String, attendee: Attendee): Attendee {
@@ -64,7 +65,7 @@ class AttendeeService(
                     listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
                 )
             }
-            ?.let { saveAttendeeToDB(attendee, it::class, it.id, it.code) }
+            ?.let { saveAttendeeToDB(attendee, it::class, it.id, it.code, it.createdAt) }
             ?: createAttendee(attendee)
     }
 
@@ -187,14 +188,15 @@ class AttendeeService(
         toSave: Attendee,
         dbAttendeeClass: KClass<out Attendee>,
         id: String,
-        code: String
+        code: String,
+        createdAt: Instant
     ): Attendee {
         if (toSave::class != dbAttendeeClass) {
             throw ChangedRoleException("The role of the attendee to save (${toSave::class}) is not the same as the stored role ($dbAttendeeClass).")
         }
         return when (toSave) {
-            is YouthEntry -> youthRepository.save(toSave.copy(code = code, id = id))
-            is YouthLeaderEntry -> youthLeaderRepository.save(toSave.copy(code = code, id = id))
+            is YouthEntry -> youthRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
+            is YouthLeaderEntry -> youthLeaderRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
             else -> throw UnexpectedTypeException("Attendee from db is not of expected type")
         }
     }
