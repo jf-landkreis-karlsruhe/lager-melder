@@ -18,6 +18,6 @@
     <include file="classpath:db/scripts/013_add_variable_tshirt_sizes.xml"/>
     <include file="classpath:db/scripts/014_add-mock-tshirt-data.xml"/>
     <include file="classpath:db/scripts/016_add_department_features.xml"/>
-    <include file="classpath:db/scripts/017_add_zkids.xml"/>
+    <include file="classpath:db/scripts/017_divide_attendee_types.xml"/>
 
 </databaseChangeLog>

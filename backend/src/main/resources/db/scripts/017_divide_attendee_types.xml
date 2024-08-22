@@ -29,6 +29,12 @@
             CREATE UNIQUE INDEX base_attendees_code_unique ON base_attendees (code);
             CREATE UNIQUE INDEX base_attendees_department_id_firstname_lastname ON base_attendees (first_name, last_name, department_id);
 
+
+        </sql>
+    </changeSet>
+
+    <changeSet id="20240811-1" author="kordon">
+        <sql>
             ALTER TABLE youth_plan_attendee_roles DROP CONSTRAINT youth_plan_attendee_role_attendee_id;
             ALTER TABLE youth_plan_attendee_roles DROP COLUMN attendee_id;
             ALTER TABLE youth_plan_attendee_roles
@@ -36,10 +42,13 @@
             ALTER TABLE youth_plan_attendee_roles
                 ADD CONSTRAINT youth_plan_attendee_role_attendee_id FOREIGN KEY (attendee_id) REFERENCES base_attendees (id);
 
+            ALTER TABLE attendee_in_event DROP CONSTRAINT attendee_in_event_attendee_code_constraint;
+            ALTER TABLE attendee_in_event
+                ADD CONSTRAINT attendee_in_event_attendee_code_constraint FOREIGN KEY (attendee_code) REFERENCES base_attendees (code);
         </sql>
     </changeSet>
 
-    <changeSet id="20240811-1" author="kordon">
+    <changeSet id="20240811-2" author="kordon">
         <sql>
             CREATE TABLE youths
             (
@@ -78,7 +87,7 @@
         </sql>
     </changeSet>
 
-    <changeSet id="20240811-2" author="kordon">
+    <changeSet id="20240811-3" author="kordon">
         <sql>
             CREATE TABLE youth_leaders
             (
@@ -118,16 +127,9 @@
     </changeSet>
 
 
-    <changeSet id="20240811-3" author="kordon">
+    <changeSet id="20240811-4" author="kordon">
         <sql>
-            CREATE TABLE z_kids
-            (
-                base_attendee_id         VARCHAR(36) PRIMARY KEY NOT NULL,
-                birthday                 VARCHAR(255)            NOT NULL,
-                belongs_to_department_id BIGINT                  NOT NULL,
-                FOREIGN KEY (base_attendee_id) REFERENCES base_attendees (id),
-                FOREIGN KEY (belongs_to_department_id) REFERENCES departments (id)
-            );
+            DROP TABLE attendees;
         </sql>
     </changeSet>
 
