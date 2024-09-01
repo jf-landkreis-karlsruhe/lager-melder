@@ -109,7 +109,7 @@ class StateYouthPlanLeader(
             "$NAME_AND_BIRTHDAY$cellId",
             "${attendee.lastName}, ${attendee.firstName}, ${
                 pdfHelper.formatBirthday(
-                    Helper.getAge(attendee),
+                    Helper.getBirthday(attendee),
                     germanDate
                 )
             }",

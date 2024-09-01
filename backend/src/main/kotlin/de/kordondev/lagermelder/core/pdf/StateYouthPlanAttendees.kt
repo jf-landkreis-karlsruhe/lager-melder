@@ -177,7 +177,7 @@ class StateYouthPlanAttendees(
         pdfHelper.fillField(
             form,
             "Texteingabe$birthDateCellId",
-            pdfHelper.formatBirthday(Helper.getAge(attendee), germanDate),
+            pdfHelper.formatBirthday(Helper.getBirthday(attendee), germanDate),
             page
         )?.let { fields.add(it) }
         pdfHelper.fillField(form, "Texteingabe$startCellId", settings.eventStart.format(germanDate), page)

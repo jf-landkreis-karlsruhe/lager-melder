@@ -23,7 +23,7 @@ class YouthPlanAttendeeRoleHelper {
         return listOf()
     }
 
-    private val oldFirst = compareBy<Attendee> { Helper.getAge(it) }
+    private val oldFirst = compareBy<Attendee> { Helper.getBirthday(it) }
     private val oldFirstThenFirstname = oldFirst.thenByDescending { it.firstName }
     private fun distributeNewAttendees(
         newAttendees: List<Attendee>,

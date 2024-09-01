@@ -10,19 +10,15 @@ import java.time.Period
 class Helper {
     companion object {
         fun birthdayToDate(birthday: String) : LocalDate {
-            var dateList = birthday.split("-")
+            val dateList = birthday.split("-")
             return LocalDate.of(dateList[0].toInt(), dateList[1].toInt(), dateList[2].toInt())
         }
 
         fun ageAtEvent(attendee: Attendee, eventStart: LocalDate): Int {
-            return when (attendee) {
-                is YouthEntry -> ageAtEvent(attendee.birthday, eventStart)
-                is YouthLeaderEntry -> ageAtEvent(attendee.birthday, eventStart)
-                else -> 0
-            }
+            return ageAtEvent(getBirthday(attendee), eventStart)
         }
 
-        fun getAge(attendee: Attendee): String {
+        fun getBirthday(attendee: Attendee): String {
             return when (attendee) {
                 is YouthEntry -> attendee.birthday
                 is YouthLeaderEntry -> attendee.birthday

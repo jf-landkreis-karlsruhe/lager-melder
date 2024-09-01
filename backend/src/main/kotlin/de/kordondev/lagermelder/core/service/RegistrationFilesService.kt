@@ -48,7 +48,7 @@ class RegistrationFilesService(
             .filter { it.youthPlanRole == AttendeeRole.YOUTH }
             .filter { it.departmentId == department.id }
             .map { it.attendee }
-            .let { attendees -> attendeeService.getAllAttendeesWithIds(attendees.map { it.id }) }
+            .let { attendees -> attendeeService.getAllAttendeesIn(attendees.map { it.id }) }
             .let { stateYouthPlanAttendees.createStateYouthPlanAttendees(it) }
 
         val out = ByteArrayOutputStream()
@@ -66,7 +66,7 @@ class RegistrationFilesService(
             .filter { it.youthPlanRole == AttendeeRole.YOUTH_LEADER }
             .filter { it.departmentId == department.id }
             .map { it.attendee }
-            .let { attendees -> attendeeService.getAllAttendeesWithIds(attendees.map { it.id }) }
+            .let { attendees -> attendeeService.getAllAttendeesIn(attendees.map { it.id }) }
             .let { stateYouthPlanAttendees.createStateYouthPlanAttendees(it) }
         val out = ByteArrayOutputStream()
         result.save(out)

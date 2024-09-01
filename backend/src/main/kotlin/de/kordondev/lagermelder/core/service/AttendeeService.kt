@@ -109,7 +109,7 @@ class AttendeeService(
         return (youthRepository.findAttendeesWithoutYouthPlanRole() + youthLeaderRepository.findAttendeesWithoutYouthPlanRole())
     }
 
-    fun getAllAttendeesWithIds(ids: List<String>): List<Attendee> {
+    fun getAllAttendeesIn(ids: List<String>): List<Attendee> {
         val attendees = baseAttendeeRepository.findAllById(ids)
         val youthIds = attendees.filter { it.role == AttendeeRole.YOUTH }.map { it.id }
         val youthLeaderIds = attendees.filter { it.role == AttendeeRole.YOUTH_LEADER }.map { it.id }

@@ -1,8 +1,6 @@
 package de.kordondev.lagermelder.core.pdf
 
 import de.kordondev.lagermelder.Helper
-import de.kordondev.lagermelder.core.persistence.entry.YouthEntry
-import de.kordondev.lagermelder.core.persistence.entry.YouthLeaderEntry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox
@@ -37,11 +35,7 @@ class PDFHelper {
     }
 
     fun getAndFormatBirthday(attendee: Attendee, formatter: DateTimeFormatter): String {
-        return when (attendee) {
-            is YouthEntry -> Helper.birthdayToDate(attendee.birthday).format(formatter)
-            is YouthLeaderEntry -> Helper.birthdayToDate(attendee.birthday).format(formatter)
-            else -> ""
-        }
+        return formatBirthday(Helper.getBirthday(attendee), formatter)
     }
 
     fun formatBirthday(birthday: String, formatter: DateTimeFormatter): String {
