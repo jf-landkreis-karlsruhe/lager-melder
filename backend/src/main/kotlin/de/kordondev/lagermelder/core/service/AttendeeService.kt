@@ -2,6 +2,7 @@ package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
+import de.kordondev.lagermelder.core.persistence.repository.AttendeeInEventRepository
 import de.kordondev.lagermelder.core.persistence.repository.BaseAttendeeRepository
 import de.kordondev.lagermelder.core.persistence.repository.YouthLeadersRepository
 import de.kordondev.lagermelder.core.persistence.repository.YouthsRepository
@@ -10,6 +11,7 @@ import de.kordondev.lagermelder.core.security.PasswordGenerator
 import de.kordondev.lagermelder.core.service.helper.TShirtSizeValidator
 import de.kordondev.lagermelder.core.service.models.Attendees
 import de.kordondev.lagermelder.exception.*
+import jakarta.transaction.Transactional
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -25,7 +27,8 @@ class AttendeeService(
     private val tShirtSizeValidator: TShirtSizeValidator,
     private val youthRepository: YouthsRepository,
     private val youthLeaderRepository: YouthLeadersRepository,
-    private val baseAttendeeRepository: BaseAttendeeRepository
+    private val baseAttendeeRepository: BaseAttendeeRepository,
+    private val eventRepository: AttendeeInEventRepository
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AttendeeService::class.java)
 
@@ -69,6 +72,7 @@ class AttendeeService(
             ?: createAttendee(attendee)
     }
 
+    @Transactional
     fun deleteAttendee(id: String) {
         checkCanAttendeeBeEdited()
         getAttendeeOrNull(id)
@@ -77,6 +81,7 @@ class AttendeeService(
                     it,
                     listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
                 )
+                eventRepository.deleteAllByAttendeeCode(it.code)
                 when (it) {
                     is YouthEntry -> youthRepository.delete(it)
                     is YouthLeaderEntry -> youthLeaderRepository.delete(it)

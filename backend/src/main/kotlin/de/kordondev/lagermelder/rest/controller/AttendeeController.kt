@@ -2,6 +2,7 @@ package de.kordondev.lagermelder.rest.controller
 
 import de.kordondev.lagermelder.core.service.AttendeeService
 import de.kordondev.lagermelder.core.service.DepartmentService
+import de.kordondev.lagermelder.core.service.EventService
 import de.kordondev.lagermelder.rest.model.RestAttendee
 import de.kordondev.lagermelder.rest.model.RestAttendees
 import de.kordondev.lagermelder.rest.model.request.RestAttendeeRequest
@@ -10,8 +11,9 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class AttendeeController(
-        private val attendeeService: AttendeeService,
-        private val departmentService: DepartmentService
+    private val attendeeService: AttendeeService,
+    private val departmentService: DepartmentService,
+    private val eventService: EventService
 ) {
     @GetMapping("/attendees")
     fun getAttendees(): RestAttendees {
