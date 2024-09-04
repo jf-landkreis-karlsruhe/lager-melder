@@ -22,5 +22,9 @@ data class DepartmentEntry (
         val phoneNumber: String = "",
 
         @Column(name = "short_name")
-        val shortName: String = ""
+        val shortName: String = "",
+
+        @OneToMany
+        @JoinColumn(name = "department_id")
+        val features: Set<DepartmentFeatureEntry> = emptySet()
 )

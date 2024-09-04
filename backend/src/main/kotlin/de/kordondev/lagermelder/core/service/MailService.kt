@@ -38,7 +38,8 @@ class MailService(
         if (sendTo == SendTo.ALL_DEPARTMENTS) {
             return true
         }
-        val attendeeList = attendeeService.getAttendeesForDepartment(department)
+        val attendees = attendeeService.getAttendeesForDepartment(department)
+        val attendeeList = (attendees.youths + attendees.youthLeaders)
         if (sendTo == SendTo.DEPARTMENTS_WITH_ATTENDEES) {
             return attendeeList.isNotEmpty()
         }

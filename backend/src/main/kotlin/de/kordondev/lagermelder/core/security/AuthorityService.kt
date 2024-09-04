@@ -1,6 +1,10 @@
 package de.kordondev.lagermelder.core.security
 
-import de.kordondev.lagermelder.core.persistence.entry.*
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
+import de.kordondev.lagermelder.core.persistence.entry.Roles
+import de.kordondev.lagermelder.core.persistence.entry.TentsEntity
+import de.kordondev.lagermelder.core.persistence.entry.UserEntry
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.security.SecurityConstants.DEPARTMENT_ID_PREFIX
 import de.kordondev.lagermelder.core.security.SecurityConstants.ROLE_PREFIX
 import de.kordondev.lagermelder.core.security.SecurityConstants.USER_ID_PREFIX
@@ -22,7 +26,7 @@ class AuthorityService {
             .any { authority -> authority == DEPARTMENT_ID_PREFIX + department.id.toString() || allowedRoles.any { ROLE_PREFIX + it.toString() == authority } }
     }
 
-    fun hasAuthorityFilter(attendee: AttendeeEntry, allowedRoles: List<String>): Boolean {
+    fun hasAuthorityFilter(attendee: Attendee, allowedRoles: List<String>): Boolean {
         return hasAuthorityFilter(attendee.department, allowedRoles);
     }
 
@@ -33,7 +37,7 @@ class AuthorityService {
         throw AccessDeniedException("You are not allowed to access department with other department id")
     }
 
-    fun hasAuthority(attendee: AttendeeEntry, allowedRoles: List<String>): AttendeeEntry {
+    fun hasAuthority(attendee: Attendee, allowedRoles: List<String>): Attendee {
         if (hasAuthorityFilter(attendee, allowedRoles)) {
             return attendee
         }

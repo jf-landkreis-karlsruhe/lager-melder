@@ -1,6 +1,7 @@
 package de.kordondev.lagermelder.rest.model
 
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentFeatures
 
 data class RestDepartment(
         val id: Long,
@@ -8,8 +9,8 @@ data class RestDepartment(
         val leaderName: String,
         val leaderEMail: String,
         val phoneNumber: String,
-        val shortName: String
-
+        val shortName: String,
+        val features: Set<DepartmentFeatures> = emptySet()
 ) {
     companion object {
         fun of(department: DepartmentEntry) = RestDepartment(
@@ -18,7 +19,8 @@ data class RestDepartment(
             leaderName = department.leaderName,
             leaderEMail = department.leaderEMail,
             phoneNumber = department.phoneNumber,
-            shortName = department.shortName
+            shortName = department.shortName,
+            features = department.features.map { it.feature }.toSet()
         )
     }
 }

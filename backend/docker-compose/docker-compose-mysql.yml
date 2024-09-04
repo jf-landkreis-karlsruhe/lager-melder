@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   database:
-    image: "mysql"
+    image: "mysql:9.0.1"
     container_name: lm-mysql
     ports:
       - "3306:3306"

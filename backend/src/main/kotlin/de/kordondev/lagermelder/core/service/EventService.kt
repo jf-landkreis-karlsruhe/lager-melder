@@ -1,8 +1,8 @@
 package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.persistence.entry.*
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeInEventRepository
-import de.kordondev.lagermelder.core.persistence.repository.AttendeeRepository
 import de.kordondev.lagermelder.core.persistence.repository.EventRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
@@ -20,7 +20,6 @@ class EventService(
     val authorityService: AuthorityService,
     val eventRepository: EventRepository,
     val attendeeInEventRepository: AttendeeInEventRepository,
-    val attendeeRepository: AttendeeRepository,
     val departmentService: DepartmentService
 ) {
     fun getEventByCode(code: String): EventEntry {
@@ -70,7 +69,7 @@ class EventService(
 
     fun addAttendeeToEvent(eventCode: String, attendeeCode: String): AttendeeInEvent {
         val event = getEventByCode(eventCode)
-        val attendee: AttendeeEntry = attendeeService.getAttendeeByCode(attendeeCode)
+        val attendee: Attendee = attendeeService.getAttendeeByCode(attendeeCode)
         val attendeeInEvent = AttendeeInEventEntry(id = 0, attendeeCode, eventCode, Instant.now())
         var attendeeStatus: AttendeeStatus? = null
         if (event.type == EventType.GlobalEnter) {
@@ -80,7 +79,7 @@ class EventService(
             attendeeStatus = AttendeeStatus.LEFT
         }
         if (attendeeStatus != null) {
-            attendeeRepository.save(attendee.copy(status = attendeeStatus))
+            attendeeService.updateAttendeeStatus(attendee, attendeeStatus)
         }
         return attendeeInEventRepository.save(attendeeInEvent)
             .let {
@@ -94,7 +93,8 @@ class EventService(
     }
 
     fun getGlobalEventSummary(): RestGlobalEventSummary {
-        val allAttendees = attendeeService.getAllAttendees()
+        val attendees = attendeeService.getAllAttendees()
+        val allAttendees = (attendees.youths + attendees.youthLeaders)
         val attendeesByDepartment = allAttendees.groupBy { it.department }
 
         return RestGlobalEventSummary(
@@ -103,7 +103,7 @@ class EventService(
         )
     }
 
-    private fun sumUp(attendees: List<AttendeeEntry>, name: String): Distribution {
+    private fun sumUp(attendees: List<Attendee>, name: String): Distribution {
         val groupedAttendees = attendees.groupBy { attendeeRoleStatus(it.status, it.role) }
         return Distribution(
             name = name,
@@ -139,6 +139,7 @@ class EventService(
     fun addDepartmentToEvent(eventCode: String, departmentId: Long): List<AttendeeInEvent> {
         return departmentService.getDepartment(departmentId)
             .let { attendeeService.getAttendeesForDepartment(it) }
+            .let { it.youths + it.youthLeaders }
             .map { addAttendeeToEvent(eventCode, it.code) }
     }
 }

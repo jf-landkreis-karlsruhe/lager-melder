@@ -1,56 +1,61 @@
 package de.kordondev.lagermelder.core.persistence.entry
 
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import jakarta.persistence.*
 import org.hibernate.Hibernate
+import java.time.Instant
 import java.util.*
 
 @Entity
-@Table(name = "attendees")
-data class AttendeeEntry(
+@Table(name = "base_attendees")
+@SecondaryTable(name = "youth_leaders", pkJoinColumns = [PrimaryKeyJoinColumn(name = "base_attendee_id")])
+data class YouthLeaderEntry(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    override val id: String = UUID.randomUUID().toString(),
 
     @Column(name = "first_name")
-    val firstName: String,
+    override val firstName: String,
 
     @Column(name = "last_name")
-    val lastName: String,
+    override val lastName: String,
 
-    @Column(name = "birthday")
+    @Column(name = "birthday", table = "youth_leaders")
     val birthday: String,
 
     @Column(name = "food")
     @Enumerated(EnumType.STRING)
-    val food: Food,
+    override val food: Food,
 
     @Column(name = "t_shirt_size")
-    val tShirtSize: String,
+    override val tShirtSize: String,
 
     @Column(name = "additional_information")
-    val additionalInformation: String,
+    override val additionalInformation: String,
 
     @Column(name = "code", unique = true)
-    val code: String,
+    override val code: String,
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    val role: AttendeeRole,
+    override val role: AttendeeRole,
 
     @ManyToOne
     @JoinColumn(name = "department_id")
-    val department: DepartmentEntry,
+    override val department: DepartmentEntry,
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    val status: AttendeeStatus?
+    override val status: AttendeeStatus?,
 
-) {
+    @Column(name = "created_at")
+    override val createdAt: Instant = Instant.now()
+
+) : Attendee {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as AttendeeEntry
+        other as YouthLeaderEntry
 
         return id != null && id == other.id
     }

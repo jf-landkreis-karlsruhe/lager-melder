@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, type Ref, ref } from 'vue'
-import type { Attendee } from '../services/attendee'
+import { type Attendee, type Attendees, defaultAttendees } from '../services/attendee'
 import { getAttendees } from '../services/attendee'
 import type { Department } from '../services/department'
 import { getDepartments } from '../services/department'
-import { filterEnteredAttendees, youthAttendees, youthLeaderAttendees } from '@/helper/filterHelper'
+import { filterByDepartmentAndSearch, filterEnteredAttendees } from '@/helper/filterHelper'
 import { hasAdministrationRole as hasAdministrationRole } from '../services/authentication'
 import {
   getBatches,
@@ -27,7 +27,7 @@ interface DepartmentWithAttendees {
   youthLeader: Attendee[]
 }
 
-const attendees = ref<Attendee[]>([])
+const attendees = ref<Attendees>(defaultAttendees)
 const departments = ref<Department[]>([])
 const filterInput = ref<string>('')
 const totalTents = ref<Tents>({} as Tents)
@@ -45,8 +45,16 @@ const departmentWithAttendees = computed<DepartmentWithAttendees[]>(() => {
     .map((department) => {
       return {
         department: department,
-        youthAttendees: youthAttendees(department.id, attendees.value, filterInput.value),
-        youthLeader: youthLeaderAttendees(department.id, attendees.value, filterInput.value)
+        youthAttendees: filterByDepartmentAndSearch(
+          attendees.value.youths,
+          department.id,
+          filterInput.value
+        ),
+        youthLeader: filterByDepartmentAndSearch(
+          attendees.value.youthLeaders,
+          department.id,
+          filterInput.value
+        )
       }
     })
     .filter(
@@ -89,11 +97,14 @@ const loadFile = (request: () => Promise<FileReponse>, loading: Ref<boolean>) =>
 }
 
 const totalAttendeeCount = computed<number>(() => {
-  return attendees.value.length
+  return attendees.value.youthLeaders.length + attendees.value.youths.length
 })
 
 const enteredAttendeesCount = computed<number>(() => {
-  return attendees.value.filter(filterEnteredAttendees).length
+  return (
+    attendees.value.youths.filter(filterEnteredAttendees).length +
+    attendees.value.youthLeaders.filter(filterEnteredAttendees).length
+  )
 })
 
 onMounted(() => {

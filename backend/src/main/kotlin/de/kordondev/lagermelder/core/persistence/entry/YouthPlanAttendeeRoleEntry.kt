@@ -11,13 +11,13 @@ data class YouthPlanAttendeeRoleEntry(
 
     @Id
     @Column(name = "attendee_id")
-    val attendeeId: Long,
+    val attendeeId: String,
 
     @OneToOne(fetch = FetchType.LAZY)
     @Cascade(CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "attendee_id")
-    val attendee: AttendeeEntry,
+    val attendee: BaseAttendeeEntry,
 
 
     @Column(name = "department_id")

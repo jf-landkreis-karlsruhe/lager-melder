@@ -1,9 +1,9 @@
 package de.kordondev.lagermelder.core.pdf
 
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
@@ -34,7 +34,7 @@ class AttendeesCommunal(
     val ATTENDEES_ON_FIRST_PAGE = TABLE_ROW_START_FIRST_PAGE.size
     val ATTENDEES_ON_SECOND_PAGE = TABLE_ROW_START_SECOND_PAGE.size
 
-    fun createAttendeesCommunalPdf(attendees: List<AttendeeEntry>, departmentName: String): PDDocument {
+    fun createAttendeesCommunalPdf(attendees: List<Attendee>, departmentName: String): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/attendeesCommunal.pdf")
         val settings = settingsService.getSettings()
 
@@ -90,7 +90,7 @@ class AttendeesCommunal(
     fun fillFirstPage(
         pdfDocument: PDDocument,
         departmentName: String,
-        attendees: List<AttendeeEntry>,
+        attendees: List<Attendee>,
         page: Int
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
@@ -102,7 +102,7 @@ class AttendeesCommunal(
 
     fun fillSecondPage(
         pdfDocument: PDDocument,
-        attendees: List<AttendeeEntry>,
+        attendees: List<Attendee>,
         page: Int,
         settings: SettingsEntry
     ): MutableList<PDField> {
@@ -117,7 +117,7 @@ class AttendeesCommunal(
 
     fun fillPage(
         pdfDocument: PDDocument,
-        attendees: List<AttendeeEntry>,
+        attendees: List<Attendee>,
         cellIds: List<Int>,
         page: Int
     ): MutableList<PDField> {
@@ -129,7 +129,7 @@ class AttendeesCommunal(
         return fields
     }
 
-    fun fillAttendeeInForm(attendee: AttendeeEntry, form: PDAcroForm, cellId: Int, page: Int): List<PDField> {
+    fun fillAttendeeInForm(attendee: Attendee, form: PDAcroForm, cellId: Int, page: Int): List<PDField> {
         val fields = mutableListOf<PDField>()
         pdfHelper.fillField(form, "$NAME$cellId", "${attendee.firstName} ${attendee.lastName}", page)
             ?.let { fields.add(it) }

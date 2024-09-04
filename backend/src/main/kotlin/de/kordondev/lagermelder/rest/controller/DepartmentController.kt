@@ -3,7 +3,7 @@ package de.kordondev.lagermelder.rest.controller
 import de.kordondev.lagermelder.core.service.AttendeeService
 import de.kordondev.lagermelder.core.service.DepartmentService
 import de.kordondev.lagermelder.core.service.TentsService
-import de.kordondev.lagermelder.rest.model.RestAttendee
+import de.kordondev.lagermelder.rest.model.RestAttendees
 import de.kordondev.lagermelder.rest.model.RestDepartment
 import de.kordondev.lagermelder.rest.model.RestTents
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRegistrationRequest
@@ -52,11 +52,11 @@ class DepartmentController(
     }
 
     @GetMapping("/departments/{id}/attendees")
-    fun getAttendeesForDepartment(@PathVariable(value = "id") id: Long): Iterable<RestAttendee> {
+    fun getAttendeesForDepartment(@PathVariable(value = "id") id: Long): RestAttendees {
         return departmentService
                 .getDepartment(id)
-                .let { attendeeService.getAttendeesForDepartment(it) }
-                .let { attendees -> attendees.map { attendee -> RestAttendee.of(attendee) } }
+            .let { attendeeService.getAttendeesForDepartment(it) }
+            .let { RestAttendees.of(it) }
     }
 
     @GetMapping("departments/{id}/tents")

@@ -1,6 +1,7 @@
 package de.kordondev.lagermelder.exception
 
 import de.kordondev.lagermelder.exception.ErrorConstants.ACCESS_DENIED_ERROR
+import de.kordondev.lagermelder.exception.ErrorConstants.WRONG_TYPE
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
@@ -54,6 +55,17 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     fun handleWrongTimeException(ex: WrongTimeException): ResponseEntity<ErrorResponse> {
         return exceptionToBody(ex, HttpStatus.BAD_REQUEST, ex.key)
     }
+
+    @ExceptionHandler(ChangedRoleException::class)
+    fun handleChangedRoleException(ex: ChangedRoleException): ResponseEntity<ErrorResponse> {
+        return exceptionToBody(ex, HttpStatus.BAD_REQUEST, ex.key)
+    }
+
+    @ExceptionHandler(UnexpectedTypeException::class)
+    fun handleUnexpectedTypeException(ex: UnexpectedTypeException): ResponseEntity<ErrorResponse> {
+        return exceptionToBody(ex, HttpStatus.INTERNAL_SERVER_ERROR, WRONG_TYPE)
+    }
+
 
     data class ErrorResponse(val key: String, val messages: List<ErrorMessage>)
     data class ErrorMessage(val message: String?, val fieldName: String?)

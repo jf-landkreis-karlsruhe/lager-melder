@@ -31,6 +31,7 @@ class RegistrationFilesService(
         }
         val result = departmentService.getDepartment(id)
             .let { attendeeService.getAttendeesForDepartment(it) }
+            .let { it.youths + it.youthLeaders }
             .let { attendeesKarlsruhe.createAttendeesKarlsruhePdf(it) }
         val out = ByteArrayOutputStream()
         result.save(out)
@@ -47,6 +48,7 @@ class RegistrationFilesService(
             .filter { it.youthPlanRole == AttendeeRole.YOUTH }
             .filter { it.departmentId == department.id }
             .map { it.attendee }
+            .let { attendees -> attendeeService.getAllAttendeesIn(attendees.map { it.id }) }
             .let { stateYouthPlanAttendees.createStateYouthPlanAttendees(it) }
 
         val out = ByteArrayOutputStream()
@@ -64,6 +66,7 @@ class RegistrationFilesService(
             .filter { it.youthPlanRole == AttendeeRole.YOUTH_LEADER }
             .filter { it.departmentId == department.id }
             .map { it.attendee }
+            .let { attendees -> attendeeService.getAllAttendeesIn(attendees.map { it.id }) }
             .let { stateYouthPlanAttendees.createStateYouthPlanAttendees(it) }
         val out = ByteArrayOutputStream()
         result.save(out)
@@ -78,6 +81,7 @@ class RegistrationFilesService(
         val department = departmentService.getDepartment(id)
         val result = department
             .let { attendeeService.getAttendeesForDepartment(it) }
+            .let { it.youths + it.youthLeaders }
             .let { attendeesCommunal.createAttendeesCommunalPdf(it, department.name) }
         val out = ByteArrayOutputStream()
         result.save(out)

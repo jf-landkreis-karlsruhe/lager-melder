@@ -1,9 +1,10 @@
 package de.kordondev.lagermelder.core.service.helper
 
 import de.kordondev.lagermelder.Helper
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
+import de.kordondev.lagermelder.core.persistence.entry.BaseAttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.YouthPlanAttendeeRoleEntry
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
@@ -12,7 +13,7 @@ class YouthPlanAttendeeRoleHelper {
 
     fun getOptimizedLeaderAndAttendeeIds(
         youthPlanAttendeeRoles: List<YouthPlanAttendeeRoleEntry>,
-        undistributedAttendees: List<AttendeeEntry>,
+        undistributedAttendees: List<Attendee>,
         eventStart: LocalDate
     ): List<YouthPlanAttendeeRoleEntry> {
         if (undistributedAttendees.isNotEmpty()) {
@@ -22,19 +23,20 @@ class YouthPlanAttendeeRoleHelper {
         return listOf()
     }
 
-    private val oldFirst = compareBy<AttendeeEntry> { it.birthday }
+    private val oldFirst = compareBy<Attendee> { Helper.getBirthday(it) }
     private val oldFirstThenFirstname = oldFirst.thenByDescending { it.firstName }
     private fun distributeNewAttendees(
-        newAttendees: List<AttendeeEntry>,
+        newAttendees: List<Attendee>,
         eventStart: LocalDate,
         fixedDistributedAttendeesSize: Int,
         fixedLeaderSize: Int
     ): List<YouthPlanAttendeeRoleEntry> {
+
         // birthday: "2020-03-30" "yyyy-MM-dd"
         var (youth, leader) = newAttendees
             .sortedWith(oldFirstThenFirstname)
-            .filter { Helper.ageAtEvent(it.birthday, eventStart) >= 6 }
-            .partition { Helper.ageAtEvent(it.birthday, eventStart) <= 26 }
+            .filter { Helper.ageAtEvent(it, eventStart) >= 6 }
+            .partition { Helper.ageAtEvent(it, eventStart) <= 26 }
 
         val allLeaderSize = leader.size + fixedLeaderSize
         val correctDistributedAttendees = allLeaderSize + allLeaderSize * 5
@@ -44,7 +46,7 @@ class YouthPlanAttendeeRoleHelper {
             // move x first of attendees, who are at least 18, to the end of leader
             val newLeader = youth
                 .subList(0, possibleLeaderCount)
-                .filter { Helper.ageAtEvent(it.birthday, eventStart) >= 18 }
+                .filter { Helper.ageAtEvent(it, eventStart) >= 18 }
             leader = leader.plus(newLeader)
             youth = youth.subList(newLeader.size, youth.size)
         }
@@ -53,7 +55,7 @@ class YouthPlanAttendeeRoleHelper {
             newYouthPlanRoles = newYouthPlanRoles.plus(
                 YouthPlanAttendeeRoleEntry(
                     attendeeId = l.id,
-                    attendee = l,
+                    attendee = BaseAttendeeEntry.of(l),
                     departmentId = l.department.id,
                     youthPlanRole = AttendeeRole.YOUTH_LEADER,
                 )
@@ -63,7 +65,7 @@ class YouthPlanAttendeeRoleHelper {
             newYouthPlanRoles = newYouthPlanRoles.plus(
                 YouthPlanAttendeeRoleEntry(
                     attendeeId = y.id,
-                    attendee = y,
+                    attendee = BaseAttendeeEntry.of(y),
                     departmentId = y.department.id,
                     youthPlanRole = AttendeeRole.YOUTH,
                 )

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <changeSet id="20240809" author="kordon">
+        <createTable tableName="department_features">
+            <column name="id" type="varchar(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="department_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="feature" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="department_features" baseColumnNames="department_id"
+                                 constraintName="department_features_department_id_constraint"
+                                 referencedTableName="departments" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="202408091" author="kordon" context="dev">
+        <loadData tableName="department_features" separator=";" file="db/mocks/department_features.csv"/>
+    </changeSet>
+</databaseChangeLog>

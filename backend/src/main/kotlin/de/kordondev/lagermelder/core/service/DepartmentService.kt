@@ -49,7 +49,8 @@ class DepartmentService(
     fun deleteDepartment(id: Long) {
         authorityService.isSpecializedFieldDirector()
         val department = this.getDepartment(id)
-        if (attendeeService.getAttendeesForDepartment(department).isNotEmpty()) {
+        val attendeesInDepartment = attendeeService.getAttendeesForDepartment(department)
+        if (attendeesInDepartment.youths.isNotEmpty() || attendeesInDepartment.youthLeaders.isNotEmpty()) {
             throw ExistingDependencyException("Attendees for department existing. Delete them first.")
         }
         departmentRepository.delete(department)

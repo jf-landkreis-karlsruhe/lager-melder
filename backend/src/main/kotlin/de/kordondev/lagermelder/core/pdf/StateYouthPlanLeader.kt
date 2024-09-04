@@ -1,9 +1,10 @@
 package de.kordondev.lagermelder.core.pdf
 
+import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
-import de.kordondev.lagermelder.core.persistence.entry.AttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
@@ -36,7 +37,7 @@ class StateYouthPlanLeader(
 
     val DAYS_OF_EVENT = 5
 
-    fun createStateYouthPlanLeaderPdf(attendees: List<AttendeeEntry>): PDDocument {
+    fun createStateYouthPlanLeaderPdf(attendees: List<Attendee>): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/stateYouthPlanLeader.pdf")
         val settings = settingsService.getSettings()
 
@@ -70,7 +71,7 @@ class StateYouthPlanLeader(
 
     fun fillPage(
         pdfDocument: PDDocument,
-        attendees: List<AttendeeEntry>,
+        attendees: List<Attendee>,
         cellIds: List<Int>,
         page: Int,
         settings: SettingsEntry
@@ -90,7 +91,7 @@ class StateYouthPlanLeader(
     }
 
     fun fillAttendeeInForm(
-        attendee: AttendeeEntry,
+        attendee: Attendee,
         form: PDAcroForm,
         cellId: Int,
         page: Int,
@@ -106,7 +107,12 @@ class StateYouthPlanLeader(
         pdfHelper.fillField(
             form,
             "$NAME_AND_BIRTHDAY$cellId",
-            "${attendee.lastName}, ${attendee.firstName}, ${pdfHelper.formatBirthday(attendee.birthday, germanDate)}",
+            "${attendee.lastName}, ${attendee.firstName}, ${
+                pdfHelper.formatBirthday(
+                    Helper.getBirthday(attendee),
+                    germanDate
+                )
+            }",
             page
         )?.let { fields.add(it) }
         pdfHelper.fillField(form, startDateCell, settings.eventStart.format(germanDate), page)?.let { fields.add(it) }

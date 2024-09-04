@@ -1,7 +1,9 @@
 package de.kordondev.lagermelder.helper
 
 import de.kordondev.lagermelder.core.persistence.entry.*
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.rest.model.request.*
+import java.util.*
 
 
 class Entities() {
@@ -19,9 +21,9 @@ class Entities() {
             return DepartmentEntry(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com", "", "")
         }
 
-        fun attendee(): AttendeeEntry {
-            return AttendeeEntry(
-                10L,
+        fun attendee(): Attendee {
+            return YouthEntry(
+                UUID.randomUUID().toString(),
                 "att",
                 "endee",
                 "20-09-2005",
