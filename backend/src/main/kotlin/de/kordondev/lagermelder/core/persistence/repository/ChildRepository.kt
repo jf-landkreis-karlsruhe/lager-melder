@@ -10,12 +10,4 @@ interface ChildRepository : CrudRepository<ChildEntry, String> {
 
     @Query("SELECT y FROM ChildEntry y WHERE y.role = 'CHILD'")
     override fun findAll(): List<ChildEntry>
-
-    @Query(
-        "Select a from ChildEntry a LEFT JOIN YouthPlanAttendeeRoleEntry ypa ON a.id = ypa.attendeeId where ypa.attendeeId is NULL AND a.role = 'CHILD'",
-    )
-    fun findAttendeesWithoutYouthPlanRole(): List<ChildEntry>
-
-    @Query("SELECT y FROM ChildEntry y WHERE y.id IN (:ids) AND y.role = 'CHILD'")
-    fun findAllByIds(ids: List<String>): List<ChildEntry>
 }

@@ -1,6 +1,6 @@
 package de.kordondev.lagermelder.rest.controller
 
-import de.kordondev.lagermelder.core.service.AdminFilesService
+import de.kordondev.lagermelder.core.service.PlanningFilesService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.*
@@ -8,7 +8,7 @@ import java.io.IOException
 
 @RestController
 class AdminFilesController(
-    private val adminFilesService: AdminFilesService
+    private val adminFilesService: PlanningFilesService
 ) {
 
     @ResponseBody
