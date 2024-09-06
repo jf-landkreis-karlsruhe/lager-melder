@@ -2,10 +2,7 @@ package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
-import de.kordondev.lagermelder.core.persistence.repository.AttendeeInEventRepository
-import de.kordondev.lagermelder.core.persistence.repository.BaseAttendeeRepository
-import de.kordondev.lagermelder.core.persistence.repository.YouthLeadersRepository
-import de.kordondev.lagermelder.core.persistence.repository.YouthsRepository
+import de.kordondev.lagermelder.core.persistence.repository.*
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
 import de.kordondev.lagermelder.core.service.helper.TShirtSizeValidator
@@ -27,6 +24,8 @@ class AttendeeService(
     private val tShirtSizeValidator: TShirtSizeValidator,
     private val youthRepository: YouthsRepository,
     private val youthLeaderRepository: YouthLeadersRepository,
+    private val childRepository: ChildRepository,
+    private val childLeaderRepository: ChildLeaderRepository,
     private val baseAttendeeRepository: BaseAttendeeRepository,
     private val eventRepository: AttendeeInEventRepository
 ) {
@@ -37,6 +36,8 @@ class AttendeeService(
         return Attendees(
             youths = allAttendees.youths.filter { byAuthority(it) },
             youthLeaders = allAttendees.youthLeaders.filter { byAuthority(it) },
+            children = allAttendees.children.filter { byAuthority(it) },
+            childLeaders = allAttendees.childLeaders.filter { byAuthority(it) }
         )
     }
 
@@ -94,6 +95,8 @@ class AttendeeService(
         return Attendees(
             youths = getYouthsByDepartmentId(department.id),
             youthLeaders = getYouthLeadersByDepartmentId(department.id),
+            children = childRepository.findByDepartment(department.id).filter { byAuthority(it) }.toList(),
+            childLeaders = childLeaderRepository.findByDepartment(department.id).filter { byAuthority(it) }.toList()
         )
     }
 
@@ -107,6 +110,8 @@ class AttendeeService(
         return Attendees(
             youths = youthRepository.findAll().toList(),
             youthLeaders = youthLeaderRepository.findAll().toList(),
+            children = childRepository.findAll().toList(),
+            childLeaders = childLeaderRepository.findAll().toList()
         )
     }
 
@@ -133,6 +138,8 @@ class AttendeeService(
         when (attendee) {
             is YouthEntry -> youthRepository.save(attendee.copy(status = status))
             is YouthLeaderEntry -> youthLeaderRepository.save(attendee.copy(status = status))
+            is ChildEntry -> childRepository.save(attendee.copy(status = status))
+            is ChildLeaderEntry -> childLeaderRepository.save(attendee.copy(status = status))
             else -> throw UnexpectedTypeException("Attendee from db is not of expected type")
         }
     }
@@ -184,6 +191,8 @@ class AttendeeService(
                 when (it.role) {
                     AttendeeRole.YOUTH -> youthRepository.findByIdOrNull(it.id)
                     AttendeeRole.YOUTH_LEADER -> youthLeaderRepository.findByIdOrNull(it.id)
+                    AttendeeRole.CHILD -> childRepository.findByIdOrNull(it.id)
+                    AttendeeRole.CHILD_LEADER -> childLeaderRepository.findByIdOrNull(it.id)
                 }
             }
             ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
@@ -202,6 +211,8 @@ class AttendeeService(
         return when (toSave) {
             is YouthEntry -> youthRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
             is YouthLeaderEntry -> youthLeaderRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
+            is ChildEntry -> childRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
+            is ChildLeaderEntry -> childLeaderRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
             else -> throw UnexpectedTypeException("Attendee from db is not of expected type")
         }
     }
