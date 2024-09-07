@@ -86,6 +86,8 @@ class AttendeeService(
                 when (it) {
                     is YouthEntry -> youthRepository.delete(it)
                     is YouthLeaderEntry -> youthLeaderRepository.delete(it)
+                    is ChildEntry -> childRepository.delete(it)
+                    is ChildLeaderEntry -> childLeaderRepository.delete(it)
                 }
             }
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")

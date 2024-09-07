@@ -22,12 +22,15 @@ const attendees = ref<Attendees>(defaultAttendees)
 const filterInput = ref<string>('')
 const attendeeRoleYouth = ref<AttendeeRole>(AttendeeRole.YOUTH)
 const attendeeRoleYouthLeader = ref<AttendeeRole>(AttendeeRole.YOUTH_LEADER)
+const attendeeRoleChild = ref<AttendeeRole>(AttendeeRole.CHILD)
+const attendeeRoleChildLeader = ref<AttendeeRole>(AttendeeRole.CHILD_LEADER)
 const totalAttendeeCount = ref<number>(0)
 
 let now = new Date()
 let registrationEnd: Date | null = null
 let registrationEndLocalized: string = ''
 let attendeesCanBeEdited: boolean = false
+let childrenCanBeEdited: boolean = true
 
 const youthAttendeeList = computed<Attendee[]>(() => {
   if (!props.department || !props.department.id) {
@@ -44,6 +47,28 @@ const youthLeaderAttendeeList = computed<Attendee[]>(() => {
     attendees.value.youthLeaders,
     props.department.id,
     filterInput.value
+  )
+})
+
+const childAttendeeList = computed<Attendee[]>(() => {
+  if (!props.department || !props.department.id) {
+    return []
+  }
+  return filterByDepartmentAndSearch(
+      attendees.value.children,
+      props.department.id,
+      filterInput.value
+  )
+})
+
+const childLeaderAttendeeList = computed<Attendee[]>(() => {
+  if (!props.department || !props.department.id) {
+    return []
+  }
+  return filterByDepartmentAndSearch(
+      attendees.value.childLeaders,
+      props.department.id,
+      filterInput.value
   )
 })
 
@@ -116,8 +141,6 @@ onMounted(() => {
             {{ registrationEndDiff.hours === 1 ? 'Stunde' : 'Stunden' }}
             {{ registrationEndDiff.minutes }}
             {{ registrationEndDiff.minutes === 1 ? 'Minute' : 'Minuten' }}
-            <!-- {{ registrationEndDiff.seconds }}
-            {{ registrationEndDiff.seconds === 1 ? "Sekunde" : "Sekunden" }} -->
           </div>
           <div v-else>Anmeldeschluss ist bereits erreicht!</div>
         </div>
@@ -129,6 +152,7 @@ onMounted(() => {
           Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})
         </div>
       </div>
+      <h2>Teilnehmer</h2>
       <v-row>
         <v-col cols="4">
           <v-text-field
@@ -163,6 +187,24 @@ onMounted(() => {
         :department-phone-number="department.phoneNumber"
       />
     </div>
+
+    <h2>Kindergruppentag</h2>
+    <AttendeesTable
+        headlineText="Kinder"
+        :attendees="childAttendeeList"
+        :departmentId="department.id"
+        :role="attendeeRoleChild"
+        :attendeesChanged="attendeesChanged"
+        :disabled="!childrenCanBeEdited"
+    />
+    <AttendeesTable
+        headlineText="Kindergruppenleiter"
+        :attendees="childLeaderAttendeeList"
+        :role="attendeeRoleChildLeader"
+        :departmentId="department.id"
+        :attendeesChanged="attendeesChanged"
+        :disabled="!childrenCanBeEdited"
+    />
   </v-container>
 </template>
 
