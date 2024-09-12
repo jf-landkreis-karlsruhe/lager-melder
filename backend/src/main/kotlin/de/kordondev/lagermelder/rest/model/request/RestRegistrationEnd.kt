@@ -6,7 +6,7 @@ import java.time.Instant
 data class RestRegistrationEnd(
     val registrationEnd: Instant,
     val attendeesCanBeEdited: Boolean,
-    val childGroupRegistrationEnd: Instant,
+    val childGroupsRegistrationEnd: Instant,
     val childGroupsCanBeEdited: Boolean
 ) {
     companion object {
@@ -14,7 +14,7 @@ data class RestRegistrationEnd(
             return RestRegistrationEnd(
                 registrationEnd = settings.registrationEnd,
                 attendeesCanBeEdited = attendeesCanBeEdited,
-                childGroupRegistrationEnd = settings.childGroupsRegistrationEnd,
+                childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd,
                 childGroupsCanBeEdited = childGroupsCanBeEdited
             )
         }

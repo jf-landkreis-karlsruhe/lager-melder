@@ -50,12 +50,12 @@ onMounted(() => {
               <v-text-field
                 type="date"
                 v-model="settings.registrationEnd"
-                label="Ende Registration"
+                label="Registrierungsende Teilnehmer"
                 :variant="'underlined'"
                 :error-messages="
                   downloadAfterEndRegistration
                     ? ''
-                    : 'Ende der Registrierung muss nach dem Start des Downloads der Anmeldeunterlagen liegen.'
+                    : 'Registrierungsende muss nach dem Start des Downloads der Anmeldeunterlagen liegen.'
                 "
               />
               <v-text-field
@@ -66,8 +66,14 @@ onMounted(() => {
                 :error-messages="
                   downloadAfterEndRegistration
                     ? ''
-                    : 'Ende der Registrierung muss nach dem Start des Downloads der Anmeldeunterlagen liegen.'
+                    : 'Ende der Registrierung für Teilnehmer muss nach dem Start des Downloads der Anmeldeunterlagen liegen.'
                 "
+              />
+              <v-text-field
+                  type="date"
+                  v-model="settings.childGroupsRegistrationEnd"
+                  label="Registrierungsende Kindergruppen"
+                  :variant="'underlined'"
               />
               <h3>Veranstalltung</h3>
               <v-text-field
