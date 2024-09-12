@@ -48,7 +48,7 @@ class AttendeeService(
 
     fun createAttendee(attendee: Attendee): Attendee {
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
-        checkCanAttendeeBeEdited()
+        checkCanAttendeeBeEdited(attendee)
         checkFirstNameAndLastNameAreUnique(attendee)
         tShirtSizeValidator.validate(attendee.tShirtSize)
 
@@ -58,7 +58,7 @@ class AttendeeService(
     }
 
     fun saveAttendee(id: String, attendee: Attendee): Attendee {
-        checkCanAttendeeBeEdited()
+        checkCanAttendeeBeEdited(attendee)
         checkFirstNameAndLastNameAreUnique(attendee, id)
         tShirtSizeValidator.validate(attendee.tShirtSize)
 
@@ -75,8 +75,11 @@ class AttendeeService(
 
     @Transactional
     fun deleteAttendee(id: String) {
-        checkCanAttendeeBeEdited()
         getAttendeeOrNull(id)
+            ?.let {
+                checkCanAttendeeBeEdited(it)
+                it
+            }
             ?.let {
                 authorityService.hasAuthority(
                     it,
@@ -159,8 +162,8 @@ class AttendeeService(
             }
     }
 
-    private fun checkCanAttendeeBeEdited() {
-        if (!settingsService.canAttendeesBeEdited()) {
+    private fun checkCanAttendeeBeEdited(attendee: Attendee) {
+        if (!settingsService.canBeEdited(attendee)) {
             throw WrongTimeException("Registrierungsende wurde überschritten")
         }
     }

@@ -42,7 +42,11 @@ data class SettingsEntry(
     val moneyPerYouthLoader: String,
 
     @Column(name = "start_download_registration_files")
-    val startDownloadRegistrationFiles: Instant
+    val startDownloadRegistrationFiles: Instant,
+
+    @Column(name = "child_groups_registration_end")
+    val childGroupsRegistrationEnd: Instant
+
 
 ) {
     override fun equals(other: Any?): Boolean {

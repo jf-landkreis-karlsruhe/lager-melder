@@ -44,7 +44,12 @@ data class RestSettingsRequest(
 
     @NotNull
     @NotBlank
-    val startDownloadRegistrationFiles: Instant
+    val startDownloadRegistrationFiles: Instant,
+
+    @NotNull
+    @NotBlank
+    val childGroupsRegistrationEnd: Instant
+
 ) {
     companion object {
         fun to(settings: RestSettingsRequest) = SettingsEntry(
@@ -58,7 +63,8 @@ data class RestSettingsRequest(
             organizer = settings.organizer,
             organisationAddress = settings.organisationAddress,
             moneyPerYouthLoader = settings.moneyPerYouthLoader,
-            startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles
+            startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles,
+            childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd
         )
     }
 }

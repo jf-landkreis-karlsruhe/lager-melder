@@ -20,5 +20,6 @@
     <include file="classpath:db/scripts/016_add_department_features.xml"/>
     <include file="classpath:db/scripts/017_divide_attendee_types.xml"/>
     <include file="classpath:db/scripts/018_add_child_groups.xml"/>
+    <include file="classpath:db/scripts/019_add_child_groups_registration_end.xml"/>
 
 </databaseChangeLog>

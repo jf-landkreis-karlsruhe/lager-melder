@@ -1,7 +1,7 @@
 package de.kordondev.lagermelder.core.service
 
-import de.kordondev.lagermelder.core.persistence.entry.Roles
-import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
+import de.kordondev.lagermelder.core.persistence.entry.*
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.persistence.repository.SettingsRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.exception.BadRequestException
@@ -34,6 +34,7 @@ class SettingsService(
                     organizer = "",
                     organisationAddress = "",
                     moneyPerYouthLoader = "8,99",
+                    childGroupsRegistrationEnd = Instant.now().plus(35, ChronoUnit.DAYS)
                 )
             )
         }
@@ -49,12 +50,29 @@ class SettingsService(
     }
 
 
-    fun canAttendeesBeEdited(): Boolean {
+    fun canBeEdited(attendee: Attendee): Boolean {
         if (authorityService.isSpecializedFieldDirectorFilter()) {
             return true
         }
-        val endRegistration = getSettings().registrationEnd
-        return Instant.now().isBefore(endRegistration)
+        return when (attendee) {
+            is YouthEntry, is YouthLeaderEntry -> {
+                attendeesCanBeEdited()
+            }
+
+            is ChildEntry, is ChildLeaderEntry -> {
+                childGroupsCanBeEdited()
+            }
+
+            else -> false
+        }
+    }
+
+    fun attendeesCanBeEdited(): Boolean {
+        return Instant.now().isBefore(getSettings().registrationEnd)
+    }
+
+    fun childGroupsCanBeEdited(): Boolean {
+        return Instant.now().isBefore(getSettings().childGroupsRegistrationEnd)
     }
 
     fun canRegistrationFilesDownloaded(): Boolean {

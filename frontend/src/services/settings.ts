@@ -29,6 +29,8 @@ export const getSettings = () =>
 export interface RegistrationEnd<T = Date> {
   registrationEnd: T;
   attendeesCanBeEdited: boolean;
+  childGroupRegistrationEnd: T;
+  childGroupsCanBeEdited: boolean;
 }
 
 export const getRegistrationEnd = () => {
@@ -39,6 +41,7 @@ export const getRegistrationEnd = () => {
     return {
       ...settings,
       registrationEnd: new Date(settings.registrationEnd),
+      childGroupRegistrationEnd: new Date(settings.childGroupRegistrationEnd),
     };
   });
 };
