@@ -34,10 +34,10 @@ class AttendeeService(
     fun getAttendees(): Attendees {
         val allAttendees = getAllAttendees()
         return Attendees(
-            youths = allAttendees.youths.filter { byAuthority(it) },
-            youthLeaders = allAttendees.youthLeaders.filter { byAuthority(it) },
-            children = allAttendees.children.filter { byAuthority(it) },
-            childLeaders = allAttendees.childLeaders.filter { byAuthority(it) }
+            youths = allAttendees.youths.filter { byAuthority(it) && hasFeature(it) },
+            youthLeaders = allAttendees.youthLeaders.filter { byAuthority(it) && hasFeature(it) },
+            children = allAttendees.children.filter { byAuthority(it) && hasFeature(it) },
+            childLeaders = allAttendees.childLeaders.filter { byAuthority(it) && hasFeature(it) }
         )
     }
 
@@ -98,9 +98,9 @@ class AttendeeService(
 
     fun getAttendeesForDepartment(department: DepartmentEntry): Attendees {
         return Attendees(
-            youths = getYouthsByDepartmentId(department.id),
-            youthLeaders = getYouthLeadersByDepartmentId(department.id),
-            children = childRepository.findByDepartment(department.id).filter { byAuthority(it) }.toList(),
+            youths = youthRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            youthLeaders =  youthLeaderRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            children = childRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
             childLeaders = childLeaderRepository.findByDepartment(department.id).filter { byAuthority(it) }.toList()
         )
     }
@@ -174,20 +174,17 @@ class AttendeeService(
         }
     }
 
-    private fun getYouthsByDepartmentId(departmentId: Long): List<YouthEntry> {
-        return youthRepository.findByDepartment(departmentId)
-            .filter { byAuthority(it) }
-            .toList()
-    }
-
-    private fun getYouthLeadersByDepartmentId(departmentId: Long): List<YouthLeaderEntry> {
-        return youthLeaderRepository.findByDepartment(departmentId)
-            .filter { byAuthority(it) }
-            .toList()
-    }
-
     private fun byAuthority(attendee: Attendee): Boolean {
         return authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+    }
+
+    private fun hasFeature(attendee: Attendee): Boolean {
+        val features = attendee.department.features.map { it.feature }
+        return when (attendee) {
+            is YouthEntry, is YouthLeaderEntry -> features.contains(DepartmentFeatures.YOUTH_GROUPS)
+            is ChildEntry, is ChildLeaderEntry -> features.contains(DepartmentFeatures.CHILD_GROUPS)
+            else -> false
+        }
     }
 
     private fun getAttendeeOrNull(id: String): Attendee? {
