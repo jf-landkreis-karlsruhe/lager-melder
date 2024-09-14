@@ -2,16 +2,19 @@ package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Roles
+import de.kordondev.lagermelder.core.persistence.repository.DepartmentFeatureRepository
 import de.kordondev.lagermelder.core.persistence.repository.DepartmentRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.exception.ExistingDependencyException
 import de.kordondev.lagermelder.exception.NotFoundException
+import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class DepartmentService(
     private val departmentRepository: DepartmentRepository,
+    private val departmentFeatureRepository: DepartmentFeatureRepository,
     private val attendeeService: AttendeeService,
     private val authorityService: AuthorityService
 ) {
@@ -41,8 +44,11 @@ class DepartmentService(
         return departmentRepository.save(department)
     }
 
+    @Transactional
     fun saveDepartment(department: DepartmentEntry): DepartmentEntry {
         authorityService.isSpecializedFieldDirector()
+
+        departmentFeatureRepository.deleteForDepartmentAndNotIn(department.id, department.features.map { it.id })
         return departmentRepository.save(department)
     }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { Roles, rolesText as rolesTitle } from '@/services/authentication'
-import type { Department } from '../../services/department'
+import {type Department, DepartmentFeatures} from '../../services/department'
 import { updateDepartment } from '../../services/department'
 import type { User } from '../../services/user'
 import { updateRole, userForDepartment } from '../../services/user'
@@ -117,12 +117,22 @@ onMounted(async () => {
               required
             />
           </div>
+          <p>Feature</p>
         </v-row>
         <v-row align="center" justify="center" wrap="wrap" style="gap: 20px">
           <div class="flex-grow">
             <v-text-field variant="underlined" v-model="phoneNumber" label="Kontaktnummer" />
           </div>
         </v-row>
+        <div style="margin: 12px; margin-left: -12px; margin-right: -12px">
+          <div>
+            <h5>Anmeldeoptionen</h5>
+          </div>
+          <div class="d-flex space-between wrap" style="gap: 20px">
+            <v-switch color="primary" v-model="department.features" label="Teilnehmer" :value="DepartmentFeatures.YOUTH_GROUPS"></v-switch>
+            <v-switch color="primary" v-model="department.features" label="Kindergruppentag" :value="DepartmentFeatures.CHILD_GROUPS"></v-switch>
+          </div>
+        </div>
       </v-container>
     </form>
     <form v-on:submit.prevent="onUpdateRole">

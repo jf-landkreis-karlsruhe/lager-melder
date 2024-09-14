@@ -26,6 +26,14 @@ export interface Department {
   leaderEMail: string
   phoneNumber: string
   shortName: string
+  features: DepartmentFeatures[]
+}
+
+export enum DepartmentFeatures {
+  "CHILD_GROUPS"= "CHILD_GROUPS",
+  "YOUTH_GROUPS" = "YOUTH_GROUPS",
+  "ZKIDS" = "ZKIDS",
+  "HELPER" = "HELPER",
 }
 
 export const updateRegistration = (registration: RegistrationData) =>

@@ -7,12 +7,12 @@ import {
   defaultAttendees,
   getAttendeesForDepartment
 } from '../services/attendee'
-import type { Department } from '../services/department'
+import { type Department, DepartmentFeatures } from '../services/department'
 import { filterByDepartmentAndSearch, filterEnteredAttendees } from '../helper/filterHelper'
 import AttendeesTable from './LmAttendeesTable.vue'
 import RegistrationInformation from './LmRegistrationInformation.vue'
 import { getRegistrationEnd } from '@/services/settings'
-import LmRegistrationEndBanner from "@/components/LmRegistrationEndBanner.vue";
+import LmRegistrationEndBanner from '@/components/LmRegistrationEndBanner.vue'
 
 const props = defineProps<{
   department: Department
@@ -55,9 +55,9 @@ const childAttendeeList = computed<Attendee[]>(() => {
     return []
   }
   return filterByDepartmentAndSearch(
-      attendees.value.children,
-      props.department.id,
-      filterInput.value
+    attendees.value.children,
+    props.department.id,
+    filterInput.value
   )
 })
 
@@ -66,9 +66,9 @@ const childLeaderAttendeeList = computed<Attendee[]>(() => {
     return []
   }
   return filterByDepartmentAndSearch(
-      attendees.value.childLeaders,
-      props.department.id,
-      filterInput.value
+    attendees.value.childLeaders,
+    props.department.id,
+    filterInput.value
   )
 })
 
@@ -101,69 +101,72 @@ onMounted(() => {
 
 <template>
   <v-container>
-    <div>
-
-      <div class="d-flex align-baseline">
-        <h1 class="mr-4">Teilnehmer {{ department.name }}</h1>
-        <div>
-          Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})
+    <div v-if="department && department.features.includes(DepartmentFeatures.YOUTH_GROUPS)">
+      <div>
+        <div class="d-flex align-baseline">
+          <h1 class="mr-4">Teilnehmer {{ department.name }}</h1>
+          <div>
+            Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})
+          </div>
         </div>
+        <h2>Teilnehmer</h2>
+        <LmRegistrationEndBanner :registrationEnd="attendeesRegistrationEnd" />
+        <v-row>
+          <v-col cols="4">
+            <v-text-field
+              variant="underlined"
+              prepend-icon="mdi-magnify"
+              v-model="filterInput"
+              label="Teilnehmerfilter"
+            />
+          </v-col>
+        </v-row>
       </div>
-      <h2>Teilnehmer</h2>
-      <LmRegistrationEndBanner :registrationEnd="attendeesRegistrationEnd" />
-      <v-row>
-        <v-col cols="4">
-          <v-text-field
-            variant="underlined"
-            prepend-icon="mdi-magnify"
-            v-model="filterInput"
-            label="Teilnehmerfilter"
-          />
-        </v-col>
-      </v-row>
-    </div>
-    <AttendeesTable
-      headlineText="Jugendliche"
-      :attendees="youthAttendeeList"
-      :departmentId="department.id"
-      :role="attendeeRoleYouth"
-      :attendeesChanged="attendeesChanged"
-      :disabled="!attendeesCanBeEdited"
-    />
-    <AttendeesTable
-      headlineText="Jugendleiter"
-      :attendees="youthLeaderAttendeeList"
-      :role="attendeeRoleYouthLeader"
-      :departmentId="department.id"
-      :attendeesChanged="attendeesChanged"
-      :disabled="!attendeesCanBeEdited"
-    />
-
-    <div v-if="department && department.id">
-      <RegistrationInformation
+      <AttendeesTable
+        headlineText="Jugendliche"
+        :attendees="youthAttendeeList"
         :departmentId="department.id"
-        :department-phone-number="department.phoneNumber"
+        :role="attendeeRoleYouth"
+        :attendeesChanged="attendeesChanged"
+        :disabled="!attendeesCanBeEdited"
       />
+      <AttendeesTable
+        headlineText="Jugendleiter"
+        :attendees="youthLeaderAttendeeList"
+        :role="attendeeRoleYouthLeader"
+        :departmentId="department.id"
+        :attendeesChanged="attendeesChanged"
+        :disabled="!attendeesCanBeEdited"
+      />
+
+      <div v-if="department && department.id">
+        <RegistrationInformation
+          :departmentId="department.id"
+          :department-phone-number="department.phoneNumber"
+        />
+      </div>
     </div>
 
-    <h2>Kindergruppentag</h2>
-    <LmRegistrationEndBanner :registrationEnd="childGroupRegistrationEnd" />
-    <AttendeesTable
+    <div v-if="department && department.features.includes(DepartmentFeatures.CHILD_GROUPS)">
+      <h2>Kindergruppentag</h2>
+      <LmRegistrationEndBanner :registrationEnd="childGroupRegistrationEnd" />
+      <AttendeesTable
         headlineText="Kinder"
         :attendees="childAttendeeList"
         :departmentId="department.id"
         :role="attendeeRoleChild"
         :attendeesChanged="attendeesChanged"
         :disabled="!childGroupCanBeEdited"
-    />
-    <AttendeesTable
+      />
+      <AttendeesTable
         headlineText="Kindergruppenleiter"
         :attendees="childLeaderAttendeeList"
         :role="attendeeRoleChildLeader"
         :departmentId="department.id"
         :attendeesChanged="attendeesChanged"
         :disabled="!childGroupCanBeEdited"
-    />
+      />
+    </div>
   </v-container>
 </template>
 
