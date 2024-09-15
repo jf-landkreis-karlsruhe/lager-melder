@@ -39,6 +39,7 @@ class DepartmentService(
             ?: throw NotFoundException("Attendee with id $id not found")
     }
 
+    @Transactional
     fun createDepartment(department: DepartmentEntry): DepartmentEntry {
         authorityService.isSpecializedFieldDirector()
         return departmentRepository.save(department)

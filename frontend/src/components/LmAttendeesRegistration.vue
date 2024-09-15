@@ -88,7 +88,7 @@ onBeforeMount(async () => {
   attendeesRegistrationEnd = response.registrationEnd
   attendeesCanBeEdited = response.attendeesCanBeEdited
   childGroupRegistrationEnd = response.childGroupRegistrationEnd
-  childGroupCanBeEdited = response.childGroupCanBeEdited
+  childGroupCanBeEdited = response.childGroupsCanBeEdited
 })
 
 onMounted(() => {

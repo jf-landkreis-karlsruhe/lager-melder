@@ -75,7 +75,8 @@ class Entities() {
                 username = "username@email.de",
                 departmentName = "department",
                 leaderName = "leaderName",
-                leaderEMail = "leader@department.de"
+                leaderEMail = "leader@department.de",
+                features = setOf(DepartmentFeatures.CHILD_GROUPS, DepartmentFeatures.YOUTH_GROUPS)
             )
         }
 
@@ -85,7 +86,8 @@ class Entities() {
                 leaderEMail = "leader@mail.de",
                 leaderName = "leader",
                 phoneNumber = "",
-                shortName = ""
+                shortName = "",
+                features = emptySet()
             )
         }
 

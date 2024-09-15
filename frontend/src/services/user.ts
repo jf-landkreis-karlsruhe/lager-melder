@@ -1,5 +1,5 @@
 import { Roles, withAuthenticationHeader } from './authentication'
-import type { Department } from './department'
+import {type Department, DepartmentFeatures} from './department'
 import { putData, getData, postData } from '../helper/fetch'
 
 export interface User {
@@ -38,6 +38,7 @@ export interface DepartmentWithUserRequest {
   departmentName: string
   leaderName: string
   leaderEMail: string
+  features: DepartmentFeatures[]
 }
 export interface DepartmentWithUser extends DepartmentWithUserRequest {
   departmentId: number
