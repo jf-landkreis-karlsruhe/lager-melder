@@ -12,7 +12,7 @@ import {
   getFoodPDF,
   getTShirtPDF,
   getAdditionalInformationPDF
-} from '@/services/adminFiles'
+} from '@/services/planningFiles'
 import { showFile } from '@/services/filesHelper'
 import type { Tents } from '@/services/tents'
 import { getTents } from '@/services/tents'

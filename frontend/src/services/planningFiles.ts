@@ -3,7 +3,7 @@ import { withAuthenticationHeader } from './authentication'
 import type { FileReponse } from './filesHelper'
 
 export const getBatches = (): Promise<FileReponse> => {
-  return fetchData(`admin-files/batches`, {
+  return fetchData(`planning-files/batches`, {
     headers: {
       ...withAuthenticationHeader()
     }
@@ -17,7 +17,7 @@ export const getBatches = (): Promise<FileReponse> => {
 
 export const getEventCodes = (): Promise<FileReponse> => {
   return fetchData(
-    `admin-files/events?frontendBaseUrl=${encodeURI(`${window.location.origin}/events`)}`,
+    `planning-files/events?frontendBaseUrl=${encodeURI(`${window.location.origin}/events`)}`,
     {
       headers: {
         ...withAuthenticationHeader()
@@ -32,7 +32,7 @@ export const getEventCodes = (): Promise<FileReponse> => {
 }
 
 export const getAdditionalInformationPDF = (): Promise<FileReponse> => {
-  return fetchData(`admin-files/additionalInformation`, {
+  return fetchData(`planning-files/additionalInformation`, {
     headers: {
       ...withAuthenticationHeader()
     }
@@ -45,7 +45,7 @@ export const getAdditionalInformationPDF = (): Promise<FileReponse> => {
 }
 
 export const getFoodPDF = (): Promise<FileReponse> => {
-  return fetchData(`admin-files/food`, {
+  return fetchData(`planning-files/food`, {
     headers: {
       ...withAuthenticationHeader()
     }
@@ -58,7 +58,7 @@ export const getFoodPDF = (): Promise<FileReponse> => {
 }
 
 export const getTShirtPDF = (): Promise<FileReponse> => {
-  return fetchData(`admin-files/t-shirts`, {
+  return fetchData(`planning-files/t-shirts`, {
     headers: {
       ...withAuthenticationHeader()
     }
@@ -71,7 +71,7 @@ export const getTShirtPDF = (): Promise<FileReponse> => {
 }
 
 export const getDepartmentOverview = (): Promise<FileReponse> => {
-  return fetchData(`admin-files/overviewForDepartment`, {
+  return fetchData(`planning-files/overviewForDepartment`, {
     headers: {
       ...withAuthenticationHeader()
     }
