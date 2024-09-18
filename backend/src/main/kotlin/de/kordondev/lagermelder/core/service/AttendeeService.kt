@@ -2,10 +2,7 @@ package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
-import de.kordondev.lagermelder.core.persistence.repository.AttendeeInEventRepository
-import de.kordondev.lagermelder.core.persistence.repository.BaseAttendeeRepository
-import de.kordondev.lagermelder.core.persistence.repository.YouthLeadersRepository
-import de.kordondev.lagermelder.core.persistence.repository.YouthsRepository
+import de.kordondev.lagermelder.core.persistence.repository.*
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
 import de.kordondev.lagermelder.core.service.helper.TShirtSizeValidator
@@ -27,6 +24,8 @@ class AttendeeService(
     private val tShirtSizeValidator: TShirtSizeValidator,
     private val youthRepository: YouthsRepository,
     private val youthLeaderRepository: YouthLeadersRepository,
+    private val childRepository: ChildRepository,
+    private val childLeaderRepository: ChildLeaderRepository,
     private val baseAttendeeRepository: BaseAttendeeRepository,
     private val eventRepository: AttendeeInEventRepository
 ) {
@@ -35,8 +34,10 @@ class AttendeeService(
     fun getAttendees(): Attendees {
         val allAttendees = getAllAttendees()
         return Attendees(
-            youths = allAttendees.youths.filter { byAuthority(it) },
-            youthLeaders = allAttendees.youthLeaders.filter { byAuthority(it) },
+            youths = allAttendees.youths.filter { byAuthority(it) && hasFeature(it) },
+            youthLeaders = allAttendees.youthLeaders.filter { byAuthority(it) && hasFeature(it) },
+            children = allAttendees.children.filter { byAuthority(it) && hasFeature(it) },
+            childLeaders = allAttendees.childLeaders.filter { byAuthority(it) && hasFeature(it) }
         )
     }
 
@@ -47,7 +48,7 @@ class AttendeeService(
 
     fun createAttendee(attendee: Attendee): Attendee {
         authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
-        checkCanAttendeeBeEdited()
+        checkCanAttendeeBeEdited(attendee)
         checkFirstNameAndLastNameAreUnique(attendee)
         tShirtSizeValidator.validate(attendee.tShirtSize)
 
@@ -57,7 +58,7 @@ class AttendeeService(
     }
 
     fun saveAttendee(id: String, attendee: Attendee): Attendee {
-        checkCanAttendeeBeEdited()
+        checkCanAttendeeBeEdited(attendee)
         checkFirstNameAndLastNameAreUnique(attendee, id)
         tShirtSizeValidator.validate(attendee.tShirtSize)
 
@@ -74,8 +75,11 @@ class AttendeeService(
 
     @Transactional
     fun deleteAttendee(id: String) {
-        checkCanAttendeeBeEdited()
         getAttendeeOrNull(id)
+            ?.let {
+                checkCanAttendeeBeEdited(it)
+                it
+            }
             ?.let {
                 authorityService.hasAuthority(
                     it,
@@ -85,6 +89,8 @@ class AttendeeService(
                 when (it) {
                     is YouthEntry -> youthRepository.delete(it)
                     is YouthLeaderEntry -> youthLeaderRepository.delete(it)
+                    is ChildEntry -> childRepository.delete(it)
+                    is ChildLeaderEntry -> childLeaderRepository.delete(it)
                 }
             }
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
@@ -92,8 +98,10 @@ class AttendeeService(
 
     fun getAttendeesForDepartment(department: DepartmentEntry): Attendees {
         return Attendees(
-            youths = getYouthsByDepartmentId(department.id),
-            youthLeaders = getYouthLeadersByDepartmentId(department.id),
+            youths = youthRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            youthLeaders =  youthLeaderRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            children = childRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            childLeaders = childLeaderRepository.findByDepartment(department.id).filter { byAuthority(it) }.toList()
         )
     }
 
@@ -107,6 +115,8 @@ class AttendeeService(
         return Attendees(
             youths = youthRepository.findAll().toList(),
             youthLeaders = youthLeaderRepository.findAll().toList(),
+            children = childRepository.findAll().toList(),
+            childLeaders = childLeaderRepository.findAll().toList()
         )
     }
 
@@ -133,6 +143,8 @@ class AttendeeService(
         when (attendee) {
             is YouthEntry -> youthRepository.save(attendee.copy(status = status))
             is YouthLeaderEntry -> youthLeaderRepository.save(attendee.copy(status = status))
+            is ChildEntry -> childRepository.save(attendee.copy(status = status))
+            is ChildLeaderEntry -> childLeaderRepository.save(attendee.copy(status = status))
             else -> throw UnexpectedTypeException("Attendee from db is not of expected type")
         }
     }
@@ -150,8 +162,8 @@ class AttendeeService(
             }
     }
 
-    private fun checkCanAttendeeBeEdited() {
-        if (!settingsService.canAttendeesBeEdited()) {
+    private fun checkCanAttendeeBeEdited(attendee: Attendee) {
+        if (!settingsService.canBeEdited(attendee)) {
             throw WrongTimeException("Registrierungsende wurde überschritten")
         }
     }
@@ -162,20 +174,17 @@ class AttendeeService(
         }
     }
 
-    private fun getYouthsByDepartmentId(departmentId: Long): List<YouthEntry> {
-        return youthRepository.findByDepartment(departmentId)
-            .filter { byAuthority(it) }
-            .toList()
-    }
-
-    private fun getYouthLeadersByDepartmentId(departmentId: Long): List<YouthLeaderEntry> {
-        return youthLeaderRepository.findByDepartment(departmentId)
-            .filter { byAuthority(it) }
-            .toList()
-    }
-
     private fun byAuthority(attendee: Attendee): Boolean {
         return authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+    }
+
+    private fun hasFeature(attendee: Attendee): Boolean {
+        val features = attendee.department.features.map { it.feature }
+        return when (attendee) {
+            is YouthEntry, is YouthLeaderEntry -> features.contains(DepartmentFeatures.YOUTH_GROUPS)
+            is ChildEntry, is ChildLeaderEntry -> features.contains(DepartmentFeatures.CHILD_GROUPS)
+            else -> false
+        }
     }
 
     private fun getAttendeeOrNull(id: String): Attendee? {
@@ -184,6 +193,8 @@ class AttendeeService(
                 when (it.role) {
                     AttendeeRole.YOUTH -> youthRepository.findByIdOrNull(it.id)
                     AttendeeRole.YOUTH_LEADER -> youthLeaderRepository.findByIdOrNull(it.id)
+                    AttendeeRole.CHILD -> childRepository.findByIdOrNull(it.id)
+                    AttendeeRole.CHILD_LEADER -> childLeaderRepository.findByIdOrNull(it.id)
                 }
             }
             ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
@@ -202,6 +213,8 @@ class AttendeeService(
         return when (toSave) {
             is YouthEntry -> youthRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
             is YouthLeaderEntry -> youthLeaderRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
+            is ChildEntry -> childRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
+            is ChildLeaderEntry -> childLeaderRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
             else -> throw UnexpectedTypeException("Attendee from db is not of expected type")
         }
     }

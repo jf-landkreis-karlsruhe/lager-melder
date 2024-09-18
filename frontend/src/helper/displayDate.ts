@@ -23,9 +23,10 @@ export const dateLocalized = (
  * @returns localized date in string format with time, e.g. "Samstag, 04.03.2022 10:00"
  */
 export const dateTimeLocalized = (
-  date: Date | string,
+  date: Date | string | null,
   locale = "de-DE"
 ): string => {
+  if (!date) return "";
   return new Date(date).toLocaleString(locale, {
     weekday: "long",
     day: "2-digit",

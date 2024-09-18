@@ -299,6 +299,34 @@ class YouthPlanAttendeeRoleHelperTest {
                 code = "",
                 status = AttendeeStatus.ENTERED,
             )
+
+            AttendeeRole.CHILD -> ChildEntry(
+                id = id,
+                firstName = "first",
+                lastName = "name",
+                birthday = birthday,
+                food = Food.MEAT,
+                tShirtSize = Entities.TShirtSizeMock.L.size,
+                additionalInformation = "",
+                role = role,
+                department = DepartmentEntry(4L, "", "", "", "", ""),
+                code = "",
+                status = AttendeeStatus.ENTERED,
+            )
+
+            AttendeeRole.CHILD_LEADER -> ChildLeaderEntry(
+                id = id,
+                firstName = "first",
+                lastName = "name",
+                birthday = birthday,
+                food = Food.MEAT,
+                tShirtSize = Entities.TShirtSizeMock.L.size,
+                additionalInformation = "",
+                role = role,
+                department = DepartmentEntry(4L, "", "", "", "", ""),
+                code = "",
+                status = AttendeeStatus.ENTERED,
+            )
         }
     }
 

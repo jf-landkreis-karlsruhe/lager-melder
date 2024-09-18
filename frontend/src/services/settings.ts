@@ -4,6 +4,7 @@ import { putData, getData } from "../helper/fetch";
 export interface Settings {
   id: string;
   registrationEnd: string;
+  childGroupsRegistrationEnd: string;
   hostCity: string;
   eventStart: string;
   eventEnd: string;
@@ -20,6 +21,7 @@ export const getSettings = () =>
     (settings) => ({
       ...settings,
       registrationEnd: toDate(settings.registrationEnd),
+      childGroupsRegistrationEnd: toDate(settings.childGroupsRegistrationEnd),
       startDownloadRegistrationFiles: toDate(
         settings.startDownloadRegistrationFiles
       ),
@@ -29,6 +31,8 @@ export const getSettings = () =>
 export interface RegistrationEnd<T = Date> {
   registrationEnd: T;
   attendeesCanBeEdited: boolean;
+  childGroupsRegistrationEnd: T;
+  childGroupsCanBeEdited: boolean;
 }
 
 export const getRegistrationEnd = () => {
@@ -39,19 +43,19 @@ export const getRegistrationEnd = () => {
     return {
       ...settings,
       registrationEnd: new Date(settings.registrationEnd),
+      childGroupRegistrationEnd: new Date(settings.childGroupsRegistrationEnd),
     };
   });
 };
 
 export const updateSettings = (settings: Settings) => {
-  const registrationEndDate = new Date(settings.registrationEnd);
-  registrationEndDate.setHours(23);
-  registrationEndDate.setMinutes(59);
-  registrationEndDate.setSeconds(59);
-  registrationEndDate.toISOString();
   return putData<Settings>(`settings`, withAuthenticationHeader(), {
     ...settings,
     registrationEnd: toInstantString(settings.registrationEnd, false),
+    childGroupsRegistrationEnd: toInstantString(
+      settings.childGroupsRegistrationEnd,
+      false
+    ),
     startDownloadRegistrationFiles: toInstantString(
       settings.startDownloadRegistrationFiles,
       true

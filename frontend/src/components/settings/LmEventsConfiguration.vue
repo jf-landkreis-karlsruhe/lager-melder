@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { createEvent, getEvents, deleteEvent, updateEvent, EventType } from '../../services/event'
 import type { Event } from '../../services/event'
-import { getEventCodes } from '../../services/adminFiles'
+import { getEventCodes } from '../../services/planningFiles'
 import { showFile } from '../../services/filesHelper'
 import { useToast } from 'vue-toastification'
 import { showErrorToast } from '@/helper/fetch'

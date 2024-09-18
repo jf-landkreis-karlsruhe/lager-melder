@@ -2,5 +2,7 @@ package de.kordondev.lagermelder.core.persistence.entry
 
 enum class AttendeeRole {
     YOUTH,
-    YOUTH_LEADER
+    YOUTH_LEADER,
+    CHILD,
+    CHILD_LEADER
 }

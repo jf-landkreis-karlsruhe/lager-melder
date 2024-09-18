@@ -20,7 +20,9 @@ export const deleteAttendee = (id: string) =>
 
 export enum AttendeeRole {
   YOUTH = 'YOUTH',
-  YOUTH_LEADER = 'YOUTH_LEADER'
+  YOUTH_LEADER = 'YOUTH_LEADER',
+  CHILD = 'CHILD',
+  CHILD_LEADER = 'CHILD_LEADER'
 }
 
 export enum Food {
@@ -56,12 +58,19 @@ export interface Youth extends Attendee {}
 
 export interface YouthLeader extends Attendee {}
 
+export interface Child extends Attendee {}
+export interface ChildLeader extends Attendee {}
+
 export interface Attendees {
   youths: Youth[]
   youthLeaders: YouthLeader[]
+  children: Child[]
+  childLeaders: ChildLeader[]
 }
 
 export const defaultAttendees: Attendees = {
   youths: [],
-  youthLeaders: []
+  youthLeaders: [],
+  children: [],
+  childLeaders: []
 }

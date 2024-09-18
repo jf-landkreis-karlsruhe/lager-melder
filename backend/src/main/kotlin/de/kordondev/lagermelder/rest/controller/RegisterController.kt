@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import kotlin.random.Random
 
 @RestController
 class RegisterController(
@@ -35,8 +36,14 @@ class RegisterController(
             throw ResourceAlreadyExistsException("Department with name ${departmentWithUser.departmentName} or user with name ${departmentWithUser.username} already exists")
         }
 
-        val newDepartment = RestDepartmentWithUserRequest.toDepartment(departmentWithUser)
-        val department = departmentService.createDepartment(newDepartment)
+        val newDepartment = RestDepartmentWithUserRequest.toDepartment(departmentWithUser, Random.nextLong())
+        val features = newDepartment.features
+
+        val departmentWithoutFeatures = newDepartment.copy(features = emptySet())
+        val savedDepartment = departmentService.createDepartment(departmentWithoutFeatures)
+
+        val departmentWithFeatures = savedDepartment.copy(features = features.map { it.copy(departmentId = savedDepartment.id) }.toSet())
+        val department = departmentService.saveDepartment(departmentWithFeatures)
 
         val newUser = RestDepartmentWithUserRequest.toUser(departmentWithUser, department)
         val user = userService.createUser(newUser)

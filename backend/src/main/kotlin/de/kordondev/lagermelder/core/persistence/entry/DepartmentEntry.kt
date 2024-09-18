@@ -24,7 +24,7 @@ data class DepartmentEntry (
         @Column(name = "short_name")
         val shortName: String = "",
 
-        @OneToMany
+        @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.EAGER)
         @JoinColumn(name = "department_id")
         val features: Set<DepartmentFeatureEntry> = emptySet()
 )

@@ -10,6 +10,7 @@ import de.kordondev.lagermelder.rest.model.request.RestDepartmentRegistrationReq
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRequest
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
+import kotlin.random.Random
 
 @RestController
 class DepartmentController(
@@ -33,16 +34,18 @@ class DepartmentController(
 
     @PostMapping("/departments")
     fun addDepartment(@RequestBody(required = true) @Valid department: RestDepartmentRequest): RestDepartment {
+        val departmentId = Random.nextLong()
         return departmentService
-                .createDepartment(RestDepartmentRequest.to(department))
+                .createDepartment(RestDepartmentRequest.to(department, departmentId, setOf()))
                 .let { RestDepartment.of(it) }
     }
 
     @PutMapping("/departments/{id}")
     fun saveDepartment(@RequestBody(required = true) @Valid department: RestDepartmentRequest, @PathVariable("id") id: Long): RestDepartment {
+        val departmentFromDB = departmentService.getDepartment(id)
 
         return departmentService
-            .saveDepartment(RestDepartmentRequest.to(department, id))
+            .saveDepartment(RestDepartmentRequest.to(department, id, departmentFromDB.features))
                 .let { RestDepartment.of(it) }
     }
 

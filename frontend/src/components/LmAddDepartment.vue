@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { Department } from '../services/department'
+import {type Department, DepartmentFeatures} from '../services/department'
 import { registerNewDepartmentAndUser } from '../services/user'
 import { useToast } from 'vue-toastification'
 import { showErrorToast } from '@/helper/fetch'
@@ -25,7 +25,8 @@ const addDepartmentAndUser = () => {
     departmentName: departmentName.value,
     leaderName: leaderName.value,
     leaderEMail: leaderMail.value,
-    username: username.value
+    username: username.value,
+    features: [DepartmentFeatures.CHILD_GROUPS, DepartmentFeatures.YOUTH_GROUPS]
   }
   registerNewDepartmentAndUser(departmentWithUserReguest)
     .then((newDepartmentWithUser) => {
@@ -38,7 +39,8 @@ const addDepartmentAndUser = () => {
         leaderName: newDepartmentWithUser.leaderName,
         leaderEMail: newDepartmentWithUser.leaderEMail,
         shortName: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        features: newDepartmentWithUser.features
       })
       departmentName.value = ''
       leaderName.value = ''

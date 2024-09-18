@@ -12,12 +12,16 @@ onMounted(async () => {
   const attendees = await getAttendeesForDepartment(props.departmentId)
   distribution.value = {
     youths: attendees.youths.length,
-    youthLeader: attendees.youthLeaders.length
+    youthLeader: attendees.youthLeaders.length,
+    children: attendees.children.length,
+    childLeaders: attendees.childLeaders.length
   }
 })
 interface Distribution {
   youths?: number
   youthLeader?: number
+  children?: number
+  childLeaders?: number
 }
 </script>
 
@@ -32,12 +36,16 @@ interface Distribution {
           <tr>
             <th>Jugendliche</th>
             <th>Jugendleiter</th>
+            <th>Kinder (Kindergruppentag)</th>
+            <th>Jugendleiter (Kindergruppentag)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>{{ distribution.youths }}</td>
             <td>{{ distribution.youthLeader }}</td>
+            <td>{{ distribution.children }}</td>
+            <td>{{ distribution.childLeaders }}</td>
           </tr>
         </tbody>
       </v-table>

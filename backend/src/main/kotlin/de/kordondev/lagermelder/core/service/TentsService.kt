@@ -32,7 +32,7 @@ class TentsService(
     }
 
     private fun checkCanTentsBeEdited() {
-        if (!settingsService.canAttendeesBeEdited()) {
+        if (!settingsService.attendeesCanBeEdited()) {
             throw WrongTimeException("Registrierungsende wurde überschritten")
         }
     }

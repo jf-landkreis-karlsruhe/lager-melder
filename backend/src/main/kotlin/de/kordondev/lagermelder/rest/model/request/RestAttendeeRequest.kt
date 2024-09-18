@@ -55,6 +55,34 @@ data class RestAttendeeRequest(
                     code = "",
                     status = null
                 )
+
+                AttendeeRole.CHILD -> ChildEntry(
+                    id = UUID.randomUUID().toString(),
+                    firstName = attendee.firstName,
+                    lastName = attendee.lastName,
+                    birthday = attendee.birthday,
+                    food = attendee.food,
+                    tShirtSize = attendee.tShirtSize,
+                    additionalInformation = attendee.additionalInformation,
+                    role = attendee.role,
+                    department = department,
+                    code = "",
+                    status = null
+                )
+
+                AttendeeRole.CHILD_LEADER -> ChildLeaderEntry(
+                    id = UUID.randomUUID().toString(),
+                    firstName = attendee.firstName,
+                    lastName = attendee.lastName,
+                    birthday = attendee.birthday,
+                    food = attendee.food,
+                    tShirtSize = attendee.tShirtSize,
+                    additionalInformation = attendee.additionalInformation,
+                    role = attendee.role,
+                    department = department,
+                    code = "",
+                    status = null
+                )
             }
 
         }

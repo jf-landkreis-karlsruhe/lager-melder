@@ -12,7 +12,6 @@ import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.security.AuthorityService
-import de.kordondev.lagermelder.core.service.models.Attendees
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ResourceLoader
@@ -23,7 +22,7 @@ import java.time.LocalDate
 
 
 @Service
-class AdminFilesService(
+class PlanningFilesService(
     private val resourceLoader: ResourceLoader,
     private val attendeeService: AttendeeService,
     private val eventService: EventService,
@@ -33,7 +32,7 @@ class AdminFilesService(
     private val tShirtSizeService: TShirtSizeService,
 ) {
     private val yDistanceBetweenBatches = 141F
-    private val logger: Logger = LoggerFactory.getLogger(AdminFilesService::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(PlanningFilesService::class.java)
     private val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
 
     fun createBatches(): ByteArray {
@@ -44,7 +43,9 @@ class AdminFilesService(
         document.open()
 
         val attendeesFromDB = attendeeService.getAttendees()
-        val attendees = (attendeesFromDB.youths + attendeesFromDB.youthLeaders).sortedBy { it.department.name }
+        val attendees =
+            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders)
+                .sortedBy { it.department.name }
         logger.info("Creating batches for ${attendees.size} on ${1 + (attendees.size / 5)} pages")
         var attendeeIndex = 0
         while (attendeeIndex < attendees.size) {
@@ -181,13 +182,17 @@ class AdminFilesService(
 
         val globalDepartments = DepartmentEntry(0, "Zeltlager gesamt", "", "", "", "")
         val allAttendees = attendeeService.getAttendees()
-        val totalTShirtCount = countTShirtPerSize(allAttendees)
+        val totalTShirtCount =
+            countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders)
         val eventStart = settingsService.getSettings().eventStart
-        val totalBraceletCount = countBracelet(allAttendees, eventStart)
+        val totalBraceletCount = countBracelet(
+            allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders,
+            eventStart
+        )
         val tShirtSizes = tShirtSizeService.getTShirtSizes().map { it.size }.toMutableList()
 
         addTShirtsAndBraceletForDepartment(
-            globalDepartments,
+            globalDepartments.name,
             tShirtSizes,
             totalTShirtCount,
             totalBraceletCount,
@@ -198,9 +203,20 @@ class AdminFilesService(
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartment(department)
             if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty()) {
-                val tShirtCount = countTShirtPerSize(attendees)
-                val braceletCount = countBracelet(attendees, eventStart)
-                addTShirtsAndBraceletForDepartment(department, tShirtSizes, tShirtCount, braceletCount, document)
+                val tShirtCount = countTShirtPerSize(attendees.youths + attendees.youthLeaders)
+                val braceletCount = countBracelet(attendees.youths + attendees.youthLeaders, eventStart)
+                addTShirtsAndBraceletForDepartment(department.name, tShirtSizes, tShirtCount, braceletCount, document)
+            }
+            if (attendees.children.isNotEmpty() || attendees.childLeaders.isNotEmpty()) {
+                val tShirtCount = countTShirtPerSize(attendees.children + attendees.childLeaders)
+                val braceletCount = countBracelet(attendees.children + attendees.childLeaders, eventStart)
+                addTShirtsAndBraceletForDepartment(
+                    "${department.name} Kindergruppe",
+                    tShirtSizes,
+                    tShirtCount,
+                    braceletCount,
+                    document
+                )
             }
         }
         document.close()
@@ -208,14 +224,14 @@ class AdminFilesService(
     }
 
     private fun addTShirtsAndBraceletForDepartment(
-        department: DepartmentEntry,
+        departmentName: String,
         tShirtSizes: MutableList<String>,
         tShirtCount: MutableMap<String, Int>,
         braceletCount: MutableMap<Color, Int>,
         document: Document
     ) {
         val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
-        document.add(Paragraph("Abteilung: ${department.name}", headlineFont))
+        document.add(Paragraph("Abteilung: $departmentName", headlineFont))
         document.add(Paragraph("Kreiszeltlager - T-Shirt", headlineFont))
 
         val table = Table(2)
@@ -251,18 +267,21 @@ class AdminFilesService(
         document.newPage()
     }
 
-    private fun countTShirtPerSize(attendees: Attendees): MutableMap<String, Int> {
+    private fun countTShirtPerSize(attendees: kotlin.collections.List<Attendee>): MutableMap<String, Int> {
         val tShirtCount = mutableMapOf<String, Int>()
-        for (attendee in (attendees.youths + attendees.youthLeaders)) {
+        for (attendee in (attendees)) {
             val currentCount = tShirtCount[attendee.tShirtSize] ?: 0
             tShirtCount[attendee.tShirtSize] = (currentCount + 1)
         }
         return tShirtCount
     }
 
-    private fun countBracelet(attendees: Attendees, eventStart: LocalDate): MutableMap<Color, Int> {
+    private fun countBracelet(
+        attendees: kotlin.collections.List<Attendee>,
+        eventStart: LocalDate
+    ): MutableMap<Color, Int> {
         val braceletCount = mutableMapOf<Color, Int>()
-        for (attendee in (attendees.youths + attendees.youthLeaders)) {
+        for (attendee in attendees) {
             val color = colorForAgeGroup(attendee, eventStart)
             val currentCount = braceletCount[color] ?: 0
             braceletCount[color] = (currentCount + 1)
@@ -297,16 +316,36 @@ class AdminFilesService(
         val document = prepareDocument(out)
 
         val attendees = attendeeService.getAttendees()
+
+        val foodAttendees = foodFromAttendees(attendees.youths + attendees.youthLeaders)
+        addFoodToDocument(document, foodAttendees, "Essen - Teilnehmer")
+        document.newPage()
+
+        val foodChildren = foodFromAttendees(attendees.children + attendees.childLeaders)
+        addFoodToDocument(document, foodChildren, "Essen - Kindergruppe")
+
+        document.close()
+        return out.toByteArray()
+    }
+
+    private fun foodFromAttendees(attendees: kotlin.collections.List<Attendee>): Map<Food, MutableList<Attendee>> {
         val foodAttendees = mutableMapOf<Food, MutableList<Attendee>>()
         for (food in Food.entries) {
             foodAttendees[food] = mutableListOf()
         }
 
-        for (attendee in (attendees.youths + attendees.youthLeaders)) {
+        for (attendee in attendees) {
             foodAttendees[attendee.food]?.add(attendee)
         }
+        return foodAttendees
+    }
 
-        document.add(Paragraph("Kreiszeltlager - Essen", headlineFont))
+    private fun addFoodToDocument(
+        document: Document,
+        foodAttendees: Map<Food, MutableList<Attendee>>,
+        headline: String
+    ) {
+        document.add(Paragraph(headline, headlineFont))
         for (food in Food.entries) {
             document.add(Paragraph("$food (${foodAttendees[food]!!.size})", headlineFont))
             val list = List()
@@ -320,9 +359,6 @@ class AdminFilesService(
             }
             document.add(list)
         }
-
-        document.close()
-        return out.toByteArray()
     }
 
     fun createAdditionalInformationPDF(): ByteArray {
@@ -330,9 +366,22 @@ class AdminFilesService(
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out)
         val attendees = attendeeService.getAttendees()
-        val departmentAttendees = mutableMapOf<DepartmentEntry, MutableList<Attendee>>()
 
-        for (attendee in (attendees.youths + attendees.youthLeaders)) {
+        document.add(Paragraph("Kreiszeltlager - Kommentare", headlineFont))
+        val departmentAttendees = attendeesWithAdditionalInformation(attendees.youths + attendees.youthLeaders)
+        addCommentsToDocument(document, departmentAttendees)
+        document.newPage()
+
+        val departmentChildren = attendeesWithAdditionalInformation(attendees.children + attendees.childLeaders)
+        addCommentsToDocument(document, departmentChildren)
+
+        document.close()
+        return out.toByteArray()
+    }
+
+    private fun attendeesWithAdditionalInformation(attendees: kotlin.collections.List<Attendee>): Map<DepartmentEntry, MutableList<Attendee>> {
+        val departmentAttendees = mutableMapOf<DepartmentEntry, MutableList<Attendee>>()
+        for (attendee in attendees) {
             if (attendee.additionalInformation.isEmpty()) {
                 continue
             }
@@ -341,9 +390,14 @@ class AdminFilesService(
             }
             departmentAttendees[attendee.department]?.add(attendee)
         }
+        return departmentAttendees
+    }
 
+    private fun addCommentsToDocument(
+        document: Document,
+        departmentAttendees: Map<DepartmentEntry, MutableList<Attendee>>,
+    ) {
         val departments = departmentAttendees.keys.toList().sortedBy { it.name }
-        document.add(Paragraph("Kreiszeltlager - Kommentare", headlineFont))
         for (department in departments) {
             document.add(Paragraph(department.name, headlineFont))
             document.add(Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}"))
@@ -354,10 +408,6 @@ class AdminFilesService(
             }
             document.add(list)
         }
-
-        document.close()
-        return out.toByteArray()
-
     }
 
     fun createOverviewForEachDepartment(): ByteArray {
@@ -369,30 +419,56 @@ class AdminFilesService(
         val departments = departmentService.getDepartments()
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartment(department)
-            if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty()) {
+            if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty() && attendees.children.isEmpty() && attendees.childLeaders.isEmpty()) {
                 continue
             }
-            document.add(Paragraph("Abteilung: ${department.name}", headlineFont))
-
-            val table = Table(3)
-            table.borderWidth = 1F
-            table.borderColor = Color(0, 0, 0)
-            table.padding = 3F
-            table.spacing = 0F
-            table.addCell("Name:")
-            table.addCell("T-Shirt")
-            table.addCell("Armband")
-            table.endHeaders()
-            for (attendee in (attendees.youths + attendees.youthLeaders)) {
-                table.addCell("${attendee.firstName} ${attendee.lastName}")
-                table.addCell(attendee.tShirtSize)
-                table.addCell(colorToString(colorForAgeGroup(attendee, eventStart)))
+            if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty()) {
+                addDepartmentTableToDocument(
+                    document,
+                    department.name,
+                    attendees.youths + attendees.youthLeaders,
+                    eventStart
+                )
             }
-            document.add(table)
+
+            if (attendees.children.isNotEmpty() || attendees.childLeaders.isNotEmpty()) {
+                addDepartmentTableToDocument(
+                    document,
+                    "${department.name} Kindergruppe",
+                    attendees.children + attendees.childLeaders,
+                    eventStart
+                )
+            }
+
             document.newPage()
         }
         document.close()
         return out.toByteArray()
+    }
+
+    private fun addDepartmentTableToDocument(
+        document: Document,
+        departmentName: String,
+        attendees: kotlin.collections.List<Attendee>,
+        eventStart: LocalDate
+    ) {
+        document.add(Paragraph(departmentName, headlineFont))
+
+        val table = Table(3)
+        table.borderWidth = 1F
+        table.borderColor = Color(0, 0, 0)
+        table.padding = 3F
+        table.spacing = 0F
+        table.addCell("Name:")
+        table.addCell("T-Shirt")
+        table.addCell("Armband")
+        table.endHeaders()
+        for (attendee in attendees) {
+            table.addCell("${attendee.firstName} ${attendee.lastName}")
+            table.addCell(attendee.tShirtSize)
+            table.addCell(colorToString(colorForAgeGroup(attendee, eventStart)))
+        }
+        document.add(table)
     }
 
     private fun prepareDocument(documentStream: ByteArrayOutputStream): Document {

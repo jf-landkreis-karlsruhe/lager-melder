@@ -13,7 +13,6 @@ data class DepartmentFeatureEntry(
     @Column(name = "department_id")
     val departmentId: Long,
 
-    @Id
     @Column(name = "feature")
     @Enumerated(EnumType.STRING)
     val feature: DepartmentFeatures,
