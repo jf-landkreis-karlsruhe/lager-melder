@@ -4,6 +4,7 @@ import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import jakarta.persistence.*
 import org.hibernate.Hibernate
 import java.time.Instant
+import java.time.LocalDate
 import java.util.*
 
 @Entity
@@ -49,7 +50,13 @@ data class ChildLeaderEntry(
     override val status: AttendeeStatus?,
 
     @Column(name = "created_at")
-    override val createdAt: Instant = Instant.now()
+    override val createdAt: Instant = Instant.now(),
+
+    @Column(name = "juleika_number", table = "child_leaders")
+    val juleikaNumber: String,
+
+    @Column(name = "juleika_expire_date", table = "child_leaders")
+    val juleikaExpireDate: LocalDate?,
 
 ) : Attendee {
     override fun equals(other: Any?): Boolean {

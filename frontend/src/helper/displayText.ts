@@ -1,7 +1,10 @@
 import { Food } from '../services/attendee'
 
-export const birthdayText = (birthday: string) => {
-  const date = new Date(birthday);
+export const dateAsText = (stringDate: string) => {
+  if (!stringDate) {
+    return "";
+  }
+  const date = new Date(stringDate);
   const day = date.getDate().toString().padStart(2, "0");
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const year = date.getFullYear();
