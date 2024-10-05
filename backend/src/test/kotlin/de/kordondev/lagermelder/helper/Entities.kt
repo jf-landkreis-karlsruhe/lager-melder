@@ -14,11 +14,29 @@ class Entities() {
     }
     companion object {
         fun department(): DepartmentEntry {
-            return DepartmentEntry(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com", "", "")
+            return DepartmentEntry(
+                id = 1L,
+                name = "Dep",
+                leaderName = "depLeader",
+                leaderEMail = "l@dep.com",
+                "",
+                "",
+                emptySet(),
+                ""
+            )
         }
 
         fun departmentEntry(): DepartmentEntry {
-            return DepartmentEntry(id = 1L, name = "Dep", leaderName = "depLeader", leaderEMail = "l@dep.com", "", "")
+            return DepartmentEntry(
+                id = 1L,
+                name = "Dep",
+                leaderName = "depLeader",
+                leaderEMail = "l@dep.com",
+                "",
+                "",
+                emptySet(),
+                ""
+            )
         }
 
         fun attendee(): Attendee {
@@ -87,7 +105,8 @@ class Entities() {
                 leaderName = "leader",
                 phoneNumber = "",
                 shortName = "",
-                features = emptySet()
+                features = emptySet(),
+                headDepartmentName = ""
             )
         }
 
