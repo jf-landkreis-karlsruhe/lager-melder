@@ -40,7 +40,8 @@ const addDepartmentAndUser = () => {
         leaderEMail: newDepartmentWithUser.leaderEMail,
         shortName: '',
         phoneNumber: '',
-        features: newDepartmentWithUser.features
+        features: newDepartmentWithUser.features,
+        headDepartmentName: ''
       })
       departmentName.value = ''
       leaderName.value = ''
