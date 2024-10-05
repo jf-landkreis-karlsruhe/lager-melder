@@ -19,10 +19,10 @@ data class RestDepartmentRequest(
     val leaderEMail: String,
     val phoneNumber: String,
     val shortName: String,
-    val features: Set<DepartmentFeatures>
+    val features: Set<DepartmentFeatures>,
+    val headDepartmentName: String,
 ) {
     companion object {
-
         fun to(department: RestDepartmentRequest, id: Long, features: Set<DepartmentFeatureEntry>) = DepartmentEntry(
             id = id,
             name = department.name,
@@ -32,8 +32,11 @@ data class RestDepartmentRequest(
             shortName = department.shortName,
             features = department.features.map {
                 features.firstOrNull { feature -> feature.feature == it }
-                    ?: DepartmentFeatureEntry(id = UUID.randomUUID().toString(), departmentId = id, feature = it)
-            }.toSet()
+                    ?: DepartmentFeatureEntry(
+                        id = UUID.randomUUID().toString(), departmentId = id, feature = it
+                    )
+            }.toSet(),
+            headDepartmentName = department.headDepartmentName
         )
     }
 }

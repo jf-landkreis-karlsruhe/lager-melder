@@ -10,7 +10,8 @@ data class RestDepartment(
         val leaderEMail: String,
         val phoneNumber: String,
         val shortName: String,
-        val features: Set<DepartmentFeatures> = emptySet()
+        val features: Set<DepartmentFeatures> = emptySet(),
+        val headDepartmentName: String
 ) {
     companion object {
         fun of(department: DepartmentEntry) = RestDepartment(
@@ -20,7 +21,8 @@ data class RestDepartment(
             leaderEMail = department.leaderEMail,
             phoneNumber = department.phoneNumber,
             shortName = department.shortName,
-            features = department.features.map { it.feature }.toSet()
+            features = department.features.map { it.feature }.toSet(),
+            headDepartmentName = department.headDepartmentName
         )
     }
 }

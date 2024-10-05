@@ -26,5 +26,8 @@ data class DepartmentEntry (
 
         @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.EAGER)
         @JoinColumn(name = "department_id")
-        val features: Set<DepartmentFeatureEntry> = emptySet()
+        val features: Set<DepartmentFeatureEntry> = emptySet(),
+
+        @Column(name = "head_department_name")
+        val headDepartmentName: String = ""
 )
