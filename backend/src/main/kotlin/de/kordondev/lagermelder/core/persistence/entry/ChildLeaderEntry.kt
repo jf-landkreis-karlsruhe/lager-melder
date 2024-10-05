@@ -58,7 +58,7 @@ data class ChildLeaderEntry(
     @Column(name = "juleika_expire_date", table = "child_leaders")
     val juleikaExpireDate: LocalDate?,
 
-) : Attendee {
+    ) : Attendee {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false

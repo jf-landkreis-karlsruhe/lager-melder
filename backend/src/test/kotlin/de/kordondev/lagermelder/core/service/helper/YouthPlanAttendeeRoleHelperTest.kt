@@ -220,6 +220,23 @@ class YouthPlanAttendeeRoleHelperTest {
         Assertions.assertThat(youthPlanAttendees[AttendeeRole.YOUTH]).hasSize(12)
     }
 
+    @Test
+    fun invalidYouthLeaderAreYouth() {
+        val eventDate = LocalDate.of(2023, 5, 5)
+        val youths = createAttendees(10, eventDate)
+        val leaderMovable = createLeaderBelow27(1, eventDate)
+        val leaderWithoutJuleika = createLeaderWithoutJuleika(3, eventDate)
+
+        val youthPlanAttendees = youthPlanAttendeeRoleHelper.getOptimizedLeaderAndAttendeeIds(
+            listOf(),
+            leaderWithoutJuleika + youths + leaderMovable,
+            eventDate
+        ).groupBy { it.youthPlanRole }
+        Assertions.assertThat(youthPlanAttendees[AttendeeRole.YOUTH_LEADER]).hasSize(1)
+        Assertions.assertThat(youthPlanAttendees[AttendeeRole.YOUTH]).hasSize(13)
+
+    }
+
 
     private fun attendeeToYouthPlanAttendeeRole(
         attendee: Attendee,
@@ -248,6 +265,21 @@ class YouthPlanAttendeeRoleHelperTest {
         var attendees = listOf<Attendee>()
         for (i in 1..count) {
             attendees = attendees.plus(createAttendeeAge(randomId(), 26, eventDate, AttendeeRole.YOUTH_LEADER))
+        }
+        return attendees
+    }
+
+    private fun createLeaderWithoutJuleika(count: Int, eventDate: LocalDate): List<Attendee> {
+        var attendees = listOf<Attendee>()
+        for (i in 1..count) {
+            var attendee = createAttendeeAge(randomId(), 26, eventDate, AttendeeRole.YOUTH_LEADER) as YouthLeaderEntry
+            attendee = if ((count % 2) == 0) {
+                attendee.copy(juleikaNumber = "")
+            } else {
+                attendee.copy(juleikaExpireDate = eventDate.minusDays(1))
+            }
+
+            attendees = attendees.plus(attendee)
         }
         return attendees
     }
@@ -298,6 +330,8 @@ class YouthPlanAttendeeRoleHelperTest {
                 department = DepartmentEntry(4L, "", "", "", "", ""),
                 code = "",
                 status = AttendeeStatus.ENTERED,
+                juleikaNumber = "12345678",
+                juleikaExpireDate = LocalDate.of(2099, 5, 5)
             )
 
             AttendeeRole.CHILD -> ChildEntry(
@@ -326,6 +360,8 @@ class YouthPlanAttendeeRoleHelperTest {
                 department = DepartmentEntry(4L, "", "", "", "", ""),
                 code = "",
                 status = AttendeeStatus.ENTERED,
+                juleikaNumber = "12345678",
+                juleikaExpireDate = LocalDate.of(2099, 5, 5)
             )
         }
     }

@@ -58,13 +58,7 @@ data class RestAttendeeRequest(
                     code = "",
                     status = null,
                     juleikaNumber = attendee.juleikaNumber,
-                    juleikaExpireDate = attendee.juleikaExpireDate.let {
-                        if (it != "") {
-                            LocalDate.parse(it)
-                        } else {
-                            null
-                        }
-                    }
+                    juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate)
                 )
 
                 AttendeeRole.CHILD -> ChildEntry(
@@ -94,10 +88,17 @@ data class RestAttendeeRequest(
                     code = "",
                     status = null,
                     juleikaNumber = attendee.juleikaNumber,
-                    juleikaExpireDate = attendee.juleikaExpireDate.let { LocalDate.parse(it) }
+                    juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate)
                 )
             }
+        }
 
+        private fun toDateOrNull(date: String): LocalDate? {
+            return if (date != "") {
+                LocalDate.parse(date)
+            } else {
+                null
+            }
         }
     }
 }

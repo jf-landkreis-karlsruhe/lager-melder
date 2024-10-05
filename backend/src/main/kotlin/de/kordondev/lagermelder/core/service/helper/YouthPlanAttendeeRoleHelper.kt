@@ -3,6 +3,7 @@ package de.kordondev.lagermelder.core.service.helper
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.BaseAttendeeEntry
+import de.kordondev.lagermelder.core.persistence.entry.YouthLeaderEntry
 import de.kordondev.lagermelder.core.persistence.entry.YouthPlanAttendeeRoleEntry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import org.springframework.stereotype.Service
@@ -32,12 +33,16 @@ class YouthPlanAttendeeRoleHelper {
         fixedLeaderSize: Int
     ): List<YouthPlanAttendeeRoleEntry> {
 
+        val (leaderWithoutJuleika, attendees) = newAttendees
+            .partition { leaderWithInvalidJuleika(it, eventStart) }
+
         // birthday: "2020-03-30" "yyyy-MM-dd"
-        var (youth, leader) = newAttendees
+        var (youth, leader) = attendees
             .sortedWith(oldFirstThenFirstname)
             .filter { Helper.ageAtEvent(it, eventStart) >= 6 }
             .partition { Helper.ageAtEvent(it, eventStart) <= 26 }
 
+        youth = youth + leaderWithoutJuleika
         val allLeaderSize = leader.size + fixedLeaderSize
         val correctDistributedAttendees = allLeaderSize + allLeaderSize * 5
         val toMuchYouths = (fixedDistributedAttendeesSize + newAttendees.size) - correctDistributedAttendees
@@ -46,7 +51,7 @@ class YouthPlanAttendeeRoleHelper {
             // move x first of attendees, who are at least 18, to the end of leader
             val newLeader = youth
                 .subList(0, possibleLeaderCount)
-                .filter { Helper.ageAtEvent(it, eventStart) >= 18 }
+                .filter { Helper.ageAtEvent(it, eventStart) >= 18 && !leaderWithInvalidJuleika(it, eventStart) }
             leader = leader.plus(newLeader)
             youth = youth.subList(newLeader.size, youth.size)
         }
@@ -72,5 +77,12 @@ class YouthPlanAttendeeRoleHelper {
             )
         }
         return newYouthPlanRoles
+    }
+
+    private fun leaderWithInvalidJuleika(attendee: Attendee, eventStart: LocalDate): Boolean {
+        if (attendee !is YouthLeaderEntry) {
+            return false
+        }
+        return attendee.juleikaNumber.isEmpty() || attendee.juleikaExpireDate?.isBefore(eventStart) ?: true
     }
 }
