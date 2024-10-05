@@ -23,16 +23,6 @@ data class RestDepartmentRequest(
     val headDepartmentName: String,
 ) {
     companion object {
-        fun to(department: RestDepartmentRequest) = DepartmentEntry(
-            id = 0,
-            name = department.name,
-            leaderName = department.leaderName,
-            leaderEMail = department.leaderEMail,
-            phoneNumber = department.phoneNumber,
-            shortName = department.shortName,
-            headDepartmentName = department.headDepartmentName
-        )
-
         fun to(department: RestDepartmentRequest, id: Long, features: Set<DepartmentFeatureEntry>) = DepartmentEntry(
             id = id,
             name = department.name,
