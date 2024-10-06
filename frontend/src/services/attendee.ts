@@ -47,6 +47,8 @@ export interface NewAttendee {
   tShirtSize: string
   additionalInformation: string
   role: AttendeeRole
+  juleikaNumber: string
+  juleikaExpireDate: string
 }
 
 export interface Attendee extends NewAttendee {

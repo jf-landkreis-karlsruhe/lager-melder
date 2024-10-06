@@ -8,11 +8,13 @@
     <changeSet id="20241001" author="kordon">
         <sql>
             ALTER TABLE child_leaders
-                ADD COLUMN juleika_number varchar(255) not null default '',
+                ADD COLUMN juleika_number varchar(255) not null default '';
+            ALTER TABLE child_leaders
                 ADD COLUMN juleika_expire_date DATE;
 
             ALTER TABLE youth_leaders
-                ADD COLUMN juleika_number varchar(255) not null default '',
+                ADD COLUMN juleika_number varchar(255) not null default '';
+            ALTER TABLE youth_leaders
                 ADD COLUMN juleika_expire_date DATE;
         </sql>
     </changeSet>
