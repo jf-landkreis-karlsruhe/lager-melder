@@ -4,6 +4,7 @@ import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import java.time.LocalDate
 import java.util.*
 
 data class RestAttendeeRequest(
@@ -23,7 +24,9 @@ data class RestAttendeeRequest(
     val tShirtSize: String,
     val additionalInformation: String,
     @field:NotNull(message = "role is missing")
-    val role: AttendeeRole
+    val role: AttendeeRole,
+    val juleikaNumber: String,
+    val juleikaExpireDate: String
 ) {
     companion object {
         fun to(attendee: RestAttendeeRequest, department: DepartmentEntry): Attendee {
@@ -53,7 +56,9 @@ data class RestAttendeeRequest(
                     role = attendee.role,
                     department = department,
                     code = "",
-                    status = null
+                    status = null,
+                    juleikaNumber = attendee.juleikaNumber,
+                    juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate)
                 )
 
                 AttendeeRole.CHILD -> ChildEntry(
@@ -81,10 +86,19 @@ data class RestAttendeeRequest(
                     role = attendee.role,
                     department = department,
                     code = "",
-                    status = null
+                    status = null,
+                    juleikaNumber = attendee.juleikaNumber,
+                    juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate)
                 )
             }
+        }
 
+        private fun toDateOrNull(date: String): LocalDate? {
+            return if (date != "") {
+                LocalDate.parse(date)
+            } else {
+                null
+            }
         }
     }
 }

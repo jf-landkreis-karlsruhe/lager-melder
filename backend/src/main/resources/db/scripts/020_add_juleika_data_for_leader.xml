@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+
+    <changeSet id="20241001" author="kordon">
+        <sql>
+            ALTER TABLE child_leaders
+                ADD COLUMN juleika_number varchar(255) not null default '';
+            ALTER TABLE child_leaders
+                ADD COLUMN juleika_expire_date DATE;
+
+            ALTER TABLE youth_leaders
+                ADD COLUMN juleika_number varchar(255) not null default '';
+            ALTER TABLE youth_leaders
+                ADD COLUMN juleika_expire_date DATE;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { AttendeeStatus, updateAttendee } from '../services/attendee'
-import { foodText, birthdayText } from '../helper/displayText'
-import { Food, AttendeeRole, createAttendee } from '../services/attendee'
-import type { Attendee } from '../services/attendee'
-import { deleteAttendee as deleteAttendeeService } from '../services/attendee'
+import { computed, onMounted, ref } from 'vue'
+import {
+  type Attendee,
+  AttendeeRole,
+  AttendeeStatus,
+  createAttendee,
+  deleteAttendee as deleteAttendeeService,
+  Food,
+  updateAttendee
+} from '../services/attendee'
+import { dateAsText, foodText } from '../helper/displayText'
 import { filterEnteredAttendees } from '@/helper/filterHelper'
-import { computed } from 'vue'
-import { getTShirtSizes, type TShirtSize } from '@/services/tShirtSizes'
+import { getTShirtSizes } from '@/services/tShirtSizes'
 
 interface AttendeeWithValidation extends Attendee {
   tShirtSizeError: boolean
@@ -40,8 +44,12 @@ const headers = ref<{ title: string; value: string; sortable?: boolean }[]>([
   { title: 'TShirt Größe', value: 'tShirtSize' },
   { title: 'Geburtsdatum', value: 'birthday' },
   { title: 'Anmerkung', value: 'additionalInformation' },
+  { title: 'Juleikanummer', value: 'juleikaNumber' },
+  { title: 'Juleika Ablaufdatum', value: 'juleikaExpireDate' },
   { title: '', value: 'actions', sortable: false }
 ])
+if (props.role == AttendeeRole.CHILD_LEADER) {
+}
 const tShirtSizes = ref<string[]>([])
 
 onMounted(() => {
@@ -126,7 +134,9 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
         tShirtSize: '',
         additionalInformation: '',
         role: props.role,
-        departmentId: props.departmentId
+        departmentId: props.departmentId,
+        juleikaNumber: '',
+        juleikaExpireDate: ''
       }
     ])
     .map((attendee) => ({ ...attendee, tShirtSizeError: false }))
@@ -186,6 +196,36 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
               />
             </div>
           </template>
+          <template v-slot:[`item.juleikaNumber`]="{ item }">
+            <div v-if="!editingAttendeeIds.includes(item.id)">
+              {{ item.juleikaNumber || '-' }}
+            </div>
+            <div v-if="editingAttendeeIds.includes(item.id)">
+              <v-text-field
+                type="text"
+                v-model="item.juleikaNumber"
+                label="Juleika Nummer"
+                variant="underlined"
+                :disabled="item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER"
+                :form="createFormName(item)"
+              />
+            </div>
+          </template>
+          <template v-slot:[`item.juleikaExpireDate`]="{ item }">
+            <div v-if="!editingAttendeeIds.includes(item.id)">
+              {{ dateAsText(item.juleikaExpireDate) }}
+            </div>
+            <div v-if="editingAttendeeIds.includes(item.id)">
+              <v-text-field
+                type="date"
+                v-model="item.juleikaExpireDate"
+                label="Juleika Ablaufdatum"
+                variant="underlined"
+                :disabled="item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER"
+                :form="createFormName(item)"
+              />
+            </div>
+          </template>
           <template v-slot:[`item.tShirtSize`]="{ item }">
             <div style="max-width: 190px">
               <div v-if="!editingAttendeeIds.includes(item.id)">
@@ -223,7 +263,7 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
           </template>
           <template v-slot:[`item.birthday`]="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
-              {{ birthdayText(item.birthday) }}
+              {{ dateAsText(item.birthday) }}
             </div>
             <div v-if="editingAttendeeIds.includes(item.id)">
               <v-text-field
