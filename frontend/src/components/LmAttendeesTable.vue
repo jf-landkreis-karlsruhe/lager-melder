@@ -12,6 +12,7 @@ import {
 import { dateAsText, foodText } from '../helper/displayText'
 import { filterEnteredAttendees } from '@/helper/filterHelper'
 import { getTShirtSizes } from '@/services/tShirtSizes'
+import { getDepartmentsForSelecting } from '@/services/department'
 
 interface AttendeeWithValidation extends Attendee {
   tShirtSizeError: boolean
@@ -36,24 +37,32 @@ const deletedAttendeeIds = ref<string[]>([])
 const newAttendeeId = ref<string>('newAttendee')
 const deletingAttendees = ref<string[]>([])
 const editingAttendeeIds = ref<string[]>([newAttendeeId.value])
-const headers = ref<{ title: string; value: string; sortable?: boolean }[]>([
+const headers = computed<{ title: string; value: string; sortable?: boolean }[]>(() => [
   { title: '', value: 'status' },
   { title: 'Vorname', value: 'firstName' },
   { title: 'Nachname', value: 'lastName' },
   { title: 'Essen', value: 'food' },
   { title: 'TShirt Größe', value: 'tShirtSize' },
   { title: 'Geburtsdatum', value: 'birthday' },
-  { title: 'Anmerkung', value: 'additionalInformation' },
-  { title: 'Juleikanummer', value: 'juleikaNumber' },
-  { title: 'Juleika Ablaufdatum', value: 'juleikaExpireDate' },
-  { title: '', value: 'actions', sortable: false }
+  { title: 'Anmerkung', value: 'additionalInformation' }
 ])
-if (props.role == AttendeeRole.CHILD_LEADER) {
+if (props.role == AttendeeRole.CHILD_LEADER || props.role == AttendeeRole.YOUTH_LEADER) {
+  headers.value.push({ title: 'Juleikanummer', value: 'juleikaNumber' })
+  headers.value.push({ title: 'Juleika Ablaufdatum', value: 'juleikaExpireDate' })
 }
+if (props.role === AttendeeRole.Z_KID) {
+  headers.value.push({ title: 'Gehört zu', value: 'partOfDepartmentId' })
+}
+headers.value.push({ title: '', value: 'actions', sortable: false })
+
 const tShirtSizes = ref<string[]>([])
 
 onMounted(() => {
   getTShirtSizes().then((data) => (tShirtSizes.value = data))
+  getDepartmentsForSelecting().then((data) => {
+    console.log(data)
+    departments.value.push({ value: data.id, title: data.name })
+  })
 })
 
 const deleteAttendee = (att: Attendee) => {
@@ -115,6 +124,16 @@ const foods = computed<{ value: Food; title: string }[]>(() => {
   }))
 })
 
+const departments = computed<{ value: number; title: string }[]>(() => {
+  return [
+    { value: 0, title: 'Keine' },
+    { value: 1, title: 'Karlsbad' },
+    { value: 2, title: 'Ettlingen' },
+    { value: 3, title: 'Landkreis Karlsruhe' },
+    { value: 10, title: 'admin' }
+  ]
+})
+
 const enteredAttendees = computed<number>(() => {
   return props.attendees.filter(filterEnteredAttendees).length
 })
@@ -136,7 +155,8 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
         role: props.role,
         departmentId: props.departmentId,
         juleikaNumber: '',
-        juleikaExpireDate: ''
+        juleikaExpireDate: '',
+        partOfDepartmentId: 0 // or props.departmentId?
       }
     ])
     .map((attendee) => ({ ...attendee, tShirtSizeError: false }))
@@ -206,7 +226,9 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                 v-model="item.juleikaNumber"
                 label="Juleika Nummer"
                 variant="underlined"
-                :disabled="item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER"
+                :disabled="
+                  item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER
+                "
                 :form="createFormName(item)"
               />
             </div>
@@ -221,7 +243,9 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                 v-model="item.juleikaExpireDate"
                 label="Juleika Ablaufdatum"
                 variant="underlined"
-                :disabled="item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER"
+                :disabled="
+                  item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER
+                "
                 :form="createFormName(item)"
               />
             </div>
@@ -255,6 +279,22 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                 :items="foods"
                 variant="underlined"
                 label="Essen"
+                single-line
+                required
+                :form="createFormName(item)"
+              ></v-select>
+            </div>
+          </template>
+          <template v-slot:[`item.partOfDepartmentId`]="{ item }">
+            <div v-if="!editingAttendeeIds.includes(item.id)">
+              {{ item.partOfDepartmentId }}
+            </div>
+            <div v-if="editingAttendeeIds.includes(item.id)">
+              <v-select
+                v-model="item.partOfDepartmentId"
+                :items="departments"
+                variant="underlined"
+                label="Teil von"
                 single-line
                 required
                 :form="createFormName(item)"

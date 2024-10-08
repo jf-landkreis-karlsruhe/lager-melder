@@ -23,5 +23,6 @@
     <include file="classpath:db/scripts/018_add_child_groups.xml"/>
     <include file="classpath:db/scripts/019_add_child_groups_registration_end.xml"/>
     <include file="classpath:db/scripts/020_add_juleika_data_for_leader.xml"/>
+    <include file="classpath:db/scripts/021_add_z_kids.xml"/>
 
 </databaseChangeLog>

@@ -5,6 +5,7 @@ import de.kordondev.lagermelder.core.service.DepartmentService
 import de.kordondev.lagermelder.core.service.TentsService
 import de.kordondev.lagermelder.rest.model.RestAttendees
 import de.kordondev.lagermelder.rest.model.RestDepartment
+import de.kordondev.lagermelder.rest.model.RestDepartmentShort
 import de.kordondev.lagermelder.rest.model.RestTents
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRegistrationRequest
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRequest
@@ -23,6 +24,13 @@ class DepartmentController(
         return departmentService
             .getDepartments(onlyWithAttendees)
                 .map{ RestDepartment.of(it)}
+    }
+
+    @GetMapping("/departments/for-selecting")
+    fun getDepartmentsForSelecting(): List<RestDepartmentShort> {
+        return departmentService
+            .getDepartmentsForSelecting()
+            .map{ RestDepartmentShort.of(it)}
     }
 
     @GetMapping("/departments/{id}")

@@ -26,10 +26,11 @@ data class RestAttendeeRequest(
     @field:NotNull(message = "role is missing")
     val role: AttendeeRole,
     val juleikaNumber: String,
-    val juleikaExpireDate: String
+    val juleikaExpireDate: String,
+    val partOfDepartmentId: Long,
 ) {
     companion object {
-        fun to(attendee: RestAttendeeRequest, department: DepartmentEntry): Attendee {
+        fun to(attendee: RestAttendeeRequest, department: DepartmentEntry, partOfDepartment: DepartmentEntry?): Attendee {
             return when (attendee.role) {
                 AttendeeRole.YOUTH -> YouthEntry(
                     id = UUID.randomUUID().toString(),
@@ -89,6 +90,23 @@ data class RestAttendeeRequest(
                     status = null,
                     juleikaNumber = attendee.juleikaNumber,
                     juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate)
+                )
+
+                AttendeeRole.Z_KID -> ZKidEntry(
+                    id = UUID.randomUUID().toString(),
+                    firstName = attendee.firstName,
+                    lastName = attendee.lastName,
+                    birthday = attendee.birthday,
+                    food = attendee.food,
+                    tShirtSize = attendee.tShirtSize,
+                    additionalInformation = attendee.additionalInformation,
+                    role = attendee.role,
+                    department = department,
+                    code = "",
+                    status = null,
+                    // at this point we know that partOfDepartment is not null, because we could load it from the database
+                    // but all other Attendee types do not have a partOfDepartment
+                    partOfDepartment = partOfDepartment!!
                 )
             }
         }
