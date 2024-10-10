@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/lager_melder
   liquibase:
-    change-log: classpath:db/changelog-master.xml
+    change-log: classpath:db/changelog-main.xml
     contexts: prod
 
   mail:

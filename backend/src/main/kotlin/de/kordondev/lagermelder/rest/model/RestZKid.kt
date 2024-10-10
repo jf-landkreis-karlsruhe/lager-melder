@@ -17,7 +17,7 @@ data class RestZKid(
     val additionalInformation: String,
     val role: AttendeeRole,
     val code: String,
-    val status: String,
+    val status: String?,
     val partOfDepartmentId: Long
 ) {
     companion object {
@@ -32,7 +32,7 @@ data class RestZKid(
             role = attendee.role,
             departmentId = attendee.department.id,
             code = attendee.code,
-            status = attendee.status.toString(),
+            status = attendee.status?.toString(),
             partOfDepartmentId = attendee.partOfDepartment.id
         )
     }
