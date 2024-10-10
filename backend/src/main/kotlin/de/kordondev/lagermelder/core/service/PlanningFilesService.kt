@@ -44,7 +44,7 @@ class PlanningFilesService(
 
         val attendeesFromDB = attendeeService.getAttendees()
         val attendees =
-            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders)
+            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
                 .sortedBy { it.department.name }
         logger.info("Creating batches for ${attendees.size} on ${1 + (attendees.size / 5)} pages")
         var attendeeIndex = 0
@@ -183,10 +183,10 @@ class PlanningFilesService(
         val globalDepartments = DepartmentEntry(0, "Zeltlager gesamt", "", "", "", "")
         val allAttendees = attendeeService.getAttendees()
         val totalTShirtCount =
-            countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders)
+            countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids)
         val eventStart = settingsService.getSettings().eventStart
         val totalBraceletCount = countBracelet(
-            allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders,
+            allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids,
             eventStart
         )
         val tShirtSizes = tShirtSizeService.getTShirtSizes().map { it.size }.toMutableList()
