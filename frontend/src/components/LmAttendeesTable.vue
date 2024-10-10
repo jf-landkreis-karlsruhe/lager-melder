@@ -222,9 +222,6 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                 v-model="item.juleikaNumber"
                 label="Juleika Nummer"
                 variant="underlined"
-                :disabled="
-                  item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER
-                "
                 :form="createFormName(item)"
               />
             </div>
@@ -239,9 +236,6 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                 v-model="item.juleikaExpireDate"
                 label="Juleika Ablaufdatum"
                 variant="underlined"
-                :disabled="
-                  item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER
-                "
                 :form="createFormName(item)"
               />
             </div>
