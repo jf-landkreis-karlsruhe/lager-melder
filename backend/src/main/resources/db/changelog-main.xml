@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <include file="classpath:db/scripts/001_add-attendees-users-departments.xml"/>
+    <include file="classpath:db/scripts/002_add-settings.xml"/>
+    <include file="classpath:db/scripts/003_add-events.xml"/>
+    <include file="classpath:db/scripts/005_add-mock-data.xml"/>
+    <include file="classpath:db/scripts/006_add-event-type.xml"/>
+    <include file="classpath:db/scripts/007_add-attendee-status.xml"/>
+    <include file="classpath:db/scripts/008_add-tent-count.xml"/>
+    <include file="classpath:db/scripts/009_add-youth-plan-attendee-roles.xml"/>
+    <include file="classpath:db/scripts/010_add-start-of-registration-files-date.xml"/>
+    <include file="classpath:db/scripts/011_add-reset-token-table.xml"/>
+    <include file="classpath:db/scripts/012_extend-department.xml"/>
+    <include file="classpath:db/scripts/013_add_variable_tshirt_sizes.xml"/>
+    <include file="classpath:db/scripts/014_add-mock-tshirt-data.xml"/>
+    <include file="classpath:db/scripts/015_add_head_department_name.xml"/>
+    <include file="classpath:db/scripts/016_add_department_features.xml"/>
+    <include file="classpath:db/scripts/017_divide_attendee_types.xml"/>
+    <include file="classpath:db/scripts/018_add_child_groups.xml"/>
+    <include file="classpath:db/scripts/019_add_child_groups_registration_end.xml"/>
+    <include file="classpath:db/scripts/020_add_juleika_data_for_leader.xml"/>
+    <include file="classpath:db/scripts/021_add_z_kids.xml"/>
+    <include file="classpath:db/scripts/022_add_helpers.xml"/>
+
+</databaseChangeLog>

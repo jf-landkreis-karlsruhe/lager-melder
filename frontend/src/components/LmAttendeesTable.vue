@@ -37,7 +37,7 @@ const deletedAttendeeIds = ref<string[]>([])
 const newAttendeeId = ref<string>('newAttendee')
 const deletingAttendees = ref<string[]>([])
 const editingAttendeeIds = ref<string[]>([newAttendeeId.value])
-const headers = computed<{ title: string; value: string; sortable?: boolean }[]>(() => [
+const headers = ref<{ title: string; value: string; sortable?: boolean }[]>([
   { title: '', value: 'status' },
   { title: 'Vorname', value: 'firstName' },
   { title: 'Nachname', value: 'lastName' },
@@ -60,8 +60,10 @@ const tShirtSizes = ref<string[]>([])
 onMounted(() => {
   getTShirtSizes().then((data) => (tShirtSizes.value = data))
   getDepartmentsForSelecting().then((data) => {
-    console.log(data)
-    departments.value.push({ value: data.id, title: data.name })
+    departments.value = [
+      ...departments.value,
+      ...data.map((department) => ({ value: department.id, title: department.name }))
+    ]
   })
 })
 
@@ -93,6 +95,8 @@ const saveAttendee = (att: AttendeeWithValidation) => {
     })
     return
   }
+  if (!att.juleikaNumber) att.juleikaNumber = ''
+  if (!att.juleikaExpireDate) att.juleikaExpireDate = ''
   updateAttendee(att).then(() => {
     removeAttendeeIdFromList(att.id, editingAttendeeIds.value)
   })
@@ -124,15 +128,7 @@ const foods = computed<{ value: Food; title: string }[]>(() => {
   }))
 })
 
-const departments = computed<{ value: number; title: string }[]>(() => {
-  return [
-    { value: 0, title: 'Keine' },
-    { value: 1, title: 'Karlsbad' },
-    { value: 2, title: 'Ettlingen' },
-    { value: 3, title: 'Landkreis Karlsruhe' },
-    { value: 10, title: 'admin' }
-  ]
-})
+const departments = ref<{ value: number; title: string }[]>([{ value: 0, title: 'Keine' }])
 
 const enteredAttendees = computed<number>(() => {
   return props.attendees.filter(filterEnteredAttendees).length
@@ -287,7 +283,7 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
           </template>
           <template v-slot:[`item.partOfDepartmentId`]="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
-              {{ item.partOfDepartmentId }}
+              {{ departments.find((d) => d.value == item.partOfDepartmentId)?.title || '-' }}
             </div>
             <div v-if="editingAttendeeIds.includes(item.id)">
               <v-select
