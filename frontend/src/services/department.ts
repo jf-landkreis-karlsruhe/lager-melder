@@ -8,6 +8,12 @@ export const getDepartments = (query?: { onlyWithAttendees?: boolean }) =>
     withAuthenticationHeader()
   )
 
+export const getDepartmentsForSelecting = () =>
+    getData<DepartmentShort[]>(
+        `departments/for-selecting`,
+        withAuthenticationHeader()
+    )
+
 export const getDepartment = (id: number) =>
   getData<Department>(`departments/${id}`, withAuthenticationHeader())
 
@@ -28,6 +34,11 @@ export interface Department {
   shortName: string
   features: DepartmentFeatures[]
   headDepartmentName: string
+}
+
+export interface DepartmentShort {
+  id: number
+  name: string
 }
 
 export enum DepartmentFeatures {

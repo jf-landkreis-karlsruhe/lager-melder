@@ -12,6 +12,7 @@ import {
 import { dateAsText, foodText } from '../helper/displayText'
 import { filterEnteredAttendees } from '@/helper/filterHelper'
 import { getTShirtSizes } from '@/services/tShirtSizes'
+import { getDepartmentsForSelecting } from '@/services/department'
 
 interface AttendeeWithValidation extends Attendee {
   tShirtSizeError: boolean
@@ -43,17 +44,27 @@ const headers = ref<{ title: string; value: string; sortable?: boolean }[]>([
   { title: 'Essen', value: 'food' },
   { title: 'TShirt Größe', value: 'tShirtSize' },
   { title: 'Geburtsdatum', value: 'birthday' },
-  { title: 'Anmerkung', value: 'additionalInformation' },
-  { title: 'Juleikanummer', value: 'juleikaNumber' },
-  { title: 'Juleika Ablaufdatum', value: 'juleikaExpireDate' },
-  { title: '', value: 'actions', sortable: false }
+  { title: 'Anmerkung', value: 'additionalInformation' }
 ])
-if (props.role == AttendeeRole.CHILD_LEADER) {
+if (props.role == AttendeeRole.CHILD_LEADER || props.role == AttendeeRole.YOUTH_LEADER) {
+  headers.value.push({ title: 'Juleikanummer', value: 'juleikaNumber' })
+  headers.value.push({ title: 'Juleika Ablaufdatum', value: 'juleikaExpireDate' })
 }
+if (props.role === AttendeeRole.Z_KID) {
+  headers.value.push({ title: 'Gehört zu', value: 'partOfDepartmentId' })
+}
+headers.value.push({ title: '', value: 'actions', sortable: false })
+
 const tShirtSizes = ref<string[]>([])
 
 onMounted(() => {
   getTShirtSizes().then((data) => (tShirtSizes.value = data))
+  getDepartmentsForSelecting().then((data) => {
+    departments.value = [
+      ...departments.value,
+      ...data.map((department) => ({ value: department.id, title: department.name }))
+    ]
+  })
 })
 
 const deleteAttendee = (att: Attendee) => {
@@ -84,6 +95,8 @@ const saveAttendee = (att: AttendeeWithValidation) => {
     })
     return
   }
+  if (!att.juleikaNumber) att.juleikaNumber = ''
+  if (!att.juleikaExpireDate) att.juleikaExpireDate = ''
   updateAttendee(att).then(() => {
     removeAttendeeIdFromList(att.id, editingAttendeeIds.value)
   })
@@ -115,6 +128,8 @@ const foods = computed<{ value: Food; title: string }[]>(() => {
   }))
 })
 
+const departments = ref<{ value: number; title: string }[]>([{ value: 0, title: 'Keine' }])
+
 const enteredAttendees = computed<number>(() => {
   return props.attendees.filter(filterEnteredAttendees).length
 })
@@ -136,7 +151,8 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
         role: props.role,
         departmentId: props.departmentId,
         juleikaNumber: '',
-        juleikaExpireDate: ''
+        juleikaExpireDate: '',
+        partOfDepartmentId: 0 // or props.departmentId?
       }
     ])
     .map((attendee) => ({ ...attendee, tShirtSizeError: false }))
@@ -206,7 +222,6 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                 v-model="item.juleikaNumber"
                 label="Juleika Nummer"
                 variant="underlined"
-                :disabled="item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER"
                 :form="createFormName(item)"
               />
             </div>
@@ -221,7 +236,6 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                 v-model="item.juleikaExpireDate"
                 label="Juleika Ablaufdatum"
                 variant="underlined"
-                :disabled="item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER"
                 :form="createFormName(item)"
               />
             </div>
@@ -255,6 +269,22 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                 :items="foods"
                 variant="underlined"
                 label="Essen"
+                single-line
+                required
+                :form="createFormName(item)"
+              ></v-select>
+            </div>
+          </template>
+          <template v-slot:[`item.partOfDepartmentId`]="{ item }">
+            <div v-if="!editingAttendeeIds.includes(item.id)">
+              {{ departments.find((d) => d.value == item.partOfDepartmentId)?.title || '-' }}
+            </div>
+            <div v-if="editingAttendeeIds.includes(item.id)">
+              <v-select
+                v-model="item.partOfDepartmentId"
+                :items="departments"
+                variant="underlined"
+                label="Teil von"
                 single-line
                 required
                 :form="createFormName(item)"

@@ -24,9 +24,9 @@ const attendeeRoleYouth = ref<AttendeeRole>(AttendeeRole.YOUTH)
 const attendeeRoleYouthLeader = ref<AttendeeRole>(AttendeeRole.YOUTH_LEADER)
 const attendeeRoleChild = ref<AttendeeRole>(AttendeeRole.CHILD)
 const attendeeRoleChildLeader = ref<AttendeeRole>(AttendeeRole.CHILD_LEADER)
+const attendeeRoleZKid = ref<AttendeeRole>(AttendeeRole.Z_KID)
 const totalAttendeeCount = ref<number>(0)
 
-let now = new Date()
 let attendeesRegistrationEnd: Date | null = null
 let attendeesCanBeEdited: boolean = false
 let childGroupRegistrationEnd: Date | null = null
@@ -59,6 +59,13 @@ const childAttendeeList = computed<Attendee[]>(() => {
     props.department.id,
     filterInput.value
   )
+})
+
+const zKidsAttendeeList = computed<Attendee[]>(() => {
+  if (!props.department || !props.department.id) {
+    return []
+  }
+  return filterByDepartmentAndSearch(attendees.value.zKids, props.department.id, filterInput.value)
 })
 
 const childLeaderAttendeeList = computed<Attendee[]>(() => {
@@ -165,6 +172,19 @@ onMounted(() => {
         :departmentId="department.id"
         :attendeesChanged="attendeesChanged"
         :disabled="!childGroupCanBeEdited"
+      />
+    </div>
+
+    <div v-if="department && department.features.includes(DepartmentFeatures.ZKIDS)">
+      <h2>Z Kids</h2>
+      <LmRegistrationEndBanner :registrationEnd="attendeesRegistrationEnd" />
+      <AttendeesTable
+        headlineText="Z Kids"
+        :attendees="zKidsAttendeeList"
+        :departmentId="department.id"
+        :role="attendeeRoleZKid"
+        :attendeesChanged="attendeesChanged"
+        :disabled="!attendeesCanBeEdited"
       />
     </div>
   </v-container>

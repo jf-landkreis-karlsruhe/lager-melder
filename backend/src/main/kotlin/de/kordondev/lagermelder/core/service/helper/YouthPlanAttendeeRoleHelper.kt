@@ -81,8 +81,8 @@ class YouthPlanAttendeeRoleHelper {
 
     private fun leaderWithValidJuleika(attendee: Attendee, eventStart: LocalDate): Boolean {
         if (attendee !is YouthLeaderEntry) {
-            return true
+            return false
         }
-        return attendee.juleikaNumber.isNotEmpty() && attendee.juleikaExpireDate?.isAfter(eventStart) ?: false
+        return attendee.juleikaNumber.isEmpty() || attendee.juleikaExpireDate?.isBefore(eventStart) ?: true
     }
 }

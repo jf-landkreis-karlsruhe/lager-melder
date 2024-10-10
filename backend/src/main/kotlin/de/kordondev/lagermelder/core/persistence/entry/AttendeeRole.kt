@@ -4,5 +4,6 @@ enum class AttendeeRole {
     YOUTH,
     YOUTH_LEADER,
     CHILD,
-    CHILD_LEADER
+    CHILD_LEADER,
+    Z_KID
 }

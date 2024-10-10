@@ -1,4 +1,4 @@
-import { AttendeeRole, Food, AttendeeStatus } from '../services/attendee'
+import { AttendeeStatus } from '../services/attendee'
 import type { Attendee } from '../services/attendee'
 
 export const filterByDepartmentAndSearch = (
