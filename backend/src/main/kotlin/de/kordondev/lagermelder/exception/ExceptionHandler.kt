@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
+
 @ControllerAdvice
 class ExceptionHandler : ResponseEntityExceptionHandler() {
 
@@ -65,7 +66,6 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     fun handleUnexpectedTypeException(ex: UnexpectedTypeException): ResponseEntity<ErrorResponse> {
         return exceptionToBody(ex, HttpStatus.INTERNAL_SERVER_ERROR, WRONG_TYPE)
     }
-
 
     data class ErrorResponse(val key: String, val messages: List<ErrorMessage>)
     data class ErrorMessage(val message: String?, val fieldName: String?)

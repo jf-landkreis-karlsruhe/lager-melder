@@ -3,9 +3,9 @@ package de.kordondev.lagermelder.rest.model
 import com.fasterxml.jackson.annotation.JsonProperty
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.Food
-import de.kordondev.lagermelder.core.persistence.entry.YouthEntry
+import de.kordondev.lagermelder.core.persistence.entry.ZKidEntry
 
-data class RestYouth(
+data class RestZKid(
     val id: String,
     val firstName: String,
     val lastName: String,
@@ -17,10 +17,11 @@ data class RestYouth(
     val additionalInformation: String,
     val role: AttendeeRole,
     val code: String,
-    val status: String?
+    val status: String?,
+    val partOfDepartmentId: Long
 ) {
     companion object {
-        fun of(attendee: YouthEntry) = RestYouth(
+        fun of(attendee: ZKidEntry) = RestZKid(
             id = attendee.id,
             firstName = attendee.firstName,
             lastName = attendee.lastName,
@@ -31,7 +32,8 @@ data class RestYouth(
             role = attendee.role,
             departmentId = attendee.department.id,
             code = attendee.code,
-            status = attendee.status?.toString()
+            status = attendee.status?.toString(),
+            partOfDepartmentId = attendee.partOfDepartment.id
         )
     }
 }

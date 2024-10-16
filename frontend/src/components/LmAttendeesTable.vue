@@ -9,9 +9,11 @@ import {
   Food,
   updateAttendee
 } from '../services/attendee'
-import { dateAsText, foodText } from '../helper/displayText'
+import { dateAsText, foodText, helperDaysText } from '../helper/displayText'
 import { filterEnteredAttendees } from '@/helper/filterHelper'
 import { getTShirtSizes } from '@/services/tShirtSizes'
+import { getDepartmentsForSelecting } from '@/services/department'
+import { getEventDays } from '@/services/eventDays'
 
 interface AttendeeWithValidation extends Attendee {
   tShirtSizeError: boolean
@@ -22,6 +24,7 @@ const props = withDefaults(
     attendees: Attendee[]
     departmentId: number
     headlineText: string
+    formName: string
     role: AttendeeRole
     disabled: boolean
     attendeesChanged?: (change: number) => void
@@ -42,18 +45,36 @@ const headers = ref<{ title: string; value: string; sortable?: boolean }[]>([
   { title: 'Nachname', value: 'lastName' },
   { title: 'Essen', value: 'food' },
   { title: 'TShirt Größe', value: 'tShirtSize' },
-  { title: 'Geburtsdatum', value: 'birthday' },
-  { title: 'Anmerkung', value: 'additionalInformation' },
-  { title: 'Juleikanummer', value: 'juleikaNumber' },
-  { title: 'Juleika Ablaufdatum', value: 'juleikaExpireDate' },
-  { title: '', value: 'actions', sortable: false }
+  { title: 'Anmerkung', value: 'additionalInformation' }
 ])
-if (props.role == AttendeeRole.CHILD_LEADER) {
+if (props.role == AttendeeRole.CHILD_LEADER || props.role == AttendeeRole.YOUTH_LEADER) {
+  headers.value.push({ title: 'Geburtsdatum', value: 'birthday' })
+  headers.value.push({ title: 'Juleikanummer', value: 'juleikaNumber' })
+  headers.value.push({ title: 'Juleika Ablaufdatum', value: 'juleikaExpireDate' })
 }
+if (props.role === AttendeeRole.Z_KID) {
+  headers.value.push({ title: 'Geburtsdatum', value: 'birthday' })
+  headers.value.push({ title: 'Gehört zu', value: 'partOfDepartmentId' })
+}
+if (props.role === AttendeeRole.HELPER) {
+  headers.value.push({ title: 'Helfertage', value: 'helperDays' })
+}
+headers.value.push({ title: '', value: 'actions', sortable: false })
+
 const tShirtSizes = ref<string[]>([])
+const possibleHelperDays = ref<{ title: string; value: string }[]>([])
 
 onMounted(() => {
   getTShirtSizes().then((data) => (tShirtSizes.value = data))
+  getDepartmentsForSelecting().then((data) => {
+    departments.value = [
+      ...departments.value,
+      ...data.map((department) => ({ value: department.id, title: department.name }))
+    ]
+  })
+  getEventDays().then((data) => {
+    possibleHelperDays.value.push(...data.map((day) => ({ title: day.name, value: day.id })))
+  })
 })
 
 const deleteAttendee = (att: Attendee) => {
@@ -84,6 +105,9 @@ const saveAttendee = (att: AttendeeWithValidation) => {
     })
     return
   }
+  if (!att.juleikaNumber) att.juleikaNumber = ''
+  if (!att.juleikaExpireDate) att.juleikaExpireDate = ''
+  if (!att.birthday) att.birthday = ''
   updateAttendee(att).then(() => {
     removeAttendeeIdFromList(att.id, editingAttendeeIds.value)
   })
@@ -95,7 +119,7 @@ const removeAttendeeIdFromList = (id: string, list: string[]) => {
 }
 
 const createFormName = (att: Attendee) => {
-  return `form-${props.departmentId}-${props.headlineText}-${att.id}`
+  return `form-${props.departmentId}-${props.formName}-${att.id}`
 }
 
 const statusClass = (item: any): string => {
@@ -109,11 +133,13 @@ const statusClass = (item: any): string => {
 }
 
 const foods = computed<{ value: Food; title: string }[]>(() => {
-  return Object.values(Food).map((value) => ({
+  return Object.values(Food).map((value: Food) => ({
     value,
     title: foodText(value)
   }))
 })
+
+const departments = ref<{ value: number; title: string }[]>([{ value: 0, title: 'Keine' }])
 
 const enteredAttendees = computed<number>(() => {
   return props.attendees.filter(filterEnteredAttendees).length
@@ -136,7 +162,8 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
         role: props.role,
         departmentId: props.departmentId,
         juleikaNumber: '',
-        juleikaExpireDate: ''
+        juleikaExpireDate: '',
+        partOfDepartmentId: 0 // or props.departmentId?
       }
     ])
     .map((attendee) => ({ ...attendee, tShirtSizeError: false }))
@@ -206,7 +233,6 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                 v-model="item.juleikaNumber"
                 label="Juleika Nummer"
                 variant="underlined"
-                :disabled="item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER"
                 :form="createFormName(item)"
               />
             </div>
@@ -221,7 +247,6 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                 v-model="item.juleikaExpireDate"
                 label="Juleika Ablaufdatum"
                 variant="underlined"
-                :disabled="item.role !== AttendeeRole.CHILD_LEADER && item.role !== AttendeeRole.YOUTH_LEADER"
                 :form="createFormName(item)"
               />
             </div>
@@ -245,6 +270,33 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
               </div>
             </div>
           </template>
+          <template v-slot:[`item.helperDays`]="{ item }">
+            <div style="max-width: 190px">
+              <div v-if="!editingAttendeeIds.includes(item.id)">
+                <v-chip v-for="helperDay in item.helperDays">
+                  {{ helperDaysText(helperDay, possibleHelperDays) }}
+                </v-chip>
+              </div>
+              <div v-if="editingAttendeeIds.includes(item.id)">
+                <v-select
+                  v-model="item.helperDays"
+                  :items="possibleHelperDays"
+                  label="Helfertage"
+                  variant="underlined"
+                  :required="true"
+                  multiple
+                  chips
+                  single-line
+                  :error-messages="
+                    !item.helperDays || item.helperDays.length === 0
+                      ? ['Mindestens ein Helfertag muss ausgewählt werden']
+                      : []
+                  "
+                  :form="createFormName(item)"
+                ></v-select>
+              </div>
+            </div>
+          </template>
           <template v-slot:[`item.food`]="{ item }">
             <div v-if="!editingAttendeeIds.includes(item.id)">
               {{ foodText(item.food) }}
@@ -255,6 +307,22 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                 :items="foods"
                 variant="underlined"
                 label="Essen"
+                single-line
+                required
+                :form="createFormName(item)"
+              ></v-select>
+            </div>
+          </template>
+          <template v-slot:[`item.partOfDepartmentId`]="{ item }">
+            <div v-if="!editingAttendeeIds.includes(item.id)">
+              {{ departments.find((d) => d.value == item.partOfDepartmentId)?.title || '-' }}
+            </div>
+            <div v-if="editingAttendeeIds.includes(item.id)">
+              <v-select
+                v-model="item.partOfDepartmentId"
+                :items="departments"
+                variant="underlined"
+                label="Teil von"
                 single-line
                 required
                 :form="createFormName(item)"
