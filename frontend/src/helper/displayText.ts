@@ -1,4 +1,4 @@
-import { Food } from '../services/attendee'
+import { type EventDays, Food } from '../services/attendee'
 
 export const dateAsText = (stringDate: string) => {
   if (!stringDate) {
@@ -14,16 +14,23 @@ export const dateAsText = (stringDate: string) => {
 export const foodText = (food: Food) => {
   switch (food) {
     case Food.MEAT:
-      return "Fleisch";
+      return 'Fleisch'
     case Food.NONE:
-      return "Nichts";
+      return 'Nichts'
     case Food.SPECIAL:
-      return "Sonderessen";
+      return 'Sonderessen'
     case Food.VEGETARIAN:
-      return "Vegetarisch";
+      return 'Vegetarisch'
     case Food.MUSLIM:
-      return "Muslimisch";
+      return 'Muslimisch'
     default:
-      return food;
+      return food
   }
-};
+}
+
+export const helperDaysText = (
+  helperDayId: string,
+  eventDays: { value: string; title: string }[]
+) => {
+  return eventDays.find((eventDay) => eventDay.value === helperDayId)?.title || 'unbekannt'
+}

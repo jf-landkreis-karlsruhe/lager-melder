@@ -27,6 +27,7 @@ class AttendeeService(
     private val childRepository: ChildRepository,
     private val childLeaderRepository: ChildLeaderRepository,
     private val zKidRepository: ZKidsRepository,
+    private val helperRepository: HelperRepository,
     private val baseAttendeeRepository: BaseAttendeeRepository,
     private val eventRepository: AttendeeInEventRepository,
 ) {
@@ -39,7 +40,8 @@ class AttendeeService(
             youthLeaders = allAttendees.youthLeaders.filter { byAuthority(it) && hasFeature(it) },
             children = allAttendees.children.filter { byAuthority(it) && hasFeature(it) },
             childLeaders = allAttendees.childLeaders.filter { byAuthority(it) && hasFeature(it) },
-            zKids = allAttendees.zKids.filter { byAuthority(it) && hasFeature(it) }
+            zKids = allAttendees.zKids.filter { byAuthority(it) && hasFeature(it) },
+            helpers = allAttendees.helpers.filter { byAuthority(it) && hasFeature(it) }
         )
     }
 
@@ -104,7 +106,8 @@ class AttendeeService(
             youthLeaders =  youthLeaderRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
             children = childRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
             childLeaders = childLeaderRepository.findByDepartment(department.id).filter { byAuthority(it) }.toList(),
-            zKids = zKidRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList()
+            zKids = zKidRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            helpers = helperRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList()
         )
     }
 
@@ -120,7 +123,8 @@ class AttendeeService(
             youthLeaders = youthLeaderRepository.findAll().toList(),
             children = childRepository.findAll().toList(),
             childLeaders = childLeaderRepository.findAll().toList(),
-            zKids = zKidRepository.findAll().toList()
+            zKids = zKidRepository.findAll().toList(),
+            helpers = helperRepository.findAll().toList()
         )
     }
 
@@ -188,6 +192,7 @@ class AttendeeService(
             is YouthEntry, is YouthLeaderEntry -> features.contains(DepartmentFeatures.YOUTH_GROUPS)
             is ChildEntry, is ChildLeaderEntry -> features.contains(DepartmentFeatures.CHILD_GROUPS)
             is ZKidEntry -> features.contains(DepartmentFeatures.ZKIDS)
+            is HelperEntity -> features.contains(DepartmentFeatures.HELPER)
             else -> false
         }
     }
@@ -201,6 +206,7 @@ class AttendeeService(
                     AttendeeRole.CHILD -> childRepository.findByIdOrNull(it.id)
                     AttendeeRole.CHILD_LEADER -> childLeaderRepository.findByIdOrNull(it.id)
                     AttendeeRole.Z_KID -> zKidRepository.findByIdOrNull(it.id)
+                    AttendeeRole.HELPER -> helperRepository.findByIdOrNull(it.id)
                 }
             }
             ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
@@ -222,6 +228,7 @@ class AttendeeService(
             is ChildEntry -> childRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
             is ChildLeaderEntry -> childLeaderRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
             is ZKidEntry -> zKidRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
+            is HelperEntity -> helperRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
             else -> throw UnexpectedTypeException("Attendee type ${toSave.role} to save is not of expected type (AttendeeService)")
         }
     }

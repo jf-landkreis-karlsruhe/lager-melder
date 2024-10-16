@@ -30,10 +30,9 @@
 
             CREATE TABLE helper_days
             (
-                event_days_id VARCHAR(36) NOT NULL,
-                helpers_id     VARCHAR(36) NOT NULL,
-                FOREIGN KEY (event_days_id) REFERENCES event_days (id),
-                FOREIGN KEY (helpers_id) REFERENCES helpers (base_attendee_id)
+                event_day_id VARCHAR(36) NOT NULL,
+                helper_id     VARCHAR(36) NOT NULL,
+                FOREIGN KEY (event_day_id) REFERENCES event_days (id)
             );
         </sql>
     </changeSet>

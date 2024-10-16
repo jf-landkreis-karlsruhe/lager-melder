@@ -10,7 +10,7 @@ data class RestAttendee(
     val firstName: String,
     val lastName: String,
     val departmentId: Long,
-    val birthday: String,
+    val birthday: String? = null,
     val food: Food,
     @get:JsonProperty("tShirtSize")
     val tShirtSize: String,
@@ -20,7 +20,8 @@ data class RestAttendee(
     val status: String,
     val juleikaNumber: String? = null,
     val juleikaExpireDate: String? = null,
-    val partOfDepartmentId: Long? = null
+    val partOfDepartmentId: Long? = null,
+    val helperDays: Set<String>? = null
 ) {
     companion object {
 
@@ -31,6 +32,7 @@ data class RestAttendee(
                 is ChildEntry -> of(attendee)
                 is ChildLeaderEntry -> of(attendee)
                 is ZKidEntry -> of(attendee)
+                is HelperEntity -> of(attendee)
                 else -> throw UnexpectedTypeException("attendee is of type ${attendee.javaClass} and can not be be a RestAttendee")
             }
         }
@@ -104,6 +106,20 @@ data class RestAttendee(
             code = attendee.code,
             status = attendee.status.toString(),
             partOfDepartmentId = attendee.partOfDepartment.id
+        )
+
+        fun of(attendee: HelperEntity) = RestAttendee(
+            id = attendee.id,
+            firstName = attendee.firstName,
+            lastName = attendee.lastName,
+            food = attendee.food,
+            tShirtSize = attendee.tShirtSize,
+            additionalInformation = attendee.additionalInformation,
+            role = attendee.role,
+            departmentId = attendee.department.id,
+            code = attendee.code,
+            status = attendee.status.toString(),
+            helperDays = attendee.helperDays.map { it.id }.toSet()
         )
     }
 }

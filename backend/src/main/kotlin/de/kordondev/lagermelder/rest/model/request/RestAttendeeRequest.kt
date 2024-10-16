@@ -16,7 +16,6 @@ data class RestAttendeeRequest(
     val lastName: String,
     @field:NotNull(message = "departmentId missing")
     val departmentId: Long,
-    @field:NotNull(message = "birthday is missing")
     val birthday: String,
     @field:NotNull(message = "food is missing")
     val food: Food,
@@ -28,9 +27,10 @@ data class RestAttendeeRequest(
     val juleikaNumber: String,
     val juleikaExpireDate: String,
     val partOfDepartmentId: Long,
+    val helperDays: Set<String>
 ) {
     companion object {
-        fun to(attendee: RestAttendeeRequest, department: DepartmentEntry, partOfDepartment: DepartmentEntry?): Attendee {
+        fun to(attendee: RestAttendeeRequest, department: DepartmentEntry, partOfDepartment: DepartmentEntry?, eventDays: Set<EventDayEntity>): Attendee {
             return when (attendee.role) {
                 AttendeeRole.YOUTH -> YouthEntry(
                     id = UUID.randomUUID().toString(),
@@ -107,6 +107,20 @@ data class RestAttendeeRequest(
                     // at this point we know that partOfDepartment is not null, because we could load it from the database
                     // but all other Attendee types do not have a partOfDepartment
                     partOfDepartment = partOfDepartment!!
+                )
+
+                AttendeeRole.HELPER -> HelperEntity(
+                    id = UUID.randomUUID().toString(),
+                    firstName = attendee.firstName,
+                    lastName = attendee.lastName,
+                    food = attendee.food,
+                    tShirtSize = attendee.tShirtSize,
+                    additionalInformation = attendee.additionalInformation,
+                    role = attendee.role,
+                    department = department,
+                    code = "",
+                    status = null,
+                    helperDays = eventDays.filter { it.id in attendee.helperDays }.toSet()
                 )
             }
         }
