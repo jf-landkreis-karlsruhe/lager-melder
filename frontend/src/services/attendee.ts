@@ -51,12 +51,13 @@ export interface NewAttendee {
   role: AttendeeRole
   juleikaNumber: string
   juleikaExpireDate: string
-  partOfDepartmentId: number
+  partOfDepartmentId: number | undefined
+  helperDays: string[]
 }
 
 export interface Attendee extends NewAttendee {
   id: string
-  status: AttendeeStatus | null
+  status: AttendeeStatus | null | undefined
 }
 
 export interface Youth extends Attendee {}
@@ -79,12 +80,6 @@ export interface ZKid extends Attendee {
 
 export interface Helper extends Attendee {
   helperDays: string[]
-}
-
-export interface EventDays {
-  id: string
-  name: string
-  dayOfEvent: number
 }
 
 export interface Attendees {

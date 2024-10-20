@@ -1,4 +1,5 @@
-import { type EventDays, Food } from '../services/attendee'
+import { Food } from '../services/attendee'
+import type { EventDays } from '@/services/eventDays'
 
 export const dateAsText = (stringDate: string) => {
   if (!stringDate) {
@@ -28,9 +29,6 @@ export const foodText = (food: Food) => {
   }
 }
 
-export const helperDaysText = (
-  helperDayId: string,
-  eventDays: { value: string; title: string }[]
-) => {
-  return eventDays.find((eventDay) => eventDay.value === helperDayId)?.title || 'unbekannt'
+export const helperDaysText = (helperDayId: string, eventDays: EventDays[]) => {
+  return eventDays.find((eventDay) => eventDay.id === helperDayId)?.name || 'unbekannt'
 }

@@ -27,7 +27,7 @@ data class RestAttendeeRequest(
     val juleikaNumber: String,
     val juleikaExpireDate: String,
     val partOfDepartmentId: Long,
-    val helperDays: Set<String>
+    val helperDays: Set<String> = emptySet()
 ) {
     companion object {
         fun to(attendee: RestAttendeeRequest, department: DepartmentEntry, partOfDepartment: DepartmentEntry?, eventDays: Set<EventDayEntity>): Attendee {

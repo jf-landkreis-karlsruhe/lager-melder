@@ -3,9 +3,9 @@ package de.kordondev.lagermelder.rest.controller
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.EventDayEntity
-import de.kordondev.lagermelder.core.persistence.repository.EventDayRepository
 import de.kordondev.lagermelder.core.service.AttendeeService
 import de.kordondev.lagermelder.core.service.DepartmentService
+import de.kordondev.lagermelder.core.service.EventDayService
 import de.kordondev.lagermelder.rest.model.RestAttendee
 import de.kordondev.lagermelder.rest.model.RestAttendees
 import de.kordondev.lagermelder.rest.model.request.RestAttendeeRequest
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 class AttendeeController(
     private val attendeeService: AttendeeService,
     private val departmentService: DepartmentService,
-    private val eventDayRepository: EventDayRepository
+    private val eventDayService: EventDayService
 ) {
     @GetMapping("/attendees")
     fun getAttendees(): RestAttendees {
@@ -65,7 +65,7 @@ class AttendeeController(
 
     private fun getEventDays(attendee: RestAttendeeRequest): Set<EventDayEntity> {
         if (attendee.role === AttendeeRole.HELPER) {
-            return eventDayRepository.findAll().toSet()
+            return eventDayService.getEventDays().toSet()
         }
         return emptySet()
     }

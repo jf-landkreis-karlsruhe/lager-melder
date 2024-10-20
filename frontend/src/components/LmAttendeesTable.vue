@@ -13,10 +13,11 @@ import { dateAsText, foodText, helperDaysText } from '../helper/displayText'
 import { filterEnteredAttendees } from '@/helper/filterHelper'
 import { getTShirtSizes } from '@/services/tShirtSizes'
 import { getDepartmentsForSelecting } from '@/services/department'
-import { getEventDays } from '@/services/eventDays'
+import { type EventDays, getEventDays } from '@/services/eventDays'
 
 interface AttendeeWithValidation extends Attendee {
   tShirtSizeError: boolean
+  helperDaysError: boolean
 }
 
 const props = withDefaults(
@@ -44,13 +45,15 @@ const headers = ref<{ title: string; value: string; sortable?: boolean }[]>([
   { title: 'Vorname', value: 'firstName' },
   { title: 'Nachname', value: 'lastName' },
   { title: 'Essen', value: 'food' },
-  { title: 'TShirt Größe', value: 'tShirtSize' },
-  { title: 'Anmerkung', value: 'additionalInformation' }
+  { title: 'TShirt Größe', value: 'tShirtSize' }
 ])
 if (props.role == AttendeeRole.CHILD_LEADER || props.role == AttendeeRole.YOUTH_LEADER) {
   headers.value.push({ title: 'Geburtsdatum', value: 'birthday' })
   headers.value.push({ title: 'Juleikanummer', value: 'juleikaNumber' })
   headers.value.push({ title: 'Juleika Ablaufdatum', value: 'juleikaExpireDate' })
+}
+if (props.role === AttendeeRole.YOUTH || props.role === AttendeeRole.CHILD) {
+  headers.value.push({ title: 'Geburtsdatum', value: 'birthday' })
 }
 if (props.role === AttendeeRole.Z_KID) {
   headers.value.push({ title: 'Geburtsdatum', value: 'birthday' })
@@ -59,10 +62,13 @@ if (props.role === AttendeeRole.Z_KID) {
 if (props.role === AttendeeRole.HELPER) {
   headers.value.push({ title: 'Helfertage', value: 'helperDays' })
 }
+headers.value.push({ title: 'Anmerkung', value: 'additionalInformation' })
 headers.value.push({ title: '', value: 'actions', sortable: false })
 
 const tShirtSizes = ref<string[]>([])
-const possibleHelperDays = ref<{ title: string; value: string }[]>([])
+const helperDaysSelectValues = ref<{ title: string; value: string }[]>([])
+const eventDays = ref<EventDays[]>([])
+const departments = ref<{ value: number; title: string }[]>([])
 
 onMounted(() => {
   getTShirtSizes().then((data) => (tShirtSizes.value = data))
@@ -73,7 +79,7 @@ onMounted(() => {
     ]
   })
   getEventDays().then((data) => {
-    possibleHelperDays.value.push(...data.map((day) => ({ title: day.name, value: day.id })))
+    helperDaysSelectValues.value = data.map((day) => ({ title: day.name, value: day.id }))
   })
 })
 
@@ -97,6 +103,12 @@ const saveAttendee = (att: AttendeeWithValidation) => {
   } else {
     att.tShirtSizeError = false
   }
+  if (att.role == AttendeeRole.HELPER && (!att.helperDays || att.helperDays.length === 0)) {
+    att.helperDaysError = true
+    return
+  } else {
+    att.helperDaysError = false
+  }
 
   if (att.id === newAttendeeId.value) {
     createAttendee(att).then((newAtt) => {
@@ -108,6 +120,8 @@ const saveAttendee = (att: AttendeeWithValidation) => {
   if (!att.juleikaNumber) att.juleikaNumber = ''
   if (!att.juleikaExpireDate) att.juleikaExpireDate = ''
   if (!att.birthday) att.birthday = ''
+  if (!att.status) att.status = undefined
+  if (!att.helperDays) att.helperDays = []
   updateAttendee(att).then(() => {
     removeAttendeeIdFromList(att.id, editingAttendeeIds.value)
   })
@@ -139,8 +153,6 @@ const foods = computed<{ value: Food; title: string }[]>(() => {
   }))
 })
 
-const departments = ref<{ value: number; title: string }[]>([{ value: 0, title: 'Keine' }])
-
 const enteredAttendees = computed<number>(() => {
   return props.attendees.filter(filterEnteredAttendees).length
 })
@@ -163,10 +175,11 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
         departmentId: props.departmentId,
         juleikaNumber: '',
         juleikaExpireDate: '',
-        partOfDepartmentId: 0 // or props.departmentId?
+        partOfDepartmentId: undefined,
+        helperDays: []
       }
     ])
-    .map((attendee) => ({ ...attendee, tShirtSizeError: false }))
+    .map((attendee) => ({ ...attendee, tShirtSizeError: false, helperDaysError: false }))
 })
 </script>
 
@@ -274,13 +287,13 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
             <div style="max-width: 190px">
               <div v-if="!editingAttendeeIds.includes(item.id)">
                 <v-chip v-for="helperDay in item.helperDays">
-                  {{ helperDaysText(helperDay, possibleHelperDays) }}
+                  {{ helperDaysText(helperDay, eventDays) }}
                 </v-chip>
               </div>
               <div v-if="editingAttendeeIds.includes(item.id)">
                 <v-select
                   v-model="item.helperDays"
-                  :items="possibleHelperDays"
+                  :items="helperDaysSelectValues"
                   label="Helfertage"
                   variant="underlined"
                   :required="true"
@@ -288,9 +301,7 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
                   chips
                   single-line
                   :error-messages="
-                    !item.helperDays || item.helperDays.length === 0
-                      ? ['Mindestens ein Helfertag muss ausgewählt werden']
-                      : []
+                    item.helperDaysError ? ['Mindestens ein Helfertag muss ausgewählt werden'] : []
                   "
                   :form="createFormName(item)"
                 ></v-select>

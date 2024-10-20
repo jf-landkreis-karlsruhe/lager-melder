@@ -15,7 +15,10 @@ spring:
     host: h
     username: u
     password: p
-
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
 server:
   error:
     include-message: always

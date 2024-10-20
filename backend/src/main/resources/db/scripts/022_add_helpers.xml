@@ -32,7 +32,8 @@
             (
                 event_day_id VARCHAR(36) NOT NULL,
                 helper_id     VARCHAR(36) NOT NULL,
-                FOREIGN KEY (event_day_id) REFERENCES event_days (id)
+                FOREIGN KEY (event_day_id) REFERENCES event_days (id),
+                PRIMARY KEY (event_day_id, helper_id)
             );
         </sql>
     </changeSet>

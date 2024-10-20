@@ -78,7 +78,9 @@ class AttendeeControllerTest(val context: WebApplicationContext) {
             additionalInformation = "no",
             role = AttendeeRole.YOUTH_LEADER,
             juleikaNumber = "12345678",
-            juleikaExpireDate = LocalDate.of(2099, 5, 5).toString()
+            juleikaExpireDate = LocalDate.of(2099, 5, 5).toString(),
+            partOfDepartmentId = department.id,
+            helperDays = emptySet()
         )
 
         restMockMvc.perform(webTestHelper.put("/attendees/${createdAttendee.id}", updatedAttendee))
