@@ -16,7 +16,7 @@ data class RestHelper(
     val additionalInformation: String,
     val role: AttendeeRole,
     val code: String,
-    val status: String?,
+    val status: String,
     val helperDays: Set<String>
 ) {
     companion object {
@@ -30,7 +30,7 @@ data class RestHelper(
             role = attendee.role,
             departmentId = attendee.department.id,
             code = attendee.code,
-            status = attendee.status?.toString(),
+            status = attendee.status.toString(),
             helperDays = attendee.helperDays.map { it.id }.toSet()
         )
     }

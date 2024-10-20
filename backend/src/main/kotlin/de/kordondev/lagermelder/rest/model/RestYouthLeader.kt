@@ -17,7 +17,7 @@ data class RestYouthLeader(
     val additionalInformation: String,
     val role: AttendeeRole,
     val code: String,
-    val status: String?,
+    val status: String,
     val juleikaNumber: String,
     val juleikaExpireDate: String
 ) {
@@ -33,7 +33,7 @@ data class RestYouthLeader(
             role = attendee.role,
             departmentId = attendee.department.id,
             code = attendee.code,
-            status = attendee.status?.toString(),
+            status = attendee.status.toString(),
             juleikaNumber = attendee.juleikaNumber,
             juleikaExpireDate = attendee.juleikaExpireDate?.toString() ?: ""
         )
