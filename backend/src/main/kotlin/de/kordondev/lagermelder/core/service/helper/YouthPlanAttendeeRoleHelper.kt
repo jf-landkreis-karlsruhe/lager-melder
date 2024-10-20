@@ -34,7 +34,7 @@ class YouthPlanAttendeeRoleHelper {
     ): List<YouthPlanAttendeeRoleEntry> {
 
         val (attendees, leaderWithoutJuleika) = newAttendees
-            .partition { leaderWithValidJuleika(it, eventStart) }
+            .partition { leaderWithInvalidJuleika(it, eventStart) }
 
         // birthday: "2020-03-30" "yyyy-MM-dd"
         var (youth, leader) = attendees
@@ -51,7 +51,7 @@ class YouthPlanAttendeeRoleHelper {
             // move x first of attendees, who are at least 18, to the end of leader
             val newLeader = youth
                 .subList(0, possibleLeaderCount)
-                .filter { Helper.ageAtEvent(it, eventStart) >= 18 && leaderWithValidJuleika(it, eventStart) }
+                .filter { Helper.ageAtEvent(it, eventStart) >= 18 && leaderWithInvalidJuleika(it, eventStart) }
             leader = leader.plus(newLeader)
             youth = youth.subList(newLeader.size, youth.size)
         }
@@ -79,10 +79,10 @@ class YouthPlanAttendeeRoleHelper {
         return newYouthPlanRoles
     }
 
-    private fun leaderWithValidJuleika(attendee: Attendee, eventStart: LocalDate): Boolean {
+    private fun leaderWithInvalidJuleika(attendee: Attendee, eventStart: LocalDate): Boolean {
         if (attendee !is YouthLeaderEntry) {
             return true
         }
-        return attendee.juleikaNumber.isNotEmpty() && attendee.juleikaExpireDate?.isAfter(eventStart) ?: false
+        return attendee.juleikaNumber.isNotEmpty() && (attendee.juleikaExpireDate?.isAfter(eventStart) ?: false)
     }
 }

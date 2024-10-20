@@ -363,6 +363,9 @@ class YouthPlanAttendeeRoleHelperTest {
                 juleikaNumber = "12345678",
                 juleikaExpireDate = LocalDate.of(2099, 5, 5)
             )
+
+            AttendeeRole.HELPER -> throw IllegalArgumentException("Helper are not allowed")
+            AttendeeRole.Z_KID -> throw IllegalArgumentException("Z-Kids are not allowed")
         }
     }
 

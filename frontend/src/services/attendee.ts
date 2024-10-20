@@ -22,7 +22,9 @@ export enum AttendeeRole {
   YOUTH = 'YOUTH',
   YOUTH_LEADER = 'YOUTH_LEADER',
   CHILD = 'CHILD',
-  CHILD_LEADER = 'CHILD_LEADER'
+  CHILD_LEADER = 'CHILD_LEADER',
+  Z_KID = 'Z_KID',
+  HELPER = 'HELPER'
 }
 
 export enum Food {
@@ -49,30 +51,51 @@ export interface NewAttendee {
   role: AttendeeRole
   juleikaNumber: string
   juleikaExpireDate: string
+  partOfDepartmentId: number | undefined
+  helperDays: string[]
 }
 
 export interface Attendee extends NewAttendee {
   id: string
-  status: AttendeeStatus | null
+  status: AttendeeStatus | null | undefined
 }
 
 export interface Youth extends Attendee {}
 
-export interface YouthLeader extends Attendee {}
+export interface YouthLeader extends Attendee {
+  juleikaNumber: string
+  juleikaExpireDate: string
+}
 
 export interface Child extends Attendee {}
-export interface ChildLeader extends Attendee {}
+
+export interface ChildLeader extends Attendee {
+  juleikaNumber: string
+  juleikaExpireDate: string
+}
+
+export interface ZKid extends Attendee {
+  partOfDepartmentId: number
+}
+
+export interface Helper extends Attendee {
+  helperDays: string[]
+}
 
 export interface Attendees {
   youths: Youth[]
   youthLeaders: YouthLeader[]
   children: Child[]
   childLeaders: ChildLeader[]
+  zKids: ZKid[]
+  helpers: Helper[]
 }
 
 export const defaultAttendees: Attendees = {
   youths: [],
   youthLeaders: [],
   children: [],
-  childLeaders: []
+  childLeaders: [],
+  zKids: [],
+  helpers: []
 }

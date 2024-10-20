@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+
+    <changeSet id="20240904" author="kordon">
+        <sql>
+            CREATE TABLE z_kids
+            (
+                base_attendee_id VARCHAR(36) PRIMARY KEY NOT NULL,
+                birthday         VARCHAR(255)            NOT NULL,
+                part_of_department_id          BIGINT                  NOT NULL,
+                FOREIGN KEY (base_attendee_id) REFERENCES base_attendees (id),
+                FOREIGN KEY (part_of_department_id) REFERENCES departments (id)
+            );
+        </sql>
+    </changeSet>
+</databaseChangeLog>
