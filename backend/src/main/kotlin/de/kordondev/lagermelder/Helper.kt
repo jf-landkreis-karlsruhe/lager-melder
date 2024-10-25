@@ -1,7 +1,6 @@
 package de.kordondev.lagermelder
 
-import de.kordondev.lagermelder.core.persistence.entry.YouthEntry
-import de.kordondev.lagermelder.core.persistence.entry.YouthLeaderEntry
+import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.exception.UnexpectedTypeException
 import java.time.LocalDate
@@ -18,10 +17,21 @@ class Helper {
             return ageAtEvent(getBirthday(attendee), eventStart)
         }
 
+        fun ageAtEvent(attendee: Attendee, eventStart: LocalDate, fallback: Int): Int {
+            return try {
+                ageAtEvent(getBirthday(attendee), eventStart)
+            } catch (e: UnexpectedTypeException) {
+                fallback
+            }
+        }
+
         fun getBirthday(attendee: Attendee): String {
             return when (attendee) {
                 is YouthEntry -> attendee.birthday
                 is YouthLeaderEntry -> attendee.birthday
+                is ChildEntry -> attendee.birthday
+                is ChildLeaderEntry -> attendee.birthday
+                is ZKidEntry -> attendee.birthday
                 else -> throw UnexpectedTypeException("Attendee ${attendee.id} has no age")
             }
         }

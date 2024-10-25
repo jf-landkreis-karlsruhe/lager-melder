@@ -10,6 +10,7 @@ import com.lowagie.text.pdf.*
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
+import de.kordondev.lagermelder.core.persistence.entry.ZKidEntry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.security.AuthorityService
 import org.slf4j.Logger
@@ -30,6 +31,7 @@ class PlanningFilesService(
     private val authorityService: AuthorityService,
     private val settingsService: SettingsService,
     private val tShirtSizeService: TShirtSizeService,
+    private val eventDayService: EventDayService
 ) {
     private val yDistanceBetweenBatches = 141F
     private val logger: Logger = LoggerFactory.getLogger(PlanningFilesService::class.java)
@@ -44,8 +46,8 @@ class PlanningFilesService(
 
         val attendeesFromDB = attendeeService.getAttendees()
         val attendees =
-            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
-                .sortedBy { it.department.name }
+            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids + attendeesFromDB.helpers)
+                .sortedBy{ getPartOfDepartmentOrDepartmentName(it)}
         logger.info("Creating batches for ${attendees.size} on ${1 + (attendees.size / 5)} pages")
         var attendeeIndex = 0
         while (attendeeIndex < attendees.size) {
@@ -101,11 +103,7 @@ class PlanningFilesService(
         val xValue = 335F
         val yValue = 723F
         content.setTextMatrix(xValue, yValue - yDistanceBetweenBatches * attendeesOnPage)
-        if (attendee.department.shortName.isNotEmpty()) {
-            content.showText(attendee.department.shortName)
-        } else {
-            content.showText(attendee.department.name)
-        }
+        content.showText(getPartOfDepartmentOrDepartmentName(attendee, true))
         content.endText()
     }
 
@@ -145,7 +143,7 @@ class PlanningFilesService(
 
             document.open()
             document.add(headline)
-            document.add(Paragraph("Bitte beim Kommen und Gehen ein und ausloggen.")) //TODO: Correct sentence
+            document.add(Paragraph("Bitte beim Kommen und Gehen scannen."))
 
 
             val qrCode = Image.getInstance(createEventCode(createEventUrl(frontendBaseUrl, event.code)))
@@ -183,7 +181,7 @@ class PlanningFilesService(
         val globalDepartments = DepartmentEntry(0, "Zeltlager gesamt", "", "", "", "")
         val allAttendees = attendeeService.getAttendees()
         val totalTShirtCount =
-            countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids)
+            countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids + allAttendees.helpers)
         val eventStart = settingsService.getSettings().eventStart
         val totalBraceletCount = countBracelet(
             allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids,
@@ -201,10 +199,10 @@ class PlanningFilesService(
 
         val departments = departmentService.getDepartments()
         for (department in departments) {
-            val attendees = attendeeService.getAttendeesForDepartment(department)
-            if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty()) {
-                val tShirtCount = countTShirtPerSize(attendees.youths + attendees.youthLeaders)
-                val braceletCount = countBracelet(attendees.youths + attendees.youthLeaders, eventStart)
+            val attendees = attendeeService.getAttendeesForDepartmentWithZKidsBeingPartOf(department.id)
+            if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty() || attendees.zKids.isNotEmpty()) {
+                val tShirtCount = countTShirtPerSize(attendees.youths + attendees.youthLeaders + attendees.zKids)
+                val braceletCount = countBracelet(attendees.youths + attendees.youthLeaders + attendees.zKids, eventStart)
                 addTShirtsAndBraceletForDepartment(department.name, tShirtSizes, tShirtCount, braceletCount, document)
             }
             if (attendees.children.isNotEmpty() || attendees.childLeaders.isNotEmpty()) {
@@ -212,6 +210,17 @@ class PlanningFilesService(
                 val braceletCount = countBracelet(attendees.children + attendees.childLeaders, eventStart)
                 addTShirtsAndBraceletForDepartment(
                     "${department.name} Kindergruppe",
+                    tShirtSizes,
+                    tShirtCount,
+                    braceletCount,
+                    document
+                )
+            }
+            if (attendees.helpers.isNotEmpty()) {
+                val tShirtCount = countTShirtPerSize(attendees.helpers)
+                val braceletCount = countBracelet(attendees.helpers, eventStart)
+                addTShirtsAndBraceletForDepartment(
+                    "${department.name} Helfer",
                     tShirtSizes,
                     tShirtCount,
                     braceletCount,
@@ -290,7 +299,7 @@ class PlanningFilesService(
     }
 
     private fun colorForAgeGroup(attendee: Attendee, eventStart: LocalDate): Color {
-        val age = Helper.ageAtEvent(attendee, eventStart)
+        val age = Helper.ageAtEvent(attendee, eventStart, 18)
         if (age < 16) {
             return Color.RED
         }
@@ -317,12 +326,21 @@ class PlanningFilesService(
 
         val attendees = attendeeService.getAttendees()
 
-        val foodAttendees = foodFromAttendees(attendees.youths + attendees.youthLeaders)
+        val foodAttendees = foodFromAttendees(attendees.youths + attendees.youthLeaders + attendees.zKids)
         addFoodToDocument(document, foodAttendees, "Essen - Teilnehmer")
         document.newPage()
 
         val foodChildren = foodFromAttendees(attendees.children + attendees.childLeaders)
         addFoodToDocument(document, foodChildren, "Essen - Kindergruppe")
+
+        val eventDays = eventDayService.getEventDays().sortedBy { it.dayOfEvent }
+        for (eventDay in eventDays) {
+            document.newPage()
+            val helperForDay = attendees.helpers.filter { helper -> helper.helperDays.map { it.id }.contains(eventDay.id) }
+            val foodEventDay = foodFromAttendees(helperForDay)
+            addFoodToDocument(document, foodEventDay, "Helferessen - ${eventDay.name}")
+        }
+
 
         document.close()
         return out.toByteArray()
@@ -368,12 +386,16 @@ class PlanningFilesService(
         val attendees = attendeeService.getAttendees()
 
         document.add(Paragraph("Kreiszeltlager - Kommentare", headlineFont))
-        val departmentAttendees = attendeesWithAdditionalInformation(attendees.youths + attendees.youthLeaders)
+        val departmentAttendees = attendeesWithAdditionalInformation(attendees.youths + attendees.youthLeaders + attendees.zKids)
         addCommentsToDocument(document, departmentAttendees)
         document.newPage()
 
         val departmentChildren = attendeesWithAdditionalInformation(attendees.children + attendees.childLeaders)
         addCommentsToDocument(document, departmentChildren)
+        document.newPage()
+
+        val departmentHelper = attendeesWithAdditionalInformation(attendees.helpers)
+        addCommentsToDocument(document, departmentHelper)
 
         document.close()
         return out.toByteArray()
@@ -385,10 +407,11 @@ class PlanningFilesService(
             if (attendee.additionalInformation.isEmpty()) {
                 continue
             }
-            if (departmentAttendees[attendee.department] == null) {
-                departmentAttendees[attendee.department] = mutableListOf()
+            val department = getPartOfDepartmentOrDepartment(attendee)
+            if (departmentAttendees[department] == null) {
+                departmentAttendees[department] = mutableListOf()
             }
-            departmentAttendees[attendee.department]?.add(attendee)
+            departmentAttendees[department]?.add(attendee)
         }
         return departmentAttendees
     }
@@ -418,15 +441,15 @@ class PlanningFilesService(
 
         val departments = departmentService.getDepartments()
         for (department in departments) {
-            val attendees = attendeeService.getAttendeesForDepartment(department)
-            if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty() && attendees.children.isEmpty() && attendees.childLeaders.isEmpty()) {
+            val attendees = attendeeService.getAttendeesForDepartmentWithZKidsBeingPartOf(department.id)
+            if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty() && attendees.children.isEmpty() && attendees.childLeaders.isEmpty() && attendees.zKids.isEmpty() && attendees.helpers.isEmpty()) {
                 continue
             }
-            if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty()) {
+            if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty() || attendees.zKids.isNotEmpty()) {
                 addDepartmentTableToDocument(
                     document,
                     department.name,
-                    attendees.youths + attendees.youthLeaders,
+                    attendees.youths + attendees.youthLeaders + attendees.zKids,
                     eventStart
                 )
             }
@@ -436,6 +459,15 @@ class PlanningFilesService(
                     document,
                     "${department.name} Kindergruppe",
                     attendees.children + attendees.childLeaders,
+                    eventStart
+                )
+            }
+
+            if (attendees.helpers.isNotEmpty()) {
+                addDepartmentTableToDocument(
+                    document,
+                    "${department.name} Helfer",
+                    attendees.helpers,
                     eventStart
                 )
             }
@@ -481,4 +513,19 @@ class PlanningFilesService(
         return document
     }
 
+    private fun getPartOfDepartmentOrDepartmentName(attendee: Attendee, withShortName: Boolean = false): String {
+        val department = getPartOfDepartmentOrDepartment(attendee)
+        if (withShortName && department.shortName.isNotEmpty()) {
+            return department.shortName
+        }
+        return department.name
+    }
+
+    private fun getPartOfDepartmentOrDepartment(attendee: Attendee): DepartmentEntry {
+        if (attendee is ZKidEntry) {
+            return attendee.partOfDepartment
+        }
+        return attendee.department
+
+    }
 }

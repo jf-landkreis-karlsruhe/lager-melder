@@ -111,6 +111,17 @@ class AttendeeService(
         )
     }
 
+    fun getAttendeesForDepartmentWithZKidsBeingPartOf(departmentId: Long): Attendees {
+        return Attendees(
+            youths = youthRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            youthLeaders =  youthLeaderRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            children = childRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            childLeaders = childLeaderRepository.findByDepartment(departmentId).filter { byAuthority(it) }.toList(),
+            zKids = zKidRepository.findByPartOfDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            helpers = helperRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList()
+        )
+    }
+
     fun getAttendeeByCode(code: String): Attendee {
         return baseAttendeeRepository.findByCode(code)
             ?.let { getAttendee(it.id) }
