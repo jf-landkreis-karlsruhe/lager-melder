@@ -299,7 +299,7 @@ class PlanningFilesService(
     }
 
     private fun colorForAgeGroup(attendee: Attendee, eventStart: LocalDate): Color {
-        val age = Helper.ageAtEvent(attendee, eventStart)
+        val age = Helper.ageAtEvent(attendee, eventStart, 18)
         if (age < 16) {
             return Color.RED
         }
