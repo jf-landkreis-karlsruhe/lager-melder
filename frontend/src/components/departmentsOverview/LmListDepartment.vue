@@ -54,9 +54,7 @@ const updatePauseDepartmentInternal = (department: Department) => {
           <AttendeesShort :department-id="department.id" />
           <TentsShort :department-id="department.id" />
           <router-link :to="'/feuerwehr/' + department.id">Details</router-link>
-          <div
-            class="d-flex justify-space-between align-center flex-grow-1 flex-wrap mt-4 background-"
-          >
+          <div class="d-flex justify-space-between align-center flex-grow-1 flex-wrap mt-4">
             <v-btn @click="updatePauseDepartmentInternal(department)" class="checkin" rounded>
               <span v-if="department.paused">Zurückmelden</span>
               <span v-if="!department.paused">Abmelden</span>

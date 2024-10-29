@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { Roles, rolesText as rolesTitle } from '@/services/authentication'
-import {type Department, DepartmentFeatures} from '../../services/department'
+import { type Department, DepartmentFeatures } from '../../services/department'
 import { updateDepartment } from '../../services/department'
 import type { User } from '../../services/user'
 import { updateRole, userForDepartment } from '../../services/user'
@@ -134,8 +134,30 @@ onMounted(async () => {
             <h5>Anmeldeoptionen</h5>
           </div>
           <div class="d-flex space-between wrap" style="gap: 20px">
-            <v-switch color="primary" v-model="department.features" label="Teilnehmer" :value="DepartmentFeatures.YOUTH_GROUPS"></v-switch>
-            <v-switch color="primary" v-model="department.features" label="Kindergruppentag" :value="DepartmentFeatures.CHILD_GROUPS"></v-switch>
+            <v-switch
+              color="primary"
+              v-model="department.features"
+              label="Teilnehmer"
+              :value="DepartmentFeatures.YOUTH_GROUPS"
+            ></v-switch>
+            <v-switch
+              color="primary"
+              v-model="department.features"
+              label="Kindergruppentag"
+              :value="DepartmentFeatures.CHILD_GROUPS"
+            ></v-switch>
+            <v-switch
+              color="primary"
+              v-model="department.features"
+              label="Z Kids"
+              :value="DepartmentFeatures.ZKIDS"
+            ></v-switch>
+            <v-switch
+              color="primary"
+              v-model="department.features"
+              label="Helfer"
+              :value="DepartmentFeatures.HELPER"
+            ></v-switch>
           </div>
         </div>
       </v-container>
