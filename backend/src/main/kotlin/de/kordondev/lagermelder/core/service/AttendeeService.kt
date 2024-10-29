@@ -195,6 +195,13 @@ class AttendeeService(
         }
     }
 
+    fun getPartOfDepartmentOrDepartment(attendee: Attendee): DepartmentEntry {
+        if (attendee is ZKidEntry) {
+            return attendee.partOfDepartment
+        }
+        return attendee.department
+    }
+
     private fun byAuthority(attendee: Attendee): Boolean {
         return authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
     }

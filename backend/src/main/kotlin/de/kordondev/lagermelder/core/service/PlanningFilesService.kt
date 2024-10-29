@@ -10,7 +10,6 @@ import com.lowagie.text.pdf.*
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
-import de.kordondev.lagermelder.core.persistence.entry.ZKidEntry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.security.AuthorityService
 import org.slf4j.Logger
@@ -407,7 +406,7 @@ class PlanningFilesService(
             if (attendee.additionalInformation.isEmpty()) {
                 continue
             }
-            val department = getPartOfDepartmentOrDepartment(attendee)
+            val department = attendeeService.getPartOfDepartmentOrDepartment(attendee)
             if (departmentAttendees[department] == null) {
                 departmentAttendees[department] = mutableListOf()
             }
@@ -514,18 +513,11 @@ class PlanningFilesService(
     }
 
     private fun getPartOfDepartmentOrDepartmentName(attendee: Attendee, withShortName: Boolean = false): String {
-        val department = getPartOfDepartmentOrDepartment(attendee)
+        val department = attendeeService.getPartOfDepartmentOrDepartment(attendee)
         if (withShortName && department.shortName.isNotEmpty()) {
             return department.shortName
         }
         return department.name
     }
 
-    private fun getPartOfDepartmentOrDepartment(attendee: Attendee): DepartmentEntry {
-        if (attendee is ZKidEntry) {
-            return attendee.partOfDepartment
-        }
-        return attendee.department
-
-    }
 }

@@ -95,7 +95,7 @@ class EventService(
     fun getGlobalEventSummary(): RestGlobalEventSummary {
         val attendees = attendeeService.getAllAttendees()
         val allAttendees = (attendees.youths + attendees.youthLeaders + attendees.childLeaders + attendees.children + attendees.zKids)
-        val attendeesByDepartment = allAttendees.groupBy { it.department } // TODO: partOfDepartmentOrDepartment
+        val attendeesByDepartment = allAttendees.groupBy { attendeeService.getPartOfDepartmentOrDepartment(it) }
 
         val notPausedAttendees = attendeesByDepartment.entries
             .filter { !it.key.paused }
