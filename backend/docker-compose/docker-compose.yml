@@ -2,7 +2,7 @@ version: "3.6"
 
 services:
   database:
-    image: "mysql"
+    image: "mysql:9.0.1"
     container_name: lm-mysql
     ports:
       - "3306:3306"
@@ -14,7 +14,7 @@ services:
     expose:
       - "3306"
   backend:
-    image: openjdk
+    image: "openjdk:21"
     container_name: lm-backend
     ports:
       - "8080:8080"
@@ -25,7 +25,7 @@ services:
       - "database"
     volumes:
       - "..:/app/:rw"
-    command: sh -c "cd /app && ./mvnw install && ./mvnw spring-boot:run"
+    command: sh -c "cd /app && ./mvnw install -DskipTests && ./mvnw spring-boot:run"
   frontend:
     image: "node:lts-alpine"
     container_name: lm-frontend
