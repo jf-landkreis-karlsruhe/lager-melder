@@ -46,7 +46,7 @@ class PlanningFilesService(
 
         val attendeesFromDB = attendeeService.getAttendees()
         val attendees =
-            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids + attendeesFromDB.helpers)
+            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
                 .sortedBy{ getPartOfDepartmentOrDepartmentName(it)}
         logger.info("Creating batches for ${attendees.size} on ${1 + (attendees.size / 5)} pages")
         var attendeeIndex = 0
