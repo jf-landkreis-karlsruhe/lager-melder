@@ -21,6 +21,7 @@ data class RestDepartmentRequest(
     val shortName: String,
     val features: Set<DepartmentFeatures>,
     val headDepartmentName: String,
+    val paused: Boolean,
 ) {
     companion object {
         fun to(department: RestDepartmentRequest, id: Long, features: Set<DepartmentFeatureEntry>) = DepartmentEntry(
@@ -36,7 +37,8 @@ data class RestDepartmentRequest(
                         id = UUID.randomUUID().toString(), departmentId = id, feature = it
                     )
             }.toSet(),
-            headDepartmentName = department.headDepartmentName
+            headDepartmentName = department.headDepartmentName,
+            paused = department.paused
         )
     }
 }

@@ -9,7 +9,10 @@ const eventSummary = ref<GlobalEventSummary | null>(null)
 
 onMounted(() => {
   globalEventSummary().then((summary) => {
-    eventSummary.value = summary
+    eventSummary.value = {
+      total: summary.total,
+      departments: summary.departments.sort((a, b) => a.name.localeCompare(b.name))
+    }
   })
 })
 </script>
@@ -19,6 +22,7 @@ onMounted(() => {
     <h1>Anwesende</h1>
     <div v-if="eventSummary !== null">
       <CheckedInSummary :departmentDistribution="eventSummary.total" />
+      Pausierte Feuerwehren sind nicht in der Gesammtanzahl enthalten.
       <div v-for="departmentSummary in eventSummary.departments" :key="departmentSummary.name">
         <CheckedInSummary :departmentDistribution="departmentSummary" />
       </div>

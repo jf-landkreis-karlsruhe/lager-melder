@@ -25,6 +25,11 @@ export const getMyDepartment = () => {
 export const updateDepartment = (department: Department) =>
   putData<Department>(`departments/${department.id}`, withAuthenticationHeader(), department)
 
+export const updatePauseDepartment = (departmentId: number, pause: boolean) =>
+  putData<Department>(`departments/${departmentId}/change-pausing`, withAuthenticationHeader(), {
+    paused: pause
+  })
+
 export interface Department {
   id: number
   name: string
@@ -34,6 +39,7 @@ export interface Department {
   shortName: string
   features: DepartmentFeatures[]
   headDepartmentName: string
+  paused: boolean
 }
 
 export interface DepartmentShort {

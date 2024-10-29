@@ -94,41 +94,44 @@ class EventService(
 
     fun getGlobalEventSummary(): RestGlobalEventSummary {
         val attendees = attendeeService.getAllAttendees()
-        val allAttendees = (attendees.youths + attendees.youthLeaders)
-        val attendeesByDepartment = allAttendees.groupBy { it.department }
+        val allAttendees = (attendees.youths + attendees.youthLeaders + attendees.childLeaders + attendees.children + attendees.zKids)
+        val attendeesByDepartment = allAttendees.groupBy { it.department } // TODO: partOfDepartmentOrDepartment
+
+        val notPausedAttendees = attendeesByDepartment.entries
+            .filter { !it.key.paused }
+            .flatMap { it.value }
 
         return RestGlobalEventSummary(
-            total = sumUp(allAttendees, "Zeltlager"),
-            departments = attendeesByDepartment.keys.map { sumUp(attendeesByDepartment[it]!!, it.name) }
+            total = sumUp(notPausedAttendees, "Zeltlager Gesamt", false),
+            departments = attendeesByDepartment.keys.map { sumUp(attendeesByDepartment[it]!!, it.name, it.paused) }
         )
     }
 
-    private fun sumUp(attendees: List<Attendee>, name: String): Distribution {
+    private fun sumUp(attendees: List<Attendee>, name: String, paused: Boolean): Distribution {
         val groupedAttendees = attendees.groupBy { attendeeRoleStatus(it.status, it.role) }
         return Distribution(
             name = name,
-            checkedInYouth = groupedAttendees[attendeeRoleStatus(
+            paused = paused,
+            youths = groupedAttendees[attendeeRoleStatus(
                 AttendeeStatus.ENTERED,
                 AttendeeRole.YOUTH
             )]?.size ?: 0,
-            checkedInYouthLeader = groupedAttendees[attendeeRoleStatus(
+            youthLeaders = groupedAttendees[attendeeRoleStatus(
                 AttendeeStatus.ENTERED,
                 AttendeeRole.YOUTH_LEADER
             )]?.size ?: 0,
-            checkedOutYouth = (groupedAttendees[attendeeRoleStatus(
-                AttendeeStatus.LEFT,
-                AttendeeRole.YOUTH
-            )]?.size ?: 0) + (groupedAttendees[attendeeRoleStatus(
-                null,
-                AttendeeRole.YOUTH
-            )]?.size ?: 0),
-            checkedOutYouthLeader = (groupedAttendees[attendeeRoleStatus(
-                AttendeeStatus.LEFT,
-                AttendeeRole.YOUTH_LEADER
-            )]?.size ?: 0) + (groupedAttendees[attendeeRoleStatus(
-                null,
-                AttendeeRole.YOUTH_LEADER
-            )]?.size ?: 0),
+            zKids = groupedAttendees[attendeeRoleStatus(
+                AttendeeStatus.ENTERED,
+                AttendeeRole.Z_KID
+            )]?.size ?: 0,
+            children = groupedAttendees[attendeeRoleStatus(
+                AttendeeStatus.ENTERED,
+                AttendeeRole.CHILD
+            )]?.size ?: 0,
+            childLeaders = groupedAttendees[attendeeRoleStatus(
+                AttendeeStatus.ENTERED,
+                AttendeeRole.CHILD_LEADER
+            )]?.size ?: 0,
         )
     }
 

@@ -180,7 +180,7 @@ class PlanningFilesService(
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out)
 
-        val globalDepartments = DepartmentEntry(0, "Zeltlager gesamt", "", "", "", "")
+        val globalDepartments = DepartmentEntry(0, "Zeltlager gesamt", "", "", "", "", emptySet(), "", false)
         val allAttendees = attendeeService.getAttendees()
         val totalTShirtCount =
             countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids)

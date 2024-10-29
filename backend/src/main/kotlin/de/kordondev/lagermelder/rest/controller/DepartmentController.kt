@@ -7,6 +7,7 @@ import de.kordondev.lagermelder.rest.model.RestAttendees
 import de.kordondev.lagermelder.rest.model.RestDepartment
 import de.kordondev.lagermelder.rest.model.RestDepartmentShort
 import de.kordondev.lagermelder.rest.model.RestTents
+import de.kordondev.lagermelder.rest.model.request.RestDepartmentPauseRequest
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRegistrationRequest
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRequest
 import jakarta.validation.Valid
@@ -91,6 +92,17 @@ class DepartmentController(
         return tentsService
             .saveForDepartment(RestTents.to(registrationRequest.tents, department))
             .let { RestTents.of(it) }
+    }
+
+    @PutMapping("departments/{id}/change-pausing")
+    fun changePausingDepartment(
+        @PathVariable("id") id: Long,
+        @RequestBody(required = true) @Valid pauseRequest: RestDepartmentPauseRequest
+    ): RestDepartment {
+        val department = departmentService.getDepartment(id)
+        return departmentService
+            .saveDepartment(department.copy(paused = pauseRequest.paused))
+            .let { RestDepartment.of(it) }
     }
 
 }

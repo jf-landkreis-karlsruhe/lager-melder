@@ -42,7 +42,9 @@ class LagermelderApplication {
             leaderName = "KordonDev",
             leaderEMail = "KordonDev@mail.ka",
             phoneNumber = "",
-            shortName = ""
+            shortName = "",
+            headDepartmentName = "",
+            paused = false
         )
         departmentRepository.save(adminDepartment)
 
