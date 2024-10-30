@@ -29,5 +29,8 @@ data class DepartmentEntry (
         val features: Set<DepartmentFeatureEntry> = emptySet(),
 
         @Column(name = "head_department_name")
-        val headDepartmentName: String = ""
+        val headDepartmentName: String = "",
+
+        @Column(name = "paused")
+        val paused: Boolean,
 )

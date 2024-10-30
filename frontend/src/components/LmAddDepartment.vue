@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import {type Department, DepartmentFeatures} from '../services/department'
+import { type Department, DepartmentFeatures } from '../services/department'
 import { registerNewDepartmentAndUser } from '../services/user'
 import { useToast } from 'vue-toastification'
 import { showErrorToast } from '@/helper/fetch'
@@ -41,7 +41,8 @@ const addDepartmentAndUser = () => {
         shortName: '',
         phoneNumber: '',
         features: newDepartmentWithUser.features,
-        headDepartmentName: ''
+        headDepartmentName: '',
+        paused: false
       })
       departmentName.value = ''
       leaderName.value = ''

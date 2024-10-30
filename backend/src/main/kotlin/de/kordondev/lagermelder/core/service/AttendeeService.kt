@@ -164,6 +164,8 @@ class AttendeeService(
             is YouthLeaderEntry -> youthLeaderRepository.save(attendee.copy(status = status))
             is ChildEntry -> childRepository.save(attendee.copy(status = status))
             is ChildLeaderEntry -> childLeaderRepository.save(attendee.copy(status = status))
+            is ZKidEntry -> zKidRepository.save(attendee.copy(status = status))
+            is HelperEntity -> helperRepository.save(attendee.copy(status = status))
             else -> throw UnexpectedTypeException("Attendee from db is not of expected type")
         }
     }
@@ -191,6 +193,13 @@ class AttendeeService(
         baseAttendeeRepository.findAllBytShirtSize(oldSize).forEach {
             baseAttendeeRepository.save(it.copy(tShirtSize = newSize))
         }
+    }
+
+    fun getPartOfDepartmentOrDepartment(attendee: Attendee): DepartmentEntry {
+        if (attendee is ZKidEntry) {
+            return attendee.partOfDepartment
+        }
+        return attendee.department
     }
 
     private fun byAuthority(attendee: Attendee): Boolean {

@@ -27,7 +27,9 @@ data class RestDepartmentWithUserRequest(
             leaderEMail = departmentWithUser.leaderEMail,
             phoneNumber = "",
             shortName = "",
-            features = departmentWithUser.features.map { DepartmentFeatureEntry(UUID.randomUUID().toString(), departmentId, it) }.toSet()
+            features = departmentWithUser.features.map { DepartmentFeatureEntry(UUID.randomUUID().toString(), departmentId, it) }.toSet(),
+            headDepartmentName = "",
+            paused = false
         )
 
         fun toUser(departmentWithUser: RestDepartmentWithUserRequest, department: DepartmentEntry) = UserEntry(
