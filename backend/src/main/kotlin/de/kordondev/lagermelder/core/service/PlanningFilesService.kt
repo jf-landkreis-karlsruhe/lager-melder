@@ -8,6 +8,7 @@ import com.lowagie.text.*
 import com.lowagie.text.List
 import com.lowagie.text.pdf.*
 import de.kordondev.lagermelder.Helper
+import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
@@ -473,6 +474,42 @@ class PlanningFilesService(
 
             document.newPage()
         }
+        document.close()
+        return out.toByteArray()
+    }
+
+    fun createContactList(): ByteArray {
+        authorityService.isSpecializedFieldDirector()
+        val out = ByteArrayOutputStream()
+        val document = prepareDocument(out)
+
+        val dbAttendees = attendeeService.getAllAttendees()
+        val departmentWithAttendees = (dbAttendees.youths + dbAttendees.youthLeaders + dbAttendees.children + dbAttendees.childLeaders + dbAttendees.zKids + dbAttendees.helpers)
+            .groupBy { attendeeService.getPartOfDepartmentOrDepartment(it) }
+
+        departmentWithAttendees.keys.sortedBy { it.name }.map { department ->
+            document.add(Paragraph(department.name, headlineFont))
+            document.add(Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}, Telefon: ${department.phoneNumber}"))
+            val table = Table(4)
+            table.borderWidth = 1F
+            table.borderColor = Color(0, 0, 0)
+            table.padding = 3F
+            table.spacing = 0F
+            table.addCell("Jugendliche")
+            table.addCell("Jugendleiter")
+            table.addCell("Kinder")
+            table.addCell("Kinderleiter")
+            table.endHeaders()
+            val attendeeByType = departmentWithAttendees[department]?.groupBy { it.role }
+            if (attendeeByType != null) {
+                table.addCell((attendeeByType[AttendeeRole.YOUTH]?.plus(attendeeByType[AttendeeRole.Z_KID]))?.size?.toString() ?: "0")
+                table.addCell(attendeeByType[AttendeeRole.YOUTH_LEADER]?.size?.toString() ?: "0")
+                table.addCell(attendeeByType[AttendeeRole.CHILD]?.size?.toString() ?: "0")
+                table.addCell(attendeeByType[AttendeeRole.CHILD_LEADER]?.size?.toString() ?: "0")
+            }
+            document.add(table)
+        }
+
         document.close()
         return out.toByteArray()
     }

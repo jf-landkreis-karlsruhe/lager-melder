@@ -11,7 +11,8 @@ import {
   getDepartmentOverview,
   getFoodPDF,
   getTShirtPDF,
-  getAdditionalInformationPDF
+  getAdditionalInformationPDF,
+  getContactOverview
 } from '@/services/planningFiles'
 import { showFile } from '@/services/filesHelper'
 import type { Tents } from '@/services/tents'
@@ -37,6 +38,7 @@ const loadingFood = ref<boolean>(false)
 const loadingAdditionalInformation = ref<boolean>(false)
 const loadingTshirt = ref<boolean>(false)
 const loadingDepartmentOverview = ref<boolean>(false)
+const loadingContactList = ref<boolean>(false)
 
 const toast = useToast()
 
@@ -81,6 +83,10 @@ const downloadTShirtsPDF = () => {
 
 const downloadDepartmentOverview = () => {
   loadFile(getDepartmentOverview, loadingDepartmentOverview)
+}
+
+const downloadContactList = () => {
+  loadFile(getContactOverview, loadingContactList)
 }
 
 const loadFile = (request: () => Promise<FileReponse>, loading: Ref<boolean>) => {
@@ -231,6 +237,26 @@ onMounted(() => {
           >
             Herunterladen
             <v-icon right dark> mdi-cloud-download </v-icon>
+          </v-btn>
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2>Kontaktliste</h2>
+      <div class="d-flex align-center justify-space-between">
+        <p class="mr-8">
+          Hier kann eine Liste aller Kontaktdaten der Feuerwehren, die sich angemeldet haben,
+          heruntergeladen werden.
+          <br />
+          <v-btn
+            color="var(--lm-c-accent)"
+            @click="downloadContactList"
+            small
+            :loading="loadingContactList"
+          >
+            Herunterladen
+            <v-icon right dark> mdi-cloud-download</v-icon>
           </v-btn>
         </p>
       </div>

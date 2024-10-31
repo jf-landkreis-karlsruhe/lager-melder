@@ -82,3 +82,16 @@ export const getDepartmentOverview = (): Promise<FileReponse> => {
       fileName: 'übersichtÜberFeuerwehr.pdf'
     }))
 }
+
+export const getContactOverview = (): Promise<FileReponse> => {
+  return fetchData(`planning-files/contactOverview`, {
+    headers: {
+      ...withAuthenticationHeader()
+    }
+  })
+    .then((r) => r.blob())
+    .then((blob) => ({
+      data: blob,
+      fileName: 'kontaktdatenÜbersicht.pdf'
+    }))
+}
