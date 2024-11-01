@@ -47,7 +47,7 @@ class PlanningFilesService(
         val attendeesFromDB = attendeeService.getAttendees()
         val attendees =
             (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
-                .sortedBy{ getPartOfDepartmentOrDepartmentName(it)}
+                .sortedBy{ attendeeService.getPartOfDepartmentOrDepartment(it).headDepartmentName + attendeeService.getPartOfDepartmentOrDepartment(it).name }
         logger.info("Creating batches for ${attendees.size} on ${1 + (attendees.size / 5)} pages")
         var attendeeIndex = 0
         while (attendeeIndex < attendees.size) {
@@ -197,7 +197,7 @@ class PlanningFilesService(
             document
         )
 
-        val departments = departmentService.getDepartments()
+        val departments = departmentService.getDepartments().sortedBy { it.headDepartmentName + it.name }
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartmentWithZKidsBeingPartOf(department.id)
             if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty() || attendees.zKids.isNotEmpty()) {
@@ -420,7 +420,7 @@ class PlanningFilesService(
         document: Document,
         departmentAttendees: Map<DepartmentEntry, MutableList<Attendee>>,
     ) {
-        val departments = departmentAttendees.keys.toList().sortedBy { it.name }
+        val departments = departmentAttendees.keys.toList().sortedBy { it.headDepartmentName + it.name }
         for (department in departments) {
             document.add(Paragraph(department.name, headlineFont))
             document.add(Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}"))
@@ -439,7 +439,7 @@ class PlanningFilesService(
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out)
 
-        val departments = departmentService.getDepartments()
+        val departments = departmentService.getDepartments().sortedBy { it.headDepartmentName + it.name }
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartmentWithZKidsBeingPartOf(department.id)
             if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty() && attendees.children.isEmpty() && attendees.childLeaders.isEmpty() && attendees.zKids.isEmpty() && attendees.helpers.isEmpty()) {
@@ -487,13 +487,13 @@ class PlanningFilesService(
         val departmentWithAttendees = (dbAttendees.youths + dbAttendees.youthLeaders + dbAttendees.children + dbAttendees.childLeaders + dbAttendees.zKids + dbAttendees.helpers)
             .groupBy { attendeeService.getPartOfDepartmentOrDepartment(it) }
 
-        departmentWithAttendees.keys.sortedBy { it.name }.map { department ->
-            document.add(Paragraph(department.name, headlineFont))
+        departmentWithAttendees.keys.sortedBy { it.headDepartmentName + it.name }.map { department ->
+            document.add(Paragraph("${department.headDepartmentName} ${department.name}", headlineFont))
             document.add(Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}, Telefon: ${department.phoneNumber}"))
             val table = Table(4)
             table.borderWidth = 1F
             table.borderColor = Color(0, 0, 0)
-            table.padding = 3F
+            table.padding = 2F
             table.spacing = 0F
             table.addCell("Jugendliche")
             table.addCell("Jugendleiter")
