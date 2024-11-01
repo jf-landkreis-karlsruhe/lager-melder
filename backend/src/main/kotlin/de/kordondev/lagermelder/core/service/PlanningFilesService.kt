@@ -8,6 +8,7 @@ import com.lowagie.text.*
 import com.lowagie.text.List
 import com.lowagie.text.pdf.*
 import de.kordondev.lagermelder.Helper
+import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
@@ -46,7 +47,7 @@ class PlanningFilesService(
         val attendeesFromDB = attendeeService.getAttendees()
         val attendees =
             (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
-                .sortedBy{ getPartOfDepartmentOrDepartmentName(it)}
+                .sortedBy{ attendeeService.getPartOfDepartmentOrDepartment(it).headDepartmentName + attendeeService.getPartOfDepartmentOrDepartment(it).name }
         logger.info("Creating batches for ${attendees.size} on ${1 + (attendees.size / 5)} pages")
         var attendeeIndex = 0
         while (attendeeIndex < attendees.size) {
@@ -196,7 +197,7 @@ class PlanningFilesService(
             document
         )
 
-        val departments = departmentService.getDepartments()
+        val departments = departmentService.getDepartments().sortedBy { it.headDepartmentName + it.name }
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartmentWithZKidsBeingPartOf(department.id)
             if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty() || attendees.zKids.isNotEmpty()) {
@@ -419,7 +420,7 @@ class PlanningFilesService(
         document: Document,
         departmentAttendees: Map<DepartmentEntry, MutableList<Attendee>>,
     ) {
-        val departments = departmentAttendees.keys.toList().sortedBy { it.name }
+        val departments = departmentAttendees.keys.toList().sortedBy { it.headDepartmentName + it.name }
         for (department in departments) {
             document.add(Paragraph(department.name, headlineFont))
             document.add(Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}"))
@@ -438,7 +439,7 @@ class PlanningFilesService(
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out)
 
-        val departments = departmentService.getDepartments()
+        val departments = departmentService.getDepartments().sortedBy { it.headDepartmentName + it.name }
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartmentWithZKidsBeingPartOf(department.id)
             if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty() && attendees.children.isEmpty() && attendees.childLeaders.isEmpty() && attendees.zKids.isEmpty() && attendees.helpers.isEmpty()) {
@@ -473,6 +474,42 @@ class PlanningFilesService(
 
             document.newPage()
         }
+        document.close()
+        return out.toByteArray()
+    }
+
+    fun createContactList(): ByteArray {
+        authorityService.isSpecializedFieldDirector()
+        val out = ByteArrayOutputStream()
+        val document = prepareDocument(out)
+
+        val dbAttendees = attendeeService.getAllAttendees()
+        val departmentWithAttendees = (dbAttendees.youths + dbAttendees.youthLeaders + dbAttendees.children + dbAttendees.childLeaders + dbAttendees.zKids + dbAttendees.helpers)
+            .groupBy { attendeeService.getPartOfDepartmentOrDepartment(it) }
+
+        departmentWithAttendees.keys.sortedBy { it.headDepartmentName + it.name }.map { department ->
+            document.add(Paragraph("${department.headDepartmentName} ${department.name}", headlineFont))
+            document.add(Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}, Telefon: ${department.phoneNumber}"))
+            val table = Table(4)
+            table.borderWidth = 1F
+            table.borderColor = Color(0, 0, 0)
+            table.padding = 2F
+            table.spacing = 0F
+            table.addCell("Jugendliche")
+            table.addCell("Jugendleiter")
+            table.addCell("Kinder")
+            table.addCell("Kinderleiter")
+            table.endHeaders()
+            val attendeeByType = departmentWithAttendees[department]?.groupBy { it.role }
+            if (attendeeByType != null) {
+                table.addCell((attendeeByType[AttendeeRole.YOUTH]?.plus(attendeeByType[AttendeeRole.Z_KID]))?.size?.toString() ?: "0")
+                table.addCell(attendeeByType[AttendeeRole.YOUTH_LEADER]?.size?.toString() ?: "0")
+                table.addCell(attendeeByType[AttendeeRole.CHILD]?.size?.toString() ?: "0")
+                table.addCell(attendeeByType[AttendeeRole.CHILD_LEADER]?.size?.toString() ?: "0")
+            }
+            document.add(table)
+        }
+
         document.close()
         return out.toByteArray()
     }

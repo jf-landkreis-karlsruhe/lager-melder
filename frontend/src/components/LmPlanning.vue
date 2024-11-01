@@ -1,25 +1,25 @@
 <script setup lang="ts">
 import { computed, onMounted, type Ref, ref } from 'vue'
-import { type Attendee, type Attendees, defaultAttendees } from '../services/attendee'
-import { getAttendees } from '../services/attendee'
+import { type Attendee, type Attendees, defaultAttendees, getAttendees } from '../services/attendee'
 import type { Department } from '../services/department'
 import { getDepartments } from '../services/department'
 import { filterByDepartmentAndSearch, filterEnteredAttendees } from '@/helper/filterHelper'
 import { hasAdministrationRole as hasAdministrationRole } from '../services/authentication'
 import {
+  getAdditionalInformationPDF,
   getBatches,
+  getContactOverview,
   getDepartmentOverview,
   getFoodPDF,
-  getTShirtPDF,
-  getAdditionalInformationPDF
+  getTShirtPDF
 } from '@/services/planningFiles'
+import type { FileReponse } from '@/services/filesHelper'
 import { showFile } from '@/services/filesHelper'
 import type { Tents } from '@/services/tents'
 import { getTents } from '@/services/tents'
 import LmContainer from './LmContainer.vue'
 import { useToast } from 'vue-toastification'
 import { showErrorToast } from '@/helper/fetch'
-import type { FileReponse } from '@/services/filesHelper'
 
 interface DepartmentWithAttendees {
   department: Department
@@ -37,6 +37,7 @@ const loadingFood = ref<boolean>(false)
 const loadingAdditionalInformation = ref<boolean>(false)
 const loadingTshirt = ref<boolean>(false)
 const loadingDepartmentOverview = ref<boolean>(false)
+const loadingContactList = ref<boolean>(false)
 
 const toast = useToast()
 
@@ -61,6 +62,11 @@ const departmentWithAttendees = computed<DepartmentWithAttendees[]>(() => {
       (registration) =>
         registration.youthAttendees.length > 0 || registration.youthLeader.length > 0
     )
+    .sort((a, b) =>
+      `${a.department.headDepartmentName} ${a.department.name}`.localeCompare(
+        `${b.department.headDepartmentName} ${b.department.name}`
+      )
+    )
 })
 
 const downloadBatchesPDF = () => {
@@ -81,6 +87,10 @@ const downloadTShirtsPDF = () => {
 
 const downloadDepartmentOverview = () => {
   loadFile(getDepartmentOverview, loadingDepartmentOverview)
+}
+
+const downloadContactList = () => {
+  loadFile(getContactOverview, loadingContactList)
 }
 
 const loadFile = (request: () => Promise<FileReponse>, loading: Ref<boolean>) => {
@@ -231,6 +241,26 @@ onMounted(() => {
           >
             Herunterladen
             <v-icon right dark> mdi-cloud-download </v-icon>
+          </v-btn>
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2>Kontaktliste</h2>
+      <div class="d-flex align-center justify-space-between">
+        <p class="mr-8">
+          Hier kann eine Liste aller Kontaktdaten der Feuerwehren, die sich angemeldet haben,
+          heruntergeladen werden.
+          <br />
+          <v-btn
+            color="var(--lm-c-accent)"
+            @click="downloadContactList"
+            small
+            :loading="loadingContactList"
+          >
+            Herunterladen
+            <v-icon right dark> mdi-cloud-download</v-icon>
           </v-btn>
         </p>
       </div>
