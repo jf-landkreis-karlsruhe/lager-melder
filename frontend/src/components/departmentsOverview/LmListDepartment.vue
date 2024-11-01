@@ -23,7 +23,11 @@ const onDepartmentCreated = (newDepartment: Department) => {
 }
 
 onMounted(async () => {
-  departments.value = await getDepartments()
+  departments.value = await getDepartments().then((deps) =>
+    deps.sort((a, b) =>
+      `${a.headDepartmentName} ${a.name}`.localeCompare(`${b.headDepartmentName} ${b.name}`)
+    )
+  )
   getEventByType(EventType.GLOBAL_ENTER).then((event: Event) => (enterEvent.value = event))
 })
 

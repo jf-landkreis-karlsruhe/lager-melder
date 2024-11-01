@@ -1,26 +1,25 @@
 <script setup lang="ts">
 import { computed, onMounted, type Ref, ref } from 'vue'
-import { type Attendee, type Attendees, defaultAttendees } from '../services/attendee'
-import { getAttendees } from '../services/attendee'
+import { type Attendee, type Attendees, defaultAttendees, getAttendees } from '../services/attendee'
 import type { Department } from '../services/department'
 import { getDepartments } from '../services/department'
 import { filterByDepartmentAndSearch, filterEnteredAttendees } from '@/helper/filterHelper'
 import { hasAdministrationRole as hasAdministrationRole } from '../services/authentication'
 import {
+  getAdditionalInformationPDF,
   getBatches,
+  getContactOverview,
   getDepartmentOverview,
   getFoodPDF,
-  getTShirtPDF,
-  getAdditionalInformationPDF,
-  getContactOverview
+  getTShirtPDF
 } from '@/services/planningFiles'
+import type { FileReponse } from '@/services/filesHelper'
 import { showFile } from '@/services/filesHelper'
 import type { Tents } from '@/services/tents'
 import { getTents } from '@/services/tents'
 import LmContainer from './LmContainer.vue'
 import { useToast } from 'vue-toastification'
 import { showErrorToast } from '@/helper/fetch'
-import type { FileReponse } from '@/services/filesHelper'
 
 interface DepartmentWithAttendees {
   department: Department
@@ -62,6 +61,11 @@ const departmentWithAttendees = computed<DepartmentWithAttendees[]>(() => {
     .filter(
       (registration) =>
         registration.youthAttendees.length > 0 || registration.youthLeader.length > 0
+    )
+    .sort((a, b) =>
+      `${a.department.headDepartmentName} ${a.department.name}`.localeCompare(
+        `${b.department.headDepartmentName} ${b.department.name}`
+      )
     )
 })
 
