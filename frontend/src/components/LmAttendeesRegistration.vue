@@ -7,12 +7,13 @@ import {
   defaultAttendees,
   getAttendeesForDepartment
 } from '../services/attendee'
-import { type Department, DepartmentFeatures } from '../services/department'
+import { type Department, DepartmentFeatures, getDepartment } from '../services/department'
 import { filterByDepartmentAndSearch, filterEnteredAttendees } from '../helper/filterHelper'
 import AttendeesTable from './LmAttendeesTable.vue'
 import RegistrationInformation from './LmRegistrationInformation.vue'
 import { getRegistrationEnd } from '@/services/settings'
 import LmRegistrationEndBanner from '@/components/LmRegistrationEndBanner.vue'
+import { dateAsText } from '../helper/displayText'
 
 const props = defineProps<{
   department: Department
@@ -44,22 +45,14 @@ const youthLeaderAttendeeList = computed<Attendee[]>(() => {
   if (!props.department || !props.department.id) {
     return []
   }
-  return filterByDepartmentAndSearch(
-    attendees.value.youthLeaders,
-    props.department.id,
-    filterInput.value
-  )
+  return filterByDepartmentAndSearch(attendees.value.youthLeaders, props.department.id, filterInput.value)
 })
 
 const childAttendeeList = computed<Attendee[]>(() => {
   if (!props.department || !props.department.id) {
     return []
   }
-  return filterByDepartmentAndSearch(
-    attendees.value.children,
-    props.department.id,
-    filterInput.value
-  )
+  return filterByDepartmentAndSearch(attendees.value.children, props.department.id, filterInput.value)
 })
 
 const zKidsAttendeeList = computed<Attendee[]>(() => {
@@ -73,22 +66,14 @@ const helpersAttendeeList = computed<Attendee[]>(() => {
   if (!props.department || !props.department.id) {
     return []
   }
-  return filterByDepartmentAndSearch(
-    attendees.value.helpers,
-    props.department.id,
-    filterInput.value
-  )
+  return filterByDepartmentAndSearch(attendees.value.helpers, props.department.id, filterInput.value)
 })
 
 const childLeaderAttendeeList = computed<Attendee[]>(() => {
   if (!props.department || !props.department.id) {
     return []
   }
-  return filterByDepartmentAndSearch(
-    attendees.value.childLeaders,
-    props.department.id,
-    filterInput.value
-  )
+  return filterByDepartmentAndSearch(attendees.value.childLeaders, props.department.id, filterInput.value)
 })
 
 const enteredAttendeesCount = computed<number>(() => {
@@ -100,6 +85,11 @@ const enteredAttendeesCount = computed<number>(() => {
 
 const attendeesChanged = (change: number) => {
   totalAttendeeCount.value += change
+}
+
+const getDepartmentName = async (departmentId: number) => {
+  const department = await getDepartment(departmentId)
+  return department.name
 }
 
 onBeforeMount(async () => {
@@ -122,25 +112,55 @@ onMounted(() => {
   <v-container>
     <div v-if="department && department.features.includes(DepartmentFeatures.YOUTH_GROUPS)">
       <div>
-        <div class="d-flex align-baseline">
-          <h1 class="mr-4">Teilnehmer {{ department.name }}</h1>
-          <div>
-            Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})
-          </div>
+        <div class="align-baseline">
+          <h1 class="mb-0">Teilnehmer {{ department.name }}</h1>
+          <div>Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})</div>
         </div>
+
         <h2>Teilnehmer</h2>
-        <LmRegistrationEndBanner :registrationEnd="attendeesRegistrationEnd" />
-        <v-row>
-          <v-col cols="4">
-            <v-text-field
-              variant="underlined"
-              prepend-icon="mdi-magnify"
-              v-model="filterInput"
-              label="Teilnehmerfilter"
-            />
-          </v-col>
-        </v-row>
+        <LmRegistrationEndBanner v-if="attendeesRegistrationEnd" :registrationEnd="attendeesRegistrationEnd" />
       </div>
+
+      <v-expansion-panels class="mb-4">
+        <v-expansion-panel v-for="attendee in youthAttendeeList" :key="attendee.id">
+          <v-expansion-panel-title expand-icon="mdi-menu-down">
+            <div class="d-flex justify-space-between align-center flex-1-1-100">
+              <div class="d-flex flex-column" style="flex: 3">
+                <span>{{ attendee.firstName }} {{ ' ' }} {{ attendee.lastName }}</span>
+                <span>{{ dateAsText(attendee.birthday) }}</span>
+              </div>
+              <div class="shirt-and-food" style="flex: 2">
+                <v-icon class="mr-3">mdi-tshirt-crew-outline</v-icon>
+                <v-icon class="mr-3">mdi-food-drumstick-outline</v-icon>
+              </div>
+
+              <div v-if="attendee.juleikaNumber" class="d-flex align-center" style="flex: 3">
+                <v-icon class="mr-1">mdi-card-account-details-outline</v-icon>
+                <div class="d-flex flex-column ga-2">
+                  <span>{{ attendee.juleikaNumber }}</span>
+                  <span>{{ dateAsText(attendee.juleikaExpireDate) }}</span>
+                </div>
+              </div>
+              <div v-else-if="attendee.departmentId" class="d-flex align-center" style="flex: 3">
+                <v-icon class="mr-1">mdi-account-group-outline</v-icon>
+                <span>{{ attendee.departmentId }}</span>
+              </div>
+              <div v-else-if="(attendee.helperDays?.length ?? 0) > 0" class="d-flex align-center" style="flex: 3">
+                <v-icon class="mr-1">mdi-handshake-outline</v-icon>
+                <div class="d-flex flex-column ga-2">
+                  <span v-for="day in attendee.helperDays" :key="day">{{ day }}</span>
+                </div>
+              </div>
+
+              <div class="description mr-8" style="flex: 4">
+                <i>TODO: Description</i>
+              </div>
+            </div>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text> TODO </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+
       <AttendeesTable
         headlineText="Jugendliche"
         formName="youth"
@@ -161,10 +181,7 @@ onMounted(() => {
       />
 
       <div v-if="department && department.id">
-        <RegistrationInformation
-          :departmentId="department.id"
-          :department-phone-number="department.phoneNumber"
-        />
+        <RegistrationInformation :departmentId="department.id" :department-phone-number="department.phoneNumber" />
       </div>
     </div>
 
