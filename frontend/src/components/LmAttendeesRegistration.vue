@@ -125,12 +125,16 @@ onMounted(() => {
         <v-expansion-panel v-for="attendee in youthAttendeeList" :key="attendee.id">
           <v-expansion-panel-title expand-icon="mdi-menu-down">
             <div class="d-flex justify-space-between align-center flex-1-1-100">
-              <div class="d-flex flex-column" style="flex: 3">
+              <div class="d-flex flex-column ga-2" style="flex: 3">
                 <span>{{ attendee.firstName }} {{ ' ' }} {{ attendee.lastName }}</span>
                 <span>{{ dateAsText(attendee.birthday) }}</span>
               </div>
-              <div class="shirt-and-food" style="flex: 2">
-                <v-icon class="mr-3">mdi-tshirt-crew-outline</v-icon>
+              <div class="shirt-and-food d-flex" style="flex: 2">
+                <div class="shirt d-flex flex-column justify-center align-center mr-4">
+                  <v-icon>mdi-tshirt-crew-outline</v-icon>
+                  <div class="shirt__size">{{ attendee.tShirtSize }}</div>
+                </div>
+
                 <v-icon class="mr-3">mdi-food-drumstick-outline</v-icon>
               </div>
 
@@ -152,12 +156,108 @@ onMounted(() => {
                 </div>
               </div>
 
-              <div class="description mr-8" style="flex: 4">
-                <i>TODO: Description</i>
+              <div v-if="attendee.additionalInformation" class="description mr-2" style="flex: 4">
+                <i>
+                  <v-icon class="mr-1">mdi-information-outline</v-icon>
+                  {{ attendee.additionalInformation }}
+                </i>
               </div>
             </div>
           </v-expansion-panel-title>
-          <v-expansion-panel-text> TODO </v-expansion-panel-text>
+          <v-expansion-panel-text>
+            <form>
+              <div class="d-flex flex-row ga-4 justify-space-between align-start mt-4">
+                <!-- First column -->
+                <div class="d-flex flex-column" style="flex: 6">
+                  <div class="d-flex align-center ga-4">
+                    <v-text-field label="Vorname" variant="outlined" density="comfortable"></v-text-field>
+                    <v-text-field label="Nachname" variant="outlined" density="comfortable"></v-text-field>
+                  </div>
+
+                  <v-select
+                    :items="[
+                      { name: 'S', props: { prependIcon: 'mdi-tshirt-crew-outline' } },
+                      { name: 'M', props: { prependIcon: 'mdi-tshirt-crew-outline' } },
+                      { name: 'TODO', props: { prependIcon: 'mdi-tshirt-crew-outline' } }
+                    ]"
+                    density="comfortable"
+                    variant="outlined"
+                    item-title="name"
+                    label="T-Shirt-Größe"
+                  >
+                    <template v-slot:selection="{ item }">
+                      <v-icon class="mr-4">mdi-tshirt-crew-outline</v-icon>{{ item.title }}
+                    </template>
+                    <template v-slot:item="{ props }">
+                      <v-list-item v-bind="props"></v-list-item>
+                    </template>
+                  </v-select>
+
+                  <v-select
+                    :items="[
+                      { name: 'Fleisch', props: { prependIcon: 'mdi-food-drumstick-outline' } },
+                      { name: 'Vegetarisch', props: { prependIcon: 'mdi-cheese' } },
+                      { name: 'TODO', props: { prependIcon: 'mdi-food-drumstick-outline' } }
+                    ]"
+                    density="comfortable"
+                    variant="outlined"
+                    item-title="name"
+                    label="Essen"
+                  >
+                    <template v-slot:selection="{ item }">
+                      <v-icon class="mr-4">mdi-food-drumstick-outline</v-icon>{{ item.title }}
+                    </template>
+                    <template v-slot:item="{ props }">
+                      <v-list-item v-bind="props"></v-list-item>
+                    </template>
+                  </v-select>
+                </div>
+
+                <!-- Second column -->
+                <div class="d-flex flex-column" style="flex: 6">
+                  <v-select
+                    :items="[
+                      { name: 'Samstag vorher' },
+                      { name: 'Montag' },
+                      { name: 'Dienstag' },
+                      { name: 'Mittwoch' },
+                      { name: 'Donnerstag' },
+                      { name: 'Freitag' },
+                      { name: 'Samstag' },
+                      { name: 'Sonntag' }
+                    ]"
+                    density="comfortable"
+                    variant="outlined"
+                    multiple
+                    chips
+                    item-title="name"
+                    label="Helfertage"
+                  >
+                  </v-select>
+
+                  <v-textarea
+                    label="Kommentar"
+                    variant="outlined"
+                    row-height="14"
+                    rows="3.6"
+                    auto-grow
+                    clearable
+                  ></v-textarea>
+
+                  <div class="d-flex ga-4">
+                    <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
+                      <v-btn style="flex: 1" prepend-icon="mdi-trash-can-outline" variant="outlined"> Löschen </v-btn>
+                    </v-defaults-provider>
+                    <v-defaults-provider :defaults="{ VIcon: { color: 'info' } }">
+                      <v-btn style="flex: 1" color="primary" prepend-icon="mdi-check" variant="flat" type="submit">
+                        Speichern
+                      </v-btn>
+                    </v-defaults-provider>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
 
@@ -239,7 +339,13 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.departmentCount {
-  color: rgba(0, 0, 0, 0.6);
+.shirt-and-food {
+  .shirt {
+    gap: 0.1rem;
+
+    .shirt__size {
+      font-size: 0.8rem !important;
+    }
+  }
 }
 </style>
