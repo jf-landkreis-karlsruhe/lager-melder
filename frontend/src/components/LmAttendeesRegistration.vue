@@ -4,8 +4,13 @@ import {
   type Attendee,
   AttendeeRole,
   type Attendees,
+  type AttendeeWithValidation,
+  createAttendee,
   defaultAttendees,
-  getAttendeesForDepartment
+  deleteAttendee as deleteAttendeeService,
+  Food,
+  getAttendeesForDepartment,
+  updateAttendee
 } from '../services/attendee'
 import { type Department, DepartmentFeatures, getDepartment } from '../services/department'
 import { filterByDepartmentAndSearch, filterEnteredAttendees } from '../helper/filterHelper'
@@ -13,32 +18,42 @@ import AttendeesTable from './LmAttendeesTable.vue'
 import RegistrationInformation from './LmRegistrationInformation.vue'
 import { getRegistrationEnd } from '@/services/settings'
 import LmRegistrationEndBanner from '@/components/LmRegistrationEndBanner.vue'
-import { dateAsText } from '../helper/displayText'
+import LmAttendeeExpansionPanel from './AttendeeExpansionPanel/LmAttendeeExpansionPanel.vue'
+import LmAttendeeAddForm from './AttendeeExpansionPanel/LmAttendeeAddForm.vue'
 
 const props = defineProps<{
   department: Department
 }>()
 
-const attendees = ref<Attendees>(defaultAttendees)
-const filterInput = ref<string>('')
-const attendeeRoleYouth = ref<AttendeeRole>(AttendeeRole.YOUTH)
-const attendeeRoleYouthLeader = ref<AttendeeRole>(AttendeeRole.YOUTH_LEADER)
-const attendeeRoleChild = ref<AttendeeRole>(AttendeeRole.CHILD)
-const attendeeRoleChildLeader = ref<AttendeeRole>(AttendeeRole.CHILD_LEADER)
-const attendeeRoleZKid = ref<AttendeeRole>(AttendeeRole.Z_KID)
-const attendeeRoleHelper = ref<AttendeeRole>(AttendeeRole.HELPER)
-const totalAttendeeCount = ref<number>(0)
+// Variables
+const attendeeRoleYouth: AttendeeRole = AttendeeRole.YOUTH
+const attendeeRoleYouthLeader: AttendeeRole = AttendeeRole.YOUTH_LEADER
+const attendeeRoleChild: AttendeeRole = AttendeeRole.CHILD
+const attendeeRoleChildLeader: AttendeeRole = AttendeeRole.CHILD_LEADER
+const attendeeRoleZKid: AttendeeRole = AttendeeRole.Z_KID
+const attendeeRoleHelper: AttendeeRole = AttendeeRole.HELPER
 
 let attendeesRegistrationEnd: Date | null = null
 let attendeesCanBeEdited: boolean = false
 let childGroupRegistrationEnd: Date | null = null
 let childGroupCanBeEdited: boolean = true
 
-const youthAttendeeList = computed<Attendee[]>(() => {
+// REFS
+const attendees = ref<Attendees>(defaultAttendees)
+const filterInput = ref<string>('')
+const totalAttendeeCount = ref<number>(0)
+const isAddNewFormModalVisible = ref<boolean>(false)
+const newAttendee = ref<AttendeeWithValidation | undefined>(undefined)
+
+// COMPUTED
+
+const youthAttendeeList = computed<AttendeeWithValidation[]>(() => {
   if (!props.department || !props.department.id) {
     return []
   }
-  return filterByDepartmentAndSearch(attendees.value.youths, props.department.id, filterInput.value)
+  return filterByDepartmentAndSearch(attendees.value.youths, props.department.id, filterInput.value).map(
+    (attendee) => ({ ...attendee, tShirtSizeError: false, helperDaysError: false })
+  )
 })
 
 const youthLeaderAttendeeList = computed<Attendee[]>(() => {
@@ -69,6 +84,31 @@ const helpersAttendeeList = computed<Attendee[]>(() => {
   return filterByDepartmentAndSearch(attendees.value.helpers, props.department.id, filterInput.value)
 })
 
+const addNewAttendee = () => {
+  if (!props.department || !props.department.id) {
+    return
+  }
+  isAddNewFormModalVisible.value = true
+  newAttendee.value = {
+    id: 'newAttendee' + Date.now(),
+    departmentId: props.department.id,
+    partOfDepartmentId: undefined,
+    role: AttendeeRole.YOUTH,
+    firstName: '',
+    lastName: '',
+    tShirtSize: '',
+    helperDays: [],
+    juleikaNumber: '',
+    food: Food.NONE,
+    juleikaExpireDate: '',
+    birthday: '',
+    status: undefined,
+    additionalInformation: '',
+    helperDaysError: false,
+    tShirtSizeError: false
+  }
+}
+
 const childLeaderAttendeeList = computed<Attendee[]>(() => {
   if (!props.department || !props.department.id) {
     return []
@@ -90,6 +130,54 @@ const attendeesChanged = (change: number) => {
 const getDepartmentName = async (departmentId: number) => {
   const department = await getDepartment(departmentId)
   return department.name
+}
+
+const saveAttendee = (att: AttendeeWithValidation) => {
+  console.debug('🔥 save attende', att)
+  if (!att.tShirtSize) {
+    att.tShirtSizeError = true
+    return
+  } else {
+    att.tShirtSizeError = false
+  }
+  if (att.role == AttendeeRole.HELPER && (!att.helperDays || att.helperDays.length === 0)) {
+    att.helperDaysError = true
+    return
+  } else {
+    att.helperDaysError = false
+  }
+
+  if (att.id === newAttendee.value?.id) {
+    createAttendee(att).then((newAtt) => {
+      attendees.value.youths.push(newAtt)
+      attendeesChanged?.(1)
+    })
+    return
+  }
+  if (!att.juleikaNumber) att.juleikaNumber = ''
+  if (!att.juleikaExpireDate) att.juleikaExpireDate = ''
+  if (!att.birthday) att.birthday = ''
+  if (!att.status) att.status = undefined
+  if (!att.helperDays) att.helperDays = []
+  updateAttendee(att).then(() => {
+    // TODO! Do not mutate param!
+    removeAttendeeIdFromList(att.id, attendees.value.youths)
+  })
+}
+
+// TODO! Do not mutate param!
+const removeAttendeeIdFromList = (id: string, list: string[]) => {
+  const indexOfAttendee = list.indexOf(id)
+  list.splice(indexOfAttendee, 1)
+}
+
+const deleteAttendee = (att: Attendee) => {
+  deletingAttendees.value.push(att.id)
+  deleteAttendeeService(att.id).then(() => {
+    removeAttendeeIdFromList(att.id, deletingAttendees.value)
+    deletedAttendeeIds.value.push(att.id)
+    props.attendeesChanged?.(-1)
+  })
 }
 
 onBeforeMount(async () => {
@@ -117,148 +205,26 @@ onMounted(() => {
           <div>Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})</div>
         </div>
 
-        <h2>Teilnehmer</h2>
         <LmRegistrationEndBanner v-if="attendeesRegistrationEnd" :registrationEnd="attendeesRegistrationEnd" />
+
+        <div class="d-flex justify-space-between align-center">
+          <h2>Teilnehmer</h2>
+
+          <label v-if="attendeesCanBeEdited">
+            <span class="mr-2" style="cursor: pointer">Teilnehmer hinzufügen</span>
+            <v-btn @click="addNewAttendee" color="primary" class="ma-0 mb-1" icon size="x-small">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+          </label>
+        </div>
       </div>
 
       <v-expansion-panels class="mb-4">
-        <v-expansion-panel v-for="attendee in youthAttendeeList" :key="attendee.id">
-          <v-expansion-panel-title expand-icon="mdi-menu-down">
-            <div class="d-flex justify-space-between align-center flex-1-1-100">
-              <div class="d-flex flex-column ga-2" style="flex: 3">
-                <span>{{ attendee.firstName }} {{ ' ' }} {{ attendee.lastName }}</span>
-                <span>{{ dateAsText(attendee.birthday) }}</span>
-              </div>
-              <div class="shirt-and-food d-flex" style="flex: 2">
-                <div class="shirt d-flex flex-column justify-center align-center mr-4">
-                  <v-icon>mdi-tshirt-crew-outline</v-icon>
-                  <div class="shirt__size">{{ attendee.tShirtSize }}</div>
-                </div>
-
-                <v-icon class="mr-3">mdi-food-drumstick-outline</v-icon>
-              </div>
-
-              <div v-if="attendee.juleikaNumber" class="d-flex align-center" style="flex: 3">
-                <v-icon class="mr-1">mdi-card-account-details-outline</v-icon>
-                <div class="d-flex flex-column ga-2">
-                  <span>{{ attendee.juleikaNumber }}</span>
-                  <span>{{ dateAsText(attendee.juleikaExpireDate) }}</span>
-                </div>
-              </div>
-              <div v-else-if="attendee.departmentId" class="d-flex align-center" style="flex: 3">
-                <v-icon class="mr-1">mdi-account-group-outline</v-icon>
-                <span>{{ attendee.departmentId }}</span>
-              </div>
-              <div v-else-if="(attendee.helperDays?.length ?? 0) > 0" class="d-flex align-center" style="flex: 3">
-                <v-icon class="mr-1">mdi-handshake-outline</v-icon>
-                <div class="d-flex flex-column ga-2">
-                  <span v-for="day in attendee.helperDays" :key="day">{{ day }}</span>
-                </div>
-              </div>
-
-              <div v-if="attendee.additionalInformation" class="description mr-2" style="flex: 4">
-                <i>
-                  <v-icon class="mr-1">mdi-information-outline</v-icon>
-                  {{ attendee.additionalInformation }}
-                </i>
-              </div>
-            </div>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <form>
-              <div class="d-flex flex-row ga-4 justify-space-between align-start mt-4">
-                <!-- First column -->
-                <div class="d-flex flex-column" style="flex: 6">
-                  <div class="d-flex align-center ga-4">
-                    <v-text-field label="Vorname" variant="outlined" density="comfortable"></v-text-field>
-                    <v-text-field label="Nachname" variant="outlined" density="comfortable"></v-text-field>
-                  </div>
-
-                  <v-select
-                    :items="[
-                      { name: 'S', props: { prependIcon: 'mdi-tshirt-crew-outline' } },
-                      { name: 'M', props: { prependIcon: 'mdi-tshirt-crew-outline' } },
-                      { name: 'TODO', props: { prependIcon: 'mdi-tshirt-crew-outline' } }
-                    ]"
-                    density="comfortable"
-                    variant="outlined"
-                    item-title="name"
-                    label="T-Shirt-Größe"
-                  >
-                    <template v-slot:selection="{ item }">
-                      <v-icon class="mr-4">mdi-tshirt-crew-outline</v-icon>{{ item.title }}
-                    </template>
-                    <template v-slot:item="{ props }">
-                      <v-list-item v-bind="props"></v-list-item>
-                    </template>
-                  </v-select>
-
-                  <v-select
-                    :items="[
-                      { name: 'Fleisch', props: { prependIcon: 'mdi-food-drumstick-outline' } },
-                      { name: 'Vegetarisch', props: { prependIcon: 'mdi-cheese' } },
-                      { name: 'TODO', props: { prependIcon: 'mdi-food-drumstick-outline' } }
-                    ]"
-                    density="comfortable"
-                    variant="outlined"
-                    item-title="name"
-                    label="Essen"
-                  >
-                    <template v-slot:selection="{ item }">
-                      <v-icon class="mr-4">mdi-food-drumstick-outline</v-icon>{{ item.title }}
-                    </template>
-                    <template v-slot:item="{ props }">
-                      <v-list-item v-bind="props"></v-list-item>
-                    </template>
-                  </v-select>
-                </div>
-
-                <!-- Second column -->
-                <div class="d-flex flex-column" style="flex: 6">
-                  <v-select
-                    :items="[
-                      { name: 'Samstag vorher' },
-                      { name: 'Montag' },
-                      { name: 'Dienstag' },
-                      { name: 'Mittwoch' },
-                      { name: 'Donnerstag' },
-                      { name: 'Freitag' },
-                      { name: 'Samstag' },
-                      { name: 'Sonntag' }
-                    ]"
-                    density="comfortable"
-                    variant="outlined"
-                    multiple
-                    chips
-                    item-title="name"
-                    label="Helfertage"
-                  >
-                  </v-select>
-
-                  <v-textarea
-                    label="Kommentar"
-                    variant="outlined"
-                    row-height="14"
-                    rows="3.6"
-                    auto-grow
-                    clearable
-                  ></v-textarea>
-
-                  <div class="d-flex ga-4">
-                    <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
-                      <v-btn style="flex: 1" prepend-icon="mdi-trash-can-outline" variant="outlined"> Löschen </v-btn>
-                    </v-defaults-provider>
-                    <v-defaults-provider :defaults="{ VIcon: { color: 'info' } }">
-                      <v-btn style="flex: 1" color="primary" prepend-icon="mdi-check" variant="flat" type="submit">
-                        Speichern
-                      </v-btn>
-                    </v-defaults-provider>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
+        <LmAttendeeExpansionPanel
+          v-for="attendee in youthAttendeeList"
+          :key="attendee.id"
+          :attendee="attendee"
+        ></LmAttendeeExpansionPanel>
       </v-expansion-panels>
 
       <AttendeesTable
@@ -336,9 +302,28 @@ onMounted(() => {
       />
     </div>
   </v-container>
+
+  <v-dialog v-model="isAddNewFormModalVisible" max-width="650">
+    <v-card class="px-6 py-6">
+      <LmAttendeeAddForm
+        v-if="newAttendee"
+        :department="department"
+        :attendee="newAttendee"
+        @save="saveAttendee"
+        @delete="deleteAttendee"
+      />
+    </v-card>
+  </v-dialog>
 </template>
 
-<style scoped>
+<style lang="scss">
+// Remove default vuetify filter from v-icon
+.v-icon {
+  filter: none;
+}
+</style>
+
+<style scoped lang="scss">
 .shirt-and-food {
   .shirt {
     gap: 0.1rem;

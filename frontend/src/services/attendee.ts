@@ -6,8 +6,7 @@ export const getAttendees = () => getData<Attendees>('attendees', withAuthentica
 export const getAttendeesForDepartment = (departmentId: number) =>
   getData<Attendees>(`departments/${departmentId}/attendees`, withAuthenticationHeader())
 
-export const getAttendee = (id: number) =>
-  getData<Attendee>(`attendees/${id}`, withAuthenticationHeader())
+export const getAttendee = (id: number) => getData<Attendee>(`attendees/${id}`, withAuthenticationHeader())
 
 export const createAttendee = (attendee: NewAttendee) =>
   postData<Attendee>('attendees', withAuthenticationHeader(), attendee)
@@ -15,8 +14,7 @@ export const createAttendee = (attendee: NewAttendee) =>
 export const updateAttendee = (attendee: Attendee) =>
   putData<Attendee>(`attendees/${attendee.id}`, withAuthenticationHeader(), attendee)
 
-export const deleteAttendee = (id: string) =>
-  deleteData(`attendees/${id}`, withAuthenticationHeader())
+export const deleteAttendee = (id: string) => deleteData(`attendees/${id}`, withAuthenticationHeader())
 
 export enum AttendeeRole {
   YOUTH = 'YOUTH',
@@ -58,6 +56,11 @@ export interface NewAttendee {
 export interface Attendee extends NewAttendee {
   id: string
   status: AttendeeStatus | null | undefined
+}
+
+export interface AttendeeWithValidation extends Attendee {
+  tShirtSizeError: boolean
+  helperDaysError: boolean
 }
 
 export interface Youth extends Attendee {}
