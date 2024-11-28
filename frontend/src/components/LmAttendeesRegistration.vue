@@ -41,7 +41,6 @@ let childGroupCanBeEdited: boolean = true
 // REFS
 const attendees = ref<Attendees>(defaultAttendees)
 const filterInput = ref<string>('')
-const totalAttendeeCount = ref<number>(0)
 const isAddNewFormModalVisible = ref<boolean>(false)
 const newAttendee = ref<AttendeeWithValidation | undefined>(undefined)
 
@@ -123,9 +122,9 @@ const enteredAttendeesCount = computed<number>(() => {
   )
 })
 
-const attendeesChanged = (change: number) => {
-  totalAttendeeCount.value += change
-}
+const totalAttendeeCount = computed<number>(() => {
+  return attendees.value.youths.length + attendees.value.youthLeaders.length
+})
 
 const getDepartmentName = async (departmentId: number) => {
   const department = await getDepartment(departmentId)
@@ -150,7 +149,6 @@ const saveAttendee = (att: AttendeeWithValidation) => {
   if (att.id === newAttendee.value?.id) {
     createAttendee(att).then((newAtt) => {
       attendees.value.youths.push(newAtt)
-      attendeesChanged?.(1)
     })
     return
   }
@@ -176,7 +174,6 @@ const deleteAttendee = (att: Attendee) => {
   deleteAttendeeService(att.id).then(() => {
     removeAttendeeIdFromList(att.id, deletingAttendees.value)
     deletedAttendeeIds.value.push(att.id)
-    props.attendeesChanged?.(-1)
   })
 }
 
@@ -191,7 +188,6 @@ onBeforeMount(async () => {
 onMounted(() => {
   getAttendeesForDepartment(props.department.id).then((attendeeList) => {
     attendees.value = attendeeList
-    totalAttendeeCount.value = attendeeList.youths.length + attendeeList.youthLeaders.length
   })
 })
 </script>
@@ -233,7 +229,6 @@ onMounted(() => {
         :attendees="youthAttendeeList"
         :departmentId="department.id"
         :role="attendeeRoleYouth"
-        :attendeesChanged="attendeesChanged"
         :disabled="!attendeesCanBeEdited"
       />
       <AttendeesTable
@@ -242,7 +237,6 @@ onMounted(() => {
         :attendees="youthLeaderAttendeeList"
         :role="attendeeRoleYouthLeader"
         :departmentId="department.id"
-        :attendeesChanged="attendeesChanged"
         :disabled="!attendeesCanBeEdited"
       />
 
@@ -260,7 +254,6 @@ onMounted(() => {
         :attendees="childAttendeeList"
         :departmentId="department.id"
         :role="attendeeRoleChild"
-        :attendeesChanged="attendeesChanged"
         :disabled="!childGroupCanBeEdited"
       />
       <AttendeesTable
@@ -269,7 +262,6 @@ onMounted(() => {
         :attendees="childLeaderAttendeeList"
         :role="attendeeRoleChildLeader"
         :departmentId="department.id"
-        :attendeesChanged="attendeesChanged"
         :disabled="!childGroupCanBeEdited"
       />
     </div>
@@ -283,7 +275,6 @@ onMounted(() => {
         :attendees="zKidsAttendeeList"
         :departmentId="department.id"
         :role="attendeeRoleZKid"
-        :attendeesChanged="attendeesChanged"
         :disabled="!attendeesCanBeEdited"
       />
     </div>
@@ -297,7 +288,6 @@ onMounted(() => {
         :attendees="helpersAttendeeList"
         :departmentId="department.id"
         :role="attendeeRoleHelper"
-        :attendeesChanged="attendeesChanged"
         :disabled="!childGroupCanBeEdited"
       />
     </div>
@@ -309,8 +299,9 @@ onMounted(() => {
         v-if="newAttendee"
         :department="department"
         :attendee="newAttendee"
+        :show-cancel="true"
         @save="saveAttendee"
-        @delete="deleteAttendee"
+        @cancel="isAddNewFormModalVisible = false"
       />
     </v-card>
   </v-dialog>

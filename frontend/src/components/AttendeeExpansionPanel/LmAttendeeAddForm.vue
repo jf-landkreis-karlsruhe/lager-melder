@@ -4,6 +4,7 @@ import { ref } from 'vue'
 
 const props = defineProps<{
   attendee: AttendeeWithValidation
+  showCancel: boolean
 }>()
 
 const current = ref<AttendeeWithValidation>({ ...props.attendee })
@@ -11,6 +12,7 @@ const current = ref<AttendeeWithValidation>({ ...props.attendee })
 const emit = defineEmits<{
   (e: 'save', attendee: AttendeeWithValidation): void
   (e: 'delete', attendee: AttendeeWithValidation): void
+  (e: 'cancel', attendee: AttendeeWithValidation): void
 }>()
 </script>
 
@@ -122,7 +124,11 @@ const emit = defineEmits<{
 
         <div class="d-flex ga-4">
           <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
+            <v-btn v-if="props.showCancel" style="flex: 1" variant="text" @click="emit('cancel', props.attendee)">
+              Abbrechen
+            </v-btn>
             <v-btn
+              v-else
               style="flex: 1"
               prepend-icon="mdi-trash-can-outline"
               variant="text"
