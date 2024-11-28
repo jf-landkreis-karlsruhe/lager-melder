@@ -7,9 +7,9 @@ import {
   createAttendee,
   defaultAttendees,
   deleteAttendee as deleteAttendeeService,
-  Food,
   getAttendeeDefault,
   getAttendeesForDepartment,
+  getAttendeeTypeByRole,
   updateAttendee
 } from '../services/attendee'
 import { type Department, DepartmentFeatures } from '../services/department'
@@ -110,33 +110,21 @@ const totalAttendeeCount = computed<number>(() => {
 })
 
 const saveAttendee = (att: Attendee) => {
-  console.debug('🔥 save attende', att)
-
   if (newAttendee.value && att.id === newAttendee.value.id) {
     createAttendee(att).then((newAtt) => {
       if (!newAttendee.value) return
-      const attendeeTypeToRoleMap: Record<AttendeeRole, keyof Attendees> = {
-        [AttendeeRole.YOUTH]: 'youths',
-        [AttendeeRole.YOUTH_LEADER]: 'youthLeaders',
-        [AttendeeRole.CHILD]: 'children',
-        [AttendeeRole.CHILD_LEADER]: 'childLeaders',
-        [AttendeeRole.Z_KID]: 'zKids',
-        [AttendeeRole.HELPER]: 'helpers'
-      }
-      const attendeeType = attendeeTypeToRoleMap[newAttendee.value.role]
-      attendees.value[attendeeType].push(newAttendee.value)
+      const attendeeType = getAttendeeTypeByRole(newAttendee.value.role)
+      attendees.value[attendeeType].push(newAtt) // TODO: partOfDepartmentId is not set?!
     })
-    return
+    isAddNewFormModalVisible.value = false
   }
 }
 
-// const deleteAttendee = (att: Attendee) => {
-//   deletingAttendees.value.push(att.id)
-//   deleteAttendeeService(att.id).then(() => {
-//     removeAttendeeIdFromList(att.id, deletingAttendees.value)
-//     deletedAttendeeIds.value.push(att.id)
-//   })
-// }
+const deleteAttendee = async (att: Attendee, role: AttendeeRole) => {
+  await deleteAttendeeService(att.id)
+  const attendeeType = getAttendeeTypeByRole(role)
+  attendees.value = { ...attendees.value, [attendeeType]: attendees.value[attendeeType].filter((a) => a.id !== att.id) }
+}
 
 onBeforeMount(async () => {
   const response = await getRegistrationEnd()
@@ -176,11 +164,13 @@ onMounted(() => {
         </div>
       </div>
 
-      <v-expansion-panels class="mb-4">
+      <v-expansion-panels class="mb-4" :key="attendees.youths.length">
         <LmAttendeeExpansionPanel
           v-for="attendee in youthAttendeeList"
           :key="attendee.id"
           :attendee="attendee"
+          @update="updateAttendee"
+          @delete="deleteAttendee"
         ></LmAttendeeExpansionPanel>
       </v-expansion-panels>
 

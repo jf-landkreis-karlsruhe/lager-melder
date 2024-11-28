@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { foodText } from '@/helper/displayText'
+import { FOOD_ICON_MAP, foodText } from '@/helper/displayText'
 import { Food, type Attendee } from '@/services/attendee'
 import { getEventDays } from '@/services/eventDays'
 import { getTShirtSizes } from '@/services/tShirtSizes'
@@ -18,6 +18,7 @@ const emit = defineEmits<{
 }>()
 
 const current = ref<Attendee>({ ...props.attendee })
+const isFormValid = ref<boolean>(false)
 const tShirtSizes = ref<{ title: string; props: Object }[]>([])
 const helperDays = ref<{ title: string; value: string }[]>([])
 
@@ -29,19 +30,18 @@ const birthdayAsDate = computed<unknown>(() => {
 
 const foodList = computed<{ value: Food; title: string }[]>(() => {
   return Object.values(Food).map((value: Food) => {
-    const foodIconMap = {
-      [Food.MEAT]: 'mdi-food-drumstick-outline',
-      [Food.VEGETARIAN]: 'mdi-cheese',
-      [Food.MUSLIM]: 'mdi-food-halal',
-      [Food.SPECIAL]: 'mdi-food-apple-outline',
-      [Food.NONE]: 'mdi-food-off-outline'
-    }
-    return { value, title: foodText(value), props: { prependIcon: foodIconMap[value] } }
+    return { value, title: foodText(value), props: { prependIcon: FOOD_ICON_MAP[value] } }
   })
 })
 
 const updateBirthday = (date: unknown) => {
   current.value.birthday = `${adapter.getYear(date)}-${adapter.getMonth(date) + 1}-${adapter.getDate(date)}`
+}
+
+const handleSubmit = () => {
+  if (isFormValid.value) {
+    emit('save', current.value)
+  }
 }
 
 const tshirtRules = [
@@ -79,7 +79,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-form @submit.prevent="emit('save', current)">
+  <v-form @submit.prevent="handleSubmit" v-model="isFormValid">
     <div class="d-flex flex-row ga-4 justify-space-between align-start mt-4">
       <!-- First column -->
       <div class="d-flex flex-column ga-3" style="flex: 6">
@@ -199,14 +199,7 @@ onMounted(async () => {
             </v-btn>
           </v-defaults-provider>
           <v-defaults-provider :defaults="{ VIcon: { color: '#fff' } }">
-            <v-btn
-              style="flex: 1"
-              color="primary"
-              prepend-icon="mdi-check"
-              variant="flat"
-              type="submit"
-              @click="emit('save', current)"
-            >
+            <v-btn style="flex: 1" color="primary" prepend-icon="mdi-check" variant="flat" type="submit">
               Speichern
             </v-btn>
           </v-defaults-provider>

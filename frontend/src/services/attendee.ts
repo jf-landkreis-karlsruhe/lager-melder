@@ -36,6 +36,18 @@ export const getAttendeeDefault = (role: AttendeeRole, departmentId: number): At
   }
 }
 
+export const getAttendeeTypeByRole = (role: AttendeeRole): keyof Attendees => {
+  const map: Record<AttendeeRole, keyof Attendees> = {
+    [AttendeeRole.YOUTH]: 'youths',
+    [AttendeeRole.YOUTH_LEADER]: 'youthLeaders',
+    [AttendeeRole.CHILD]: 'children',
+    [AttendeeRole.CHILD_LEADER]: 'childLeaders',
+    [AttendeeRole.Z_KID]: 'zKids',
+    [AttendeeRole.HELPER]: 'helpers'
+  }
+  return map[role]
+}
+
 export enum AttendeeRole {
   YOUTH = 'YOUTH',
   YOUTH_LEADER = 'YOUTH_LEADER',
