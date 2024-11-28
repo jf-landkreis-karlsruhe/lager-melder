@@ -16,6 +16,26 @@ export const updateAttendee = (attendee: Attendee) =>
 
 export const deleteAttendee = (id: string) => deleteData(`attendees/${id}`, withAuthenticationHeader())
 
+// returns a role-based default attendee object for creating new attendees
+export const getAttendeeDefault = (role: AttendeeRole, departmentId: number): Attendee => {
+  return {
+    id: 'newAttendee' + Date.now(),
+    departmentId: departmentId,
+    partOfDepartmentId: 0, // TODO: set to what? What is this for?
+    role,
+    firstName: '',
+    lastName: '',
+    tShirtSize: '',
+    helperDays: [],
+    juleikaNumber: '',
+    food: Food.NONE,
+    juleikaExpireDate: '',
+    birthday: '',
+    status: undefined,
+    additionalInformation: ''
+  }
+}
+
 export enum AttendeeRole {
   YOUTH = 'YOUTH',
   YOUTH_LEADER = 'YOUTH_LEADER',
@@ -27,10 +47,10 @@ export enum AttendeeRole {
 
 export enum Food {
   MEAT = 'MEAT',
-  NONE = 'NONE',
-  SPECIAL = 'SPECIAL',
   VEGETARIAN = 'VEGETARIAN',
-  MUSLIM = 'MUSLIM'
+  SPECIAL = 'SPECIAL',
+  MUSLIM = 'MUSLIM',
+  NONE = 'NONE'
 }
 
 export enum AttendeeStatus {
@@ -58,6 +78,7 @@ export interface Attendee extends NewAttendee {
   status: AttendeeStatus | null | undefined
 }
 
+// TODO: not needed anymore! remove if secure
 export interface AttendeeWithValidation extends Attendee {
   tShirtSizeError: boolean
   helperDaysError: boolean

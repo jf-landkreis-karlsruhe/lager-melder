@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { AttendeeWithValidation } from '@/services/attendee'
+import type { Attendee } from '@/services/attendee'
 import { dateAsText } from '../../helper/displayText'
 import LmAttendeeAddForm from './LmAttendeeAddForm.vue'
 
 const props = defineProps<{
-  attendee: AttendeeWithValidation
+  attendee: Attendee
 }>()
 </script>
 
@@ -43,7 +43,7 @@ const props = defineProps<{
           </div>
         </div>
 
-        <div v-if="props.attendee.additionalInformation" class="description mr-2" style="flex: 4">
+        <div :class="{ hidden: !props.attendee.additionalInformation }" class="description mr-2" style="flex: 4">
           <i>
             <v-icon class="mr-1">mdi-information-outline</v-icon>
             {{ props.attendee.additionalInformation }}
@@ -56,3 +56,9 @@ const props = defineProps<{
     </v-expansion-panel-text>
   </v-expansion-panel>
 </template>
+
+<style scoped lang="scss">
+.hidden {
+  visibility: hidden;
+}
+</style>

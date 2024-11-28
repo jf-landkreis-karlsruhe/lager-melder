@@ -4,15 +4,15 @@ import {
   type Attendee,
   AttendeeRole,
   type Attendees,
-  type AttendeeWithValidation,
   createAttendee,
   defaultAttendees,
   deleteAttendee as deleteAttendeeService,
   Food,
+  getAttendeeDefault,
   getAttendeesForDepartment,
   updateAttendee
 } from '../services/attendee'
-import { type Department, DepartmentFeatures, getDepartment } from '../services/department'
+import { type Department, DepartmentFeatures } from '../services/department'
 import { filterByDepartmentAndSearch, filterEnteredAttendees } from '../helper/filterHelper'
 import AttendeesTable from './LmAttendeesTable.vue'
 import RegistrationInformation from './LmRegistrationInformation.vue'
@@ -42,11 +42,11 @@ let childGroupCanBeEdited: boolean = true
 const attendees = ref<Attendees>(defaultAttendees)
 const filterInput = ref<string>('')
 const isAddNewFormModalVisible = ref<boolean>(false)
-const newAttendee = ref<AttendeeWithValidation | undefined>(undefined)
+const newAttendee = ref<Attendee | undefined>(undefined)
 
 // COMPUTED
 
-const youthAttendeeList = computed<AttendeeWithValidation[]>(() => {
+const youthAttendeeList = computed<Attendee[]>(() => {
   if (!props.department || !props.department.id) {
     return []
   }
@@ -83,29 +83,12 @@ const helpersAttendeeList = computed<Attendee[]>(() => {
   return filterByDepartmentAndSearch(attendees.value.helpers, props.department.id, filterInput.value)
 })
 
-const addNewAttendee = () => {
+const addNewAttendee = (role: AttendeeRole) => {
   if (!props.department || !props.department.id) {
     return
   }
+  newAttendee.value = getAttendeeDefault(role, props.department.id)
   isAddNewFormModalVisible.value = true
-  newAttendee.value = {
-    id: 'newAttendee' + Date.now(),
-    departmentId: props.department.id,
-    partOfDepartmentId: undefined,
-    role: AttendeeRole.YOUTH,
-    firstName: '',
-    lastName: '',
-    tShirtSize: '',
-    helperDays: [],
-    juleikaNumber: '',
-    food: Food.NONE,
-    juleikaExpireDate: '',
-    birthday: '',
-    status: undefined,
-    additionalInformation: '',
-    helperDaysError: false,
-    tShirtSizeError: false
-  }
 }
 
 const childLeaderAttendeeList = computed<Attendee[]>(() => {
@@ -126,56 +109,34 @@ const totalAttendeeCount = computed<number>(() => {
   return attendees.value.youths.length + attendees.value.youthLeaders.length
 })
 
-const getDepartmentName = async (departmentId: number) => {
-  const department = await getDepartment(departmentId)
-  return department.name
-}
-
-const saveAttendee = (att: AttendeeWithValidation) => {
+const saveAttendee = (att: Attendee) => {
   console.debug('🔥 save attende', att)
-  if (!att.tShirtSize) {
-    att.tShirtSizeError = true
-    return
-  } else {
-    att.tShirtSizeError = false
-  }
-  if (att.role == AttendeeRole.HELPER && (!att.helperDays || att.helperDays.length === 0)) {
-    att.helperDaysError = true
-    return
-  } else {
-    att.helperDaysError = false
-  }
 
-  if (att.id === newAttendee.value?.id) {
+  if (newAttendee.value && att.id === newAttendee.value.id) {
     createAttendee(att).then((newAtt) => {
-      attendees.value.youths.push(newAtt)
+      if (!newAttendee.value) return
+      const attendeeTypeToRoleMap: Record<AttendeeRole, keyof Attendees> = {
+        [AttendeeRole.YOUTH]: 'youths',
+        [AttendeeRole.YOUTH_LEADER]: 'youthLeaders',
+        [AttendeeRole.CHILD]: 'children',
+        [AttendeeRole.CHILD_LEADER]: 'childLeaders',
+        [AttendeeRole.Z_KID]: 'zKids',
+        [AttendeeRole.HELPER]: 'helpers'
+      }
+      const attendeeType = attendeeTypeToRoleMap[newAttendee.value.role]
+      attendees.value[attendeeType].push(newAttendee.value)
     })
     return
   }
-  if (!att.juleikaNumber) att.juleikaNumber = ''
-  if (!att.juleikaExpireDate) att.juleikaExpireDate = ''
-  if (!att.birthday) att.birthday = ''
-  if (!att.status) att.status = undefined
-  if (!att.helperDays) att.helperDays = []
-  updateAttendee(att).then(() => {
-    // TODO! Do not mutate param!
-    removeAttendeeIdFromList(att.id, attendees.value.youths)
-  })
 }
 
-// TODO! Do not mutate param!
-const removeAttendeeIdFromList = (id: string, list: string[]) => {
-  const indexOfAttendee = list.indexOf(id)
-  list.splice(indexOfAttendee, 1)
-}
-
-const deleteAttendee = (att: Attendee) => {
-  deletingAttendees.value.push(att.id)
-  deleteAttendeeService(att.id).then(() => {
-    removeAttendeeIdFromList(att.id, deletingAttendees.value)
-    deletedAttendeeIds.value.push(att.id)
-  })
-}
+// const deleteAttendee = (att: Attendee) => {
+//   deletingAttendees.value.push(att.id)
+//   deleteAttendeeService(att.id).then(() => {
+//     removeAttendeeIdFromList(att.id, deletingAttendees.value)
+//     deletedAttendeeIds.value.push(att.id)
+//   })
+// }
 
 onBeforeMount(async () => {
   const response = await getRegistrationEnd()
@@ -208,7 +169,7 @@ onMounted(() => {
 
           <label v-if="attendeesCanBeEdited">
             <span class="mr-2" style="cursor: pointer">Teilnehmer hinzufügen</span>
-            <v-btn @click="addNewAttendee" color="primary" class="ma-0 mb-1" icon size="x-small">
+            <v-btn @click="addNewAttendee(attendeeRoleYouth)" color="primary" class="ma-0 mb-1" icon size="x-small">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
           </label>
@@ -293,7 +254,7 @@ onMounted(() => {
     </div>
   </v-container>
 
-  <v-dialog v-model="isAddNewFormModalVisible" max-width="650">
+  <v-dialog v-model="isAddNewFormModalVisible" max-width="900">
     <v-card class="px-6 py-6">
       <LmAttendeeAddForm
         v-if="newAttendee"

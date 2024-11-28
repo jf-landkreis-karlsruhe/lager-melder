@@ -1,23 +1,85 @@
 <script lang="ts" setup>
-import type { AttendeeWithValidation } from '@/services/attendee'
-import { ref } from 'vue'
+import { foodText } from '@/helper/displayText'
+import { Food, type Attendee } from '@/services/attendee'
+import { getEventDays } from '@/services/eventDays'
+import { getTShirtSizes } from '@/services/tShirtSizes'
+import { computed, onMounted, ref } from 'vue'
+import { useDate } from 'vuetify'
 
 const props = defineProps<{
-  attendee: AttendeeWithValidation
-  showCancel: boolean
+  attendee: Attendee
+  showCancel?: boolean
 }>()
-
-const current = ref<AttendeeWithValidation>({ ...props.attendee })
 
 const emit = defineEmits<{
-  (e: 'save', attendee: AttendeeWithValidation): void
-  (e: 'delete', attendee: AttendeeWithValidation): void
-  (e: 'cancel', attendee: AttendeeWithValidation): void
+  (e: 'save', attendee: Attendee): void
+  (e: 'delete', attendee: Attendee): void
+  (e: 'cancel', attendee: Attendee): void
 }>()
+
+const current = ref<Attendee>({ ...props.attendee })
+const tShirtSizes = ref<{ title: string; props: Object }[]>([])
+const helperDays = ref<{ title: string; value: string }[]>([])
+
+const adapter = useDate()
+
+const birthdayAsDate = computed<unknown>(() => {
+  return adapter.parseISO(current.value.birthday)
+})
+
+const foodList = computed<{ value: Food; title: string }[]>(() => {
+  return Object.values(Food).map((value: Food) => {
+    const foodIconMap = {
+      [Food.MEAT]: 'mdi-food-drumstick-outline',
+      [Food.VEGETARIAN]: 'mdi-cheese',
+      [Food.MUSLIM]: 'mdi-food-halal',
+      [Food.SPECIAL]: 'mdi-food-apple-outline',
+      [Food.NONE]: 'mdi-food-off-outline'
+    }
+    return { value, title: foodText(value), props: { prependIcon: foodIconMap[value] } }
+  })
+})
+
+const updateBirthday = (date: unknown) => {
+  current.value.birthday = `${adapter.getYear(date)}-${adapter.getMonth(date) + 1}-${adapter.getDate(date)}`
+}
+
+const tshirtRules = [
+  (value: string) => {
+    if (value) return true
+
+    return 'TShirt Größe auswählen'
+  }
+]
+
+const helperDaysRules = [
+  (value: string[]) => {
+    if (value && value.length > 0) return true
+
+    return 'Mindestens ein Helfertag muss ausgewählt werden'
+  }
+]
+
+const requiredRule = [
+  (value: string) => {
+    if (value) return true
+
+    return 'Pflichtfeld, bitte ausfüllen.'
+  }
+]
+
+onMounted(async () => {
+  tShirtSizes.value = (await getTShirtSizes()).map((shirtSize) => ({
+    title: shirtSize,
+    props: { prependIcon: 'mdi-tshirt-crew-outline' }
+  }))
+  const eventDays = await getEventDays()
+  helperDays.value = eventDays.map((day) => ({ title: day.name, value: day.id }))
+})
 </script>
 
 <template>
-  <v-form @submit.prevent="">
+  <v-form @submit.prevent="emit('save', current)">
     <div class="d-flex flex-row ga-4 justify-space-between align-start mt-4">
       <!-- First column -->
       <div class="d-flex flex-column ga-3" style="flex: 6">
@@ -27,7 +89,8 @@ const emit = defineEmits<{
             variant="outlined"
             density="comfortable"
             required
-            :modelValue="props.attendee.firstName"
+            :rules="requiredRule"
+            :modelValue="current.firstName"
             @update:modelValue="current.firstName = $event"
           ></v-text-field>
           <v-text-field
@@ -35,78 +98,76 @@ const emit = defineEmits<{
             variant="outlined"
             density="comfortable"
             required
-            :modelValue="props.attendee.lastName"
+            :rules="requiredRule"
+            :modelValue="current.lastName"
             @update:modelValue="current.lastName = $event"
           ></v-text-field>
         </div>
 
-        <v-select
-          :items="[
-            { name: 'S', props: { prependIcon: 'mdi-tshirt-crew-outline' } },
-            { name: 'M', props: { prependIcon: 'mdi-tshirt-crew-outline' } },
-            { name: 'TODO', props: { prependIcon: 'mdi-tshirt-crew-outline' } }
-          ]"
-          density="comfortable"
+        <v-date-input
+          label="Geburtstag"
           variant="outlined"
-          item-title="name"
-          label="T-Shirt-Größe"
+          density="comfortable"
           required
-          :error-messages="props.attendee.tShirtSizeError ? ['TShirt Größe auswählen'] : []"
-          :modelValue="props.attendee.tShirtSize || 'S'"
-          @update:modelValue="current.tShirtSize = $event"
-        >
-          <template v-slot:selection="{ item }">
-            <v-icon class="mr-4">mdi-tshirt-crew-outline</v-icon>{{ item.title }}
-          </template>
-          <template v-slot:item="{ props }">
-            <v-list-item v-bind="props"></v-list-item>
-          </template>
-        </v-select>
+          :rules="requiredRule"
+          :modelValue="birthdayAsDate"
+          @update:modelValue="updateBirthday"
+        ></v-date-input>
 
-        <v-select
-          :items="[
-            { name: 'Fleisch', props: { prependIcon: 'mdi-food-drumstick-outline' } },
-            { name: 'Vegetarisch', props: { prependIcon: 'mdi-cheese' } },
-            { name: 'TODO', props: { prependIcon: 'mdi-food-drumstick-outline' } }
-          ]"
-          density="comfortable"
-          variant="outlined"
-          item-title="name"
-          label="Essen"
-          required
-          :modelValue="props.attendee.food"
-          @update:modelValue="current.food = $event"
-        >
-          <template v-slot:selection="{ item }">
-            <v-icon class="mr-4">mdi-food-drumstick-outline</v-icon>{{ item.title }}
-          </template>
-          <template v-slot:item="{ props }">
-            <v-list-item v-bind="props"></v-list-item>
-          </template>
-        </v-select>
+        <div class="d-flex align-center ga-4">
+          <v-select
+            :items="tShirtSizes"
+            density="comfortable"
+            variant="outlined"
+            item-title="title"
+            label="T-Shirt-Größe"
+            required
+            :rules="tshirtRules"
+            :modelValue="current.tShirtSize"
+            @update:modelValue="current.tShirtSize = $event"
+          >
+            <template v-slot:selection="{ item }">
+              <v-icon class="mr-4">mdi-tshirt-crew-outline</v-icon>{{ item.title }}
+            </template>
+            <template v-slot:item="{ props }">
+              <v-list-item v-bind="props"></v-list-item>
+            </template>
+          </v-select>
+
+          <v-select
+            :items="foodList"
+            density="comfortable"
+            variant="outlined"
+            item-title="title"
+            label="Essen"
+            required
+            :rules="requiredRule"
+            :modelValue="current.food"
+            @update:modelValue="current.food = $event"
+          >
+            <template v-slot:selection="{ item, props }">
+              <v-icon class="mr-4">{{ item.props.prependIcon }}</v-icon>
+              {{ item.title }}
+            </template>
+            <template v-slot:item="{ props }">
+              <v-list-item v-bind="props"></v-list-item>
+            </template>
+          </v-select>
+        </div>
       </div>
 
       <!-- Second column -->
       <div class="d-flex flex-column ga-3" style="flex: 6">
         <v-select
-          :items="[
-            { name: 'Samstag vorher' },
-            { name: 'Montag' },
-            { name: 'Dienstag' },
-            { name: 'Mittwoch' },
-            { name: 'Donnerstag' },
-            { name: 'Freitag' },
-            { name: 'Samstag' },
-            { name: 'Sonntag' }
-          ]"
+          :items="helperDays"
           density="comfortable"
           variant="outlined"
           multiple
           chips
-          item-title="name"
+          item-title="title"
           label="Helfertage"
-          :error-messages="props.attendee.helperDaysError ? ['Mindestens ein Helfertag muss ausgewählt werden'] : []"
-          :modelValue="props.attendee.helperDays"
+          :rules="helperDaysRules"
+          :modelValue="current.helperDays"
           @update:modelValue="current.helperDays = $event"
         >
         </v-select>
@@ -118,13 +179,13 @@ const emit = defineEmits<{
           rows="4.1"
           auto-grow
           clearable
-          :modelValue="props.attendee.additionalInformation"
+          :modelValue="current.additionalInformation"
           @update:modelValue="current.additionalInformation = $event"
         ></v-textarea>
 
         <div class="d-flex ga-4">
           <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
-            <v-btn v-if="props.showCancel" style="flex: 1" variant="text" @click="emit('cancel', props.attendee)">
+            <v-btn v-if="props.showCancel" style="flex: 1" variant="text" @click="emit('cancel', current)">
               Abbrechen
             </v-btn>
             <v-btn
@@ -132,7 +193,7 @@ const emit = defineEmits<{
               style="flex: 1"
               prepend-icon="mdi-trash-can-outline"
               variant="text"
-              @click="emit('delete', props.attendee)"
+              @click="emit('delete', current)"
             >
               Löschen
             </v-btn>
@@ -144,7 +205,7 @@ const emit = defineEmits<{
               prepend-icon="mdi-check"
               variant="flat"
               type="submit"
-              @click="emit('save', props.attendee)"
+              @click="emit('save', current)"
             >
               Speichern
             </v-btn>
