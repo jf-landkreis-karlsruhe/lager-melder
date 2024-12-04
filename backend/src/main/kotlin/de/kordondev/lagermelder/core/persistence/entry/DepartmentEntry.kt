@@ -33,4 +33,12 @@ data class DepartmentEntry (
 
         @Column(name = "paused")
         val paused: Boolean,
+
+        @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.EAGER)
+        @JoinColumn(name = "department_id")
+        val tentMarkings: Set<TentMarkingEntry> = emptySet(),
+
+        @ManyToOne
+        @JoinColumn(name = "evacuation_group_id")
+        val evacuationGroup: EvacuationGroupEntry?,
 )

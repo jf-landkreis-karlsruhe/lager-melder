@@ -10,6 +10,8 @@ import de.kordondev.lagermelder.rest.model.RestTents
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentPauseRequest
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRegistrationRequest
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRequest
+import de.kordondev.lagermelder.rest.model.request.RestDepartmentTentMarkingRequest
+import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
 import kotlin.random.Random
@@ -45,7 +47,7 @@ class DepartmentController(
     fun addDepartment(@RequestBody(required = true) @Valid department: RestDepartmentRequest): RestDepartment {
         val departmentId = Random.nextLong()
         return departmentService
-                .createDepartment(RestDepartmentRequest.to(department, departmentId, setOf()))
+            .createDepartment(RestDepartmentRequest.to(department, departmentId, emptySet(), null, emptySet()))
                 .let { RestDepartment.of(it) }
     }
 
@@ -54,7 +56,15 @@ class DepartmentController(
         val departmentFromDB = departmentService.getDepartment(id)
 
         return departmentService
-            .saveDepartment(RestDepartmentRequest.to(department, id, departmentFromDB.features))
+            .saveDepartment(
+                RestDepartmentRequest.to(
+                    department,
+                    id,
+                    departmentFromDB.features,
+                    departmentFromDB.evacuationGroup,
+                    departmentFromDB.tentMarkings
+                )
+            )
                 .let { RestDepartment.of(it) }
     }
 
@@ -102,6 +112,18 @@ class DepartmentController(
         val department = departmentService.getDepartment(id)
         return departmentService
             .saveDepartment(department.copy(paused = pauseRequest.paused))
+            .let { RestDepartment.of(it) }
+    }
+
+    @Transactional
+    @PutMapping("departments/{id}/evacuation-groups/{evacuationGroupId}/tent-markings")
+    fun updateTentMarkings(
+        @PathVariable("id") id: Long,
+        @PathVariable("evacuationGroupId") evacuationGroupId: String,
+        @RequestBody(required = true) @Valid tentMarkings: Set<RestDepartmentTentMarkingRequest>
+    ): RestDepartment {
+        return departmentService
+            .updateTentMarkings(id, tentMarkings, evacuationGroupId)
             .let { RestDepartment.of(it) }
     }
 

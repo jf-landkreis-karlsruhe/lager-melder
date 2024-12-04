@@ -1,8 +1,6 @@
 package de.kordondev.lagermelder.rest.model.request
 
-import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
-import de.kordondev.lagermelder.core.persistence.entry.DepartmentFeatureEntry
-import de.kordondev.lagermelder.core.persistence.entry.DepartmentFeatures
+import de.kordondev.lagermelder.core.persistence.entry.*
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -24,7 +22,13 @@ data class RestDepartmentRequest(
     val paused: Boolean,
 ) {
     companion object {
-        fun to(department: RestDepartmentRequest, id: Long, features: Set<DepartmentFeatureEntry>) = DepartmentEntry(
+        fun to(
+            department: RestDepartmentRequest,
+            id: Long,
+            features: Set<DepartmentFeatureEntry>,
+            evacuationGroup: EvacuationGroupEntry?,
+            tentMarkings: Set<TentMarkingEntry>
+        ) = DepartmentEntry(
             id = id,
             name = department.name,
             leaderName = department.leaderName,
@@ -38,7 +42,9 @@ data class RestDepartmentRequest(
                     )
             }.toSet(),
             headDepartmentName = department.headDepartmentName,
-            paused = department.paused
+            paused = department.paused,
+            evacuationGroup = evacuationGroup,
+            tentMarkings = tentMarkings
         )
     }
 }
