@@ -44,7 +44,9 @@ class LagermelderApplication {
             phoneNumber = "",
             shortName = "",
             headDepartmentName = "",
-            paused = false
+            paused = false,
+            evacuationGroup = null
+
         )
         departmentRepository.save(adminDepartment)
 

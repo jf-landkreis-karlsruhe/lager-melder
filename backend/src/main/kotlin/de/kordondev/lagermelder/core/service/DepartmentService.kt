@@ -7,6 +7,7 @@ import de.kordondev.lagermelder.core.persistence.repository.DepartmentRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.exception.ExistingDependencyException
 import de.kordondev.lagermelder.exception.NotFoundException
+import de.kordondev.lagermelder.rest.model.request.RestDepartmentTentMarkingRequest
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -16,7 +17,9 @@ class DepartmentService(
     private val departmentRepository: DepartmentRepository,
     private val departmentFeatureRepository: DepartmentFeatureRepository,
     private val attendeeService: AttendeeService,
-    private val authorityService: AuthorityService
+    private val authorityService: AuthorityService,
+    private val evacuationGroupService: EvacuationGroupService,
+    private val tentMarkingService: TentMarkingService
 ) {
     fun getDepartments(onlyWithAttendees: Boolean = false): List<DepartmentEntry> {
         val departments = departmentRepository
@@ -55,6 +58,27 @@ class DepartmentService(
 
         departmentFeatureRepository.deleteForDepartmentAndNotIn(department.id, department.features.map { it.id })
         return departmentRepository.save(department)
+    }
+
+    @Transactional
+    fun updateTentMarkings(
+        departmentId: Long,
+        tentMarkings: Set<RestDepartmentTentMarkingRequest>,
+        evacuationGroupId: String
+    ): DepartmentEntry {
+        val department = getDepartment(departmentId)
+        val evacuationGroup = evacuationGroupService.getEvacuationGroup(evacuationGroupId)
+        val updatedTentMarkings =
+            tentMarkings.map { RestDepartmentTentMarkingRequest.to(it, departmentId) }.toSet()
+
+        val updatedDepartment = saveDepartment(
+            department.copy(
+                tentMarkings = updatedTentMarkings,
+                evacuationGroup = evacuationGroup
+            )
+        )
+        tentMarkingService.deleteTentMarkingsWithoutDepartment()
+        return updatedDepartment
     }
 
     fun deleteDepartment(id: Long) {

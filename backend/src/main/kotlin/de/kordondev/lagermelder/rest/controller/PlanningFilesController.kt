@@ -69,4 +69,12 @@ class PlanningFilesController(
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=kontaktdatenÜbersicht.pdf")
         return planningFilesService.createContactList()
     }
+
+    @ResponseBody
+    @Throws(IOException::class)
+    @GetMapping(value = ["/planning-files/tentMarkings"], produces = ["application/pdf"])
+    fun getTentMarkings(response: HttpServletResponse): ByteArray? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=Zeltschilder.pdf")
+        return planningFilesService.createTentMarkings()
+    }
 }

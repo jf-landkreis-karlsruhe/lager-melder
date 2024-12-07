@@ -12,7 +12,9 @@ data class RestDepartment(
     val shortName: String,
     val features: Set<DepartmentFeatures> = emptySet(),
     val headDepartmentName: String,
-    val paused: Boolean
+    val paused: Boolean,
+    val tentMarkings: Set<RestTentMarking>,
+    val evacuationGroup: RestEvacuationGroup?
 ) {
     companion object {
         fun of(department: DepartmentEntry) = RestDepartment(
@@ -24,7 +26,9 @@ data class RestDepartment(
             shortName = department.shortName,
             features = department.features.map { it.feature }.toSet(),
             headDepartmentName = department.headDepartmentName,
-            paused = department.paused
+            paused = department.paused,
+            tentMarkings = department.tentMarkings.map { RestTentMarking.of(it) }.toSet(),
+            evacuationGroup = department.evacuationGroup?.let { RestEvacuationGroup.of(it) }
         )
     }
 }
