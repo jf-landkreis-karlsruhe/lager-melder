@@ -24,7 +24,7 @@
             (
                 id            VARCHAR(36) PRIMARY KEY,
                 name          text   NOT NULL,
-                department_id BIGINT NOT NULL,
+                department_id BIGINT,
                 FOREIGN KEY (department_id) REFERENCES departments (id)
             );
         </sql>

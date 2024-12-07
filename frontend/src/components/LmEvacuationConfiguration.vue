@@ -60,7 +60,7 @@ function saveEvacuationGroups() {
 }
 
 function startEdit() {
-  selectedTentMarkings.value = props.department.tentMarkings?.map((marking) => marking.name) || []
+  selectedTentMarkings.value = department.value.tentMarkings?.map((marking) => marking.name) || []
   selectableEvacuationGroups()
   edit.value = true
 }

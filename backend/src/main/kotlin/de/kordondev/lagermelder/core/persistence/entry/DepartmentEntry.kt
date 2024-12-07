@@ -34,7 +34,7 @@ data class DepartmentEntry (
         @Column(name = "paused")
         val paused: Boolean,
 
-        @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.EAGER)
+        @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
         @JoinColumn(name = "department_id")
         val tentMarkings: Set<TentMarkingEntry> = emptySet(),
 

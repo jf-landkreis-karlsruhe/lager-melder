@@ -1,14 +1,14 @@
 package de.kordondev.lagermelder.core.service
 
-import de.kordondev.lagermelder.core.persistence.repository.TentMarkingRepository
+import de.kordondev.lagermelder.core.persistence.repository.TentMarkingsRepository
 import org.springframework.stereotype.Service
 
 @Service
 class TentMarkingService(
-    private val tentMarkingRepository: TentMarkingRepository
+    private val tentMarkingsRepository: TentMarkingsRepository
 ) {
 
-    fun deleteTentMarkingsForDepartment(departmentId: Long) {
-        tentMarkingRepository.deleteByDepartmentId(departmentId)
+    fun deleteTentMarkingsWithoutDepartment() {
+        tentMarkingsRepository.deleteWithoutDepartmentId()
     }
 }

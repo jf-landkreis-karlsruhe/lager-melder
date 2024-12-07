@@ -71,13 +71,14 @@ class DepartmentService(
         val updatedTentMarkings =
             tentMarkings.map { RestDepartmentTentMarkingRequest.to(it, departmentId) }.toSet()
 
-        tentMarkingService.deleteTentMarkingsForDepartment(departmentId)
-        return saveDepartment(
+        val updatedDepartment = saveDepartment(
             department.copy(
                 tentMarkings = updatedTentMarkings,
                 evacuationGroup = evacuationGroup
             )
         )
+        tentMarkingService.deleteTentMarkingsWithoutDepartment()
+        return updatedDepartment
     }
 
     fun deleteDepartment(id: Long) {

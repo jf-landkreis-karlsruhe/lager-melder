@@ -11,6 +11,7 @@ import {
   getContactOverview,
   getDepartmentOverview,
   getFoodPDF,
+  getTentMarkingPDF,
   getTShirtPDF
 } from '@/services/planningFiles'
 import type { FileReponse } from '@/services/filesHelper'
@@ -34,6 +35,7 @@ const totalTents = ref<Tents>({} as Tents)
 const initialLoading = ref<boolean>(true)
 const loadingBatches = ref<boolean>(false)
 const loadingFood = ref<boolean>(false)
+const loadingTentMarkings = ref<boolean>(false)
 const loadingAdditionalInformation = ref<boolean>(false)
 const loadingTshirt = ref<boolean>(false)
 const loadingDepartmentOverview = ref<boolean>(false)
@@ -75,6 +77,10 @@ const downloadBatchesPDF = () => {
 
 const downloadFoodPDF = () => {
   loadFile(getFoodPDF, loadingFood)
+}
+
+const downloadTentMarkingPDF = () => {
+  loadFile(getTentMarkingPDF, loadingTentMarkings)
 }
 
 const downloadAdditionalInformationPDF = () => {
@@ -258,6 +264,25 @@ onMounted(() => {
             @click="downloadContactList"
             small
             :loading="loadingContactList"
+          >
+            Herunterladen
+            <v-icon right dark> mdi-cloud-download</v-icon>
+          </v-btn>
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2>Zeltmarkierungen</h2>
+      <div class="d-flex align-center justify-space-between">
+        <p class="mr-8">
+          Hier können die Zeltmarkierungen heruntergeladen werden.
+          <br />
+          <v-btn
+            color="var(--lm-c-accent)"
+            @click="downloadTentMarkingPDF"
+            small
+            :loading="loadingTentMarkings"
           >
             Herunterladen
             <v-icon right dark> mdi-cloud-download</v-icon>
