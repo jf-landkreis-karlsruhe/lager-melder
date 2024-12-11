@@ -24,7 +24,9 @@ class Entities() {
                 "",
                 emptySet(),
                 "",
-                paused = false
+                paused = false,
+                emptySet(),
+                null
             )
         }
 
@@ -38,7 +40,9 @@ class Entities() {
                 "",
                 emptySet(),
                 "",
-                paused = false
+                paused = false,
+                emptySet(),
+                null
             )
         }
 

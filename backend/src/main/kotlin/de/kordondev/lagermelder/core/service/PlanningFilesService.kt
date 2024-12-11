@@ -36,6 +36,8 @@ class PlanningFilesService(
     private val yDistanceBetweenBatches = 141F
     private val logger: Logger = LoggerFactory.getLogger(PlanningFilesService::class.java)
     private val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
+    private val markingFont = Font(Font.TIMES_ROMAN, 90F, Font.NORMAL, Color.BLACK)
+    private val markingFontSmall = Font(Font.TIMES_ROMAN, 60F, Font.NORMAL, Color.BLACK)
 
     fun createBatches(): ByteArray {
         authorityService.isSpecializedFieldDirector()
@@ -178,7 +180,8 @@ class PlanningFilesService(
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out)
 
-        val globalDepartments = DepartmentEntry(0, "Zeltlager gesamt", "", "", "", "", emptySet(), "", false)
+        val globalDepartments =
+            DepartmentEntry(0, "Zeltlager gesamt", "", "", "", "", emptySet(), "", false, emptySet(), null)
         val allAttendees = attendeeService.getAttendees()
         val totalTShirtCount =
             countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids + allAttendees.helpers)
@@ -539,8 +542,8 @@ class PlanningFilesService(
         document.add(table)
     }
 
-    private fun prepareDocument(documentStream: ByteArrayOutputStream): Document {
-        val document = Document(PageSize.A4)
+    private fun prepareDocument(documentStream: ByteArrayOutputStream, pageSize: Rectangle = PageSize.A4): Document {
+        val document = Document(pageSize)
         val writer = PdfWriter.getInstance(document, documentStream)
 
         writer.isCloseStream = false
@@ -555,6 +558,39 @@ class PlanningFilesService(
             return department.shortName
         }
         return department.name
+    }
+
+    fun createTentMarkings(): ByteArray {
+        authorityService.isSpecializedFieldDirector()
+        val out = ByteArrayOutputStream()
+        val document = prepareDocument(out, PageSize.A4.rotate())
+
+        val departments = departmentService.getDepartments(true)
+
+        departments.sortedBy { it.headDepartmentName + it.name }.map { department ->
+            department.tentMarkings.forEach { tentMarking ->
+                val tentName = Paragraph("Zelt: ${tentMarking.name}", markingFont)
+                tentName.alignment = Element.ALIGN_CENTER
+                val departmentName = Paragraph("${department.headDepartmentName} ${department.name}", markingFontSmall)
+                departmentName.alignment = Element.ALIGN_CENTER
+
+                val evacuationGroupName = Paragraph("     ${department.evacuationGroup?.name}     ", markingFont)
+                val chunk = Chunk(evacuationGroupName.getContent());
+                chunk.setBackground(Color.decode(department.evacuationGroup?.color))
+                evacuationGroupName.clear();
+                evacuationGroupName.add(chunk);
+                evacuationGroupName.alignment = Element.ALIGN_CENTER
+
+                document.add(tentName)
+                document.add(departmentName)
+                document.add(evacuationGroupName)
+
+                document.newPage()
+            }
+        }
+
+        document.close()
+        return out.toByteArray()
     }
 
 }

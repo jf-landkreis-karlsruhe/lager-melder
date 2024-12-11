@@ -26,5 +26,6 @@
     <include file="classpath:db/scripts/021_add_z_kids.xml"/>
     <include file="classpath:db/scripts/022_add_helpers.xml"/>
     <include file="classpath:db/scripts/023_pause_department.xml"/>
+    <include file="classpath:db/scripts/024_tent_markings.xml"/>
 
 </databaseChangeLog>

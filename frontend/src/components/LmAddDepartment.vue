@@ -42,7 +42,9 @@ const addDepartmentAndUser = () => {
         phoneNumber: '',
         features: newDepartmentWithUser.features,
         headDepartmentName: '',
-        paused: false
+        paused: false,
+        evacuationGroup: undefined,
+        tentMarkings: []
       })
       departmentName.value = ''
       leaderName.value = ''
