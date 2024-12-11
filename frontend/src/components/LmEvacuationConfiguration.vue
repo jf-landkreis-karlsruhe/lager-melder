@@ -28,38 +28,38 @@ function selectableEvacuationGroups() {
   }))
 }
 
-function saveEvacuationGroups() {
+const saveEvacuationGroups = () => {
   loading.value = true
   const tentMarkings = selectedTentMarkings.value.map((marking) => {
     return (
-      this.department.tentMarkings?.find((tentMarking) => tentMarking.name === marking) || {
+      department.value.tentMarkings?.find((tentMarking) => tentMarking.name === marking) || {
         name: marking
       }
     )
   })
-  if (!this.department.evacuationGroup) {
-    toast.error(`Bitte wählen Sie eine Evakuierungsgruppe für ${this.department.name} aus.`)
+  if (!department.value.evacuationGroup) {
+    toast.error(`Bitte wählen Sie eine Evakuierungsgruppe für ${department.value.name} aus.`)
     loading.value = false
     return
   }
-  updateTentMarkings(this.department.id, this.department.evacuationGroup!.id, tentMarkings)
+  updateTentMarkings(department.value.id, department.value.evacuationGroup!.id, tentMarkings)
     .then((dep) => {
       loading.value = false
       edit.value = false
       department.value = dep
-      toast.success(`Zelte für ${this.department.name} gespeichert.`)
+      toast.success(`Zelte für ${department.value.name} gespeichert.`)
     })
     .catch(async (err) => {
       loading.value = false
       await showErrorToast(
         toast,
         err,
-        `Zelte für ${this.department.name} konnten nicht gespeichert werden.`
+        `Zelte für ${department.value.name} konnten nicht gespeichert werden.`
       )
     })
 }
 
-function startEdit() {
+const startEdit = () => {
   selectedTentMarkings.value = department.value.tentMarkings?.map((marking) => marking.name) || []
   selectableEvacuationGroups()
   edit.value = true

@@ -11,7 +11,6 @@ import de.kordondev.lagermelder.rest.model.request.RestDepartmentPauseRequest
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRegistrationRequest
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentRequest
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentTentMarkingRequest
-import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
 import kotlin.random.Random
@@ -115,7 +114,6 @@ class DepartmentController(
             .let { RestDepartment.of(it) }
     }
 
-    @Transactional
     @PutMapping("departments/{id}/evacuation-groups/{evacuationGroupId}/tent-markings")
     fun updateTentMarkings(
         @PathVariable("id") id: Long,
