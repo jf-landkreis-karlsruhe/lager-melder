@@ -58,7 +58,9 @@ const emptySummary: Distribution = {
 function sortDepartmentByEvacuationGroup(a: DepartmentDistribution, b: DepartmentDistribution) {
   const evacuationA = a.department.evacuationGroup?.name
   const evacuationB = b.department.evacuationGroup?.name
-  // both same or both undefined
+  if (evacuationA === undefined && evacuationB === undefined) {
+    return a.department.name.localeCompare(b.department.name)
+  }
   if (evacuationA === evacuationB) {
     return a.department.name.localeCompare(b.department.name)
   }
