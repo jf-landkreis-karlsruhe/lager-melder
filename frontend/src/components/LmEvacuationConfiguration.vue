@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type Department, updateTentMarkings } from '@/services/department'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import type { Distribution } from '@/services/event'
 import type { EvacuationGroup } from '@/services/evacuationGroups'
 import { useToast } from 'vue-toastification'
@@ -33,7 +33,8 @@ const saveEvacuationGroups = () => {
   const tentMarkings = selectedTentMarkings.value.map((marking) => {
     return (
       department.value.tentMarkings?.find((tentMarking) => tentMarking.name === marking) || {
-        name: marking
+        name: marking,
+        id: ''
       }
     )
   })
