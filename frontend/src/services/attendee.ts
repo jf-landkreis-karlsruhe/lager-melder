@@ -21,7 +21,7 @@ export const getAttendeeDefault = (role: AttendeeRole, departmentId: number): At
   return {
     id: 'newAttendee' + Date.now(),
     departmentId: departmentId,
-    partOfDepartmentId: 0, // TODO: set to what? What is this for?
+    partOfDepartmentId: undefined,
     role,
     firstName: '',
     lastName: '',

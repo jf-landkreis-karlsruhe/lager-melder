@@ -4,10 +4,8 @@ import {
   type Attendee,
   AttendeeRole,
   type Attendees,
-  createAttendee,
   defaultAttendees,
   deleteAttendee as deleteAttendeeService,
-  getAttendeeDefault,
   getAttendeesForDepartment,
   getAttendeeTypeByRole,
   updateAttendee
@@ -18,8 +16,7 @@ import AttendeesTable from './LmAttendeesTable.vue'
 import RegistrationInformation from './LmRegistrationInformation.vue'
 import { getRegistrationEnd } from '@/services/settings'
 import LmRegistrationEndBanner from '@/components/LmRegistrationEndBanner.vue'
-import LmAttendeeExpansionPanel from './AttendeeExpansionPanel/LmAttendeeExpansionPanel.vue'
-import LmAttendeeAddForm from './AttendeeExpansionPanel/LmAttendeeAddForm.vue'
+import LmAttendeeExpandableWithHeader from './AttendeeExpansionPanel/LmAttendeeExpandableWithHeader.vue'
 
 const props = defineProps<{
   department: Department
@@ -41,8 +38,6 @@ let childGroupCanBeEdited: boolean = true
 // REFS
 const attendees = ref<Attendees>(defaultAttendees)
 const filterInput = ref<string>('')
-const isAddNewFormModalVisible = ref<boolean>(false)
-const newAttendee = ref<Attendee | undefined>(undefined)
 
 // COMPUTED
 
@@ -83,14 +78,6 @@ const helpersAttendeeList = computed<Attendee[]>(() => {
   return filterByDepartmentAndSearch(attendees.value.helpers, props.department.id, filterInput.value)
 })
 
-const addNewAttendee = (role: AttendeeRole) => {
-  if (!props.department || !props.department.id) {
-    return
-  }
-  newAttendee.value = getAttendeeDefault(role, props.department.id)
-  isAddNewFormModalVisible.value = true
-}
-
 const childLeaderAttendeeList = computed<Attendee[]>(() => {
   if (!props.department || !props.department.id) {
     return []
@@ -109,20 +96,13 @@ const totalAttendeeCount = computed<number>(() => {
   return attendees.value.youths.length + attendees.value.youthLeaders.length
 })
 
-const saveAttendee = (att: Attendee) => {
-  if (newAttendee.value && att.id === newAttendee.value.id) {
-    createAttendee(att).then((newAtt) => {
-      if (!newAttendee.value) return
-      const attendeeType = getAttendeeTypeByRole(newAttendee.value.role)
-      attendees.value[attendeeType].push(newAtt) // TODO: partOfDepartmentId is not set?!
-    })
-    isAddNewFormModalVisible.value = false
-  }
+const saveNewAttendee = (newAttendee: Attendee, type: keyof Attendees) => {
+  attendees.value = { ...attendees.value, [type]: [...attendees.value[type], newAttendee] }
 }
 
-const deleteAttendee = async (att: Attendee, role: AttendeeRole) => {
+const deleteAttendee = async (att: Attendee) => {
   await deleteAttendeeService(att.id)
-  const attendeeType = getAttendeeTypeByRole(role)
+  const attendeeType = getAttendeeTypeByRole(att.role)
   attendees.value = { ...attendees.value, [attendeeType]: attendees.value[attendeeType].filter((a) => a.id !== att.id) }
 }
 
@@ -152,27 +132,17 @@ onMounted(() => {
 
         <LmRegistrationEndBanner v-if="attendeesRegistrationEnd" :registrationEnd="attendeesRegistrationEnd" />
 
-        <div class="d-flex justify-space-between align-center">
-          <h2>Teilnehmer</h2>
-
-          <label v-if="attendeesCanBeEdited">
-            <span class="mr-2" style="cursor: pointer">Teilnehmer hinzufügen</span>
-            <v-btn @click="addNewAttendee(attendeeRoleYouth)" color="primary" class="ma-0 mb-1" icon size="x-small">
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </label>
-        </div>
-      </div>
-
-      <v-expansion-panels class="mb-4" :key="attendees.youths.length">
-        <LmAttendeeExpansionPanel
-          v-for="attendee in youthAttendeeList"
-          :key="attendee.id"
-          :attendee="attendee"
+        <LmAttendeeExpandableWithHeader
+          :department="props.department"
+          header-label="Jugendliche"
+          :attendee-list="youthAttendeeList"
+          :role="attendeeRoleYouth"
+          :attendeesCanBeEdited="attendeesCanBeEdited"
+          @save-new="saveNewAttendee"
           @update="updateAttendee"
           @delete="deleteAttendee"
-        ></LmAttendeeExpansionPanel>
-      </v-expansion-panels>
+        />
+      </div>
 
       <AttendeesTable
         headlineText="Jugendliche"
@@ -182,6 +152,18 @@ onMounted(() => {
         :role="attendeeRoleYouth"
         :disabled="!attendeesCanBeEdited"
       />
+
+      <LmAttendeeExpandableWithHeader
+        header-label="Jugendleiter"
+        :department="props.department"
+        :attendee-list="youthLeaderAttendeeList"
+        :role="attendeeRoleYouthLeader"
+        :attendeesCanBeEdited="attendeesCanBeEdited"
+        @save-new="saveNewAttendee"
+        @update="updateAttendee"
+        @delete="deleteAttendee"
+      />
+
       <AttendeesTable
         headlineText="Jugendleiter"
         formName="youthLeader"
@@ -220,6 +202,17 @@ onMounted(() => {
     <div v-if="department && department.features.includes(DepartmentFeatures.ZKIDS)">
       <h2>Z Kids</h2>
       <LmRegistrationEndBanner :registrationEnd="attendeesRegistrationEnd" />
+
+      <LmAttendeeExpandableWithHeader
+        header-label="zKids"
+        :department="props.department"
+        :attendee-list="zKidsAttendeeList"
+        :role="attendeeRoleZKid"
+        :attendeesCanBeEdited="attendeesCanBeEdited"
+        @save-new="saveNewAttendee"
+        @update="updateAttendee"
+        @delete="deleteAttendee"
+      />
       <AttendeesTable
         headlineText=""
         formName="zKids"
@@ -233,6 +226,17 @@ onMounted(() => {
     <div v-if="department && department.features.includes(DepartmentFeatures.HELPER)">
       <h2>Helfer</h2>
       <LmRegistrationEndBanner :registrationEnd="childGroupRegistrationEnd" />
+
+      <LmAttendeeExpandableWithHeader
+        header-label="Helfer"
+        :department="props.department"
+        :attendee-list="helpersAttendeeList"
+        :role="attendeeRoleHelper"
+        :attendeesCanBeEdited="childGroupCanBeEdited"
+        @save-new="saveNewAttendee"
+        @update="updateAttendee"
+        @delete="deleteAttendee"
+      />
       <AttendeesTable
         headlineText=""
         formName="helper"
@@ -243,19 +247,6 @@ onMounted(() => {
       />
     </div>
   </v-container>
-
-  <v-dialog v-model="isAddNewFormModalVisible" max-width="900">
-    <v-card class="px-6 py-6">
-      <LmAttendeeAddForm
-        v-if="newAttendee"
-        :department="department"
-        :attendee="newAttendee"
-        :show-cancel="true"
-        @save="saveAttendee"
-        @cancel="isAddNewFormModalVisible = false"
-      />
-    </v-card>
-  </v-dialog>
 </template>
 
 <style lang="scss">

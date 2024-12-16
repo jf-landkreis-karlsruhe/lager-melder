@@ -1,13 +1,16 @@
 <script lang="ts" setup>
+import { computed, onMounted, ref } from 'vue'
+import { useDate } from 'vuetify'
 import { FOOD_ICON_MAP, foodText } from '@/helper/displayText'
 import { Food, type Attendee } from '@/services/attendee'
 import { getEventDays } from '@/services/eventDays'
 import { getTShirtSizes } from '@/services/tShirtSizes'
-import { computed, onMounted, ref } from 'vue'
-import { useDate } from 'vuetify'
+import { AttendeeRole } from '@/services/attendee'
+import { getDepartmentsForSelecting } from '@/services/department'
 
 const props = defineProps<{
   attendee: Attendee
+  role: AttendeeRole
   showCancel?: boolean
 }>()
 
@@ -21,11 +24,18 @@ const current = ref<Attendee>({ ...props.attendee })
 const isFormValid = ref<boolean>(false)
 const tShirtSizes = ref<{ title: string; props: Object }[]>([])
 const helperDays = ref<{ title: string; value: string }[]>([])
+const departments = ref<{ title: string; value: number }[]>([])
 
 const adapter = useDate()
 
 const birthdayAsDate = computed<unknown>(() => {
+  if (!current.value.birthday) return null
   return adapter.parseISO(current.value.birthday)
+})
+
+const juleikaExpireDateAsDate = computed<unknown>(() => {
+  if (!current.value.juleikaExpireDate) return null
+  return adapter.parseISO(current.value.juleikaExpireDate)
 })
 
 const foodList = computed<{ value: Food; title: string }[]>(() => {
@@ -35,7 +45,13 @@ const foodList = computed<{ value: Food; title: string }[]>(() => {
 })
 
 const updateBirthday = (date: unknown) => {
+  if (!date) return
   current.value.birthday = `${adapter.getYear(date)}-${adapter.getMonth(date) + 1}-${adapter.getDate(date)}`
+}
+
+const updateJuleikaExpireDate = (date: unknown) => {
+  if (!date) return
+  current.value.juleikaExpireDate = `${adapter.getYear(date)}-${adapter.getMonth(date) + 1}-${adapter.getDate(date)}`
 }
 
 const handleSubmit = () => {
@@ -75,14 +91,21 @@ onMounted(async () => {
   }))
   const eventDays = await getEventDays()
   helperDays.value = eventDays.map((day) => ({ title: day.name, value: day.id }))
+
+  getDepartmentsForSelecting().then((data) => {
+    departments.value = [
+      ...departments.value,
+      ...data.map((department) => ({ value: department.id, title: department.name }))
+    ]
+  })
 })
 </script>
 
 <template>
   <v-form @submit.prevent="handleSubmit" v-model="isFormValid">
-    <div class="d-flex flex-row ga-4 justify-space-between align-start mt-4">
+    <div class="d-flex flex-row ga-4 mt-4">
       <!-- First column -->
-      <div class="d-flex flex-column ga-3" style="flex: 6">
+      <div class="d-flex flex-column ga-2" style="flex: 6">
         <div class="d-flex align-center ga-4">
           <v-text-field
             label="Vorname"
@@ -145,7 +168,7 @@ onMounted(async () => {
             :modelValue="current.food"
             @update:modelValue="current.food = $event"
           >
-            <template v-slot:selection="{ item, props }">
+            <template v-slot:selection="{ item }">
               <v-icon class="mr-4">{{ item.props.prependIcon }}</v-icon>
               {{ item.title }}
             </template>
@@ -157,8 +180,41 @@ onMounted(async () => {
       </div>
 
       <!-- Second column -->
-      <div class="d-flex flex-column ga-3" style="flex: 6">
+      <div class="d-flex flex-column justify-space-between ga-2" style="flex: 6">
+        <div v-if="props.role === AttendeeRole.YOUTH_LEADER" class="d-flex flex-column ga-2">
+          <v-text-field
+            label="Juleika-Nummer"
+            variant="outlined"
+            density="comfortable"
+            :modelValue="current.juleikaNumber"
+            @update:modelValue="current.juleikaNumber = $event"
+          ></v-text-field>
+
+          <v-date-input
+            label="Juleika-Ablaufdatum"
+            variant="outlined"
+            density="comfortable"
+            :modelValue="juleikaExpireDateAsDate"
+            @update:modelValue="updateJuleikaExpireDate"
+          ></v-date-input>
+        </div>
+
         <v-select
+          v-if="props.role === AttendeeRole.Z_KID && departments.length > 0"
+          :items="departments"
+          density="comfortable"
+          variant="outlined"
+          item-title="title"
+          label="Teil von"
+          required
+          :rules="requiredRule"
+          :modelValue="current.partOfDepartmentId"
+          @update:modelValue="current.partOfDepartmentId = $event"
+        >
+        </v-select>
+
+        <v-select
+          v-if="props.role === AttendeeRole.HELPER"
           :items="helperDays"
           density="comfortable"
           variant="outlined"
@@ -176,35 +232,34 @@ onMounted(async () => {
           label="Kommentar"
           variant="outlined"
           row-height="14"
-          rows="4.1"
+          :rows="props.role === AttendeeRole.YOUTH_LEADER ? '1' : '4.1'"
           auto-grow
           clearable
           :modelValue="current.additionalInformation"
           @update:modelValue="current.additionalInformation = $event"
         ></v-textarea>
-
-        <div class="d-flex ga-4">
-          <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
-            <v-btn v-if="props.showCancel" style="flex: 1" variant="text" @click="emit('cancel', current)">
-              Abbrechen
-            </v-btn>
-            <v-btn
-              v-else
-              style="flex: 1"
-              prepend-icon="mdi-trash-can-outline"
-              variant="text"
-              @click="emit('delete', current)"
-            >
-              Löschen
-            </v-btn>
-          </v-defaults-provider>
-          <v-defaults-provider :defaults="{ VIcon: { color: '#fff' } }">
-            <v-btn style="flex: 1" color="primary" prepend-icon="mdi-check" variant="flat" type="submit">
-              Speichern
-            </v-btn>
-          </v-defaults-provider>
-        </div>
       </div>
+    </div>
+
+    <!-- Second Row -->
+    <div class="d-flex flex-row justify-space-between align-center ga-4 w-50 ml-auto">
+      <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
+        <v-btn v-if="props.showCancel" style="flex: 1" variant="text" @click="emit('cancel', current)">
+          Abbrechen
+        </v-btn>
+        <v-btn
+          v-else
+          style="flex: 1"
+          prepend-icon="mdi-trash-can-outline"
+          variant="text"
+          @click="emit('delete', current)"
+        >
+          Löschen
+        </v-btn>
+      </v-defaults-provider>
+      <v-defaults-provider :defaults="{ VIcon: { color: '#fff' } }">
+        <v-btn style="flex: 1" color="primary" prepend-icon="mdi-check" variant="flat" type="submit"> Speichern </v-btn>
+      </v-defaults-provider>
     </div>
   </v-form>
 </template>
