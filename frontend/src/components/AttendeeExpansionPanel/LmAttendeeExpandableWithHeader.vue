@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import {
   AttendeeRole,
   createAttendee,
@@ -11,6 +11,7 @@ import {
 import type { Department } from '@/services/department'
 import LmAttendeeAddForm from '../AttendeeExpansionPanel/LmAttendeeAddForm.vue'
 import LmAttendeeExpansionPanel from '../AttendeeExpansionPanel/LmAttendeeExpansionPanel.vue'
+import { filterEnteredAttendees } from '@/helper/filterHelper'
 
 const props = defineProps<{
   headerLabel: string
@@ -21,13 +22,34 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update', attendee: Attendee): void
+  (e: 'update', attendee: Attendee, ownRef: InstanceType<typeof LmAttendeeExpansionPanel>): void
   (e: 'delete', attendee: Attendee): void
   (e: 'save-new', newAttendee: Attendee, type: keyof Attendees): void
 }>()
 
 const isAddNewFormModalVisible = ref<boolean>(false)
 const newAttendee = ref<Attendee | undefined>(undefined)
+const expansionPanels = ref<InstanceType<typeof LmAttendeeExpansionPanel>[]>([])
+
+const attendeeListWithAllAttributes = computed<Attendee[]>(() => {
+  return props.attendeeList.map((attendee) => {
+    let newAttendee = { ...attendee }
+    if (!attendee.helperDays) {
+      newAttendee.helperDays = []
+    }
+    if (!attendee.juleikaNumber) {
+      newAttendee.juleikaNumber = ''
+    }
+    if (!attendee.juleikaExpireDate) {
+      newAttendee.juleikaExpireDate = ''
+    }
+    return newAttendee
+  })
+})
+
+const enteredAttendees = computed<number>(() => {
+  return attendeeListWithAllAttributes.value.filter(filterEnteredAttendees).length
+})
 
 const addNewAttendee = (role: AttendeeRole) => {
   if (!props.department || !props.department.id) {
@@ -52,7 +74,12 @@ const saveAttendee = (att: Attendee) => {
 <template>
   <div>
     <div class="d-flex justify-space-between align-center">
-      <h2>{{ props.headerLabel }}</h2>
+      <div class="d-flex align-center ga-3">
+        <h2>{{ props.headerLabel }}</h2>
+        <div class="additional-information">
+          Gesamt: {{ attendeeListWithAllAttributes.length }} (Anwesend: {{ enteredAttendees }})
+        </div>
+      </div>
 
       <label v-if="attendeesCanBeEdited">
         <span class="mr-2" style="cursor: pointer">{{ props.headerLabel }} hinzufügen</span>
@@ -62,13 +89,15 @@ const saveAttendee = (att: Attendee) => {
       </label>
     </div>
 
-    <v-expansion-panels class="mb-4" :key="props.attendeeList.length">
+    <v-expansion-panels class="mb-4" :key="attendeeListWithAllAttributes.length">
       <LmAttendeeExpansionPanel
-        v-for="attendee in props.attendeeList"
+        v-for="(attendee, index) in attendeeListWithAllAttributes"
         :key="attendee.id"
         :attendee="attendee"
         :role="props.role"
-        @update="emit('update', $event)"
+        :role-title="props.headerLabel"
+        ref="expansionPanels"
+        @update="emit('update', $event, expansionPanels[index])"
         @delete="emit('delete', $event)"
       ></LmAttendeeExpansionPanel>
     </v-expansion-panels>
@@ -79,6 +108,7 @@ const saveAttendee = (att: Attendee) => {
           v-if="newAttendee"
           :department="department"
           :attendee="newAttendee"
+          :role-title="props.headerLabel"
           :role="props.role"
           :show-cancel="true"
           @save="saveAttendee"
@@ -89,4 +119,9 @@ const saveAttendee = (att: Attendee) => {
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.additional-information {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.6);
+}
+</style>

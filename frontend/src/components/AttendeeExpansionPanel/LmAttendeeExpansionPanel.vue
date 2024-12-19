@@ -4,13 +4,14 @@ import type { Attendee } from '@/services/attendee'
 import { foodText, dateAsText, helperDaysText, FOOD_ICON_MAP } from '../../helper/displayText'
 import LmAttendeeAddForm from './LmAttendeeAddForm.vue'
 import { AttendeeRole } from '@/services/attendee'
-import type { VExpansionPanel, VExpansionPanelTitle } from 'vuetify/components'
+import type { VExpansionPanelTitle } from 'vuetify/components'
 import { getDepartmentsForSelecting } from '@/services/department'
 import { getEventDays, type EventDays } from '@/services/eventDays'
 
 const props = defineProps<{
   attendee: Attendee
   role: AttendeeRole
+  roleTitle: string
 }>()
 
 const emit = defineEmits<{
@@ -24,8 +25,6 @@ const eventDays = ref<EventDays[]>([])
 
 const handleFormSave = () => {
   emit('update', props.attendee)
-  // TODO: close expansion panel after save was successful!
-  // expansionPanel.value?.$el.click()
 }
 
 onMounted(() => {
@@ -106,6 +105,7 @@ onMounted(() => {
       <LmAttendeeAddForm
         :attendee="props.attendee"
         :role="props.role"
+        :role-title="props.roleTitle"
         @save="handleFormSave"
         @delete="emit('delete', props.attendee)"
       />

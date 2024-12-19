@@ -28,7 +28,7 @@ export const getAttendeeDefault = (role: AttendeeRole, departmentId: number): At
     tShirtSize: '',
     helperDays: [],
     juleikaNumber: '',
-    food: Food.NONE,
+    food: Food.MEAT,
     juleikaExpireDate: '',
     birthday: '',
     status: undefined,

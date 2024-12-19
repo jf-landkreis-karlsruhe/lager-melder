@@ -11,6 +11,7 @@ import { getDepartmentsForSelecting } from '@/services/department'
 const props = defineProps<{
   attendee: Attendee
   role: AttendeeRole
+  roleTitle: string
   showCancel?: boolean
 }>()
 
@@ -28,13 +29,13 @@ const departments = ref<{ title: string; value: number }[]>([])
 
 const adapter = useDate()
 
-const birthdayAsDate = computed<unknown>(() => {
-  if (!current.value.birthday) return null
+const birthdayAsDate = computed<unknown | string>(() => {
+  if (!current.value.birthday) return ''
   return adapter.parseISO(current.value.birthday)
 })
 
-const juleikaExpireDateAsDate = computed<unknown>(() => {
-  if (!current.value.juleikaExpireDate) return null
+const juleikaExpireDateAsDate = computed<unknown | string>(() => {
+  if (!current.value.juleikaExpireDate) return ''
   return adapter.parseISO(current.value.juleikaExpireDate)
 })
 
@@ -103,6 +104,7 @@ onMounted(async () => {
 
 <template>
   <v-form @submit.prevent="handleSubmit" v-model="isFormValid">
+    <h3>{{ props.roleTitle }} hinzufügen</h3>
     <div class="d-flex flex-row ga-4 mt-4">
       <!-- First column -->
       <div class="d-flex flex-column ga-2" style="flex: 6">
@@ -232,7 +234,7 @@ onMounted(async () => {
           label="Kommentar"
           variant="outlined"
           row-height="14"
-          :rows="props.role === AttendeeRole.YOUTH_LEADER ? '1' : '4.1'"
+          :rows="props.role === AttendeeRole.YOUTH_LEADER ? '1' : '7'"
           auto-grow
           clearable
           :modelValue="current.additionalInformation"

@@ -6,9 +6,10 @@ import {
   type Attendees,
   defaultAttendees,
   deleteAttendee as deleteAttendeeService,
+  getAttendeeDefault,
   getAttendeesForDepartment,
   getAttendeeTypeByRole,
-  updateAttendee
+  updateAttendee as updateAttendeeService
 } from '../services/attendee'
 import { type Department, DepartmentFeatures } from '../services/department'
 import { filterByDepartmentAndSearch, filterEnteredAttendees } from '../helper/filterHelper'
@@ -17,6 +18,7 @@ import RegistrationInformation from './LmRegistrationInformation.vue'
 import { getRegistrationEnd } from '@/services/settings'
 import LmRegistrationEndBanner from '@/components/LmRegistrationEndBanner.vue'
 import LmAttendeeExpandableWithHeader from './AttendeeExpansionPanel/LmAttendeeExpandableWithHeader.vue'
+import type LmAttendeeExpansionPanel from './AttendeeExpansionPanel/LmAttendeeExpansionPanel.vue'
 
 const props = defineProps<{
   department: Department
@@ -100,6 +102,16 @@ const saveNewAttendee = (newAttendee: Attendee, type: keyof Attendees) => {
   attendees.value = { ...attendees.value, [type]: [...attendees.value[type], newAttendee] }
 }
 
+const handleUpdateAttendee = async (att: Attendee, ownRef: InstanceType<typeof LmAttendeeExpansionPanel>) => {
+  const attendeeWithAllProps: Attendee = {
+    ...getAttendeeDefault(att.role, att.departmentId),
+    ...att
+  }
+  await updateAttendeeService(attendeeWithAllProps)
+  // close expansion panel with manual click as other ways didn't work
+  ownRef.$el.querySelector('button')?.click()
+}
+
 const deleteAttendee = async (att: Attendee) => {
   await deleteAttendeeService(att.id)
   const attendeeType = getAttendeeTypeByRole(att.role)
@@ -129,7 +141,6 @@ onMounted(() => {
           <h1 class="mb-0">Teilnehmer {{ department.name }}</h1>
           <div>Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})</div>
         </div>
-
         <LmRegistrationEndBanner v-if="attendeesRegistrationEnd" :registrationEnd="attendeesRegistrationEnd" />
 
         <LmAttendeeExpandableWithHeader
@@ -139,7 +150,7 @@ onMounted(() => {
           :role="attendeeRoleYouth"
           :attendeesCanBeEdited="attendeesCanBeEdited"
           @save-new="saveNewAttendee"
-          @update="updateAttendee"
+          @update="handleUpdateAttendee"
           @delete="deleteAttendee"
         />
       </div>
@@ -160,7 +171,7 @@ onMounted(() => {
         :role="attendeeRoleYouthLeader"
         :attendeesCanBeEdited="attendeesCanBeEdited"
         @save-new="saveNewAttendee"
-        @update="updateAttendee"
+        @update="handleUpdateAttendee"
         @delete="deleteAttendee"
       />
 
@@ -210,7 +221,7 @@ onMounted(() => {
         :role="attendeeRoleZKid"
         :attendeesCanBeEdited="attendeesCanBeEdited"
         @save-new="saveNewAttendee"
-        @update="updateAttendee"
+        @update="handleUpdateAttendee"
         @delete="deleteAttendee"
       />
       <AttendeesTable
@@ -234,7 +245,7 @@ onMounted(() => {
         :role="attendeeRoleHelper"
         :attendeesCanBeEdited="childGroupCanBeEdited"
         @save-new="saveNewAttendee"
-        @update="updateAttendee"
+        @update="handleUpdateAttendee"
         @delete="deleteAttendee"
       />
       <AttendeesTable
