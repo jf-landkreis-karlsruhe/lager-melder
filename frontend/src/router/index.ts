@@ -53,6 +53,11 @@ const router = createRouter({
       component: () => import('../views/EventsView.vue')
     },
     {
+      path: '/feuerwehr-betreten/:departmentId',
+      name: 'Feuerwehr betreten',
+      component: () => import('../views/DepartmentBatchEnter.vue')
+    },
+    {
       path: '/einstellungen',
       name: 'Einstellungen',
       component: () => import('../views/SettingsView.vue')
