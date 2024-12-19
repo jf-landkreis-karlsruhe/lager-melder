@@ -1,5 +1,7 @@
 package de.kordondev.lagermelder.rest.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class RestGlobalEventSummary(
     val total: Distribution,
     val departments: List<Distribution>
@@ -7,8 +9,11 @@ data class RestGlobalEventSummary(
 
 data class Distribution(
     val name: String,
-    val checkedInYouth: Int,
-    val checkedInYouthLeader: Int,
-    val checkedOutYouth: Int,
-    val checkedOutYouthLeader: Int
+    val paused: Boolean,
+    val youths: Int,
+    val youthLeaders: Int,
+    @get:JsonProperty("zKids")
+    val zKids: Int,
+    val children: Int,
+    val childLeaders: Int,
 )

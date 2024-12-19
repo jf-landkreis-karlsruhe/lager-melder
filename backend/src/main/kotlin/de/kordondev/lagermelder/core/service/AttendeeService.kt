@@ -111,6 +111,17 @@ class AttendeeService(
         )
     }
 
+    fun getAttendeesForDepartmentWithZKidsBeingPartOf(departmentId: Long): Attendees {
+        return Attendees(
+            youths = youthRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            youthLeaders =  youthLeaderRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            children = childRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            childLeaders = childLeaderRepository.findByDepartment(departmentId).filter { byAuthority(it) }.toList(),
+            zKids = zKidRepository.findByPartOfDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            helpers = helperRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList()
+        )
+    }
+
     fun getAttendeeByCode(code: String): Attendee {
         return baseAttendeeRepository.findByCode(code)
             ?.let { getAttendee(it.id) }
@@ -153,6 +164,8 @@ class AttendeeService(
             is YouthLeaderEntry -> youthLeaderRepository.save(attendee.copy(status = status))
             is ChildEntry -> childRepository.save(attendee.copy(status = status))
             is ChildLeaderEntry -> childLeaderRepository.save(attendee.copy(status = status))
+            is ZKidEntry -> zKidRepository.save(attendee.copy(status = status))
+            is HelperEntity -> helperRepository.save(attendee.copy(status = status))
             else -> throw UnexpectedTypeException("Attendee from db is not of expected type")
         }
     }
@@ -180,6 +193,13 @@ class AttendeeService(
         baseAttendeeRepository.findAllBytShirtSize(oldSize).forEach {
             baseAttendeeRepository.save(it.copy(tShirtSize = newSize))
         }
+    }
+
+    fun getPartOfDepartmentOrDepartment(attendee: Attendee): DepartmentEntry {
+        if (attendee is ZKidEntry) {
+            return attendee.partOfDepartment
+        }
+        return attendee.department
     }
 
     private fun byAuthority(attendee: Attendee): Boolean {

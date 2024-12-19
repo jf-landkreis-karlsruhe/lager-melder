@@ -29,5 +29,16 @@ data class DepartmentEntry (
         val features: Set<DepartmentFeatureEntry> = emptySet(),
 
         @Column(name = "head_department_name")
-        val headDepartmentName: String = ""
+        val headDepartmentName: String = "",
+
+        @Column(name = "paused")
+        val paused: Boolean,
+
+        @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+        @JoinColumn(name = "department_id")
+        val tentMarkings: Set<TentMarkingEntry> = emptySet(),
+
+        @ManyToOne
+        @JoinColumn(name = "evacuation_group_id")
+        val evacuationGroup: EvacuationGroupEntry?,
 )

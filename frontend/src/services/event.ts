@@ -59,11 +59,14 @@ export interface GlobalEventSummary {
 
 export interface Distribution {
   name: string
-  checkedInYouth: number
-  checkedInYouthLeader: number
-  checkedOutYouth: number
-  checkedOutYouthLeader: number
+  paused: boolean
+  youths: number
+  youthLeaders: number
+  zKids: number
+  children: number
+  childLeaders: number
 }
+
 export const globalEventSummary = () =>
   getData<GlobalEventSummary>('events/global/summary', withAuthenticationHeader())
 

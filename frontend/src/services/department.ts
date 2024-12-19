@@ -1,6 +1,7 @@
 import { getData, putData } from '../helper/fetch'
 import { getTokenData, withAuthenticationHeader } from './authentication'
 import type { Tents } from '@/services/tents'
+import type { EvacuationGroup } from '@/services/evacuationGroups'
 
 export const getDepartments = (query?: { onlyWithAttendees?: boolean }) =>
   getData<Department[]>(
@@ -25,6 +26,22 @@ export const getMyDepartment = () => {
 export const updateDepartment = (department: Department) =>
   putData<Department>(`departments/${department.id}`, withAuthenticationHeader(), department)
 
+export const updatePauseDepartment = (departmentId: number, pause: boolean) =>
+  putData<Department>(`departments/${departmentId}/change-pausing`, withAuthenticationHeader(), {
+    paused: pause
+  })
+
+export const updateTentMarkings = (
+  departmentId: number,
+  evacuationGroupId: string,
+  tentMarkings: TentMarking[]
+) =>
+  putData<Department>(
+    `departments/${departmentId}/evacuation-groups/${evacuationGroupId}/tent-markings`,
+    withAuthenticationHeader(),
+    tentMarkings
+  )
+
 export interface Department {
   id: number
   name: string
@@ -34,6 +51,9 @@ export interface Department {
   shortName: string
   features: DepartmentFeatures[]
   headDepartmentName: string
+  paused: boolean
+  tentMarkings: TentMarking[]
+  evacuationGroup?: EvacuationGroup
 }
 
 export interface DepartmentShort {
@@ -59,4 +79,9 @@ export interface RegistrationData {
   departmentId: number
   tents: Tents
   departmentPhoneNumber: string
+}
+
+interface TentMarking {
+  id: string
+  name: string
 }

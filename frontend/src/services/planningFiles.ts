@@ -57,6 +57,19 @@ export const getFoodPDF = (): Promise<FileReponse> => {
     }))
 }
 
+export const getTentMarkingPDF = (): Promise<FileReponse> => {
+  return fetchData(`planning-files/tentMarkings`, {
+    headers: {
+      ...withAuthenticationHeader()
+    }
+  })
+    .then((r) => r.blob())
+    .then((blob) => ({
+      data: blob,
+      fileName: `zeltmarkierungen.pdf`
+    }))
+}
+
 export const getTShirtPDF = (): Promise<FileReponse> => {
   return fetchData(`planning-files/t-shirts`, {
     headers: {
@@ -80,5 +93,18 @@ export const getDepartmentOverview = (): Promise<FileReponse> => {
     .then((blob) => ({
       data: blob,
       fileName: 'übersichtÜberFeuerwehr.pdf'
+    }))
+}
+
+export const getContactOverview = (): Promise<FileReponse> => {
+  return fetchData(`planning-files/contactOverview`, {
+    headers: {
+      ...withAuthenticationHeader()
+    }
+  })
+    .then((r) => r.blob())
+    .then((blob) => ({
+      data: blob,
+      fileName: 'kontaktdatenÜbersicht.pdf'
     }))
 }

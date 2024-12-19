@@ -23,7 +23,10 @@ class Entities() {
                 "",
                 "",
                 emptySet(),
-                ""
+                "",
+                paused = false,
+                emptySet(),
+                null
             )
         }
 
@@ -36,7 +39,10 @@ class Entities() {
                 "",
                 "",
                 emptySet(),
-                ""
+                "",
+                paused = false,
+                emptySet(),
+                null
             )
         }
 
@@ -111,7 +117,8 @@ class Entities() {
                 phoneNumber = "",
                 shortName = "",
                 features = emptySet(),
-                headDepartmentName = ""
+                headDepartmentName = "",
+                paused = false
             )
         }
 

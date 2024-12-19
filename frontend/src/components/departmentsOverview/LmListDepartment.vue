@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { hasAdministrationRole } from '../../services/authentication'
-import type { Department } from '../../services/department'
+import { type Department, updatePauseDepartment } from '../../services/department'
 import { getDepartments } from '../../services/department'
 import EditDepartment from './LmEditDepartment.vue'
 import AddDepartment from '../LmAddDepartment.vue'
@@ -23,7 +23,11 @@ const onDepartmentCreated = (newDepartment: Department) => {
 }
 
 onMounted(async () => {
-  departments.value = await getDepartments()
+  departments.value = await getDepartments().then((deps) =>
+    deps.sort((a, b) =>
+      `${a.headDepartmentName} ${a.name}`.localeCompare(`${b.headDepartmentName} ${b.name}`)
+    )
+  )
   getEventByType(EventType.GLOBAL_ENTER).then((event: Event) => (enterEvent.value = event))
 })
 
@@ -31,6 +35,15 @@ const checkinDepartment = (department: Department) => {
   checkinDepartmentToEvent(enterEvent.value, department.id).then(() =>
     toast.success(` ${department.name} erfolgreich eingecheckt`)
   )
+}
+
+const updatePauseDepartmentInternal = (department: Department) => {
+  updatePauseDepartment(department.id, !department.paused).then(() => {
+    department.paused = !department.paused
+    toast.success(
+      ` ${department.name} erfolgreich ${department.paused ? 'abgemeldet' : 'zurückgemeldet'}`
+    )
+  })
 }
 </script>
 
@@ -40,14 +53,18 @@ const checkinDepartment = (department: Department) => {
       <LmContainer>
         <h1>Feuerwehren</h1>
         <div v-for="department in departments" :key="department.id">
-          <h2>{{ department.name }}</h2>
+          <h2><span v-if="department.paused">⏸️ </span>{{ department.name }}</h2>
           <EditDepartment :department="department" />
           <AttendeesShort :department-id="department.id" />
           <TentsShort :department-id="department.id" />
           <router-link :to="'/feuerwehr/' + department.id">Details</router-link>
-          <div class="d-flex justify-end align-center flex-grow-1">
+          <div class="d-flex justify-space-between align-center flex-grow-1 flex-wrap mt-4">
+            <v-btn @click="updatePauseDepartmentInternal(department)" class="checkin" rounded>
+              <span v-if="department.paused">Zurückmelden</span>
+              <span v-if="!department.paused">Abmelden</span>
+            </v-btn>
             <v-btn @click="checkinDepartment(department)" class="checkin" rounded>
-              ⛺ Teilnehmer {{ department.name }} einchecken
+              ⛺ Teilnehmer einchecken
             </v-btn>
           </div>
           <v-divider class="mt-8 mb-16 border-opacity-15"></v-divider>
