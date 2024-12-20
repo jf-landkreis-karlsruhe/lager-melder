@@ -192,6 +192,17 @@ onMounted(() => {
     <div v-if="department && department.features.includes(DepartmentFeatures.CHILD_GROUPS)">
       <h2>Kindergruppentag</h2>
       <LmRegistrationEndBanner :registrationEnd="childGroupRegistrationEnd" />
+
+      <LmAttendeeExpandableWithHeader
+        header-label="Kinder"
+        :department="props.department"
+        :attendee-list="childAttendeeList"
+        :role="attendeeRoleChild"
+        :attendeesCanBeEdited="attendeesCanBeEdited"
+        @save-new="saveNewAttendee"
+        @update="handleUpdateAttendee"
+        @delete="deleteAttendee"
+      />
       <AttendeesTable
         headlineText="Kinder"
         formName="child"
@@ -199,6 +210,17 @@ onMounted(() => {
         :departmentId="department.id"
         :role="attendeeRoleChild"
         :disabled="!childGroupCanBeEdited"
+      />
+
+      <LmAttendeeExpandableWithHeader
+        header-label="Kindergruppenleiter"
+        :department="props.department"
+        :attendee-list="childLeaderAttendeeList"
+        :role="attendeeRoleChildLeader"
+        :attendeesCanBeEdited="attendeesCanBeEdited"
+        @save-new="saveNewAttendee"
+        @update="handleUpdateAttendee"
+        @delete="deleteAttendee"
       />
       <AttendeesTable
         headlineText="Kindergruppenleiter"

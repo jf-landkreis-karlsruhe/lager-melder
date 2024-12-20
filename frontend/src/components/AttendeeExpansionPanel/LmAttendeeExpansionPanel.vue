@@ -63,15 +63,11 @@ onMounted(() => {
           </div>
         </div>
 
-        <div
-          v-if="props.role === AttendeeRole.YOUTH_LEADER && props.attendee.juleikaNumber"
-          class="d-flex align-center"
-          style="flex: 3"
-        >
+        <div v-if="props.role === AttendeeRole.YOUTH_LEADER" class="d-flex align-center" style="flex: 3">
           <v-icon class="mr-1">mdi-card-account-details-outline</v-icon>
           <div class="d-flex flex-column ga-2">
-            <span>{{ props.attendee.juleikaNumber }}</span>
-            <span>{{ dateAsText(props.attendee.juleikaExpireDate) }}</span>
+            <span>{{ props.attendee.juleikaNumber ?? '-' }}</span>
+            <span>{{ dateAsText(props.attendee.juleikaExpireDate ?? '-') }}</span>
           </div>
         </div>
         <div
