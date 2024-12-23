@@ -107,6 +107,10 @@ class EventService(
         )
     }
 
+    fun addAttendeesToEvent(eventCode: String, attendeeCodes: List<String>): List<AttendeeInEvent> {
+        return attendeeCodes.map { addAttendeeToEvent(eventCode, it) }
+    }
+
     private fun sumUp(attendees: List<Attendee>, name: String, paused: Boolean): Distribution {
         val groupedAttendees = attendees.groupBy { attendeeRoleStatus(it.status, it.role) }
         return Distribution(

@@ -5,6 +5,7 @@ import de.kordondev.lagermelder.core.service.EventService
 import de.kordondev.lagermelder.rest.model.RestAttendeeInEvent
 import de.kordondev.lagermelder.rest.model.RestEvent
 import de.kordondev.lagermelder.rest.model.RestGlobalEventSummary
+import de.kordondev.lagermelder.rest.model.request.RestAttendeeCodesRequest
 import de.kordondev.lagermelder.rest.model.request.RestEventRequest
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
@@ -31,6 +32,15 @@ class EventController(
         return eventService.addDepartmentToEvent(eventCode, departmentId).map {
             RestAttendeeInEvent.of(it)
         }
+    }
+
+    @PostMapping("/events/batch-enter/{eventCode}")
+    fun addBatchAttendeesToEvent(
+        @PathVariable(value = "eventCode") eventCode: String,
+        @RequestBody(required = true) @Valid attendeeCodes: RestAttendeeCodesRequest
+    ): List<RestAttendeeInEvent> {
+        return eventService.addAttendeesToEvent(eventCode, attendeeCodes.attendeeCodes)
+            .map { RestAttendeeInEvent.of(it) }
     }
 
     @GetMapping("/events/by-type/{eventType}")

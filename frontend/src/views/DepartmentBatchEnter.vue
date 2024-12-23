@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { getDepartment } from '../services/department'
-import { type Attendees, getAttendeesForDepartment } from '../services/attendee'
+import { type Attendee, type Attendees, getAttendeesForDepartment } from '../services/attendee'
 import { useToast } from 'vue-toastification'
 import { useRoute } from 'vue-router'
 import type { Department } from '@/services/department'
@@ -10,31 +10,36 @@ const toast = useToast()
 const route = useRoute()
 const departmentId = ref<number>(0)
 const department = ref<Department | undefined>()
-const attendees = ref<Attendees>([])
+const attendees = ref<Attendees>({} as Attendees)
+const youths = ref<AttendeeWithSelected[]>([])
+const allSelected = ref<boolean>(false)
 const selectedYouths = ref<string[]>([])
+
+interface AttendeeWithSelected extends Attendee {
+  selected: boolean
+}
 
 onMounted(async () => {
   departmentId.value = Array.isArray(route.params.departmentId)
     ? parseInt(route.params.departmentId[0])
     : parseInt(route.params.departmentId)
 
-  // load member of department
   department.value = await getDepartment(departmentId.value)
   attendees.value = await getAttendeesForDepartment(departmentId.value)
+  youths.value = attendees.value.youths.map((youth) => ({ ...youth, selected: false }))
 })
-const toggleSelection = (memberId) => {
-  const index = selectedYouths.value.indexOf(memberId)
-  if (index === -1) {
-    selectedYouths.value.push(memberId)
-  } else {
-    selectedYouths.value.splice(index, 1)
-  }
-}
+
 const selectAllYouths = () => {
-  if (selectedYouths.value.length === attendees.value.youths.length) {
-    selectedYouths.value = []
+  if (youths.value.some((youth) => youth.selected)) {
+    for (let i = 0; i < youths.value.length; i++) {
+      youths.value[i].selected = false
+    }
+    allSelected.value = false
   } else {
-    selectedYouths.value = attendees.value.youths.map((youth) => youth.id)
+    for (let i = 0; i < youths.value.length; i++) {
+      youths.value[i].selected = true
+    }
+    allSelected.value = true
   }
 }
 </script>
@@ -43,18 +48,19 @@ const selectAllYouths = () => {
   <div>
     <v-container class="event-root">
       <h1>{{ department?.name }} beitreten</h1>
-      <v-checkbox @change="selectAllYouths()" :label="`Alle Jugendliche auswählen`" />
+      <v-checkbox
+        :value="allSelected"
+        @change="selectAllYouths()"
+        :label="`Alle Jugendliche auswählen`"
+      />
       <form>
         <v-checkbox
-          v-for="attendee in attendees.youths"
-          :id="attendee.id"
-          :value="attendee.id"
-          :selected="selectedYouths.includes(attendee.id)"
-          @click="toggleSelection(attendee.id)"
+          v-for="attendee in youths"
+          :value="attendee.selected"
           :label="attendee.firstName + ' ' + attendee.lastName"
         />
       </form>
-      {{ selectedYouths }}
+      {{ youths.map((y) => y.firstName + ' ' + y.lastName + ' ' + y.selected) }}
     </v-container>
   </div>
 </template>
