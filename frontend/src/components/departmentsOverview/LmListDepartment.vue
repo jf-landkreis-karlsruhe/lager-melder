@@ -31,12 +31,6 @@ onMounted(async () => {
   getEventByType(EventType.GLOBAL_ENTER).then((event: Event) => (enterEvent.value = event))
 })
 
-const checkinDepartment = (department: Department) => {
-  checkinDepartmentToEvent(enterEvent.value, department.id).then(() =>
-    toast.success(` ${department.name} erfolgreich eingecheckt`)
-  )
-}
-
 const updatePauseDepartmentInternal = (department: Department) => {
   updatePauseDepartment(department.id, !department.paused).then(() => {
     department.paused = !department.paused
@@ -63,9 +57,9 @@ const updatePauseDepartmentInternal = (department: Department) => {
               <span v-if="department.paused">Zurückmelden</span>
               <span v-if="!department.paused">Abmelden</span>
             </v-btn>
-            <v-btn @click="checkinDepartment(department)" class="checkin" rounded>
-              ⛺ Teilnehmer einchecken
-            </v-btn>
+            <router-link :to="'/feuerwehr-betreten/' + department.id">
+              Teilnehmer einchecken
+            </router-link>
           </div>
           <v-divider class="mt-8 mb-16 border-opacity-15"></v-divider>
         </div>

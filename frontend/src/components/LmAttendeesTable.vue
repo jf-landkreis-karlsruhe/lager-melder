@@ -176,7 +176,8 @@ const attendeesWithNew = computed<AttendeeWithValidation[]>(() => {
         juleikaNumber: '',
         juleikaExpireDate: '',
         partOfDepartmentId: undefined,
-        helperDays: []
+        helperDays: [],
+        code: ''
       }
     ])
     .map((attendee) => ({ ...attendee, tShirtSizeError: false, helperDaysError: false }))
