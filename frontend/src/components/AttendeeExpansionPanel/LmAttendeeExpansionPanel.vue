@@ -7,6 +7,7 @@ import { AttendeeRole } from '@/services/attendee'
 import type { VExpansionPanelTitle } from 'vuetify/components'
 import { getDepartmentsForSelecting } from '@/services/department'
 import { getEventDays, type EventDays } from '@/services/eventDays'
+import { AttendeeStatus } from '@/services/attendee'
 
 const props = defineProps<{
   attendee: Attendee
@@ -45,7 +46,16 @@ onMounted(() => {
     <v-expansion-panel-title expand-icon="mdi-menu-down" ref="expansionPanel">
       <div class="d-flex justify-space-between align-center flex-1-1-100">
         <div class="d-flex align-center" style="flex: 2">
-          <v-icon size="large" class="mr-4">mdi-account-circle</v-icon>
+          <div class="user-icon position-relative mr-4">
+            <v-icon size="x-large" class="pr-3">mdi-account-circle</v-icon>
+            <div
+              v-if="props.attendee.status === AttendeeStatus.ENTERED"
+              class="position-absolute is-attending-icon"
+              title="Zeltlager betreten"
+            >
+              ⛺
+            </div>
+          </div>
           <div class="d-flex flex-column ga-2">
             <span>{{ props.attendee.firstName }} {{ ' ' }} {{ props.attendee.lastName }}</span>
             <span v-if="props.attendee.birthday">*{{ dateAsText(props.attendee.birthday) }}</span>
@@ -112,6 +122,12 @@ onMounted(() => {
 <style scoped lang="scss">
 .hidden {
   visibility: hidden;
+}
+
+.is-attending-icon {
+  font-size: 1.4rem;
+  bottom: -0.25rem;
+  right: -0.25rem;
 }
 
 .shirt {
