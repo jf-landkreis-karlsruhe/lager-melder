@@ -105,9 +105,9 @@ onMounted(async () => {
 <template>
   <v-form @submit.prevent="handleSubmit" v-model="isFormValid">
     <h3>{{ props.roleTitle }} hinzufügen</h3>
-    <div class="d-flex flex-row ga-4 mt-4">
+    <div class="d-flex flex-row flex-wrap ga-4 mt-4">
       <!-- First column -->
-      <div class="d-flex flex-column ga-2" style="flex: 6">
+      <div class="d-flex flex-column form-column ga-2">
         <div class="d-flex align-center ga-4">
           <v-text-field
             label="Vorname"
@@ -182,7 +182,7 @@ onMounted(async () => {
       </div>
 
       <!-- Second column -->
-      <div class="d-flex flex-column justify-space-between ga-2" style="flex: 6">
+      <div class="d-flex flex-column justify-space-between form-column ga-2">
         <div v-if="props.role === AttendeeRole.YOUTH_LEADER" class="d-flex flex-column ga-2">
           <v-text-field
             label="Juleika-Nummer"
@@ -244,7 +244,7 @@ onMounted(async () => {
     </div>
 
     <!-- Second Row -->
-    <div class="d-flex flex-row justify-space-between align-center ga-4 w-50 ml-auto">
+    <div class="d-flex flex-row justify-space-between align-center ga-4 w-sm-50 w-xs-100 ml-auto">
       <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
         <v-btn v-if="props.showCancel" style="flex: 1" variant="text" @click="emit('cancel', current)">
           Abbrechen
@@ -267,6 +267,16 @@ onMounted(async () => {
 </template>
 
 <style lang="scss">
+.form-column {
+  flex-basis: 100%;
+}
+
+@media screen and (min-width: 600px) {
+  .form-column {
+    flex: 6;
+  }
+}
+
 // Remove default vuetify filter from v-icon
 .v-icon {
   filter: none;
