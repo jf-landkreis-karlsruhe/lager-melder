@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
-import { useDate } from 'vuetify'
 import { FOOD_ICON_MAP, foodText } from '@/helper/displayText'
 import { Food, type Attendee } from '@/services/attendee'
 import { getEventDays } from '@/services/eventDays'
@@ -27,33 +26,11 @@ const tShirtSizes = ref<{ title: string; props: Object }[]>([])
 const helperDays = ref<{ title: string; value: string }[]>([])
 const departments = ref<{ title: string; value: number }[]>([])
 
-const adapter = useDate()
-
-const birthdayAsDate = computed<unknown | string>(() => {
-  if (!current.value.birthday) return ''
-  return adapter.parseISO(current.value.birthday)
-})
-
-const juleikaExpireDateAsDate = computed<unknown | string>(() => {
-  if (!current.value.juleikaExpireDate) return ''
-  return adapter.parseISO(current.value.juleikaExpireDate)
-})
-
 const foodList = computed<{ value: Food; title: string }[]>(() => {
   return Object.values(Food).map((value: Food) => {
     return { value, title: foodText(value), props: { prependIcon: FOOD_ICON_MAP[value] } }
   })
 })
-
-const updateBirthday = (date: unknown) => {
-  if (!date) return
-  current.value.birthday = `${adapter.getYear(date)}-${adapter.getMonth(date) + 1}-${adapter.getDate(date)}`
-}
-
-const updateJuleikaExpireDate = (date: unknown) => {
-  if (!date) return
-  current.value.juleikaExpireDate = `${adapter.getYear(date)}-${adapter.getMonth(date) + 1}-${adapter.getDate(date)}`
-}
 
 const handleSubmit = () => {
   if (isFormValid.value) {
@@ -105,7 +82,7 @@ onMounted(async () => {
 <template>
   <v-form @submit.prevent="handleSubmit" v-model="isFormValid">
     <h3>{{ props.roleTitle }} hinzufügen</h3>
-    <div class="d-flex flex-row flex-wrap ga-4 mt-4">
+    <div class="d-flex flex-row align-start flex-wrap ga-4 mt-4">
       <!-- First column -->
       <div class="d-flex flex-column form-column ga-2">
         <div class="d-flex align-center ga-4">
@@ -129,15 +106,16 @@ onMounted(async () => {
           ></v-text-field>
         </div>
 
-        <v-date-input
-          label="Geburtstag"
+        <v-text-field
+          v-if="props.role !== AttendeeRole.HELPER"
+          type="date"
+          v-model="current.birthday"
+          label="Geburtsdatum"
+          required
           variant="outlined"
           density="comfortable"
-          required
           :rules="requiredRule"
-          :modelValue="birthdayAsDate"
-          @update:modelValue="updateBirthday"
-        ></v-date-input>
+        />
 
         <div class="d-flex align-center ga-4">
           <v-select
@@ -183,7 +161,10 @@ onMounted(async () => {
 
       <!-- Second column -->
       <div class="d-flex flex-column justify-space-between form-column ga-2">
-        <div v-if="props.role === AttendeeRole.YOUTH_LEADER" class="d-flex flex-column ga-2">
+        <div
+          v-if="[AttendeeRole.YOUTH_LEADER, AttendeeRole.CHILD_LEADER].includes(props.role)"
+          class="d-flex flex-column ga-2"
+        >
           <v-text-field
             label="Juleika-Nummer"
             variant="outlined"
@@ -192,13 +173,13 @@ onMounted(async () => {
             @update:modelValue="current.juleikaNumber = $event"
           ></v-text-field>
 
-          <v-date-input
+          <v-text-field
+            type="date"
+            v-model="current.juleikaExpireDate"
             label="Juleika-Ablaufdatum"
             variant="outlined"
             density="comfortable"
-            :modelValue="juleikaExpireDateAsDate"
-            @update:modelValue="updateJuleikaExpireDate"
-          ></v-date-input>
+          />
         </div>
 
         <v-select
@@ -233,8 +214,8 @@ onMounted(async () => {
         <v-textarea
           label="Kommentar"
           variant="outlined"
-          row-height="14"
-          :rows="props.role === AttendeeRole.YOUTH_LEADER ? '1' : '7'"
+          row-height="12"
+          :rows="[AttendeeRole.YOUTH, AttendeeRole.CHILD].includes(props.role) ? 7 : 2"
           auto-grow
           clearable
           :modelValue="current.additionalInformation"

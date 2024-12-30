@@ -107,6 +107,14 @@ const handleUpdateAttendee = async (att: Attendee, ownRef: InstanceType<typeof L
     ...getAttendeeDefault(att.role, att.departmentId),
     ...att
   }
+  // replace udpated attendee in local list
+  attendees.value = {
+    ...attendees.value,
+    [getAttendeeTypeByRole(att.role)]: attendees.value[getAttendeeTypeByRole(att.role)].map((a) =>
+      a.id === att.id ? attendeeWithAllProps : a
+    )
+  }
+  // update attendee in database
   await updateAttendeeService(attendeeWithAllProps)
   // close expansion panel with manual click as other ways didn't work
   ownRef.$el.querySelector('button')?.click()

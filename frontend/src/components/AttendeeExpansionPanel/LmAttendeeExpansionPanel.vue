@@ -24,8 +24,8 @@ const expansionPanel = ref<InstanceType<typeof VExpansionPanelTitle> | null>(nul
 const departments = ref<{ title: string; value: number }[]>([])
 const eventDays = ref<EventDays[]>([])
 
-const handleFormSave = () => {
-  emit('update', props.attendee)
+const handleFormSave = (editedAttendee: Attendee) => {
+  emit('update', editedAttendee)
 }
 
 onMounted(() => {
@@ -73,8 +73,12 @@ onMounted(() => {
           </div>
         </div>
 
-        <div v-if="props.role === AttendeeRole.YOUTH_LEADER" class="d-flex align-center" style="flex: 3">
-          <v-icon class="mr-1">mdi-card-account-details-outline</v-icon>
+        <div
+          v-if="[AttendeeRole.YOUTH_LEADER, AttendeeRole.CHILD_LEADER].includes(props.role)"
+          class="d-flex align-center"
+          style="flex: 3"
+        >
+          <v-icon class="mr-2">mdi-card-account-details-outline</v-icon>
           <div class="d-flex flex-column ga-2">
             <span>{{ props.attendee.juleikaNumber ?? '-' }}</span>
             <span>{{ dateAsText(props.attendee.juleikaExpireDate ?? '-') }}</span>
@@ -85,7 +89,7 @@ onMounted(() => {
           class="d-flex align-center"
           style="flex: 3"
         >
-          <v-icon class="mr-1">mdi-account-group-outline</v-icon>
+          <v-icon class="mr-2">mdi-account-group-outline</v-icon>
           <span>{{ departments.find((d) => d.value == props.attendee.partOfDepartmentId)?.title || '-' }}</span>
         </div>
         <div
@@ -93,7 +97,7 @@ onMounted(() => {
           class="d-flex align-center"
           style="flex: 3"
         >
-          <v-icon class="mr-1">mdi-handshake-outline</v-icon>
+          <v-icon class="mr-2">mdi-handshake-outline</v-icon>
           <div class="d-flex flex-column ga-2">
             <span v-for="dayId in props.attendee.helperDays" :key="dayId">{{ helperDaysText(dayId, eventDays) }}</span>
           </div>
