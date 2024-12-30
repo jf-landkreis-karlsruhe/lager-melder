@@ -62,20 +62,20 @@ onMounted(() => {
           </div>
         </div>
         <div class="shirt-and-food d-flex justify-start" style="flex: 3">
-          <div class="shirt d-flex flex-column justify-center align-center mr-10">
+          <div class="shirt d-flex flex-column justify-center align-center mr-sm-10">
             <v-icon class="mb-1">mdi-tshirt-crew-outline</v-icon>
-            <div class="name">{{ props.attendee.tShirtSize }}</div>
+            <div class="name d-none d-sm-inline-block">{{ props.attendee.tShirtSize }}</div>
           </div>
 
-          <div class="food d-flex flex-column justify-center align-center mr-10">
+          <div class="food d-flex flex-column justify-center align-center mr-sm-10">
             <v-icon class="mb-1">{{ FOOD_ICON_MAP[props.attendee.food] }}</v-icon>
-            <div class="name">{{ foodText(props.attendee.food) }}</div>
+            <div class="name d-none d-sm-inline-block">{{ foodText(props.attendee.food) }}</div>
           </div>
         </div>
 
         <div
           v-if="[AttendeeRole.YOUTH_LEADER, AttendeeRole.CHILD_LEADER].includes(props.role)"
-          class="d-flex align-center"
+          class="d-none d-sm-flex align-center"
           style="flex: 3"
         >
           <v-icon class="mr-2">mdi-card-account-details-outline</v-icon>
@@ -84,17 +84,19 @@ onMounted(() => {
             <span>{{ dateAsText(props.attendee.juleikaExpireDate ?? '-') }}</span>
           </div>
         </div>
+
         <div
           v-if="props.role === AttendeeRole.Z_KID && props.attendee.partOfDepartmentId"
-          class="d-flex align-center"
+          class="d-none d-sm-flex align-center"
           style="flex: 3"
         >
           <v-icon class="mr-2">mdi-account-group-outline</v-icon>
           <span>{{ departments.find((d) => d.value == props.attendee.partOfDepartmentId)?.title || '-' }}</span>
         </div>
+
         <div
           v-if="props.role === AttendeeRole.HELPER && (props.attendee.helperDays?.length ?? 0) > 0"
-          class="d-flex align-center"
+          class="d-none d-sm-flex align-center"
           style="flex: 3"
         >
           <v-icon class="mr-2">mdi-handshake-outline</v-icon>
@@ -103,7 +105,11 @@ onMounted(() => {
           </div>
         </div>
 
-        <div :class="{ hidden: !props.attendee.additionalInformation }" class="description mr-2" style="flex: 4">
+        <div
+          :class="{ hidden: !props.attendee.additionalInformation }"
+          class="description mr-2 d-none d-sm-inline-block"
+          style="flex: 4"
+        >
           <i>
             <v-icon class="mr-1">mdi-information-outline</v-icon>
             {{ props.attendee.additionalInformation }}
@@ -134,11 +140,14 @@ onMounted(() => {
   right: -0.25rem;
 }
 
-.shirt {
+.shirt,
+.food {
   width: 40px;
 }
-.food {
-  width: 80px;
+@media screen and (min-width: 600px) {
+  .food {
+    width: 80px;
+  }
 }
 .shirt,
 .food {

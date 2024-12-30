@@ -76,13 +76,13 @@ const saveAttendee = (att: Attendee) => {
     <div class="d-flex justify-space-between align-center">
       <div class="d-flex align-center ga-3">
         <h2>{{ props.headerLabel }}</h2>
-        <div class="additional-information">
+        <div class="additional-information d-none d-sm-inline-block">
           Gesamt: {{ attendeeListWithAllAttributes.length }} (Anwesend: {{ enteredAttendees }})
         </div>
       </div>
 
       <label v-if="attendeesCanBeEdited">
-        <span class="mr-2" style="cursor: pointer">{{ props.headerLabel }} hinzufügen</span>
+        <span class="mr-2 d-none d-sm-inline-block" style="cursor: pointer">{{ props.headerLabel }} hinzufügen</span>
         <v-btn @click="addNewAttendee(props.role)" color="primary" class="ma-0 mb-1" icon size="x-small">
           <v-icon>mdi-plus</v-icon>
         </v-btn>
