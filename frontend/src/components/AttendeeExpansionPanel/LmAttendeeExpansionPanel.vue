@@ -146,7 +146,7 @@ onMounted(() => {
 }
 @media screen and (min-width: 600px) {
   .food {
-    width: 80px;
+    width: 90px;
   }
 }
 .shirt,
