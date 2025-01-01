@@ -12,6 +12,8 @@ import type { Department } from '@/services/department'
 import LmAttendeeAddForm from '../AttendeeExpansionPanel/LmAttendeeAddForm.vue'
 import LmAttendeeExpansionPanel from '../AttendeeExpansionPanel/LmAttendeeExpansionPanel.vue'
 import { filterEnteredAttendees } from '@/helper/filterHelper'
+import { getErrorMessage, isError } from '@/services/errorConstants'
+import { useToast } from 'vue-toastification'
 
 const props = defineProps<{
   headerLabel: string
@@ -27,6 +29,7 @@ const emit = defineEmits<{
   (e: 'save-new', newAttendee: Attendee, type: keyof Attendees): void
 }>()
 
+const toast = useToast()
 const isAddNewFormModalVisible = ref<boolean>(false)
 const newAttendee = ref<Attendee | undefined>(undefined)
 const expansionPanels = ref<InstanceType<typeof LmAttendeeExpansionPanel>[]>([])
@@ -61,12 +64,19 @@ const addNewAttendee = (role: AttendeeRole) => {
 
 const saveAttendee = (att: Attendee) => {
   if (newAttendee.value && att.id === newAttendee.value.id) {
-    createAttendee(att).then((newAtt) => {
-      if (!newAttendee.value) return
-      const attendeeType = getAttendeeTypeByRole(newAttendee.value.role)
-      emit('save-new', newAtt, attendeeType)
-    })
-    isAddNewFormModalVisible.value = false
+    createAttendee(att)
+      .then((newAtt) => {
+        if (!newAttendee.value) return
+        const attendeeType = getAttendeeTypeByRole(newAttendee.value.role)
+        emit('save-new', newAtt, attendeeType)
+        isAddNewFormModalVisible.value = false
+      })
+      .catch(async (err) => {
+        const errorMessage = await getErrorMessage(err)
+        if (errorMessage) {
+          toast.error(errorMessage)
+        }
+      })
   }
 }
 </script>

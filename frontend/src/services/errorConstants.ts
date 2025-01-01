@@ -20,6 +20,15 @@ export interface ErrorMessage {
   fieldName: string;
 }
 
+export const getErrorMessage = async (err: any) => {
+  try {
+    const errMess = await err.json()
+    if (isError(errMess)) {
+      return errMess.messages[0].message
+    }
+  } catch {}
+}
+
 export const isError = (err: ErrorResponse): boolean => {
   return Object.keys(ErrorConstants).includes(err.key);
 };
