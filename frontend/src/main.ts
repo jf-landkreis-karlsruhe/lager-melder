@@ -14,7 +14,6 @@ import 'vuetify/styles'
 import { VDateInput } from 'vuetify/labs/VDateInput'
 
 const vuetify = createVuetify({
-  locale: { locale: 'de' },
   date: { locale: { de: 'de-DE' } },
   components: { ...components, VDateInput },
   directives,
