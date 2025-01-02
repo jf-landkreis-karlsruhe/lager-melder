@@ -1,4 +1,4 @@
-import { getData, postData, putData, deleteData } from '../helper/fetch'
+import { deleteData, getData, postData, putData } from '../helper/fetch'
 import { withAuthenticationHeader } from './authentication'
 
 export const getAttendees = () => getData<Attendees>('attendees', withAuthenticationHeader())
@@ -88,12 +88,6 @@ export interface NewAttendee {
 export interface Attendee extends NewAttendee {
   id: string
   status: AttendeeStatus | null | undefined
-}
-
-// TODO: not needed anymore! remove if secure
-export interface AttendeeWithValidation extends Attendee {
-  tShirtSizeError: boolean
-  helperDaysError: boolean
 }
 
 export interface Youth extends Attendee {}

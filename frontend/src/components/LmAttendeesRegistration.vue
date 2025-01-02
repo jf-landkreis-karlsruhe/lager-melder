@@ -13,7 +13,6 @@ import {
 } from '../services/attendee'
 import { type Department, DepartmentFeatures } from '../services/department'
 import { filterByDepartmentAndSearch, filterEnteredAttendees } from '../helper/filterHelper'
-import AttendeesTable from './LmAttendeesTable.vue'
 import RegistrationInformation from './LmRegistrationInformation.vue'
 import { getRegistrationEnd } from '@/services/settings'
 import LmRegistrationEndBanner from '@/components/LmRegistrationEndBanner.vue'
@@ -163,15 +162,6 @@ onMounted(() => {
         />
       </div>
 
-      <AttendeesTable
-        headlineText="Jugendliche"
-        formName="youth"
-        :attendees="youthAttendeeList"
-        :departmentId="department.id"
-        :role="attendeeRoleYouth"
-        :disabled="!attendeesCanBeEdited"
-      />
-
       <LmAttendeeExpandableWithHeader
         header-label="Jugendleiter"
         :department="props.department"
@@ -211,14 +201,6 @@ onMounted(() => {
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
       />
-      <AttendeesTable
-        headlineText="Kinder"
-        formName="child"
-        :attendees="childAttendeeList"
-        :departmentId="department.id"
-        :role="attendeeRoleChild"
-        :disabled="!childGroupCanBeEdited"
-      />
 
       <LmAttendeeExpandableWithHeader
         header-label="Kindergruppenleiter"
@@ -229,14 +211,6 @@ onMounted(() => {
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
-      />
-      <AttendeesTable
-        headlineText="Kindergruppenleiter"
-        formName="childLeader"
-        :attendees="childLeaderAttendeeList"
-        :role="attendeeRoleChildLeader"
-        :departmentId="department.id"
-        :disabled="!childGroupCanBeEdited"
       />
     </div>
 
@@ -254,14 +228,6 @@ onMounted(() => {
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
       />
-      <AttendeesTable
-        headlineText=""
-        formName="zKids"
-        :attendees="zKidsAttendeeList"
-        :departmentId="department.id"
-        :role="attendeeRoleZKid"
-        :disabled="!attendeesCanBeEdited"
-      />
     </div>
 
     <div v-if="department && department.features.includes(DepartmentFeatures.HELPER)">
@@ -277,14 +243,6 @@ onMounted(() => {
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
-      />
-      <AttendeesTable
-        headlineText=""
-        formName="helper"
-        :attendees="helpersAttendeeList"
-        :departmentId="department.id"
-        :role="attendeeRoleHelper"
-        :disabled="!childGroupCanBeEdited"
       />
     </div>
   </v-container>
