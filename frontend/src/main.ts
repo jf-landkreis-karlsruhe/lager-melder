@@ -11,11 +11,10 @@ import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
-import { VDateInput } from 'vuetify/labs/VDateInput'
 
 const vuetify = createVuetify({
   date: { locale: { de: 'de-DE' } },
-  components: { ...components, VDateInput },
+  components: components,
   directives,
   icons: {
     defaultSet: 'mdi',

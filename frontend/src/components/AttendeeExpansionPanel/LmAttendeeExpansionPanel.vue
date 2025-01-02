@@ -1,18 +1,20 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import type { Attendee } from '@/services/attendee'
-import { foodText, dateAsText, helperDaysText, FOOD_ICON_MAP } from '../../helper/displayText'
+import { AttendeeRole, AttendeeStatus } from '@/services/attendee'
+import { dateAsText, FOOD_ICON_MAP, foodText, helperDaysText } from '../../helper/displayText'
 import LmAttendeeAddForm from './LmAttendeeAddForm.vue'
-import { AttendeeRole } from '@/services/attendee'
 import type { VExpansionPanelTitle } from 'vuetify/components'
-import { getDepartmentsForSelecting } from '@/services/department'
-import { getEventDays, type EventDays } from '@/services/eventDays'
-import { AttendeeStatus } from '@/services/attendee'
+import { type EventDays } from '@/services/eventDays'
+import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeExpansionPanel/helperTypes'
 
 const props = defineProps<{
   attendee: Attendee
   role: AttendeeRole
   roleTitle: string
+  departments: DepartmentSelect[]
+  eventDays: EventDays[]
+  tShirtSizes: TShirtSizeSelect[]
 }>()
 
 const emit = defineEmits<{
@@ -22,23 +24,10 @@ const emit = defineEmits<{
 
 const expansionPanel = ref<InstanceType<typeof VExpansionPanelTitle> | null>(null)
 const departments = ref<{ title: string; value: number }[]>([])
-const eventDays = ref<EventDays[]>([])
 
 const handleFormSave = (editedAttendee: Attendee) => {
   emit('update', editedAttendee)
 }
-
-onMounted(() => {
-  getDepartmentsForSelecting().then((data) => {
-    departments.value = [
-      ...departments.value,
-      ...data.map((department) => ({ value: department.id, title: department.name }))
-    ]
-  })
-  getEventDays().then((data) => {
-    eventDays.value = data
-  })
-})
 </script>
 
 <template>
@@ -101,7 +90,9 @@ onMounted(() => {
         >
           <v-icon class="mr-2">mdi-handshake-outline</v-icon>
           <div class="d-flex flex-column ga-2">
-            <span v-for="dayId in props.attendee.helperDays" :key="dayId">{{ helperDaysText(dayId, eventDays) }}</span>
+            <span v-for="dayId in props.attendee.helperDays" :key="dayId">{{
+              helperDaysText(dayId, props.eventDays)
+            }}</span>
           </div>
         </div>
 
@@ -122,6 +113,9 @@ onMounted(() => {
         :attendee="props.attendee"
         :role="props.role"
         :role-title="props.roleTitle"
+        :event-days="props.eventDays"
+        :departments="props.departments"
+        :t-shirt-sizes="props.tShirtSizes"
         @save="handleFormSave"
         @delete="emit('delete', props.attendee)"
       />

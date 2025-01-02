@@ -1,16 +1,17 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { FOOD_ICON_MAP, foodText } from '@/helper/displayText'
-import { Food, type Attendee } from '@/services/attendee'
-import { getEventDays } from '@/services/eventDays'
-import { getTShirtSizes } from '@/services/tShirtSizes'
-import { AttendeeRole } from '@/services/attendee'
-import { getDepartmentsForSelecting } from '@/services/department'
+import { type Attendee, AttendeeRole, Food } from '@/services/attendee'
+import { type EventDays } from '@/services/eventDays'
+import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeExpansionPanel/helperTypes'
 
 const props = defineProps<{
   attendee: Attendee
   role: AttendeeRole
   roleTitle: string
+  tShirtSizes: TShirtSizeSelect[]
+  eventDays: EventDays[]
+  departments: DepartmentSelect[]
   showCancel?: boolean
 }>()
 
@@ -22,9 +23,6 @@ const emit = defineEmits<{
 
 const current = ref<Attendee>({ ...props.attendee })
 const isFormValid = ref<boolean>(false)
-const tShirtSizes = ref<{ title: string; props: Object }[]>([])
-const helperDays = ref<{ title: string; value: string }[]>([])
-const departments = ref<{ title: string; value: number }[]>([])
 
 const foodList = computed<{ value: Food; title: string }[]>(() => {
   return Object.values(Food).map((value: Food) => {
@@ -61,22 +59,6 @@ const requiredRule = [
     return 'Pflichtfeld, bitte ausfüllen.'
   }
 ]
-
-onMounted(async () => {
-  tShirtSizes.value = (await getTShirtSizes()).map((shirtSize) => ({
-    title: shirtSize,
-    props: { prependIcon: 'mdi-tshirt-crew-outline' }
-  }))
-  const eventDays = await getEventDays()
-  helperDays.value = eventDays.map((day) => ({ title: day.name, value: day.id }))
-
-  getDepartmentsForSelecting().then((data) => {
-    departments.value = [
-      ...departments.value,
-      ...data.map((department) => ({ value: department.id, title: department.name }))
-    ]
-  })
-})
 </script>
 
 <template>
