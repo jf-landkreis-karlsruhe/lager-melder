@@ -26,10 +26,11 @@ const expansionPanel = ref<InstanceType<typeof VExpansionPanelTitle> | null>(nul
 const departments = ref<{ title: string; value: number }[]>([])
 const sortedHelperDays = computed<EventDays[]>(() => {
   return (
-    (props.attendee.helperDays
-      ?.map((dayId) => props.eventDays.find((day) => day.id === dayId))
-      .filter((day) => day)
-      .sort((a, b) => a.dayOfEvent - b.dayOfEvent) as EventDays[]) ?? []
+    (
+      props.attendee.helperDays
+        ?.map((dayId) => props.eventDays.find((day) => day.id === dayId))
+        .filter((day) => day) as EventDays[]
+    ).sort((a, b) => a.dayOfEvent - b.dayOfEvent) ?? []
   )
 })
 
