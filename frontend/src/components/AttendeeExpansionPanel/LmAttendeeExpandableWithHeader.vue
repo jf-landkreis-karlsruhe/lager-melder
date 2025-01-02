@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import {
   type Attendee,
   AttendeeRole,
@@ -8,15 +8,14 @@ import {
   getAttendeeDefault,
   getAttendeeTypeByRole
 } from '@/services/attendee'
-import { type Department, getDepartmentsForSelecting } from '@/services/department'
+import { type Department } from '@/services/department'
 import LmAttendeeAddForm from '../AttendeeExpansionPanel/LmAttendeeAddForm.vue'
 import LmAttendeeExpansionPanel from '../AttendeeExpansionPanel/LmAttendeeExpansionPanel.vue'
 import { filterEnteredAttendees } from '@/helper/filterHelper'
 import { getErrorMessage } from '@/services/errorConstants'
 import { useToast } from 'vue-toastification'
-import { getTShirtSizes } from '@/services/tShirtSizes'
-import { type EventDays, getEventDays } from '@/services/eventDays'
 import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeExpansionPanel/helperTypes'
+import type { EventDays } from '@/services/eventDays'
 
 const props = defineProps<{
   headerLabel: string
@@ -24,6 +23,9 @@ const props = defineProps<{
   attendeeList: Attendee[]
   role: AttendeeRole
   attendeesCanBeEdited: boolean
+  tShirtSizes: TShirtSizeSelect[]
+  eventDays: EventDays[]
+  departments: DepartmentSelect[]
 }>()
 
 const emit = defineEmits<{
@@ -36,9 +38,6 @@ const toast = useToast()
 const isAddNewFormModalVisible = ref<boolean>(false)
 const newAttendee = ref<Attendee | undefined>(undefined)
 const expansionPanels = ref<InstanceType<typeof LmAttendeeExpansionPanel>[]>([])
-const tShirtSizes = ref<TShirtSizeSelect[]>([])
-const eventDays = ref<EventDays[]>([])
-const departments = ref<DepartmentSelect[]>([])
 
 const attendeeListWithAllAttributes = computed<Attendee[]>(() => {
   return props.attendeeList.map((attendee) => {
@@ -58,24 +57,6 @@ const attendeeListWithAllAttributes = computed<Attendee[]>(() => {
 
 const enteredAttendees = computed<number>(() => {
   return attendeeListWithAllAttributes.value.filter(filterEnteredAttendees).length
-})
-
-onMounted(async () => {
-  tShirtSizes.value = (await getTShirtSizes()).map(
-    (shirtSize) =>
-      ({
-        title: shirtSize,
-        props: { prependIcon: 'mdi-tshirt-crew-outline' }
-      }) as TShirtSizeSelect
-  )
-  eventDays.value = await getEventDays()
-
-  getDepartmentsForSelecting().then((data) => {
-    departments.value = [
-      ...departments.value,
-      ...data.map((department) => ({ value: department.id, title: department.name }))
-    ]
-  })
 })
 
 const addNewAttendee = (role: AttendeeRole) => {
@@ -130,9 +111,9 @@ const saveAttendee = (att: Attendee) => {
         :attendee="attendee"
         :role="props.role"
         :role-title="props.headerLabel"
-        :departments="departments"
-        :event-days="eventDays"
-        :t-shirt-sizes="tShirtSizes"
+        :departments="props.departments"
+        :event-days="props.eventDays"
+        :t-shirt-sizes="props.tShirtSizes"
         ref="expansionPanels"
         @update="emit('update', $event, expansionPanels[index])"
         @delete="emit('delete', $event)"
@@ -147,9 +128,9 @@ const saveAttendee = (att: Attendee) => {
           :attendee="newAttendee"
           :role-title="props.headerLabel"
           :role="props.role"
-          :event-days="eventDays"
-          :departments="departments"
-          :t-shirt-sizes="tShirtSizes"
+          :event-days="props.eventDays"
+          :departments="props.departments"
+          :t-shirt-sizes="props.tShirtSizes"
           :show-cancel="true"
           @save="saveAttendee"
           @cancel="isAddNewFormModalVisible = false"

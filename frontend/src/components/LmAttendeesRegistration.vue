@@ -11,13 +11,16 @@ import {
   getAttendeeTypeByRole,
   updateAttendee as updateAttendeeService
 } from '../services/attendee'
-import { type Department, DepartmentFeatures } from '../services/department'
+import { type Department, DepartmentFeatures, getDepartmentsForSelecting } from '../services/department'
 import { filterByDepartmentAndSearch, filterEnteredAttendees } from '../helper/filterHelper'
 import RegistrationInformation from './LmRegistrationInformation.vue'
 import { getRegistrationEnd } from '@/services/settings'
 import LmRegistrationEndBanner from '@/components/LmRegistrationEndBanner.vue'
 import LmAttendeeExpandableWithHeader from './AttendeeExpansionPanel/LmAttendeeExpandableWithHeader.vue'
 import type LmAttendeeExpansionPanel from './AttendeeExpansionPanel/LmAttendeeExpansionPanel.vue'
+import { getTShirtSizes } from '@/services/tShirtSizes'
+import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeExpansionPanel/helperTypes'
+import { type EventDays, getEventDays } from '@/services/eventDays'
 
 const props = defineProps<{
   department: Department
@@ -39,6 +42,9 @@ let childGroupCanBeEdited: boolean = true
 // REFS
 const attendees = ref<Attendees>(defaultAttendees)
 const filterInput = ref<string>('')
+const tShirtSizes = ref<TShirtSizeSelect[]>([])
+const eventDays = ref<EventDays[]>([])
+const departments = ref<DepartmentSelect[]>([])
 
 // COMPUTED
 
@@ -133,9 +139,24 @@ onBeforeMount(async () => {
   childGroupCanBeEdited = response.childGroupsCanBeEdited
 })
 
-onMounted(() => {
+onMounted(async () => {
   getAttendeesForDepartment(props.department.id).then((attendeeList) => {
     attendees.value = attendeeList
+  })
+  tShirtSizes.value = (await getTShirtSizes()).map(
+    (shirtSize) =>
+      ({
+        title: shirtSize,
+        props: { prependIcon: 'mdi-tshirt-crew-outline' }
+      }) as TShirtSizeSelect
+  )
+  eventDays.value = await getEventDays()
+
+  getDepartmentsForSelecting().then((data) => {
+    departments.value = [
+      ...departments.value,
+      ...data.map((department) => ({ value: department.id, title: department.name }))
+    ]
   })
 })
 </script>
@@ -156,6 +177,9 @@ onMounted(() => {
           :attendee-list="youthAttendeeList"
           :role="attendeeRoleYouth"
           :attendeesCanBeEdited="attendeesCanBeEdited"
+          :t-shirt-sizes="tShirtSizes"
+          :departments="departments"
+          :event-days="eventDays"
           @save-new="saveNewAttendee"
           @update="handleUpdateAttendee"
           @delete="deleteAttendee"
@@ -168,18 +192,12 @@ onMounted(() => {
         :attendee-list="youthLeaderAttendeeList"
         :role="attendeeRoleYouthLeader"
         :attendeesCanBeEdited="attendeesCanBeEdited"
+        :t-shirt-sizes="tShirtSizes"
+        :departments="departments"
+        :event-days="eventDays"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
-      />
-
-      <AttendeesTable
-        headlineText="Jugendleiter"
-        formName="youthLeader"
-        :attendees="youthLeaderAttendeeList"
-        :role="attendeeRoleYouthLeader"
-        :departmentId="department.id"
-        :disabled="!attendeesCanBeEdited"
       />
 
       <div v-if="department && department.id">
@@ -197,6 +215,9 @@ onMounted(() => {
         :attendee-list="childAttendeeList"
         :role="attendeeRoleChild"
         :attendeesCanBeEdited="attendeesCanBeEdited"
+        :t-shirt-sizes="tShirtSizes"
+        :departments="departments"
+        :event-days="eventDays"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
@@ -208,6 +229,9 @@ onMounted(() => {
         :attendee-list="childLeaderAttendeeList"
         :role="attendeeRoleChildLeader"
         :attendeesCanBeEdited="attendeesCanBeEdited"
+        :t-shirt-sizes="tShirtSizes"
+        :departments="departments"
+        :event-days="eventDays"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
@@ -224,6 +248,9 @@ onMounted(() => {
         :attendee-list="zKidsAttendeeList"
         :role="attendeeRoleZKid"
         :attendeesCanBeEdited="attendeesCanBeEdited"
+        :t-shirt-sizes="tShirtSizes"
+        :departments="departments"
+        :event-days="eventDays"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
@@ -240,6 +267,9 @@ onMounted(() => {
         :attendee-list="helpersAttendeeList"
         :role="attendeeRoleHelper"
         :attendeesCanBeEdited="childGroupCanBeEdited"
+        :t-shirt-sizes="tShirtSizes"
+        :departments="departments"
+        :event-days="eventDays"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
