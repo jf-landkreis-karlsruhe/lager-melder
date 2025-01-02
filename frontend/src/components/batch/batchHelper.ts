@@ -1,9 +1,10 @@
-import type {Attendee} from "@/services/attendee";
+import type { Attendee } from '@/services/attendee'
 
 export interface AttendeeWithSelected extends Attendee {
-    selected: boolean
+  selected: boolean
 }
 
-export const selectAllNext = (attendees: AttendeeWithSelected[]) => {
-    return attendees.some((youth) => !youth.selected);
+export interface AttendeeGroup<T> {
+  headline: string
+  attendees: T
 }
