@@ -3,7 +3,12 @@ import { computed, ref } from 'vue'
 import { FOOD_ICON_MAP, foodText } from '@/helper/displayText'
 import { type Attendee, AttendeeRole, Food } from '@/services/attendee'
 import { type EventDays } from '@/services/eventDays'
-import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeExpansionPanel/helperTypes'
+import {
+  type DepartmentSelect,
+  getHelperDaySelect,
+  type HelperDaySelect,
+  type TShirtSizeSelect
+} from '@/components/AttendeeExpansionPanel/helperTypes'
 
 const props = defineProps<{
   attendee: Attendee
@@ -29,6 +34,7 @@ const foodList = computed<{ value: Food; title: string }[]>(() => {
     return { value, title: foodText(value), props: { prependIcon: FOOD_ICON_MAP[value] } }
   })
 })
+const helperDays = computed<HelperDaySelect[]>(() => getHelperDaySelect(props.eventDays))
 
 const handleSubmit = () => {
   if (isFormValid.value) {

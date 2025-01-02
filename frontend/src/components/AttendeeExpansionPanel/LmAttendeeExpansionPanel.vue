@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { Attendee } from '@/services/attendee'
 import { AttendeeRole, AttendeeStatus } from '@/services/attendee'
-import { dateAsText, FOOD_ICON_MAP, foodText, helperDaysText } from '../../helper/displayText'
+import { dateAsText, FOOD_ICON_MAP, foodText } from '../../helper/displayText'
 import LmAttendeeAddForm from './LmAttendeeAddForm.vue'
 import type { VExpansionPanelTitle } from 'vuetify/components'
 import { type EventDays } from '@/services/eventDays'
@@ -24,6 +24,14 @@ const emit = defineEmits<{
 
 const expansionPanel = ref<InstanceType<typeof VExpansionPanelTitle> | null>(null)
 const departments = ref<{ title: string; value: number }[]>([])
+const sortedHelperDays = computed<EventDays[]>(() => {
+  return (
+    (props.attendee.helperDays
+      ?.map((dayId) => props.eventDays.find((day) => day.id === dayId))
+      .filter((day) => day)
+      .sort((a, b) => a.dayOfEvent - b.dayOfEvent) as EventDays[]) ?? []
+  )
+})
 
 const handleFormSave = (editedAttendee: Attendee) => {
   emit('update', editedAttendee)
@@ -90,9 +98,7 @@ const handleFormSave = (editedAttendee: Attendee) => {
         >
           <v-icon class="mr-2">mdi-handshake-outline</v-icon>
           <div class="d-flex flex-column ga-2">
-            <span v-for="dayId in props.attendee.helperDays" :key="dayId">{{
-              helperDaysText(dayId, props.eventDays)
-            }}</span>
+            <span v-for="day in sortedHelperDays" :key="day.id">{{ day.name }}</span>
           </div>
         </div>
 
