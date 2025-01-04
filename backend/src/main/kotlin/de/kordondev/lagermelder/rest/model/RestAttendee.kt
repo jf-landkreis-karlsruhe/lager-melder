@@ -17,7 +17,7 @@ data class RestAttendee(
     val additionalInformation: String,
     val role: AttendeeRole,
     val code: String,
-    val status: String,
+    val status: String? = null,
     val juleikaNumber: String? = null,
     val juleikaExpireDate: String? = null,
     val partOfDepartmentId: Long? = null,
@@ -48,7 +48,7 @@ data class RestAttendee(
             role = attendee.role,
             departmentId = attendee.department.id,
             code = attendee.code,
-            status = attendee.status.toString()
+            status = attendee.status?.toString()
         )
 
         fun of(attendee: YouthLeaderEntry) = RestAttendee(
@@ -62,7 +62,9 @@ data class RestAttendee(
             role = attendee.role,
             departmentId = attendee.department.id,
             code = attendee.code,
-            status = attendee.status.toString()
+            status = attendee.status?.toString(),
+            juleikaNumber = attendee.juleikaNumber,
+            juleikaExpireDate = attendee.juleikaExpireDate?.toString()
         )
 
         fun of(attendee: ChildEntry) = RestAttendee(
@@ -76,7 +78,7 @@ data class RestAttendee(
             role = attendee.role,
             departmentId = attendee.department.id,
             code = attendee.code,
-            status = attendee.status.toString()
+            status = attendee.status?.toString()
         )
 
         fun of(attendee: ChildLeaderEntry) = RestAttendee(
@@ -90,7 +92,9 @@ data class RestAttendee(
             role = attendee.role,
             departmentId = attendee.department.id,
             code = attendee.code,
-            status = attendee.status.toString()
+            status = attendee.status.toString(),
+            juleikaNumber = attendee.juleikaNumber,
+            juleikaExpireDate = attendee.juleikaExpireDate?.toString()
         )
 
         fun of(attendee: ZKidEntry) = RestAttendee(
@@ -104,7 +108,7 @@ data class RestAttendee(
             role = attendee.role,
             departmentId = attendee.department.id,
             code = attendee.code,
-            status = attendee.status.toString(),
+            status = attendee.status?.toString(),
             partOfDepartmentId = attendee.partOfDepartment.id
         )
 
@@ -118,7 +122,7 @@ data class RestAttendee(
             role = attendee.role,
             departmentId = attendee.department.id,
             code = attendee.code,
-            status = attendee.status.toString(),
+            status = attendee.status?.toString(),
             helperDays = attendee.helperDays.map { it.id }.toSet()
         )
     }

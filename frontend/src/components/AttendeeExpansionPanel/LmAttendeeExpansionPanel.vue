@@ -23,7 +23,6 @@ const emit = defineEmits<{
 }>()
 
 const expansionPanel = ref<InstanceType<typeof VExpansionPanelTitle> | null>(null)
-const departments = ref<{ title: string; value: number }[]>([])
 const sortedHelperDays = computed<EventDays[]>(() => {
   return (
     (

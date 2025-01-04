@@ -128,7 +128,10 @@ const handleUpdateAttendee = async (att: Attendee, ownRef: InstanceType<typeof L
 const deleteAttendee = async (att: Attendee) => {
   await deleteAttendeeService(att.id)
   const attendeeType = getAttendeeTypeByRole(att.role)
-  attendees.value = { ...attendees.value, [attendeeType]: attendees.value[attendeeType].filter((a) => a.id !== att.id) }
+  attendees.value = {
+    ...attendees.value,
+    [attendeeType]: attendees.value[attendeeType].filter((a) => a.id !== att.id)
+  }
 }
 
 onBeforeMount(async () => {
