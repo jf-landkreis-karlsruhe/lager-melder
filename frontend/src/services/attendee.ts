@@ -1,4 +1,4 @@
-import { getData, postData, putData, deleteData } from '../helper/fetch'
+import { deleteData, getData, postData, putData } from '../helper/fetch'
 import { withAuthenticationHeader } from './authentication'
 
 export const getAttendees = () => getData<Attendees>('attendees', withAuthenticationHeader())
@@ -6,8 +6,7 @@ export const getAttendees = () => getData<Attendees>('attendees', withAuthentica
 export const getAttendeesForDepartment = (departmentId: number) =>
   getData<Attendees>(`departments/${departmentId}/attendees`, withAuthenticationHeader())
 
-export const getAttendee = (id: number) =>
-  getData<Attendee>(`attendees/${id}`, withAuthenticationHeader())
+export const getAttendee = (id: number) => getData<Attendee>(`attendees/${id}`, withAuthenticationHeader())
 
 export const createAttendee = (attendee: NewAttendee) =>
   postData<Attendee>('attendees', withAuthenticationHeader(), attendee)
@@ -15,8 +14,39 @@ export const createAttendee = (attendee: NewAttendee) =>
 export const updateAttendee = (attendee: Attendee) =>
   putData<Attendee>(`attendees/${attendee.id}`, withAuthenticationHeader(), attendee)
 
-export const deleteAttendee = (id: string) =>
-  deleteData(`attendees/${id}`, withAuthenticationHeader())
+export const deleteAttendee = (id: string) => deleteData(`attendees/${id}`, withAuthenticationHeader())
+
+// returns a role-based default attendee object for creating new attendees
+export const getAttendeeDefault = (role: AttendeeRole, departmentId: number): Attendee => {
+  return {
+    id: 'newAttendee' + Date.now(),
+    departmentId: departmentId,
+    partOfDepartmentId: undefined,
+    role,
+    firstName: '',
+    lastName: '',
+    tShirtSize: '',
+    helperDays: [],
+    juleikaNumber: '',
+    food: Food.MEAT,
+    juleikaExpireDate: '',
+    birthday: '',
+    status: undefined,
+    additionalInformation: ''
+  }
+}
+
+export const getAttendeeTypeByRole = (role: AttendeeRole): keyof Attendees => {
+  const map: Record<AttendeeRole, keyof Attendees> = {
+    [AttendeeRole.YOUTH]: 'youths',
+    [AttendeeRole.YOUTH_LEADER]: 'youthLeaders',
+    [AttendeeRole.CHILD]: 'children',
+    [AttendeeRole.CHILD_LEADER]: 'childLeaders',
+    [AttendeeRole.Z_KID]: 'zKids',
+    [AttendeeRole.HELPER]: 'helpers'
+  }
+  return map[role]
+}
 
 export enum AttendeeRole {
   YOUTH = 'YOUTH',
@@ -29,10 +59,10 @@ export enum AttendeeRole {
 
 export enum Food {
   MEAT = 'MEAT',
-  NONE = 'NONE',
-  SPECIAL = 'SPECIAL',
   VEGETARIAN = 'VEGETARIAN',
-  MUSLIM = 'MUSLIM'
+  SPECIAL = 'SPECIAL',
+  MUSLIM = 'MUSLIM',
+  NONE = 'NONE'
 }
 
 export enum AttendeeStatus {

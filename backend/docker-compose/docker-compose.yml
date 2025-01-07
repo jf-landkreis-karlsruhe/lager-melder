@@ -33,4 +33,4 @@ services:
       - "9000:9000"
     volumes:
       - "../../frontend/:/app/:rw"
-    command: sh -c "cd /app && npm install && VITE_BACKEND_URL=http://localhost:8080/api npm run serve"
+    command: sh -c "cd /app && npm install && VITE_BACKEND_URL=http://127.0.0.1:8080/api npm run serve"

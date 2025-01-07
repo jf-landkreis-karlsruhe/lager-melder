@@ -36,8 +36,14 @@ class AttendeeController(
     fun addAttendee(@RequestBody(required = true) @Valid attendee: RestAttendeeRequest): RestAttendee {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
-                .createAttendee(RestAttendeeRequest.to(attendee, department, getPartOfDepartmentForZKid(attendee), getEventDays(attendee)))
-                .let { RestAttendee.of(it)}
+            .createAttendee(
+                RestAttendeeRequest.to(
+                    attendee,
+                    department,
+                    getPartOfDepartmentForZKid(attendee),
+                    getEventDays(attendee)
+                )
+            ).let { RestAttendee.of(it) }
     }
 
     @PutMapping("/attendees/{id}")
