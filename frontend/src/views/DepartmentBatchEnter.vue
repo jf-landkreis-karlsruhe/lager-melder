@@ -43,7 +43,6 @@ const hasFeature = (feature: DepartmentFeatures) => {
           { headline: 'Jugendliche', attendees: attendees.youths || [] },
           { headline: 'Betreuer', attendees: attendees.youthLeaders || [] }
         ]"
-        :departmentId="departmentId"
         :enterCode="eventCode"
         :leaveCode="leaveCode"
       ></AttendeeBatchEvent>
@@ -54,7 +53,6 @@ const hasFeature = (feature: DepartmentFeatures) => {
           { headline: 'Kindergruppe', attendees: attendees.children || [] },
           { headline: 'Kindergruppenleiter', attendees: attendees.childLeaders || [] }
         ]"
-        :departmentId="departmentId"
         :enterCode="eventCode"
         :leaveCode="leaveCode"
       ></AttendeeBatchEvent>
@@ -62,7 +60,6 @@ const hasFeature = (feature: DepartmentFeatures) => {
         v-if="hasFeature(DepartmentFeatures.ZKIDS)"
         headline="ZKids"
         :attendeeGroups="[{ headline: 'Z Kids', attendees: attendees.zKids || [] }]"
-        :departmentId="departmentId"
         :enterCode="eventCode"
         :leaveCode="leaveCode"
       ></AttendeeBatchEvent>
@@ -70,7 +67,6 @@ const hasFeature = (feature: DepartmentFeatures) => {
         v-if="hasFeature(DepartmentFeatures.HELPER)"
         headline="Helfer"
         :attendeeGroups="[{ headline: 'Helfer', attendees: attendees.helpers || [] }]"
-        :departmentId="departmentId"
         :enterCode="eventCode"
         :leaveCode="leaveCode"
       ></AttendeeBatchEvent>

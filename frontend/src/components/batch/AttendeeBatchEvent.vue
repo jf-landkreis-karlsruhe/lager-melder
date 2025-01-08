@@ -13,7 +13,6 @@ const hasAttendees = ref<boolean>(true)
 const props = defineProps<{
   headline: string
   attendeeGroups: AttendeeGroup<Attendee[]>[]
-  departmentId: number
   enterCode: string
   leaveCode: string
 }>()
@@ -85,9 +84,4 @@ const leave = () => {
   </v-card>
 </template>
 
-<style scoped lang="scss">
-.event-root {
-  margin-bottom: 8rem;
-  position: relative;
-}
-</style>
+<style scoped lang="scss"></style>

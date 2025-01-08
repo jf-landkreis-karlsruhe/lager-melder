@@ -114,7 +114,6 @@ onMounted(async () => {
         </v-row>
 
         <v-row>
-          <!--div style="margin: 12px; margin-left: -12px; margin-right: -12px"-->
           <div>
             <h5>Feature</h5>
           </div>
