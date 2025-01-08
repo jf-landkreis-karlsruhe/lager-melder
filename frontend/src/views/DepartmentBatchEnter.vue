@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { getDepartment } from '../services/department'
+import { DepartmentFeatures, getDepartment } from '../services/department'
 import { type Attendees, getAttendeesForDepartment } from '../services/attendee'
 import { useToast } from 'vue-toastification'
 import { useRoute } from 'vue-router'
 import type { Department } from '@/services/department'
-import YouthAndAttendeeBatch from '@/components/batch/AttendeeBatchEvent.vue'
+import AttendeeBatchEvent from '@/components/batch/AttendeeBatchEvent.vue'
 
 const toast = useToast()
 const route = useRoute()
@@ -23,23 +23,57 @@ onMounted(async () => {
   department.value = await getDepartment(departmentId.value)
   attendees.value = await getAttendeesForDepartment(departmentId.value)
 })
+
+const hasFeature = (feature: DepartmentFeatures) => {
+  if (!department.value) {
+    return false
+  }
+  return department.value.features.includes(feature)
+}
 </script>
 
 <template>
   <div>
     <v-container class="event-root">
       <h1>{{ department?.name }} beitreten</h1>
-      <YouthAndAttendeeBatch
-        v-if="attendees.youths || attendees.youthLeaders"
-        headline="Übernachtungsgäste"
+      <AttendeeBatchEvent
+        v-if="hasFeature(DepartmentFeatures.YOUTH_GROUPS)"
+        headline="Jugendgruppe"
         :attendeeGroups="[
-          { headline: 'Jugendliche', attendees: attendees.youths },
-          { headline: 'Betreuer', attendees: attendees.youthLeaders }
+          { headline: 'Jugendliche', attendees: attendees.youths || [] },
+          { headline: 'Betreuer', attendees: attendees.youthLeaders || [] }
         ]"
         :departmentId="departmentId"
         :enterCode="eventCode"
         :leaveCode="leaveCode"
-      ></YouthAndAttendeeBatch>
+      ></AttendeeBatchEvent>
+      <AttendeeBatchEvent
+        v-if="hasFeature(DepartmentFeatures.CHILD_GROUPS)"
+        headline="Kindergruppen"
+        :attendeeGroups="[
+          { headline: 'Kindergruppe', attendees: attendees.children || [] },
+          { headline: 'Kindergruppenleiter', attendees: attendees.childLeaders || [] }
+        ]"
+        :departmentId="departmentId"
+        :enterCode="eventCode"
+        :leaveCode="leaveCode"
+      ></AttendeeBatchEvent>
+      <AttendeeBatchEvent
+        v-if="hasFeature(DepartmentFeatures.ZKIDS)"
+        headline="ZKids"
+        :attendeeGroups="[{ headline: 'Z Kids', attendees: attendees.zKids || [] }]"
+        :departmentId="departmentId"
+        :enterCode="eventCode"
+        :leaveCode="leaveCode"
+      ></AttendeeBatchEvent>
+      <AttendeeBatchEvent
+        v-if="hasFeature(DepartmentFeatures.HELPER)"
+        headline="Helfer"
+        :attendeeGroups="[{ headline: 'Helfer', attendees: attendees.helpers || [] }]"
+        :departmentId="departmentId"
+        :enterCode="eventCode"
+        :leaveCode="leaveCode"
+      ></AttendeeBatchEvent>
     </v-container>
   </div>
 </template>

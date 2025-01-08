@@ -68,6 +68,7 @@ class EventService(
 
 
     fun addAttendeeToEvent(eventCode: String, attendeeCode: String): AttendeeInEvent {
+        authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         val event = getEventByCode(eventCode)
         val attendee: Attendee = attendeeService.getAttendeeByCode(attendeeCode)
         val attendeeInEvent = AttendeeInEventEntry(id = 0, attendeeCode, eventCode, Instant.now())

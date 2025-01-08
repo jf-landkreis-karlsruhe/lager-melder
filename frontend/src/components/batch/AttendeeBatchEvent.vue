@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { getZeltagerIcon, type Youth, type YouthLeader } from '@/services/attendee'
+import { ref, watch } from 'vue'
+import { type Attendee, AttendeeStatus, getZeltagerIcon } from '@/services/attendee'
 import { useToast } from 'vue-toastification'
 import { type AttendeeGroup, type AttendeeWithSelected } from '@/components/batch/batchHelper'
 import { batchEnterAttendees } from '@/services/event'
@@ -8,37 +8,40 @@ import { batchEnterAttendees } from '@/services/event'
 const toast = useToast()
 const attendeeGroups = ref<AttendeeGroup<AttendeeWithSelected[]>[]>([])
 const allSelected = ref<boolean>(false)
+const hasAttendees = ref<boolean>(true)
 
 const props = defineProps<{
   headline: string
-  attendeeGroups: AttendeeGroup<Youth[] | YouthLeader[]>[]
+  attendeeGroups: AttendeeGroup<Attendee[]>[]
   departmentId: number
   enterCode: string
   leaveCode: string
 }>()
 
-onMounted(() => {
-  attendeeGroups.value = props.attendeeGroups.map((ag) => ({
-    headline: ag.headline,
-    attendees: ag.attendees.map((a) => ({ ...a, selected: false }) as AttendeeWithSelected)
-  }))
-})
+watch(
+  () => props.attendeeGroups,
+  () => {
+    attendeeGroups.value = props.attendeeGroups.map((ag) => ({
+      headline: ag.headline,
+      attendees: ag.attendees.map((a) => ({ ...a, selected: false }) as AttendeeWithSelected)
+    }))
+    hasAttendees.value = attendeeGroups.value.some((ag) => ag.attendees.length > 0)
+  },
+  { deep: true }
+)
 
 const selectAllAttendees = () => {
   const nextState = attendeeGroups.value.some((ag) => ag.attendees.some((youth) => !youth.selected))
-  attendeeGroups.value
-    .flatMap((ag) => ag.attendees)
-    .forEach((attendee) => (attendee.selected = nextState))
+  attendeeGroups.value.flatMap((ag) => ag.attendees).forEach((attendee) => (attendee.selected = nextState))
   allSelected.value = nextState
 }
 
 const enter = () => {
-  const attendeeCodes = attendeeGroups.value
-    .flatMap((ag) => ag.attendees)
-    .filter((a) => a.selected)
-    .map((a) => a.code)
+  const selectedAttendees = attendeeGroups.value.flatMap((ag) => ag.attendees).filter((a) => a.selected)
+  const attendeeCodes = selectedAttendees.map((a) => a.code)
   batchEnterAttendees(props.enterCode, attendeeCodes)
     .then(() => {
+      selectedAttendees.forEach((a) => (a.status = AttendeeStatus.ENTERED))
       toast.success(`${attendeeCodes.length} Teilnehmer erfolgreich betreten`)
     })
     .catch(() => {
@@ -46,12 +49,11 @@ const enter = () => {
     })
 }
 const leave = () => {
-  const attendeeCodes = attendeeGroups.value
-    .flatMap((ag) => ag.attendees)
-    .filter((a) => a.selected)
-    .map((a) => a.code)
+  const selectedAttendees = attendeeGroups.value.flatMap((ag) => ag.attendees).filter((a) => a.selected)
+  const attendeeCodes = selectedAttendees.map((a) => a.code)
   batchEnterAttendees(props.leaveCode, attendeeCodes)
     .then(() => {
+      selectedAttendees.forEach((a) => (a.status = AttendeeStatus.LEFT))
       toast.success(`${attendeeCodes.length} Teilnehmer erfolgreich verlassen`)
     })
     .catch(() => {
@@ -64,7 +66,7 @@ const leave = () => {
   <v-card class="pa-6">
     <form v-on:submit.prevent="enter">
       <h2>{{ props.headline }}</h2>
-      <v-checkbox-btn v-model="allSelected" @change="selectAllAttendees()" label="Alle auswählen" />
+      <v-checkbox-btn v-if="hasAttendees" v-model="allSelected" @change="selectAllAttendees()" label="Alle auswählen" />
       <div v-for="attendeeGroup in attendeeGroups">
         <h3>{{ attendeeGroup.headline }}</h3>
         <v-checkbox-btn
@@ -72,6 +74,7 @@ const leave = () => {
           v-model="attendee.selected"
           :label="getZeltagerIcon(attendee) + attendee.firstName + ' ' + attendee.lastName"
         />
+        <div v-if="attendeeGroup.attendees.length === 0">-</div>
       </div>
 
       <div class="w-100 d-flex justify-space-between">

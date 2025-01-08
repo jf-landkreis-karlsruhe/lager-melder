@@ -32,7 +32,8 @@ export const getAttendeeDefault = (role: AttendeeRole, departmentId: number): At
     juleikaExpireDate: '',
     birthday: '',
     status: undefined,
-    additionalInformation: ''
+    additionalInformation: '',
+    code: ''
   }
 }
 
