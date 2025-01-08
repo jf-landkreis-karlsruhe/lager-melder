@@ -32,7 +32,8 @@ export const getAttendeeDefault = (role: AttendeeRole, departmentId: number): At
     juleikaExpireDate: '',
     birthday: '',
     status: undefined,
-    additionalInformation: ''
+    additionalInformation: '',
+    code: ''
   }
 }
 
@@ -83,6 +84,7 @@ export interface NewAttendee {
   juleikaExpireDate: string
   partOfDepartmentId: number | undefined
   helperDays: string[]
+  code: string
 }
 
 export interface Attendee extends NewAttendee {
@@ -129,3 +131,14 @@ export const defaultAttendees: Attendees = {
   zKids: [],
   helpers: []
 }
+
+export const getZeltagerIcon = (attendee: Attendee) => {
+  if (attendee.status === AttendeeStatus.ENTERED) {
+    return '⛺ '
+  }
+  if (attendee.status === AttendeeStatus.LEFT) {
+    return '🏠 '
+  }
+  return ''
+}
+

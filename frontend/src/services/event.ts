@@ -1,5 +1,6 @@
 import { getData, postData, putData, deleteData } from '../helper/fetch'
 import { withAuthenticationHeader, getTokenData } from './authentication'
+import type { Department } from '@/services/department'
 
 export interface NewEvent {
   name: string
@@ -51,6 +52,11 @@ export const updateEvent = (event: Event) =>
 
 export const deleteEvent = (id: string): Promise<Response> =>
   deleteData(`events/${id}`, withAuthenticationHeader())
+
+export const batchEnterAttendees = (eventCode: string, attendeeCodes: string[]) =>
+  postData<AttendeeResponse[]>(`events/batch-enter/${eventCode}`, withAuthenticationHeader(), {
+    attendeeCodes: attendeeCodes
+  })
 
 export interface GlobalEventSummary {
   total: Distribution

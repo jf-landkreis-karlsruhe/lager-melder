@@ -68,6 +68,7 @@ class EventService(
 
 
     fun addAttendeeToEvent(eventCode: String, attendeeCode: String): AttendeeInEvent {
+        authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         val event = getEventByCode(eventCode)
         val attendee: Attendee = attendeeService.getAttendeeByCode(attendeeCode)
         val attendeeInEvent = AttendeeInEventEntry(id = 0, attendeeCode, eventCode, Instant.now())
@@ -105,6 +106,10 @@ class EventService(
             total = sumUp(notPausedAttendees, "Zeltlager Gesamt", false),
             departments = attendeesByDepartment.keys.map { sumUp(attendeesByDepartment[it]!!, it.name, it.paused) }
         )
+    }
+
+    fun addAttendeesToEvent(eventCode: String, attendeeCodes: List<String>): List<AttendeeInEvent> {
+        return attendeeCodes.map { addAttendeeToEvent(eventCode, it) }
     }
 
     private fun sumUp(attendees: List<Attendee>, name: String, paused: Boolean): Distribution {

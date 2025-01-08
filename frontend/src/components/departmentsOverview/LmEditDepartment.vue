@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { Roles, rolesText as rolesTitle } from '@/services/authentication'
-import { type Department, DepartmentFeatures } from '../../services/department'
-import { updateDepartment } from '../../services/department'
+import { type Department, DepartmentFeatures, updateDepartment } from '../../services/department'
 import type { User } from '../../services/user'
 import { updateRole, userForDepartment } from '../../services/user'
 import { useToast } from 'vue-toastification'
@@ -59,18 +58,14 @@ const onUpdateRole = () => {
       .then((updatedUser) => {
         user.value = updatedUser
         roleLoading.value = false
-        toast.success(
-          `Rolle ${rolesTitle(updatedUser.role)} für ${updatedUser.username} gepeichert.`
-        )
+        toast.success(`Rolle ${rolesTitle(updatedUser.role)} für ${updatedUser.username} gepeichert.`)
       })
       .catch(async (err) => {
         roleLoading.value = false
         await showErrorToast(
           toast,
           err,
-          `Rolle ${rolesTitle(user.value.role)} konnte für ${
-            user.value.username
-          } nicht gepeichert werden.`
+          `Rolle ${rolesTitle(user.value.role)} konnte für ${user.value.username} nicht gepeichert werden.`
         )
       })
   }
@@ -95,11 +90,6 @@ onMounted(async () => {
           <div>
             <h4>Stammdaten</h4>
           </div>
-          <div>
-            <v-btn type="submit" :loading="loading" variant="text">
-              <v-icon medium class="mr-2"> mdi-content-save</v-icon>
-            </v-btn>
-          </div>
         </v-row>
         <v-row align="center" justify="center" wrap="wrap" style="gap: 20px">
           <div class="flex-grow-1" style="min-width: 200px">
@@ -114,26 +104,20 @@ onMounted(async () => {
             <v-text-field variant="underlined" v-model="leaderName" label="Jugendwart" required />
           </div>
           <div class="flex-grow">
-            <v-text-field
-              variant="underlined"
-              type="email"
-              v-model="leaderEmail"
-              label="Jugendwart Email"
-              required
-            />
+            <v-text-field variant="underlined" type="email" v-model="leaderEmail" label="Jugendwart Email" required />
           </div>
-          <p>Feature</p>
         </v-row>
         <v-row align="center" justify="center" wrap="wrap" style="gap: 20px">
           <div class="flex-grow">
             <v-text-field variant="underlined" v-model="phoneNumber" label="Kontaktnummer" />
           </div>
         </v-row>
-        <div style="margin: 12px; margin-left: -12px; margin-right: -12px">
+
+        <v-row>
           <div>
-            <h5>Anmeldeoptionen</h5>
+            <h5>Feature</h5>
           </div>
-          <div class="d-flex space-between wrap" style="gap: 20px">
+          <div class="d-flex space-between flex-wrap" style="gap: 20px">
             <v-switch
               color="primary"
               v-model="department.features"
@@ -159,7 +143,10 @@ onMounted(async () => {
               :value="DepartmentFeatures.HELPER"
             ></v-switch>
           </div>
-        </div>
+        </v-row>
+        <v-row justify="end">
+          <v-btn type="submit" :loading="loading"> Stammdaten speichern</v-btn>
+        </v-row>
       </v-container>
     </form>
     <form v-on:submit.prevent="onUpdateRole">
@@ -189,11 +176,9 @@ onMounted(async () => {
               label="Role"
             ></v-select>
           </div>
-          <div>
-            <v-btn type="submit" :loading="roleLoading" variant="text">
-              <v-icon medium class="mr-2"> mdi-content-save </v-icon>
-            </v-btn>
-          </div>
+        </v-row>
+        <v-row justify="end">
+          <v-btn type="submit" :loading="roleLoading"> Login speichern</v-btn>
         </v-row>
       </v-container>
     </form>
