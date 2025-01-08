@@ -13,7 +13,8 @@ import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 
 const vuetify = createVuetify({
-  components,
+  date: { locale: { de: 'de-DE' } },
+  components: components,
   directives,
   icons: {
     defaultSet: 'mdi',

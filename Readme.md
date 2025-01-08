@@ -1,8 +1,14 @@
 # Lagermelder
 
+## Quickstart when app already run on your machine (docker images already created)
+
+- Make sure the old containers are shut down before re-init with: `docker-compose -f ./backend/docker-compose/docker-compose.yml down`
+- Then start them with: `docker-compose -f ./backend/docker-compose/docker-compose.yml up` (also see run.sh)
+- For Frontend Development, start with custom backend url: `VITE_BACKEND_URL=http://127.0.0.1:8080/api npm run start`
+
 ## Run database with docker
 
-- `cd backend`
+- `cd backend/docker-compose`
 - `docker-compose -f docker-compose-mysql.yml up`
 
 ## Run backend
@@ -16,6 +22,7 @@ SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
 ```
 
 ## Run frontend
+
 ```
 cd frontend
 npm install
@@ -39,8 +46,8 @@ See https://github.com/KordonDev/lager-melder/blob/main/backend/src/main/kotlin/
 Event: <frontendUrl>/scanner/event001
 
 ## Backup
-docker exec lm-database-prod sh -c 'exec mysqldump -ulager_melder_user -pPASSWORD --no-tablespaces lager_melder' > ./lm-database.sql
 
+docker exec lm-database-prod sh -c 'exec mysqldump -ulager_melder_user -pPASSWORD --no-tablespaces lager_melder' > ./lm-database.sql
 
 scp username@remote:/file/to/send /where/to/put
 
