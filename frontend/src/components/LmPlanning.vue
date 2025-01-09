@@ -8,6 +8,7 @@ import { hasAdministrationRole as hasAdministrationRole } from '../services/auth
 import {
   getAdditionalInformationPDF,
   getBatches,
+  getBatchesOrderedByCreationDate,
   getContactOverview,
   getDepartmentOverview,
   getFoodPDF,
@@ -34,6 +35,7 @@ const filterInput = ref<string>('')
 const totalTents = ref<Tents>({} as Tents)
 const initialLoading = ref<boolean>(true)
 const loadingBatches = ref<boolean>(false)
+const loadingBatchesByCreationDate = ref<boolean>(false)
 const loadingFood = ref<boolean>(false)
 const loadingTentMarkings = ref<boolean>(false)
 const loadingAdditionalInformation = ref<boolean>(false)
@@ -48,22 +50,11 @@ const departmentWithAttendees = computed<DepartmentWithAttendees[]>(() => {
     .map((department) => {
       return {
         department: department,
-        youthAttendees: filterByDepartmentAndSearch(
-          attendees.value.youths,
-          department.id,
-          filterInput.value
-        ),
-        youthLeader: filterByDepartmentAndSearch(
-          attendees.value.youthLeaders,
-          department.id,
-          filterInput.value
-        )
+        youthAttendees: filterByDepartmentAndSearch(attendees.value.youths, department.id, filterInput.value),
+        youthLeader: filterByDepartmentAndSearch(attendees.value.youthLeaders, department.id, filterInput.value)
       }
     })
-    .filter(
-      (registration) =>
-        registration.youthAttendees.length > 0 || registration.youthLeader.length > 0
-    )
+    .filter((registration) => registration.youthAttendees.length > 0 || registration.youthLeader.length > 0)
     .sort((a, b) =>
       `${a.department.headDepartmentName} ${a.department.name}`.localeCompare(
         `${b.department.headDepartmentName} ${b.department.name}`
@@ -73,6 +64,10 @@ const departmentWithAttendees = computed<DepartmentWithAttendees[]>(() => {
 
 const downloadBatchesPDF = () => {
   loadFile(getBatches, loadingBatches)
+}
+
+const downloadBatchesPDFOrderedByCreationDate = () => {
+  loadFile(getBatchesOrderedByCreationDate, loadingBatchesByCreationDate)
 }
 
 const downloadFoodPDF = () => {
@@ -157,19 +152,30 @@ onMounted(() => {
     <section class="mb-12">
       <h2>Lagerausweise</h2>
       <div class="d-flex align-center justify-space-between">
-        <p class="mr-8">
-          Hier können alle Lagerausweise heruntergeladen werden.
-          <br />
-          <v-btn
-            color="var(--lm-c-accent)"
-            @click="downloadBatchesPDF"
-            small
-            :loading="loadingBatches"
-          >
-            Herunterladen
-            <v-icon right dark> mdi-cloud-download </v-icon>
-          </v-btn>
-        </p>
+        <div>
+          <p class="mr-8">
+            Hier können alle Lagerausweise heruntergeladen werden.
+            <br />
+            <v-btn class="mb-4" color="var(--lm-c-accent)" @click="downloadBatchesPDF" small :loading="loadingBatches">
+              Herunterladen
+              <v-icon right dark> mdi-cloud-download</v-icon>
+            </v-btn>
+          </p>
+          <p>
+            Hier können die Lagerausweise nach Erstellungsdatum heruntergeladen werden.
+            <br />
+            <v-btn
+              class="mb-4"
+              color="var(--lm-c-accent)"
+              @click="downloadBatchesPDFOrderedByCreationDate"
+              small
+              :loading="loadingBatchesByCreationDate"
+            >
+              Herunterladen
+              <v-icon right dark> mdi-cloud-download</v-icon>
+            </v-btn>
+          </p>
+        </div>
         <img
           src="../assets/Zeltlager-Ausweis-Beispiel.png"
           alt="Beispiel eines Teilnehmer-Ausweises"
@@ -219,12 +225,7 @@ onMounted(() => {
         <p class="mr-8">
           Hier kann die Liste der TShirts und Armbänder pro Feuerwehr heruntergeladen werden.
           <br />
-          <v-btn
-            color="var(--lm-c-accent)"
-            @click="downloadTShirtsPDF"
-            small
-            :loading="loadingTshirt"
-          >
+          <v-btn color="var(--lm-c-accent)" @click="downloadTShirtsPDF" small :loading="loadingTshirt">
             Herunterladen
             <v-icon right dark> mdi-cloud-download </v-icon>
           </v-btn>
@@ -236,8 +237,7 @@ onMounted(() => {
       <h2>Feuerwehr T-Shirt- und Armbandverteilliste</h2>
       <div class="d-flex align-center justify-space-between">
         <p class="mr-8">
-          Hier kann eine Liste pro Feuerwehr zur Verteilung der TShirts und Armbänder
-          heruntergeladen werden.
+          Hier kann eine Liste pro Feuerwehr zur Verteilung der TShirts und Armbänder heruntergeladen werden.
           <br />
           <v-btn
             color="var(--lm-c-accent)"
@@ -256,15 +256,9 @@ onMounted(() => {
       <h2>Kontaktliste</h2>
       <div class="d-flex align-center justify-space-between">
         <p class="mr-8">
-          Hier kann eine Liste aller Kontaktdaten der Feuerwehren, die sich angemeldet haben,
-          heruntergeladen werden.
+          Hier kann eine Liste aller Kontaktdaten der Feuerwehren, die sich angemeldet haben, heruntergeladen werden.
           <br />
-          <v-btn
-            color="var(--lm-c-accent)"
-            @click="downloadContactList"
-            small
-            :loading="loadingContactList"
-          >
+          <v-btn color="var(--lm-c-accent)" @click="downloadContactList" small :loading="loadingContactList">
             Herunterladen
             <v-icon right dark> mdi-cloud-download</v-icon>
           </v-btn>
@@ -278,12 +272,7 @@ onMounted(() => {
         <p class="mr-8">
           Hier können die Zeltmarkierungen heruntergeladen werden.
           <br />
-          <v-btn
-            color="var(--lm-c-accent)"
-            @click="downloadTentMarkingPDF"
-            small
-            :loading="loadingTentMarkings"
-          >
+          <v-btn color="var(--lm-c-accent)" @click="downloadTentMarkingPDF" small :loading="loadingTentMarkings">
             Herunterladen
             <v-icon right dark> mdi-cloud-download</v-icon>
           </v-btn>
@@ -341,9 +330,7 @@ onMounted(() => {
   <section class="mx-12 mb-12">
     <div class="d-flex align-baseline">
       <h2 class="mr-4 mb-2">Teilnehmer</h2>
-      <div class="department-count">
-        Gesamt: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})
-      </div>
+      <div class="department-count">Gesamt: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})</div>
     </div>
     <v-row>
       <v-col cols="5">
@@ -357,11 +344,7 @@ onMounted(() => {
       </v-col>
     </v-row>
 
-    <div
-      v-for="registration in departmentWithAttendees"
-      :key="registration.department.id"
-      class="indented-1"
-    >
+    <div v-for="registration in departmentWithAttendees" :key="registration.department.id" class="indented-1">
       <div>
         <h2 class="mr-4 mt-8 mb-2">
           Feuerwehr {{ registration.department.name }}

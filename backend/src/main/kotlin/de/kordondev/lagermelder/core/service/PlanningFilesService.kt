@@ -39,17 +39,33 @@ class PlanningFilesService(
     private val markingFont = Font(Font.TIMES_ROMAN, 90F, Font.NORMAL, Color.BLACK)
     private val markingFontSmall = Font(Font.TIMES_ROMAN, 60F, Font.NORMAL, Color.BLACK)
 
-    fun createBatches(): ByteArray {
+    fun createBatchesOrderedByDepartment(): ByteArray {
+        val attendeesFromDB = attendeeService.getAttendees()
+        val attendees =
+            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
+                .sortedBy {
+                    attendeeService.getPartOfDepartmentOrDepartment(it).headDepartmentName + attendeeService.getPartOfDepartmentOrDepartment(
+                        it
+                    ).name
+                }
+        return createBatches(attendees)
+    }
+
+    fun createBatchesOrderedByCreationDate(): ByteArray {
+        val attendeesFromDB = attendeeService.getAttendees()
+        val attendees =
+            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
+                .sortedByDescending { it.createdAt }
+        return createBatches(attendees)
+    }
+
+    fun createBatches(attendees: kotlin.collections.List<Attendee>): ByteArray {
         authorityService.isSpecializedFieldDirector()
         val documentStream = ByteArrayOutputStream()
         val document = Document(PageSize.A4)
         val pdfCopy = PdfCopy(document, documentStream)
         document.open()
 
-        val attendeesFromDB = attendeeService.getAttendees()
-        val attendees =
-            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
-                .sortedBy{ attendeeService.getPartOfDepartmentOrDepartment(it).headDepartmentName + attendeeService.getPartOfDepartmentOrDepartment(it).name }
         logger.info("Creating batches for ${attendees.size} on ${1 + (attendees.size / 5)} pages")
         var attendeeIndex = 0
         while (attendeeIndex < attendees.size) {
