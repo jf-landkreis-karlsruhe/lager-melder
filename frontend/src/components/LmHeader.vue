@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import {
-  AuthenticationChangedEvent,
-  getTokenData,
-  hasAdministrationRole,
-  isLoggedIn
-} from '../services/authentication'
+import { AuthenticationChangedEvent, getTokenData, hasAdministrationRole, isLoggedIn } from '../services/authentication'
 import { pathNeedsAuthentication } from '@/router'
 
 let timeoutId = 0
@@ -44,7 +39,7 @@ const checkToken = () => {
   <header>
     <div class="d-flex justify-center align-center hero-image-container">
       <router-link :to="isLoggedIn() ? '/teilnehmer' : ''">
-        <img alt="Zeltlager logo" class="hero-image" src="../assets/logo.jpg" />
+        <img alt="Zeltlager logo" class="hero-image" src="../assets/logo.png" />
       </router-link>
     </div>
     <v-container>
@@ -88,12 +83,12 @@ header {
   margin-bottom: 30px;
 
   .hero-image-container {
-    background: #0077c0;
+    border-bottom: #0077c0 6px solid;
 
     .hero-image {
       max-width: 100%;
       max-height: 200px;
-      margin-top: -10px;
+      margin-top: 8px;
     }
   }
 

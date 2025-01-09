@@ -31,6 +31,7 @@ class MailSenderService(
     private val newUserMailTemplate = "new-user"
     private val reminderMailTemplate = "reminder"
     private val registrationFinishedTemplate = "registration-finished"
+    private val headerLogo = "kreiszeltlager-logo.jpg"
 
     fun sendRegistrationMail(
         to: String,
@@ -41,7 +42,7 @@ class MailSenderService(
     ) {
         try {
             authorityService.isSpecializedFieldDirector()
-            val headerLogoName = "kreiszeltlager-logo.jpg"
+            val headerLogoName = headerLogo
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
 
             val cxt = Context()
@@ -72,7 +73,7 @@ class MailSenderService(
     fun sendReminderMail(to: String, leaderName: String, settings: SettingsEntry): Boolean {
         try {
             authorityService.isAdmin()
-            val headerLogoName = "kreiszeltlager-logo.jpg"
+            val headerLogoName = headerLogo
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
             val registrationDeadlineDate = LocalDate.ofInstant(settings.registrationEnd, ZoneId.of("Europe/Berlin"))
             val daysLeft = daysUntilEnd(LocalDate.now(), registrationDeadlineDate)
@@ -105,7 +106,7 @@ class MailSenderService(
     fun sendRegistrationFinishedMail(to: String, leaderName: String, settings: SettingsEntry): Boolean {
         try {
             authorityService.isAdmin()
-            val headerLogoName = "kreiszeltlager-logo.jpg"
+            val headerLogoName = headerLogo
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
             val startDownloadRegistrationFiles =
                 LocalDate.ofInstant(settings.startDownloadRegistrationFiles, ZoneId.of("Europe/Berlin"))
@@ -136,7 +137,7 @@ class MailSenderService(
     
     fun sendForgotPasswordMail(to: String, changePasswordLink: String): Boolean {
       try {
-          val headerLogoName = "kreiszeltlager-logo.jpg"
+          val headerLogoName = headerLogo
           val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
 
           val cxt = Context()

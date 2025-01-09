@@ -55,3 +55,4 @@ scp username@remote:/file/to/send /where/to/put
 
 - in the backend in `resource/static/kreiszeltlager-logo.jpg` paste the current logo for the email header
 - For the header past the new image to `src/assets/logo.jpg` and fix styles in `Header.vue`.
+- Update batch with new logo and text in media and export pdf to `backend/src/main/resource/data/batch.pdf`
