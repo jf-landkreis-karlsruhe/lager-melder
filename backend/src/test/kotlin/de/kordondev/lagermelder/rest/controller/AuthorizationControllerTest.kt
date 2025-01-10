@@ -18,7 +18,7 @@ import org.springframework.web.context.WebApplicationContext
 
 @Transactional
 @SpringBootTest
-class RegisterControllerTest(val context: WebApplicationContext) {
+class AuthorizationControllerTest(val context: WebApplicationContext) {
 
     lateinit var restMockMvc: MockMvc
 
