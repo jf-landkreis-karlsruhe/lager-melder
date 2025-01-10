@@ -56,7 +56,7 @@ class AuthorizationController(
         return RestDepartmentWithUser.from(department, user)
     }
 
-    @GetMapping("/auth/renew")
+    @GetMapping("/auth/renew-token")
     fun renewToken(response: HttpServletResponse): RestJWT {
         val loggedInUser = userService.getMe()
         return createJWTAuthentication.createJWT(response, loggedInUser)

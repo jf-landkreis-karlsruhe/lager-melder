@@ -1,4 +1,4 @@
-import {postData, putData} from '../helper/fetch'
+import { getData, postData, putData } from '../helper/fetch'
 
 const TOKEN_STORAGE = 'access_token'
 
@@ -51,6 +51,15 @@ export const login = async (username: string, password: string) => {
       const loggoutEvent = new CustomEvent(AuthenticationChangedEvent)
       window && window.dispatchEvent(loggoutEvent)
       return decodeJWT(response)
+    })
+}
+
+export const renewToken = async () => {
+  return getData<AuthorizationResponse>('auth/renew-token', withAuthenticationHeader())
+    .then((res) => res.Authorization)
+    .then((jwt: any) => {
+      saveJWT(jwt)
+      return jwt
     })
 }
 
