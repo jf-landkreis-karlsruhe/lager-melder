@@ -15,6 +15,19 @@ export const getBatches = (): Promise<FileReponse> => {
     }))
 }
 
+export const getBatchesOrderedByCreationDate = (): Promise<FileReponse> => {
+  return fetchData(`planning-files/batches-ordered-by-creation-date`, {
+    headers: {
+      ...withAuthenticationHeader()
+    }
+  })
+    .then((r) => r.blob())
+    .then((blob) => ({
+      data: blob,
+      fileName: `lagerausweise.pdf`
+    }))
+}
+
 export const getEventCodes = (): Promise<FileReponse> => {
   return fetchData(
     `planning-files/events?frontendBaseUrl=${encodeURI(`${window.location.origin}/events`)}`,

@@ -25,9 +25,17 @@ class PlanningFilesController(
     @ResponseBody
     @Throws(IOException::class)
     @GetMapping(value = ["/planning-files/batches"], produces = ["application/pdf"])
-    fun getBatchPDF(response: HttpServletResponse): ByteArray? {
+    fun getBatchPDFOrderedByDepartment(response: HttpServletResponse): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=batches.pdf")
-        return planningFilesService.createBatches()
+        return planningFilesService.createBatchesOrderedByDepartment()
+    }
+
+    @ResponseBody
+    @Throws(IOException::class)
+    @GetMapping(value = ["/planning-files/batches-ordered-by-creation-date"], produces = ["application/pdf"])
+    fun getBatchPDFOrderedByCreationDate(response: HttpServletResponse): ByteArray? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=batches.pdf")
+        return planningFilesService.createBatchesOrderedByCreationDate()
     }
 
     @ResponseBody
