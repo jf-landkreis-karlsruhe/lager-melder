@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { getEventByCode, loginToEvent } from '../services/event'
 import { isValidTestCode } from '../assets/config'
 import { useToast } from 'vue-toastification'
 import { useRoute } from 'vue-router'
 import Scanner from '../components/LmScanner.vue'
+import { onBeforeUnmount } from '@vue/runtime-core'
+import { renewToken } from '@/services/authentication'
 
 const toast = useToast()
 const route = useRoute()
 const eventCode = ref<string>('')
 const eventName = ref<string>('')
+let intervalId: number | undefined
 
 const manualCodeInputRules = computed<((value: string) => boolean | string)[]>(() => {
-  return [
-    (value: string) => !!value || 'Required.',
-    (value: string) => isValidTestCode(value) || '8 Zeichen benötigt'
-  ]
+  return [(value: string) => !!value || 'Required.', (value: string) => isValidTestCode(value) || '8 Zeichen benötigt']
 })
 
 const submitEvent = async (attendeeCode: string) => {
@@ -24,18 +24,20 @@ const submitEvent = async (attendeeCode: string) => {
   }
   const attendeeRes = await loginToEvent(eventCode.value, attendeeCode)
   if (attendeeRes) {
-    toast.success(
-      `${eventName.value} von "${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName}".`
-    )
+    toast.success(`${eventName.value} von "${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName}".`)
   }
 }
 
 onMounted(async () => {
-  eventCode.value = Array.isArray(route.params.eventCode)
-    ? route.params.eventCode[0]
-    : route.params.eventCode
+  eventCode.value = Array.isArray(route.params.eventCode) ? route.params.eventCode[0] : route.params.eventCode
   const event = await getEventByCode(eventCode.value)
   eventName.value = event.name
+
+  intervalId = setInterval(renewToken, 60 * 60 * 1000) as unknown as number // each hour
+})
+
+onBeforeUnmount(() => {
+  clearInterval(intervalId)
 })
 </script>
 

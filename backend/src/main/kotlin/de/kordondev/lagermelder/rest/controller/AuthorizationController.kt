@@ -2,28 +2,33 @@ package de.kordondev.lagermelder.rest.controller
 
 import de.kordondev.lagermelder.core.persistence.repository.DepartmentRepository
 import de.kordondev.lagermelder.core.persistence.repository.UserRepository
+import de.kordondev.lagermelder.core.security.CreateJWTAuthentication
 import de.kordondev.lagermelder.core.service.DepartmentService
 import de.kordondev.lagermelder.core.service.UserService
 import de.kordondev.lagermelder.exception.ResourceAlreadyExistsException
 import de.kordondev.lagermelder.rest.model.RestDepartmentWithUser
+import de.kordondev.lagermelder.rest.model.RestJWT
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentWithUserRequest
+import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import kotlin.random.Random
 
 @RestController
-class RegisterController(
+class AuthorizationController(
     private val departmentRepository: DepartmentRepository,
     private val departmentService: DepartmentService,
     private val userRepository: UserRepository,
-    private val userService: UserService
+    private val userService: UserService,
+    private val createJWTAuthentication: CreateJWTAuthentication
 ) {
 
-    private val logger: Logger = LoggerFactory.getLogger(RegisterController::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(AuthorizationController::class.java)
 
     @PostMapping("/register")
     fun addDepartmentAndUser(@RequestBody(required = true) @Valid departmentWithUser: RestDepartmentWithUserRequest): RestDepartmentWithUser {
@@ -49,5 +54,11 @@ class RegisterController(
         val user = userService.createUser(newUser)
 
         return RestDepartmentWithUser.from(department, user)
+    }
+
+    @GetMapping("/authorization/renew-token")
+    fun renewToken(response: HttpServletResponse): RestJWT {
+        val loggedInUser = userService.getMe()
+        return createJWTAuthentication.createJWT(response, loggedInUser)
     }
 }

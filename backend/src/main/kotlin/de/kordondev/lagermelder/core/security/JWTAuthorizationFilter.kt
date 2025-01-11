@@ -4,11 +4,10 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import de.kordondev.lagermelder.core.persistence.repository.UserRepository
 import de.kordondev.lagermelder.core.security.SecurityConstants.DEPARTMENT_ID_PREFIX
-import de.kordondev.lagermelder.core.security.SecurityConstants.HEADER_STRING
 import de.kordondev.lagermelder.core.security.SecurityConstants.ROLE_PREFIX
 import de.kordondev.lagermelder.core.security.SecurityConstants.SECRET
-import de.kordondev.lagermelder.core.security.SecurityConstants.TOKEN_PREFIX
 import de.kordondev.lagermelder.core.security.SecurityConstants.USER_ID_PREFIX
+import de.kordondev.lagermelder.rest.model.RestJWT
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -22,9 +21,10 @@ class JWTAuthorizationFilter(
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
-        val header = request.getHeader(HEADER_STRING)
+        val token = RestJWT.getToken(request)
 
-        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+
+        if (token == null) {
             chain.doFilter(request, response)
             return
         }
@@ -38,11 +38,11 @@ class JWTAuthorizationFilter(
     }
 
     private fun getAuthentication(request: HttpServletRequest): UsernamePasswordAuthenticationToken? {
-        val token = request.getHeader(HEADER_STRING)
+        val token = RestJWT.getToken(request)
         if (token != null) {
             val username = JWT.require(Algorithm.HMAC512(SECRET))
                 .build()
-                .verify(token.replace(TOKEN_PREFIX, ""))
+                .verify(token)
                 .subject
             if (username != null) {
                 return userRepository.findOneByUserName(username)
