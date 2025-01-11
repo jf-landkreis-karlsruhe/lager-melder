@@ -55,7 +55,7 @@ export const login = async (username: string, password: string) => {
 }
 
 export const renewToken = async () => {
-  return getData<AuthorizationResponse>('auth/renew-token', withAuthenticationHeader())
+  return getData<AuthorizationResponse>('authorization/renew-token', withAuthenticationHeader())
     .then((res) => res.Authorization)
     .then((jwt: any) => {
       saveJWT(jwt)
