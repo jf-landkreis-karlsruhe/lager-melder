@@ -42,8 +42,8 @@ const checkToken = () => {
         <img alt="Zeltlager logo" class="hero-image" src="../assets/logo.png" />
       </router-link>
     </div>
-    <v-container>
-      <nav id="nav" v-if="loggedIn">
+    <v-container v-if="loggedIn">
+      <nav id="nav">
         <v-container fluid class="nav-bar">
           <v-row justify="space-between" align="center" class="nav-bar__row">
             <ul class="pa-0 nav-bar__list">

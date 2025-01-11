@@ -18,6 +18,12 @@ import Header from './components/LmHeader.vue'
   </v-app>
 </template>
 
+<style lang="scss">
+.v-application__wrap {
+  height: 100dvh;
+}
+</style>
+
 <style scoped lang="scss">
 .grid-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;
