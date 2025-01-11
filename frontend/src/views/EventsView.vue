@@ -12,7 +12,7 @@ const toast = useToast()
 const route = useRoute()
 const eventCode = ref<string>('')
 const eventName = ref<string>('')
-let intervalId
+let intervalId: number | undefined
 
 const manualCodeInputRules = computed<((value: string) => boolean | string)[]>(() => {
   return [(value: string) => !!value || 'Required.', (value: string) => isValidTestCode(value) || '8 Zeichen benötigt']
@@ -33,7 +33,7 @@ onMounted(async () => {
   const event = await getEventByCode(eventCode.value)
   eventName.value = event.name
 
-  intervalId = setInterval(renewToken, 60 * 60 * 1000) // each hour
+  intervalId = setInterval(renewToken, 60 * 60 * 1000) as unknown as number // each hour
 })
 
 onBeforeUnmount(() => {
