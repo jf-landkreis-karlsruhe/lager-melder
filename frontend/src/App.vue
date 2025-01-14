@@ -8,7 +8,7 @@ import Header from './components/LmHeader.vue'
   <v-app>
     <div class="grid-container">
       <div class="my-container">
-        <Header class="header" />
+        <Header class="mb-4 header" />
         <main class="content">
           <RouterView />
         </main>
@@ -17,12 +17,6 @@ import Header from './components/LmHeader.vue'
     </div>
   </v-app>
 </template>
-
-<style lang="scss">
-.v-application__wrap {
-  height: 100dvh;
-}
-</style>
 
 <style scoped lang="scss">
 .grid-container {

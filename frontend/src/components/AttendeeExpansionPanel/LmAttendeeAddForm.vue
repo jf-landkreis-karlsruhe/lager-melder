@@ -78,6 +78,7 @@ const requiredRule = [
             label="Vorname"
             variant="outlined"
             density="comfortable"
+            style="flex: 1"
             required
             :rules="requiredRule"
             :modelValue="current.firstName"
@@ -87,6 +88,7 @@ const requiredRule = [
             label="Nachname"
             variant="outlined"
             density="comfortable"
+            style="flex: 1"
             required
             :rules="requiredRule"
             :modelValue="current.lastName"

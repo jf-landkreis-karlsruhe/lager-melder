@@ -37,7 +37,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(--lm-c-black);
+    --color-background: var(--lm-c-white);
     --color-background-soft: var(--lm-c-black-soft);
     --color-background-mute: var(--lm-c-black-mute);
 

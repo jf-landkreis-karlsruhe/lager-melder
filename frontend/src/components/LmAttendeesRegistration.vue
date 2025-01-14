@@ -169,7 +169,7 @@ onMounted(async () => {
     <div v-if="department && department.features.includes(DepartmentFeatures.YOUTH_GROUPS)">
       <div>
         <div class="align-baseline">
-          <h1 class="mb-0">Teilnehmer {{ department.name }}</h1>
+          <h2 class="mb-0">Teilnehmer {{ department.name }}</h2>
           <div>Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})</div>
         </div>
         <LmRegistrationEndBanner v-if="attendeesRegistrationEnd" :registrationEnd="attendeesRegistrationEnd" />
@@ -208,7 +208,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div v-if="department && department.features.includes(DepartmentFeatures.CHILD_GROUPS)">
+    <div v-if="department && department.features.includes(DepartmentFeatures.CHILD_GROUPS)" class="mt-12 child-groups">
       <h2>Kindergruppentag</h2>
       <LmRegistrationEndBanner :registrationEnd="childGroupRegistrationEnd" />
 
@@ -241,8 +241,8 @@ onMounted(async () => {
       />
     </div>
 
-    <div v-if="department && department.features.includes(DepartmentFeatures.ZKIDS)">
-      <h2>Z Kids</h2>
+    <div v-if="department && department.features.includes(DepartmentFeatures.ZKIDS)" class="mt-12">
+      <h2>Z Kids Gruppe</h2>
       <LmRegistrationEndBanner :registrationEnd="attendeesRegistrationEnd" />
 
       <LmAttendeeExpandableWithHeader
@@ -260,8 +260,8 @@ onMounted(async () => {
       />
     </div>
 
-    <div v-if="department && department.features.includes(DepartmentFeatures.HELPER)">
-      <h2>Helfer</h2>
+    <div v-if="department && department.features.includes(DepartmentFeatures.HELPER)" class="mt-12 helpers-group">
+      <h2>Helfer Gruppe</h2>
       <LmRegistrationEndBanner :registrationEnd="childGroupRegistrationEnd" />
 
       <LmAttendeeExpandableWithHeader
@@ -297,5 +297,13 @@ onMounted(async () => {
       font-size: 0.8rem !important;
     }
   }
+}
+
+.child-groups,
+.helpers-group {
+  --margin-to-full-width: 200px;
+  background-color: #f5f5f5;
+  padding: 12px var(--margin-to-full-width);
+  margin: 0 calc(-1 * var(--margin-to-full-width));
 }
 </style>

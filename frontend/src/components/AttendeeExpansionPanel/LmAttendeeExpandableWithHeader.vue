@@ -55,7 +55,7 @@ const attendeeListWithAllAttributes = computed<Attendee[]>(() => {
   })
 })
 
-const enteredAttendees = computed<number>(() => {
+const enteredAttendeesCount = computed<number>(() => {
   return attendeeListWithAllAttributes.value.filter(filterEnteredAttendees).length
 })
 
@@ -90,9 +90,10 @@ const saveAttendee = (att: Attendee) => {
   <div>
     <div class="d-flex justify-space-between align-center">
       <div class="d-flex align-center ga-3">
-        <h2>{{ props.headerLabel }}</h2>
+        <h3>{{ props.headerLabel }}</h3>
         <div class="additional-information d-none d-sm-inline-block">
-          Gesamt: {{ attendeeListWithAllAttributes.length }} (Anwesend: {{ enteredAttendees }})
+          Gesamt: {{ attendeeListWithAllAttributes.length }}
+          <span v-if="enteredAttendeesCount > 0">(Anwesend: {{ enteredAttendeesCount }})</span>
         </div>
       </div>
 
