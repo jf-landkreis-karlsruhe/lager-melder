@@ -5,7 +5,7 @@ import { isValidTestCode } from '../assets/config'
 import { useToast } from 'vue-toastification'
 import { useRoute } from 'vue-router'
 import Scanner from '../components/LmScanner.vue'
-import { onBeforeUnmount } from '@vue/runtime-core'
+import { onBeforeUnmount } from 'vue'
 import { renewToken } from '@/services/authentication'
 
 const toast = useToast()
@@ -58,7 +58,6 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .event-root {
-  margin-bottom: 8rem;
   position: relative;
 }
 </style>

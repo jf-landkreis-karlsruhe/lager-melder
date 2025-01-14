@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onUnmounted, onMounted } from 'vue'
+import { ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { isValidTestCode } from '../assets/config'
 import Quagga from 'quagga' // ES6
 import { useToast } from 'vue-toastification'
@@ -8,14 +8,15 @@ const toast = useToast()
 
 const CAMERA_DEVICE_ID_KEY = 'cameraDeviceId'
 
-const manualCodeForm = ref<HTMLElement | undefined>()
 const code = ref<string>('')
 const previousCode = ref<string>('')
 const availableDevices = ref<{ id: string; label: string }[]>([])
 const activeDeviceId = ref<string | undefined>()
 const manualCode = ref<string>('')
+const manualCodeForm = ref<HTMLElement | undefined>()
+const manualCodeInput = ref<HTMLElement | undefined>()
 const manualCodeValid = ref<boolean>(false)
-const isScanning = ref<boolean>(true)
+const isScanning = ref<boolean>(false)
 
 const props = withDefaults(
   defineProps<{
@@ -76,7 +77,7 @@ const codeDetected = async (data: Quagga.Code) => {
 
   if (code.value && code.value !== previousCode.value) {
     previousCode.value = code.value
-    emit('submitCode', code.value)
+    handleSubmit(code.value)
   }
 }
 
@@ -84,9 +85,17 @@ const manualCodeSubmit = () => {
   const manCodeForm = manualCodeForm.value as any
   const manCode = manualCode.value
   manCodeForm.validate()
-  emit('submitCode', manCode)
+  handleSubmit(manCode)
   manCodeForm.reset()
   ;(document?.activeElement as any)?.blur()
+}
+
+const handleSubmit = async (codeToSubmit: string) => {
+  emit('submitCode', codeToSubmit)
+  code.value = ''
+  manualCode.value = ''
+  await nextTick()
+  manualCodeInput.value?.focus()
 }
 
 onMounted(async () => {
@@ -146,19 +155,37 @@ const initCameraSelection = () => {
 </script>
 
 <template>
-  <div>
-    <v-container class="scanner-root">
+  <div class="scanner-root">
+    <v-form
+      ref="manualCodeForm"
+      v-model="manualCodeValid"
+      @submit.prevent="manualCodeSubmit"
+      class="manual-code-form d-flex justify-center mt-8 mb-12"
+    >
+      <v-row class="manual-code-row align-center ga-3">
+        <v-text-field
+          v-model="manualCode"
+          ref="manualCodeInput"
+          label="Manuelle Eingabe"
+          :autofocus="true"
+          :hide-details="false"
+          :hint="props.manualCodeHint"
+          :rules="props.manualCodeInputRules"
+          class="manual-code-input mr-3"
+          variant="underlined"
+        />
+        <v-btn :disabled="!manualCode || !manualCodeValid" type="submit" small outlined rounded> Abschicken </v-btn>
+      </v-row>
+    </v-form>
+
+    <v-container class="scanner-container mb-2">
       <v-row justify="center">
         <transition name="fade" mode="out-in" :appear="true">
           <div v-if="true">
             <div v-show="isScanning">
               <label class="camera-selection">
                 <span>📸 Kamera</span>
-                <select
-                  name="input-stream_constraints"
-                  class="camera-select"
-                  @change="cameraChanged"
-                >
+                <select name="input-stream_constraints" class="camera-select" @change="cameraChanged">
                   <option value="">--Select your camera--</option>
                   <option
                     v-for="device in availableDevices"
@@ -189,34 +216,6 @@ const initCameraSelection = () => {
                 </v-btn>
               </v-flex>
             </div>
-
-            <v-form
-              ref="manualCodeForm"
-              v-model="manualCodeValid"
-              @submit.prevent="manualCodeSubmit"
-              class="manual-code-form d-flex justify-center mt-6"
-            >
-              <v-row class="manual-code-row align-center">
-                <v-text-field
-                  v-model="manualCode"
-                  label="Manuelle Eingabe"
-                  :hide-details="false"
-                  :hint="props.manualCodeHint"
-                  :rules="props.manualCodeInputRules"
-                  class="manual-code-input mr-3"
-                  variant="underlined"
-                />
-                <v-btn
-                  :disabled="!manualCode || !manualCodeValid"
-                  type="submit"
-                  small
-                  outlined
-                  rounded
-                >
-                  Abschicken
-                </v-btn>
-              </v-row>
-            </v-form>
           </div>
         </transition>
       </v-row>
@@ -243,7 +242,11 @@ video {
 }
 
 .scanner-root {
-  margin-bottom: 3rem;
+  .manual-code-form {
+    .manual-code-input {
+      min-width: 200px;
+    }
+  }
 
   .scanner {
     position: relative;
@@ -288,12 +291,6 @@ video {
       border: 1px solid gray;
       margin: 0 0 0 6px;
       padding: 6px;
-    }
-  }
-
-  .manual-code-form {
-    .manual-code-row {
-      max-width: 300px;
     }
   }
 
