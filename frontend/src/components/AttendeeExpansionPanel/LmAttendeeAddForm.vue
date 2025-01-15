@@ -18,6 +18,7 @@ const props = defineProps<{
   eventDays: EventDays[]
   departments: DepartmentSelect[]
   showCancel?: boolean
+  loading?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -231,7 +232,9 @@ const requiredRule = [
         </v-btn>
       </v-defaults-provider>
       <v-defaults-provider :defaults="{ VIcon: { color: '#fff' } }">
-        <v-btn style="flex: 1" color="primary" prepend-icon="mdi-check" variant="flat" type="submit"> Speichern </v-btn>
+        <v-btn style="flex: 1" color="primary" :loading="loading" prepend-icon="mdi-check" variant="flat" type="submit">
+          Speichern
+        </v-btn>
       </v-defaults-provider>
     </div>
   </v-form>

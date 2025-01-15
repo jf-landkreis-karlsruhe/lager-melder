@@ -15,6 +15,7 @@ const props = defineProps<{
   departments: DepartmentSelect[]
   eventDays: EventDays[]
   tShirtSizes: TShirtSizeSelect[]
+  loading?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -122,6 +123,7 @@ const handleFormSave = (editedAttendee: Attendee) => {
         :event-days="props.eventDays"
         :departments="props.departments"
         :t-shirt-sizes="props.tShirtSizes"
+        :loading="props.loading"
         @save="handleFormSave"
         @delete="emit('delete', props.attendee)"
       />

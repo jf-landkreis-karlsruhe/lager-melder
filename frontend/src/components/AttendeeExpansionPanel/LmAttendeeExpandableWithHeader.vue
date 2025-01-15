@@ -26,6 +26,7 @@ const props = defineProps<{
   tShirtSizes: TShirtSizeSelect[]
   eventDays: EventDays[]
   departments: DepartmentSelect[]
+  loading?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -115,6 +116,7 @@ const saveAttendee = (att: Attendee) => {
         :departments="props.departments"
         :event-days="props.eventDays"
         :t-shirt-sizes="props.tShirtSizes"
+        :loading="loading"
         ref="expansionPanels"
         @update="emit('update', $event, expansionPanels[index])"
         @delete="emit('delete', $event)"
@@ -133,6 +135,7 @@ const saveAttendee = (att: Attendee) => {
           :departments="props.departments"
           :t-shirt-sizes="props.tShirtSizes"
           :show-cancel="true"
+          :loading="loading"
           @save="saveAttendee"
           @cancel="isAddNewFormModalVisible = false"
         />

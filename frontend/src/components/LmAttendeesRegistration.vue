@@ -45,6 +45,7 @@ const filterInput = ref<string>('')
 const tShirtSizes = ref<TShirtSizeSelect[]>([])
 const eventDays = ref<EventDays[]>([])
 const departments = ref<DepartmentSelect[]>([])
+const loading = ref<boolean>(false)
 
 // COMPUTED
 
@@ -119,10 +120,12 @@ const handleUpdateAttendee = async (att: Attendee, ownRef: InstanceType<typeof L
       a.id === att.id ? attendeeWithAllProps : a
     )
   }
+  loading.value = true
   // update attendee in database
   await updateAttendeeService(attendeeWithAllProps)
   // close expansion panel with manual click as other ways didn't work
   ownRef.$el.querySelector('button')?.click()
+  loading.value = false
 }
 
 const deleteAttendee = async (att: Attendee) => {
@@ -184,6 +187,7 @@ onMounted(async () => {
           :t-shirt-sizes="tShirtSizes"
           :departments="departments"
           :event-days="eventDays"
+          :loading="loading"
           @save-new="saveNewAttendee"
           @update="handleUpdateAttendee"
           @delete="deleteAttendee"
@@ -199,6 +203,7 @@ onMounted(async () => {
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
+        :loading="loading"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
@@ -222,6 +227,7 @@ onMounted(async () => {
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
+        :loading="loading"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
@@ -236,6 +242,7 @@ onMounted(async () => {
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
+        :loading="loading"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
@@ -255,6 +262,7 @@ onMounted(async () => {
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
+        :loading="loading"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
@@ -274,6 +282,7 @@ onMounted(async () => {
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
+        :loading="loading"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
