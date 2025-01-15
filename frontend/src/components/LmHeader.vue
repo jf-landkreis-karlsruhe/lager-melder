@@ -81,7 +81,9 @@ const checkToken = () => {
 <style scoped lang="scss">
 header {
   .hero-image-container {
-    border-bottom: #0077c0 6px solid;
+    margin: 0 1rem;
+    padding-block-start: 0.75rem;
+    border-block-end: #0077c0 6px solid;
 
     .hero-image {
       max-width: 100%;

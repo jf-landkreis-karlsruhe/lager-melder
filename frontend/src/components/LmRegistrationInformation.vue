@@ -16,6 +16,7 @@ const props = defineProps<{
 const tents = ref<Tents | undefined>()
 const phoneNumber = ref<string>(props.departmentPhoneNumber)
 const saving = ref<boolean>(false)
+const activePanel = ref<number>(0)
 
 const saveRegistrationInformation = async () => {
   if (!tents.value) return
@@ -42,10 +43,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-expansion-panels>
+  <v-expansion-panels v-model="activePanel">
     <v-expansion-panel>
       <v-expansion-panel-title expand-icon="mdi-menu-down">
-        <h3 class="mt-4 mb-2">Weitere Anmeldeinformatsionen</h3>
+        <h3 class="mt-4 mb-2">Weitere Anmeldeinformationen</h3>
       </v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-card-title> </v-card-title>

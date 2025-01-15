@@ -22,7 +22,10 @@ const submitEvent = async (attendeeCode: string) => {
   if (!isValidTestCode(attendeeCode)) {
     return
   }
-  const attendeeRes = await loginToEvent(eventCode.value, attendeeCode)
+  const attendeeRes = await loginToEvent(eventCode.value, attendeeCode).catch((e) => {
+    console.error(e)
+    toast.error(`${eventName.value} mit "${attendeeCode}" hat nicht geklappt.`)
+  })
   if (attendeeRes) {
     toast.success(`${eventName.value} von "${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName}".`)
   }
@@ -43,8 +46,8 @@ onBeforeUnmount(() => {
 
 <template>
   <div>
-    <v-container class="event-root">
-      <h1>🏕 Event: {{ eventName || 'Anstehendes Event' }}</h1>
+    <v-container v-if="eventName" class="event-root">
+      <h1>🏕 Event: {{ eventName }}</h1>
       <v-row justify="center">
         <Scanner
           manualCodeHint="8 Zeichen benötigt"
@@ -52,6 +55,14 @@ onBeforeUnmount(() => {
           @submitCode="submitEvent($event)"
         />
       </v-row>
+    </v-container>
+
+    <v-container v-else>
+      <v-alert color="error" type="error" border="top">
+        <b> Dieses Event existiert nicht! </b>
+        <p>Bitte prüfe den Eventnamen in der URL</p>
+        <br />
+      </v-alert>
     </v-container>
   </div>
 </template>

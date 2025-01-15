@@ -6,12 +6,12 @@
   ```
   ./run.sh
   ```
-  (does `down` first, then `docker-compose -f ./backend/docker-compose/docker-compose.yml up`)
+  (does `docker-compose -f ./backend/docker-compose/docker-compose.yml up`)
 - For Frontend Development, start with custom backend url:
   ```
-  npm run dev
+  npm run start
   ```
-  (does `VITE_BACKEND_URL=http://127.0.0.1:8080/api npm run start`)
+  (does `VITE_BACKEND_URL=http://127.0.0.1:8080/api vite --host 0.0.0.0 --port 9000`)
 
 ## Run database with docker
 

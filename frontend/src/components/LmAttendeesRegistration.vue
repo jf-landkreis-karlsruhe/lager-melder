@@ -168,8 +168,9 @@ onMounted(async () => {
   <v-container>
     <div v-if="department && department.features.includes(DepartmentFeatures.YOUTH_GROUPS)">
       <div>
+        <h1>Teilnehmer {{ department.name }}</h1>
         <div class="align-baseline">
-          <h2 class="mb-0">Teilnehmer {{ department.name }}</h2>
+          <h2 class="mb-0">Zeltlager</h2>
           <div>Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})</div>
         </div>
         <LmRegistrationEndBanner v-if="attendeesRegistrationEnd" :registrationEnd="attendeesRegistrationEnd" />
