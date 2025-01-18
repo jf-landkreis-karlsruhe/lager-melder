@@ -18,6 +18,7 @@ const props = defineProps<{
   eventDays: EventDays[]
   departments: DepartmentSelect[]
   showCancel?: boolean
+  loading?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -78,6 +79,7 @@ const requiredRule = [
             label="Vorname"
             variant="outlined"
             density="comfortable"
+            style="flex: 1"
             required
             :rules="requiredRule"
             :modelValue="current.firstName"
@@ -87,6 +89,7 @@ const requiredRule = [
             label="Nachname"
             variant="outlined"
             density="comfortable"
+            style="flex: 1"
             required
             :rules="requiredRule"
             :modelValue="current.lastName"
@@ -229,7 +232,9 @@ const requiredRule = [
         </v-btn>
       </v-defaults-provider>
       <v-defaults-provider :defaults="{ VIcon: { color: '#fff' } }">
-        <v-btn style="flex: 1" color="primary" prepend-icon="mdi-check" variant="flat" type="submit"> Speichern </v-btn>
+        <v-btn style="flex: 1" color="primary" :loading="loading" prepend-icon="mdi-check" variant="flat" type="submit">
+          Speichern
+        </v-btn>
       </v-defaults-provider>
     </div>
   </v-form>

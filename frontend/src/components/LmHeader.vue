@@ -42,8 +42,8 @@ const checkToken = () => {
         <img alt="Zeltlager logo" class="hero-image" src="../assets/logo.png" />
       </router-link>
     </div>
-    <v-container>
-      <nav id="nav" v-if="loggedIn">
+    <v-container v-if="loggedIn">
+      <nav id="nav">
         <v-container fluid class="nav-bar">
           <v-row justify="space-between" align="center" class="nav-bar__row">
             <ul class="pa-0 nav-bar__list">
@@ -80,10 +80,10 @@ const checkToken = () => {
 
 <style scoped lang="scss">
 header {
-  margin-bottom: 30px;
-
   .hero-image-container {
-    border-bottom: #0077c0 6px solid;
+    margin: 0 1rem;
+    padding-block-start: 0.75rem;
+    border-block-end: #0077c0 6px solid;
 
     .hero-image {
       max-width: 100%;

@@ -2,9 +2,16 @@
 
 ## Quickstart when app already run on your machine (docker images already created)
 
-- Make sure the old containers are shut down before re-init with: `docker-compose -f ./backend/docker-compose/docker-compose.yml down`
-- Then start them with: `docker-compose -f ./backend/docker-compose/docker-compose.yml up` (also see run.sh)
-- For Frontend Development, start with custom backend url: `VITE_BACKEND_URL=http://127.0.0.1:8080/api npm run start`
+- Then start them with:
+  ```
+  ./run.sh
+  ```
+  (does `docker-compose -f ./backend/docker-compose/docker-compose.yml up`)
+- For Frontend Development, start with custom backend url:
+  ```
+  npm run start
+  ```
+  (does `VITE_BACKEND_URL=http://127.0.0.1:8080/api vite --host 0.0.0.0 --port 9000`)
 
 ## Run database with docker
 

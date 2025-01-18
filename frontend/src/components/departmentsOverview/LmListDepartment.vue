@@ -71,6 +71,12 @@ const updatePauseDepartmentInternal = (department: Department) => {
   </div>
 </template>
 
+<style lang="scss">
+.v-card-item {
+  padding-inline-start: 0;
+}
+</style>
+
 <style scoped lang="scss">
 .add-new-department {
   background: #ddf2ff;

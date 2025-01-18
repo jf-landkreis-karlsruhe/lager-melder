@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "vite --port 9000",
-    "serve": "vite --host 0.0.0.0 --port 9000",
+    "start": "VITE_BACKEND_URL=http://127.0.0.1:8080/api vite --host 0.0.0.0 --port 9000",
+    "dev": "npm run start",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",

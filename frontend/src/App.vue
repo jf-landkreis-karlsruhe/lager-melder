@@ -8,7 +8,7 @@ import Header from './components/LmHeader.vue'
   <v-app>
     <div class="grid-container">
       <div class="my-container">
-        <Header class="header" />
+        <Header class="mb-4 header" />
         <main class="content">
           <RouterView />
         </main>

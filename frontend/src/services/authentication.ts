@@ -48,8 +48,8 @@ export const login = async (username: string, password: string) => {
       return jwt
     })
     .then((response) => {
-      const loggoutEvent = new CustomEvent(AuthenticationChangedEvent)
-      window && window.dispatchEvent(loggoutEvent)
+      const loginEvent = new CustomEvent(AuthenticationChangedEvent)
+      window && window.dispatchEvent(loginEvent)
       return decodeJWT(response)
     })
 }
@@ -61,27 +61,32 @@ export const renewToken = async () => {
       saveJWT(jwt)
       return jwt
     })
+    .then((response) => {
+      const loginEvent = new CustomEvent(AuthenticationChangedEvent)
+      window && window.dispatchEvent(loginEvent)
+      return decodeJWT(response)
+    })
 }
 
 export const forgotPassword = async (username: string) => {
   return putData<{}>(
-      'users/forgotPasswordToken',
-      {},
-      {
-        username,
-        linkAddress: window.location.origin + '/passwort-zuruecksetzen',
-      }
+    'users/forgotPasswordToken',
+    {},
+    {
+      username,
+      linkAddress: window.location.origin + '/passwort-zuruecksetzen'
+    }
   )
 }
 
 export const resetPasswordWithToken = async (token: string, password: string) => {
   return putData<{}>(
-      'users/resetPasswordWithToken',
-      {},
-      {
-        token,
-        password,
-      }
+    'users/resetPasswordWithToken',
+    {},
+    {
+      token,
+      password
+    }
   )
 }
 
@@ -109,8 +114,7 @@ export const getToken = () => {
   return jwt
 }
 
-export const hasAdministrationRole = () =>
-  [Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR].includes(getTokenData().role)
+export const hasAdministrationRole = () => [Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR].includes(getTokenData().role)
 
 export const getTokenData = () => {
   const token = getToken()

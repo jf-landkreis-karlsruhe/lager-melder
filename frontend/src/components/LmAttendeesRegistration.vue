@@ -4,6 +4,7 @@ import {
   type Attendee,
   AttendeeRole,
   type Attendees,
+  createAttendee,
   defaultAttendees,
   deleteAttendee as deleteAttendeeService,
   getAttendeeDefault,
@@ -21,6 +22,10 @@ import type LmAttendeeExpansionPanel from './AttendeeExpansionPanel/LmAttendeeEx
 import { getTShirtSizes } from '@/services/tShirtSizes'
 import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeExpansionPanel/helperTypes'
 import { type EventDays, getEventDays } from '@/services/eventDays'
+import { getErrorMessage } from '@/services/errorConstants'
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
 
 const props = defineProps<{
   department: Department
@@ -45,6 +50,7 @@ const filterInput = ref<string>('')
 const tShirtSizes = ref<TShirtSizeSelect[]>([])
 const eventDays = ref<EventDays[]>([])
 const departments = ref<DepartmentSelect[]>([])
+const loading = ref<boolean>(false)
 
 // COMPUTED
 
@@ -103,8 +109,25 @@ const totalAttendeeCount = computed<number>(() => {
   return attendees.value.youths.length + attendees.value.youthLeaders.length
 })
 
-const saveNewAttendee = (newAttendee: Attendee, type: keyof Attendees) => {
+const saveNewAttendee = async (newAttendee: Attendee, role: AttendeeRole, handleCloseAddNewForm: () => void) => {
+  if (!newAttendee) return
+
+  loading.value = true
+
+  const newAtt = await createAttendee(newAttendee).catch(async (err) => {
+    loading.value = false
+    handleCloseAddNewForm()
+    const errorMessage = await getErrorMessage(err)
+    if (errorMessage) {
+      toast.error(errorMessage)
+    }
+  })
+  if (!newAtt) return
+
+  const type = getAttendeeTypeByRole(role)
   attendees.value = { ...attendees.value, [type]: [...attendees.value[type], newAttendee] }
+  handleCloseAddNewForm()
+  loading.value = false
 }
 
 const handleUpdateAttendee = async (att: Attendee, ownRef: InstanceType<typeof LmAttendeeExpansionPanel>) => {
@@ -119,10 +142,16 @@ const handleUpdateAttendee = async (att: Attendee, ownRef: InstanceType<typeof L
       a.id === att.id ? attendeeWithAllProps : a
     )
   }
+  loading.value = true
   // update attendee in database
-  await updateAttendeeService(attendeeWithAllProps)
+  await updateAttendeeService(attendeeWithAllProps).catch((e) => {
+    toast.error('Fehler beim Speichern des Teilnehmers')
+    console.error(e)
+    loading.value = false
+  })
   // close expansion panel with manual click as other ways didn't work
   ownRef.$el.querySelector('button')?.click()
+  loading.value = false
 }
 
 const deleteAttendee = async (att: Attendee) => {
@@ -168,8 +197,9 @@ onMounted(async () => {
   <v-container>
     <div v-if="department && department.features.includes(DepartmentFeatures.YOUTH_GROUPS)">
       <div>
+        <h1>Teilnehmer {{ department.name }}</h1>
         <div class="align-baseline">
-          <h1 class="mb-0">Teilnehmer {{ department.name }}</h1>
+          <h2 class="mb-0">Zeltlager</h2>
           <div>Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})</div>
         </div>
         <LmRegistrationEndBanner v-if="attendeesRegistrationEnd" :registrationEnd="attendeesRegistrationEnd" />
@@ -183,6 +213,7 @@ onMounted(async () => {
           :t-shirt-sizes="tShirtSizes"
           :departments="departments"
           :event-days="eventDays"
+          :loading="loading"
           @save-new="saveNewAttendee"
           @update="handleUpdateAttendee"
           @delete="deleteAttendee"
@@ -198,6 +229,7 @@ onMounted(async () => {
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
+        :loading="loading"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
@@ -208,7 +240,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div v-if="department && department.features.includes(DepartmentFeatures.CHILD_GROUPS)">
+    <div v-if="department && department.features.includes(DepartmentFeatures.CHILD_GROUPS)" class="mt-12 child-groups">
       <h2>Kindergruppentag</h2>
       <LmRegistrationEndBanner :registrationEnd="childGroupRegistrationEnd" />
 
@@ -221,6 +253,7 @@ onMounted(async () => {
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
+        :loading="loading"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
@@ -235,14 +268,15 @@ onMounted(async () => {
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
+        :loading="loading"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
       />
     </div>
 
-    <div v-if="department && department.features.includes(DepartmentFeatures.ZKIDS)">
-      <h2>Z Kids</h2>
+    <div v-if="department && department.features.includes(DepartmentFeatures.ZKIDS)" class="mt-12">
+      <h2>Z Kids Gruppe</h2>
       <LmRegistrationEndBanner :registrationEnd="attendeesRegistrationEnd" />
 
       <LmAttendeeExpandableWithHeader
@@ -254,14 +288,15 @@ onMounted(async () => {
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
+        :loading="loading"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
       />
     </div>
 
-    <div v-if="department && department.features.includes(DepartmentFeatures.HELPER)">
-      <h2>Helfer</h2>
+    <div v-if="department && department.features.includes(DepartmentFeatures.HELPER)" class="mt-12 helpers-group">
+      <h2>Helfer Gruppe</h2>
       <LmRegistrationEndBanner :registrationEnd="childGroupRegistrationEnd" />
 
       <LmAttendeeExpandableWithHeader
@@ -273,6 +308,7 @@ onMounted(async () => {
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
+        :loading="loading"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
@@ -297,5 +333,13 @@ onMounted(async () => {
       font-size: 0.8rem !important;
     }
   }
+}
+
+.child-groups,
+.helpers-group {
+  --margin-to-full-width: 200px;
+  background-color: #f5f5f5;
+  padding: 12px var(--margin-to-full-width);
+  margin: 0 calc(-1 * var(--margin-to-full-width));
 }
 </style>
