@@ -4,6 +4,7 @@ import {
   type Attendee,
   AttendeeRole,
   type Attendees,
+  createAttendee,
   defaultAttendees,
   deleteAttendee as deleteAttendeeService,
   getAttendeeDefault,
@@ -21,6 +22,10 @@ import type LmAttendeeExpansionPanel from './AttendeeExpansionPanel/LmAttendeeEx
 import { getTShirtSizes } from '@/services/tShirtSizes'
 import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeExpansionPanel/helperTypes'
 import { type EventDays, getEventDays } from '@/services/eventDays'
+import { getErrorMessage } from '@/services/errorConstants'
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
 
 const props = defineProps<{
   department: Department
@@ -104,8 +109,25 @@ const totalAttendeeCount = computed<number>(() => {
   return attendees.value.youths.length + attendees.value.youthLeaders.length
 })
 
-const saveNewAttendee = (newAttendee: Attendee, type: keyof Attendees) => {
+const saveNewAttendee = async (newAttendee: Attendee, role: AttendeeRole, handleCloseAddNewForm: () => void) => {
+  if (!newAttendee) return
+
+  loading.value = true
+
+  const newAtt = await createAttendee(newAttendee).catch(async (err) => {
+    loading.value = false
+    handleCloseAddNewForm()
+    const errorMessage = await getErrorMessage(err)
+    if (errorMessage) {
+      toast.error(errorMessage)
+    }
+  })
+  if (!newAtt) return
+
+  const type = getAttendeeTypeByRole(role)
   attendees.value = { ...attendees.value, [type]: [...attendees.value[type], newAttendee] }
+  handleCloseAddNewForm()
+  loading.value = false
 }
 
 const handleUpdateAttendee = async (att: Attendee, ownRef: InstanceType<typeof LmAttendeeExpansionPanel>) => {
@@ -122,7 +144,11 @@ const handleUpdateAttendee = async (att: Attendee, ownRef: InstanceType<typeof L
   }
   loading.value = true
   // update attendee in database
-  await updateAttendeeService(attendeeWithAllProps)
+  await updateAttendeeService(attendeeWithAllProps).catch((e) => {
+    toast.error('Fehler beim Speichern des Teilnehmers')
+    console.error(e)
+    loading.value = false
+  })
   // close expansion panel with manual click as other ways didn't work
   ownRef.$el.querySelector('button')?.click()
   loading.value = false

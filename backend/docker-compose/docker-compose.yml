@@ -26,11 +26,11 @@ services:
     volumes:
       - "..:/app/:rw"
     command: sh -c "cd /app && ./mvnw clean install -DskipTests && ./mvnw spring-boot:run"
-  frontend:
-    image: "node:lts-alpine"
-    container_name: lm-frontend
-    ports:
-      - "9000:9000"
-    volumes:
-      - "../../frontend/:/app/:rw"
-    command: sh -c "cd /app && npm install && npm run start"
+  # frontend:
+  #   image: "node:lts-alpine"
+  #   container_name: lm-frontend
+  #   ports:
+  #     - "9000:9000"
+  #   volumes:
+  #     - "../../frontend/:/app/:rw"
+  #   command: sh -c "cd /app && npm install && npm run start"
