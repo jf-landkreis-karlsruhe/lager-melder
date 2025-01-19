@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 import { type Attendee, AttendeeRole, getAttendeeDefault } from '@/services/attendee'
 import { type Department } from '@/services/department'
 import LmAttendeeAddForm from '../AttendeeExpansionPanel/LmAttendeeAddForm.vue'
@@ -23,7 +23,13 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update', attendee: Attendee, ownRef: InstanceType<typeof LmAttendeeExpansionPanel>): void
   (e: 'delete', attendee: Attendee): void
-  (e: 'save-new', newAttendee: Attendee, type: AttendeeRole, closeHandler: () => void): void
+  (
+    e: 'save-new',
+    newAttendee: Attendee,
+    type: AttendeeRole,
+    closeHandler: () => void,
+    expansionPanelsRef: Ref<InstanceType<typeof LmAttendeeExpansionPanel>[]>
+  ): void
 }>()
 
 const isAddNewFormModalVisible = ref<boolean>(false)
@@ -63,7 +69,7 @@ const closeAddNewAttendeeForm = (): void => {
 }
 
 const handleSaveNewAttendee = (newAttendee: Attendee) => {
-  emit('save-new', newAttendee, props.role, closeAddNewAttendeeForm)
+  emit('save-new', newAttendee, props.role, closeAddNewAttendeeForm, expansionPanels)
 }
 </script>
 
