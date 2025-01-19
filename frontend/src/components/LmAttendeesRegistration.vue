@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeMount, onMounted, ref, type Ref } from 'vue'
 import {
   type Attendee,
   AttendeeRole,
@@ -109,7 +109,12 @@ const totalAttendeeCount = computed<number>(() => {
   return attendees.value.youths.length + attendees.value.youthLeaders.length
 })
 
-const saveNewAttendee = async (newAttendee: Attendee, role: AttendeeRole, handleCloseAddNewForm: () => void) => {
+const saveNewAttendee = async (
+  newAttendee: Attendee,
+  role: AttendeeRole,
+  handleCloseAddNewForm: () => void,
+  expansionPanelsRef: Ref<InstanceType<typeof LmAttendeeExpansionPanel>[]>
+) => {
   if (!newAttendee) return
 
   loading.value = true
@@ -127,6 +132,12 @@ const saveNewAttendee = async (newAttendee: Attendee, role: AttendeeRole, handle
   const type = getAttendeeTypeByRole(role)
   attendees.value = { ...attendees.value, [type]: [...attendees.value[type], newAttendee] }
   handleCloseAddNewForm()
+  await nextTick()
+
+  const lastExpansionPanel: HTMLDivElement = expansionPanelsRef.value[expansionPanelsRef.value.length - 1]?.$el
+  scrollTo(lastExpansionPanel.offsetTop + 200, () => {
+    lastExpansionPanel.classList.add('highlight-bump')
+  })
   loading.value = false
 }
 
@@ -191,6 +202,29 @@ onMounted(async () => {
     ]
   })
 })
+
+// HELPER
+/**
+ * Native scrollTo with callback
+ * @param offset - offset to scroll to
+ * @param callback - callback function
+ */
+function scrollTo(offset: number, callback: () => void) {
+  const fixedOffset = offset.toFixed()
+  const onScroll = function () {
+    if (window.pageYOffset.toFixed() === fixedOffset) {
+      window.removeEventListener('scroll', onScroll)
+      callback()
+    }
+  }
+
+  window.addEventListener('scroll', onScroll)
+  onScroll()
+  window.scrollTo({
+    top: offset,
+    behavior: 'smooth'
+  })
+}
 </script>
 
 <template>
@@ -341,5 +375,22 @@ onMounted(async () => {
   background-color: #f5f5f5;
   padding: 12px var(--margin-to-full-width);
   margin: 0 calc(-1 * var(--margin-to-full-width));
+}
+
+:deep(.highlight-bump) {
+  animation: highlight-bump-anim 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out;
+
+  @keyframes highlight-bump-anim {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
 }
 </style>
