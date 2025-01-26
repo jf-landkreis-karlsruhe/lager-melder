@@ -97,7 +97,13 @@ class DepartmentController(
     ): RestTents {
         val department = departmentService.getDepartment(id)
         departmentService
-            .saveDepartment(department.copy(phoneNumber = registrationRequest.departmentPhoneNumber))
+            .saveDepartment(
+                department.copy(
+                    phoneNumber = registrationRequest.departmentPhoneNumber,
+                    nameKommandant = registrationRequest.nameKommandant,
+                    phoneNumberKommandant = registrationRequest.phoneNumberKommandant
+                )
+            )
         return tentsService
             .saveForDepartment(RestTents.to(registrationRequest.tents, department))
             .let { RestTents.of(it) }
