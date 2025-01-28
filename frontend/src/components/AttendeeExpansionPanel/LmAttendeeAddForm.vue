@@ -110,6 +110,7 @@ const requiredRule = [
 
         <div class="d-flex align-center ga-4">
           <v-select
+            v-if="props.role !== AttendeeRole.CHILD && props.role != AttendeeRole.CHILD_LEADER"
             :items="tShirtSizes"
             density="comfortable"
             variant="outlined"
