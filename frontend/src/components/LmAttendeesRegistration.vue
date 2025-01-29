@@ -133,12 +133,15 @@ const saveNewAttendee = async (
   attendees.value = { ...attendees.value, [type]: [...attendees.value[type], newAttendee] }
   handleCloseAddNewForm()
   await nextTick()
+  loading.value = false
 
   const lastExpansionPanel: HTMLDivElement = expansionPanelsRef.value[expansionPanelsRef.value.length - 1]?.$el
-  scrollTo(lastExpansionPanel.offsetTop + 200, () => {
+  scrollTo(lastExpansionPanel, () => {
     lastExpansionPanel.classList.add('highlight-bump')
+    setTimeout(() => {
+      lastExpansionPanel.classList.remove('highlight-bump')
+    }, 1000)
   })
-  loading.value = false
 }
 
 const handleUpdateAttendee = async (att: Attendee, ownRef: InstanceType<typeof LmAttendeeExpansionPanel>) => {
@@ -209,10 +212,14 @@ onMounted(async () => {
  * @param offset - offset to scroll to
  * @param callback - callback function
  */
-function scrollTo(offset: number, callback: () => void) {
-  const fixedOffset = offset.toFixed()
+function scrollTo(el: HTMLElement, callback: () => void) {
+  let offsetTopEl = (el.offsetParent as HTMLElement)?.offsetTop
+  if (!offsetTopEl || offsetTopEl === 0) {
+    offsetTopEl = el.offsetTop
+  }
+  const fixedOffset = offsetTopEl.toFixed()
   const onScroll = function () {
-    if (window.pageYOffset.toFixed() === fixedOffset) {
+    if (window.scrollY.toFixed() === fixedOffset) {
       window.removeEventListener('scroll', onScroll)
       callback()
     }
@@ -220,8 +227,9 @@ function scrollTo(offset: number, callback: () => void) {
 
   window.addEventListener('scroll', onScroll)
   onScroll()
+
   window.scrollTo({
-    top: offset,
+    top: offsetTopEl,
     behavior: 'smooth'
   })
 }
