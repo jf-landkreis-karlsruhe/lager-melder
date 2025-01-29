@@ -2,6 +2,7 @@ package de.kordondev.lagermelder.core.pdf
 
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.service.SettingsService
@@ -28,13 +29,15 @@ class AttendeesCommunal(
     val END_DATE = "ZL_Ende"
     val NAME = "T"
     val YOUTH_LEADER = "J"
+    val NAME_KOMMANDANT = "Name_KDT1"
+    val PHONE_KOMMANDANT = "Tel_KDT_1"
 
     val TABLE_ROW_START_FIRST_PAGE = (1..30).toList()
     val TABLE_ROW_START_SECOND_PAGE = (31..50).toList()
     val ATTENDEES_ON_FIRST_PAGE = TABLE_ROW_START_FIRST_PAGE.size
     val ATTENDEES_ON_SECOND_PAGE = TABLE_ROW_START_SECOND_PAGE.size
 
-    fun createAttendeesCommunalPdf(attendees: List<Attendee>, departmentName: String): PDDocument {
+    fun createAttendeesCommunalPdf(attendees: List<Attendee>, department: DepartmentEntry): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/attendeesCommunal.pdf")
         val settings = settingsService.getSettings()
 
@@ -47,7 +50,7 @@ class AttendeesCommunal(
         val pdfDocument = PDDocument.load(resource.inputStream)
 
         if (attendees.isEmpty()) {
-            fields.addAll(fillFirstPage(pdfDocument, departmentName, attendees, page))
+            fields.addAll(fillFirstPage(pdfDocument, department.name, attendees, page))
             result.addPage(pdfDocument.getPage(0))
         }
 
@@ -62,21 +65,21 @@ class AttendeesCommunal(
                 lastAttendeeIndex = i + ATTENDEES_ON_FIRST_PAGE
                 attendees.subList(i, i + ATTENDEES_ON_FIRST_PAGE)
             }
-            fields.addAll(fillFirstPage(pdfDocument, departmentName, attendeesForPage, page))
+            fields.addAll(fillFirstPage(pdfDocument, department.name, attendeesForPage, page))
             result.addPage(pdfDocument.getPage(0))
             page++
         }
 
         if (attendees.size <= ATTENDEES_ON_FIRST_PAGE) {
             val pdfDocument = PDDocument.load(resource.inputStream)
-            fields.addAll(fillFirstPage(pdfDocument, departmentName, attendees, page))
+            fields.addAll(fillFirstPage(pdfDocument, department.name, attendees, page))
             result.addPage(pdfDocument.getPage(0))
             page++
             lastAttendeeIndex = attendees.size
         }
 
         val attendeesForPage = attendees.subList(lastAttendeeIndex, attendees.size)
-        fields.addAll(fillSecondPage(pdfDocument, attendeesForPage, page, settings))
+        fields.addAll(fillSecondPage(pdfDocument, attendeesForPage, page, settings, department))
         result.addPage(pdfDocument.getPage(1))
 
 
@@ -104,13 +107,16 @@ class AttendeesCommunal(
         pdfDocument: PDDocument,
         attendees: List<Attendee>,
         page: Int,
-        settings: SettingsEntry
+        settings: SettingsEntry,
+        department: DepartmentEntry
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
         pdfHelper.fillField(form, EVENT_LOCATION, settings.hostCity, page)?.let { fields.add(it) }
         pdfHelper.fillField(form, START_DATE, settings.eventStart.format(germanDate), page)?.let { fields.add(it) }
         pdfHelper.fillField(form, END_DATE, settings.eventEnd.format(germanDate), page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, NAME_KOMMANDANT, department.nameKommandant, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, PHONE_KOMMANDANT, department.phoneNumberKommandant, page)?.let { fields.add(it) }
         fields.addAll(fillPage(pdfDocument, attendees, TABLE_ROW_START_SECOND_PAGE, page))
         return fields
     }

@@ -49,6 +49,8 @@ export interface Department {
   leaderEMail: string
   phoneNumber: string
   shortName: string
+  phoneNumberKommandant: string
+  nameKommandant: string
   features: DepartmentFeatures[]
   headDepartmentName: string
   paused: boolean
@@ -79,6 +81,8 @@ export interface RegistrationData {
   departmentId: number
   tents: Tents
   departmentPhoneNumber: string
+  nameKommandant: string
+  phoneNumberKommandant: string
 }
 
 interface TentMarking {

@@ -11,10 +11,14 @@ const toast = useToast()
 const props = defineProps<{
   departmentId: number
   departmentPhoneNumber: string
+  nameKommandant: string
+  phoneNumberKommandant: string
 }>()
 
 const tents = ref<Tents | undefined>()
 const phoneNumber = ref<string>(props.departmentPhoneNumber)
+const nameKommandant = ref<string>(props.nameKommandant)
+const phoneNumberKommandant = ref<string>(props.phoneNumberKommandant)
 const saving = ref<boolean>(false)
 const activePanel = ref<number>(0)
 
@@ -24,7 +28,9 @@ const saveRegistrationInformation = async () => {
   const registrationData = {
     departmentId: props.departmentId,
     tents: tents.value,
-    departmentPhoneNumber: phoneNumber.value
+    departmentPhoneNumber: phoneNumber.value,
+    nameKommandant: nameKommandant.value,
+    phoneNumberKommandant: phoneNumberKommandant.value
   }
   tents.value = await updateRegistration(registrationData).catch(async (error) => {
     saving.value = false
@@ -136,6 +142,26 @@ onMounted(() => {
               label="Kontaktnummer"
               variant="underlined"
             />
+
+            <h5>Erreichbarkeit Kommandant</h5>
+            <div class="d-flex align-center flex-wrap w-100">
+              <v-text-field
+                style="flex: 1 1 150px"
+                class="mx-4"
+                type="text"
+                v-model="nameKommandant"
+                label="Name"
+                variant="underlined"
+              />
+              <v-text-field
+                style="flex: 1 1 250px"
+                class="mx-4"
+                type="text"
+                v-model="phoneNumberKommandant"
+                label="Kontaktnummer"
+                variant="underlined"
+              />
+            </div>
 
             <v-row justify="end" class="my-4 w-100">
               <v-btn class="mx-2" rounded color="primary" :loading="saving" type="submit"> Speichern </v-btn>
