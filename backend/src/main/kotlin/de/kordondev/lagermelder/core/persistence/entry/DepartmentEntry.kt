@@ -41,4 +41,10 @@ data class DepartmentEntry (
         @ManyToOne
         @JoinColumn(name = "evacuation_group_id")
         val evacuationGroup: EvacuationGroupEntry?,
+
+        @Column(name = "name_kommandant")
+        val nameKommandant: String = "",
+
+        @Column(name = "phone_number_kommandant")
+        val phoneNumberKommandant: String = "",
 )

@@ -96,8 +96,15 @@ class DepartmentController(
         @RequestBody(required = true) @Valid registrationRequest: RestDepartmentRegistrationRequest
     ): RestTents {
         val department = departmentService.getDepartment(id)
+        tentsService.checkCanTentsBeEdited()
         departmentService
-            .saveDepartment(department.copy(phoneNumber = registrationRequest.departmentPhoneNumber))
+            .saveDepartment(
+                department.copy(
+                    phoneNumber = registrationRequest.departmentPhoneNumber,
+                    nameKommandant = registrationRequest.nameKommandant,
+                    phoneNumberKommandant = registrationRequest.phoneNumberKommandant
+                )
+            )
         return tentsService
             .saveForDepartment(RestTents.to(registrationRequest.tents, department))
             .let { RestTents.of(it) }

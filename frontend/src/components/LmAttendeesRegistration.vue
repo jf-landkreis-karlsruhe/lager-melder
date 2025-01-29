@@ -278,7 +278,12 @@ function scrollTo(el: HTMLElement, callback: () => void) {
       />
 
       <div v-if="department && department.id">
-        <RegistrationInformation :departmentId="department.id" :department-phone-number="department.phoneNumber" />
+        <RegistrationInformation
+          :departmentId="department.id"
+          :department-phone-number="department.phoneNumber"
+          :name-kommandant="department.nameKommandant"
+          :phone-number-kommandant="department.phoneNumberKommandant"
+        />
       </div>
     </div>
 

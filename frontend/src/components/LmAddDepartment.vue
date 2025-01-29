@@ -44,7 +44,9 @@ const addDepartmentAndUser = () => {
         headDepartmentName: '',
         paused: false,
         evacuationGroup: undefined,
-        tentMarkings: []
+        tentMarkings: [],
+        nameKommandant: '',
+        phoneNumberKommandant: ''
       })
       departmentName.value = ''
       leaderName.value = ''
@@ -61,20 +63,9 @@ const addDepartmentAndUser = () => {
 <template>
   <div class="mb-10">
     <form v-on:submit.prevent="addDepartmentAndUser()">
-      <v-text-field
-        variant="underlined"
-        v-model="departmentName"
-        label="Name der Feuerwehr"
-        required
-      />
+      <v-text-field variant="underlined" v-model="departmentName" label="Name der Feuerwehr" required />
       <v-text-field variant="underlined" v-model="leaderName" label="Jugendwart" required />
-      <v-text-field
-        variant="underlined"
-        v-model="leaderMail"
-        type="email"
-        label="Jugendwart Email"
-        required
-      />
+      <v-text-field variant="underlined" v-model="leaderMail" type="email" label="Jugendwart Email" required />
       <v-text-field variant="underlined" v-model="username" label="Benutzername" required />
       <v-row justify="end">
         <v-btn color="primary" :loading="loading" type="submit" rounded>

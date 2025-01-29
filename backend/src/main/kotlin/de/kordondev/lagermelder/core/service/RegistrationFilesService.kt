@@ -82,7 +82,7 @@ class RegistrationFilesService(
         val result = department
             .let { attendeeService.getAttendeesForDepartment(it) }
             .let { it.youths + it.youthLeaders }
-            .let { attendeesCommunal.createAttendeesCommunalPdf(it, department.name) }
+            .let { attendeesCommunal.createAttendeesCommunalPdf(it, department) }
         val out = ByteArrayOutputStream()
         result.save(out)
         result.close()
