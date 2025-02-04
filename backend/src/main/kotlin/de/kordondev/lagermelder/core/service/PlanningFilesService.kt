@@ -200,11 +200,10 @@ class PlanningFilesService(
             DepartmentEntry(0, "Zeltlager gesamt", "", "", "", "", emptySet(), "", false, emptySet(), null)
         val allAttendees = attendeeService.getAttendees()
         val totalTShirtCount =
-            countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids + allAttendees.helpers)
+            countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.zKids + allAttendees.helpers)
         val eventStart = settingsService.getSettings().eventStart
         val totalBraceletCount = countBracelet(
-            allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids,
-            eventStart
+            allAttendees.youths + allAttendees.youthLeaders + allAttendees.zKids, eventStart
         )
         val tShirtSizes = tShirtSizeService.getTShirtSizes().map { it.size }.toMutableList()
 
@@ -461,7 +460,7 @@ class PlanningFilesService(
         val departments = departmentService.getDepartments().sortedBy { it.headDepartmentName + it.name }
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartmentWithZKidsBeingPartOf(department.id)
-            if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty() && attendees.children.isEmpty() && attendees.childLeaders.isEmpty() && attendees.zKids.isEmpty() && attendees.helpers.isEmpty()) {
+            if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty() && attendees.zKids.isEmpty() && attendees.helpers.isEmpty()) {
                 continue
             }
             if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty() || attendees.zKids.isNotEmpty()) {
@@ -469,15 +468,6 @@ class PlanningFilesService(
                     document,
                     department.name,
                     attendees.youths + attendees.youthLeaders + attendees.zKids,
-                    eventStart
-                )
-            }
-
-            if (attendees.children.isNotEmpty() || attendees.childLeaders.isNotEmpty()) {
-                addDepartmentTableToDocument(
-                    document,
-                    "${department.name} Kindergruppe",
-                    attendees.children + attendees.childLeaders,
                     eventStart
                 )
             }
