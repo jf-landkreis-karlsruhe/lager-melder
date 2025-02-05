@@ -39,13 +39,17 @@ const helperDays = computed<HelperDaySelect[]>(() => getHelperDaySelect(props.ev
 
 const handleSubmit = () => {
   if (isFormValid.value) {
+    if (props.role === AttendeeRole.CHILD || props.role === AttendeeRole.CHILD_LEADER) {
+      current.value.tShirtSize = props.tShirtSizes[0].title
+    }
     emit('save', current.value)
   }
 }
 
 const tshirtRules = [
   (value: string) => {
-    if (value) return true
+    console.log(value, props.role)
+    if (value || AttendeeRole.CHILD === props.role || AttendeeRole.CHILD_LEADER === props.role) return true
 
     return 'TShirt Größe auswählen'
   }

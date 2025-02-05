@@ -203,7 +203,8 @@ class PlanningFilesService(
             countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.zKids + allAttendees.helpers)
         val eventStart = settingsService.getSettings().eventStart
         val totalBraceletCount = countBracelet(
-            allAttendees.youths + allAttendees.youthLeaders + allAttendees.zKids, eventStart
+            allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids,
+            eventStart
         )
         val tShirtSizes = tShirtSizeService.getTShirtSizes().map { it.size }.toMutableList()
 
@@ -224,14 +225,14 @@ class PlanningFilesService(
                 addTShirtsAndBraceletForDepartment(department.name, tShirtSizes, tShirtCount, braceletCount, document)
             }
             if (attendees.children.isNotEmpty() || attendees.childLeaders.isNotEmpty()) {
-                val tShirtCount = countTShirtPerSize(attendees.children + attendees.childLeaders)
                 val braceletCount = countBracelet(attendees.children + attendees.childLeaders, eventStart)
                 addTShirtsAndBraceletForDepartment(
                     "${department.name} Kindergruppe",
-                    tShirtSizes,
-                    tShirtCount,
+                    listOf<String>().toMutableList(),
+                    mapOf<String, Int>().toMutableMap(),
                     braceletCount,
-                    document
+                    document,
+                    true
                 )
             }
             if (attendees.helpers.isNotEmpty()) {
@@ -255,25 +256,28 @@ class PlanningFilesService(
         tShirtSizes: MutableList<String>,
         tShirtCount: MutableMap<String, Int>,
         braceletCount: MutableMap<Color, Int>,
-        document: Document
+        document: Document,
+        skipTShirt: Boolean = false
     ) {
         val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
         document.add(Paragraph("Abteilung: $departmentName", headlineFont))
-        document.add(Paragraph("Kreiszeltlager - T-Shirt", headlineFont))
 
-        val table = Table(2)
-        table.borderWidth = 1F
-        table.borderColor = Color(0, 0, 0)
-        table.padding = 5F
-        table.spacing = 0F
-        table.addCell("Größe:")
-        table.addCell("Anzahl:")
-        table.endHeaders()
-        for (size in tShirtSizes) {
-            table.addCell(size)
-            table.addCell("${tShirtCount[size] ?: 0}")
+        if (!skipTShirt) {
+            document.add(Paragraph("Kreiszeltlager - T-Shirt", headlineFont))
+            val table = Table(2)
+            table.borderWidth = 1F
+            table.borderColor = Color(0, 0, 0)
+            table.padding = 5F
+            table.spacing = 0F
+            table.addCell("Größe:")
+            table.addCell("Anzahl:")
+            table.endHeaders()
+            for (size in tShirtSizes) {
+                table.addCell(size)
+                table.addCell("${tShirtCount[size] ?: 0}")
+            }
+            document.add(table)
         }
-        document.add(table)
 
         document.add(Paragraph("Kreiszeltlager - Armband", headlineFont))
         val braceletTable = Table(2)
