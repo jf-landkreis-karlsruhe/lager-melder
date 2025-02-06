@@ -31,7 +31,14 @@ class SettingsController(
     @GetMapping("/settings/registration-end")
     fun getRegistrationEnd(): RestRegistrationEnd {
         return settingsService.getSettings()
-            .let { RestRegistrationEnd.of(it, settingsService.attendeesCanBeEdited(), settingsService.childGroupsCanBeEdited()) }
+            .let {
+                RestRegistrationEnd.of(
+                    it,
+                    settingsService.attendeesCanBeEdited(),
+                    settingsService.childGroupsCanBeEdited(),
+                    settingsService.helpersCanBeEdited()
+                )
+            }
     }
 
     @GetMapping("/settings/start-download-registration-files")

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { getSettings, updateSettings } from '../../services/settings'
 import type { Settings } from '../../services/settings'
+import { getSettings, updateSettings } from '../../services/settings'
 import { useToast } from 'vue-toastification'
 import { showErrorToast } from '@/helper/fetch'
 
@@ -70,10 +70,21 @@ onMounted(() => {
                 "
               />
               <v-text-field
-                  type="date"
-                  v-model="settings.childGroupsRegistrationEnd"
-                  label="Registrierungsende Kindergruppen"
-                  :variant="'underlined'"
+                type="date"
+                v-model="settings.childGroupsRegistrationEnd"
+                label="Registrierungsende Kindergruppen"
+                :variant="'underlined'"
+              />
+              <v-text-field
+                type="date"
+                v-model="settings.helpersRegistrationEnd"
+                label="Registrierungsende Helfer"
+                :variant="'underlined'"
+                :error-messages="
+                  downloadAfterEndRegistration
+                    ? ''
+                    : 'Registrierungsende muss nach dem Start des Downloads der Anmeldeunterlagen liegen.'
+                "
               />
               <h3>Veranstalltung</h3>
               <v-text-field
