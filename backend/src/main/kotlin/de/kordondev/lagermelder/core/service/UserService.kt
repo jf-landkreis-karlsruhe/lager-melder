@@ -90,7 +90,7 @@ class UserService(
     }
 
     fun updateRole(userId: Long, role: String): UserEntry {
-        authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.isSpecializedFieldDirector()
         return userRepository.findByIdOrNull(userId)
             ?.copy(role = role)
             ?.let { userRepository.save(it) }
