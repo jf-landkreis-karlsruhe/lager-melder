@@ -5,7 +5,6 @@ import type { Department } from '@/services/department'
 import { getMyDepartment } from '@/services/department'
 import type { User } from '@/services/user'
 import { changePassword, getMe } from '@/services/user'
-import EditDepartment from '../components/departmentsOverview/LmEditDepartment.vue'
 import LmContainer from '@/components/LmContainer.vue'
 
 const myDepartment = ref<Department>({} as Department)
@@ -59,34 +58,17 @@ watch([password, repeatPassword], () => {
 
     <div v-if="myDepartment.id">
       <h2>Deine Feuerwehr - {{ myDepartment.name }}</h2>
-      <EditDepartment :department="myDepartment" class="mb-8" />
     </div>
 
     <h2>Passwort</h2>
     <form v-on:submit.prevent="updateUser()" class="mb-8">
-      <v-text-field
-        v-model="password"
-        label="Passwort"
-        hint="Mindestlänge 8 Zeichen"
-        variant="underlined"
-        required
-      />
-      <v-text-field
-        variant="underlined"
-        v-model="repeatPassword"
-        label="Passwort wiederholen"
-        required
-      />
+      <v-text-field v-model="password" label="Passwort" hint="Mindestlänge 8 Zeichen" variant="underlined" required />
+      <v-text-field variant="underlined" v-model="repeatPassword" label="Passwort wiederholen" required />
       <v-alert v-if="showPasswordError" type="error"> Die Passwörter sind nicht gleich. </v-alert>
 
       <v-container>
         <v-row justify="end">
-          <v-btn
-            :color="passwordSuccess ? 'success' : 'primary'"
-            :loading="passwordLoading"
-            type="submit"
-            rounded
-          >
+          <v-btn :color="passwordSuccess ? 'success' : 'primary'" :loading="passwordLoading" type="submit" rounded>
             <div v-if="passwordSuccess"><v-icon medium>mdi-check</v-icon> geändert</div>
             <div v-if="!passwordSuccess">Passwort ändern</div>
           </v-btn>
