@@ -45,7 +45,10 @@ data class SettingsEntry(
     val startDownloadRegistrationFiles: Instant,
 
     @Column(name = "child_groups_registration_end")
-    val childGroupsRegistrationEnd: Instant
+    val childGroupsRegistrationEnd: Instant,
+
+    @Column(name = "helpers_registration_end")
+    val helpersRegistrationEnd: Instant,
 
 
 ) {

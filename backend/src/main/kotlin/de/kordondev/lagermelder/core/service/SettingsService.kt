@@ -34,7 +34,8 @@ class SettingsService(
                     organizer = "",
                     organisationAddress = "",
                     moneyPerYouthLoader = "8,99",
-                    childGroupsRegistrationEnd = Instant.now().plus(35, ChronoUnit.DAYS)
+                    childGroupsRegistrationEnd = Instant.now().plus(35, ChronoUnit.DAYS),
+                    helpersRegistrationEnd = Instant.now().plus(33, ChronoUnit.DAYS)
                 )
             )
         }
@@ -63,6 +64,10 @@ class SettingsService(
                 childGroupsCanBeEdited()
             }
 
+            is HelperEntity -> {
+                helpersCanBeEdited()
+            }
+
             else -> false
         }
     }
@@ -77,5 +82,9 @@ class SettingsService(
 
     fun canRegistrationFilesDownloaded(): Boolean {
         return Instant.now().isAfter(getSettings().startDownloadRegistrationFiles)
+    }
+
+    fun helpersCanBeEdited(): Boolean {
+        return Instant.now().isBefore(getSettings().helpersRegistrationEnd)
     }
 }

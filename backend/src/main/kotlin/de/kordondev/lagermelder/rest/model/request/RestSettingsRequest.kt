@@ -48,7 +48,11 @@ data class RestSettingsRequest(
 
     @NotNull
     @NotBlank
-    val childGroupsRegistrationEnd: Instant
+    val childGroupsRegistrationEnd: Instant,
+
+    @NotNull
+    @NotBlank
+    val helpersRegistrationEnd: Instant
 
 ) {
     companion object {
@@ -64,7 +68,8 @@ data class RestSettingsRequest(
             organisationAddress = settings.organisationAddress,
             moneyPerYouthLoader = settings.moneyPerYouthLoader,
             startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles,
-            childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd
+            childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd,
+            helpersRegistrationEnd = settings.helpersRegistrationEnd
         )
     }
 }

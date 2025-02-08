@@ -16,7 +16,8 @@ data class RestSettings(
     val organisationAddress: String, // Multiline
     val moneyPerYouthLoader: String,
     val startDownloadRegistrationFiles: Instant,
-    val childGroupsRegistrationEnd: Instant
+    val childGroupsRegistrationEnd: Instant,
+    val helpersRegistrationEnd: Instant
 ) {
     companion object {
         fun of(settings: SettingsEntry) = RestSettings(
@@ -31,7 +32,8 @@ data class RestSettings(
             organisationAddress = settings.organisationAddress,
             moneyPerYouthLoader = settings.moneyPerYouthLoader,
             startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles,
-            childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd
+            childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd,
+            helpersRegistrationEnd = settings.helpersRegistrationEnd
         )
 
         fun to(settings: RestSettings) = SettingsEntry(
@@ -46,7 +48,8 @@ data class RestSettings(
             organisationAddress = settings.organisationAddress,
             moneyPerYouthLoader = settings.moneyPerYouthLoader,
             startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles,
-            childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd
+            childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd,
+            helpersRegistrationEnd = settings.helpersRegistrationEnd
         )
     }
 }

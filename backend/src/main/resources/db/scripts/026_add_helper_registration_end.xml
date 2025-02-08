@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+
+    <changeSet id="20250206" author="kordon">
+        <sql>
+            ALTER TABLE settings
+                ADD COLUMN helpers_registration_end DATE not null default '9999-12-31';
+        </sql>
+    </changeSet>
+</databaseChangeLog>

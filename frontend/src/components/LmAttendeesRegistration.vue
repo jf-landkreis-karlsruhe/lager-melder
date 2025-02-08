@@ -43,6 +43,8 @@ let attendeesRegistrationEnd: Date | null = null
 let attendeesCanBeEdited: boolean = false
 let childGroupRegistrationEnd: Date | null = null
 let childGroupCanBeEdited: boolean = true
+let helpersRegistrationEnd: Date | null = null
+let helpersCanBeEdited: boolean = true
 
 // REFS
 const attendees = ref<Attendees>(defaultAttendees)
@@ -149,7 +151,7 @@ const handleUpdateAttendee = async (att: Attendee, ownRef: InstanceType<typeof L
     ...getAttendeeDefault(att.role, att.departmentId),
     ...att
   }
-  // replace udpated attendee in local list
+  // replace updated attendee in local list
   attendees.value = {
     ...attendees.value,
     [getAttendeeTypeByRole(att.role)]: attendees.value[getAttendeeTypeByRole(att.role)].map((a) =>
@@ -183,6 +185,8 @@ onBeforeMount(async () => {
   attendeesCanBeEdited = response.attendeesCanBeEdited
   childGroupRegistrationEnd = response.childGroupRegistrationEnd
   childGroupCanBeEdited = response.childGroupsCanBeEdited
+  helpersRegistrationEnd = response.helpersRegistrationEnd
+  helpersCanBeEdited = response.helpersCanBeEdited
 })
 
 onMounted(async () => {
@@ -344,14 +348,14 @@ function scrollTo(el: HTMLElement, callback: () => void) {
 
     <div v-if="department && department.features.includes(DepartmentFeatures.HELPER)" class="mt-12 helpers-group">
       <h2>Helfer Gruppe</h2>
-      <LmRegistrationEndBanner :registrationEnd="childGroupRegistrationEnd" />
+      <LmRegistrationEndBanner :registrationEnd="helpersRegistrationEnd" />
 
       <LmAttendeeExpandableWithHeader
         header-label="Helfer"
         :department="props.department"
         :attendee-list="helpersAttendeeList"
         :role="attendeeRoleHelper"
-        :attendeesCanBeEdited="childGroupCanBeEdited"
+        :attendeesCanBeEdited="helpersCanBeEdited"
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"

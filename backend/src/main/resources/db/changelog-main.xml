@@ -28,5 +28,6 @@
     <include file="classpath:db/scripts/023_pause_department.xml"/>
     <include file="classpath:db/scripts/024_tent_markings.xml"/>
     <include file="classpath:db/scripts/025_contact_kommandant.xml"/>
+    <include file="classpath:db/scripts/026_add_helper_registration_end.xml"/>
 
 </databaseChangeLog>
