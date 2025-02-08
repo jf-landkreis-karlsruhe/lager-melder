@@ -59,7 +59,11 @@ const handleFormSave = (editedAttendee: Attendee) => {
             <span v-if="props.attendee.birthday">*{{ dateAsText(props.attendee.birthday) }}</span>
           </div>
         </div>
-        <div class="shirt-and-food d-flex justify-start" style="flex: 3">
+        <div
+          class="shirt-and-food d-flex justify-start"
+          style="flex: 3"
+          v-if="props.role !== AttendeeRole.CHILD && props.role != AttendeeRole.CHILD_LEADER"
+        >
           <div class="shirt d-flex flex-column justify-center align-center mr-sm-10">
             <v-icon class="mb-1">mdi-tshirt-crew-outline</v-icon>
             <div class="name d-none d-sm-inline-block">{{ props.attendee.tShirtSize }}</div>

@@ -200,7 +200,7 @@ class PlanningFilesService(
             DepartmentEntry(0, "Zeltlager gesamt", "", "", "", "", emptySet(), "", false, emptySet(), null)
         val allAttendees = attendeeService.getAttendees()
         val totalTShirtCount =
-            countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids + allAttendees.helpers)
+            countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.zKids + allAttendees.helpers)
         val eventStart = settingsService.getSettings().eventStart
         val totalBraceletCount = countBracelet(
             allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids,
@@ -225,14 +225,14 @@ class PlanningFilesService(
                 addTShirtsAndBraceletForDepartment(department.name, tShirtSizes, tShirtCount, braceletCount, document)
             }
             if (attendees.children.isNotEmpty() || attendees.childLeaders.isNotEmpty()) {
-                val tShirtCount = countTShirtPerSize(attendees.children + attendees.childLeaders)
                 val braceletCount = countBracelet(attendees.children + attendees.childLeaders, eventStart)
                 addTShirtsAndBraceletForDepartment(
                     "${department.name} Kindergruppe",
-                    tShirtSizes,
-                    tShirtCount,
+                    listOf<String>().toMutableList(),
+                    mapOf<String, Int>().toMutableMap(),
                     braceletCount,
-                    document
+                    document,
+                    true
                 )
             }
             if (attendees.helpers.isNotEmpty()) {
@@ -256,25 +256,28 @@ class PlanningFilesService(
         tShirtSizes: MutableList<String>,
         tShirtCount: MutableMap<String, Int>,
         braceletCount: MutableMap<Color, Int>,
-        document: Document
+        document: Document,
+        skipTShirt: Boolean = false
     ) {
         val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
         document.add(Paragraph("Abteilung: $departmentName", headlineFont))
-        document.add(Paragraph("Kreiszeltlager - T-Shirt", headlineFont))
 
-        val table = Table(2)
-        table.borderWidth = 1F
-        table.borderColor = Color(0, 0, 0)
-        table.padding = 5F
-        table.spacing = 0F
-        table.addCell("Größe:")
-        table.addCell("Anzahl:")
-        table.endHeaders()
-        for (size in tShirtSizes) {
-            table.addCell(size)
-            table.addCell("${tShirtCount[size] ?: 0}")
+        if (!skipTShirt) {
+            document.add(Paragraph("Kreiszeltlager - T-Shirt", headlineFont))
+            val table = Table(2)
+            table.borderWidth = 1F
+            table.borderColor = Color(0, 0, 0)
+            table.padding = 5F
+            table.spacing = 0F
+            table.addCell("Größe:")
+            table.addCell("Anzahl:")
+            table.endHeaders()
+            for (size in tShirtSizes) {
+                table.addCell(size)
+                table.addCell("${tShirtCount[size] ?: 0}")
+            }
+            document.add(table)
         }
-        document.add(table)
 
         document.add(Paragraph("Kreiszeltlager - Armband", headlineFont))
         val braceletTable = Table(2)
@@ -461,11 +464,11 @@ class PlanningFilesService(
         val departments = departmentService.getDepartments().sortedBy { it.headDepartmentName + it.name }
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartmentWithZKidsBeingPartOf(department.id)
-            if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty() && attendees.children.isEmpty() && attendees.childLeaders.isEmpty() && attendees.zKids.isEmpty() && attendees.helpers.isEmpty()) {
+            if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty() && attendees.zKids.isEmpty() && attendees.helpers.isEmpty()) {
                 continue
             }
             if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty() || attendees.zKids.isNotEmpty()) {
-                addDepartmentTableToDocument(
+                addTShirtsAndBraceletsPerPersonToDocument(
                     document,
                     department.name,
                     attendees.youths + attendees.youthLeaders + attendees.zKids,
@@ -473,17 +476,8 @@ class PlanningFilesService(
                 )
             }
 
-            if (attendees.children.isNotEmpty() || attendees.childLeaders.isNotEmpty()) {
-                addDepartmentTableToDocument(
-                    document,
-                    "${department.name} Kindergruppe",
-                    attendees.children + attendees.childLeaders,
-                    eventStart
-                )
-            }
-
             if (attendees.helpers.isNotEmpty()) {
-                addDepartmentTableToDocument(
+                addTShirtsAndBraceletsPerPersonToDocument(
                     document,
                     "${department.name} Helfer",
                     attendees.helpers,
@@ -533,7 +527,7 @@ class PlanningFilesService(
         return out.toByteArray()
     }
 
-    private fun addDepartmentTableToDocument(
+    private fun addTShirtsAndBraceletsPerPersonToDocument(
         document: Document,
         departmentName: String,
         attendees: kotlin.collections.List<Attendee>,
