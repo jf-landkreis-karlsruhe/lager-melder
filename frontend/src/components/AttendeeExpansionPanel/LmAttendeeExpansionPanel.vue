@@ -16,6 +16,7 @@ const props = defineProps<{
   eventDays: EventDays[]
   tShirtSizes: TShirtSizeSelect[]
   loading?: boolean
+  attendeesCanBeEdited: boolean
 }>()
 
 const emit = defineEmits<{
@@ -40,8 +41,12 @@ const handleFormSave = (editedAttendee: Attendee) => {
 </script>
 
 <template>
-  <v-expansion-panel>
-    <v-expansion-panel-title expand-icon="mdi-menu-down" ref="expansionPanel">
+  <v-expansion-panel :readonly="!props.attendeesCanBeEdited">
+    <v-expansion-panel-title
+      :expand-icon="props.attendeesCanBeEdited ? 'mdi-menu-down' : ''"
+      ref="expansionPanel"
+      :class="props.attendeesCanBeEdited ? '' : 'readonly'"
+    >
       <div class="d-flex justify-space-between align-center flex-1-1-100">
         <div class="d-flex align-center" style="flex: 2">
           <div class="user-icon position-relative mr-4">
@@ -162,5 +167,9 @@ const handleFormSave = (editedAttendee: Attendee) => {
     text-overflow: ellipsis;
     max-width: 80px;
   }
+}
+
+.v-expansion-panel-title.readonly {
+  cursor: default;
 }
 </style>

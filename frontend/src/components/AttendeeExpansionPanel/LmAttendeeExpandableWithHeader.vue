@@ -103,6 +103,7 @@ const handleSaveNewAttendee = (newAttendee: Attendee) => {
         :event-days="props.eventDays"
         :t-shirt-sizes="props.tShirtSizes"
         :loading="loading"
+        :attendeesCanBeEdited="props.attendeesCanBeEdited"
         ref="expansionPanels"
         @update="emit('update', $event, expansionPanels[index])"
         @delete="emit('delete', $event)"
