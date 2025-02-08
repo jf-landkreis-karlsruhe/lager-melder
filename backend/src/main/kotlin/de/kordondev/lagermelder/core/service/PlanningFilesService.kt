@@ -468,7 +468,7 @@ class PlanningFilesService(
                 continue
             }
             if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty() || attendees.zKids.isNotEmpty()) {
-                addDepartmentTableToDocument(
+                addTShirtsAndBraceletsPerPersonToDocument(
                     document,
                     department.name,
                     attendees.youths + attendees.youthLeaders + attendees.zKids,
@@ -477,7 +477,7 @@ class PlanningFilesService(
             }
 
             if (attendees.helpers.isNotEmpty()) {
-                addDepartmentTableToDocument(
+                addTShirtsAndBraceletsPerPersonToDocument(
                     document,
                     "${department.name} Helfer",
                     attendees.helpers,
@@ -527,7 +527,7 @@ class PlanningFilesService(
         return out.toByteArray()
     }
 
-    private fun addDepartmentTableToDocument(
+    private fun addTShirtsAndBraceletsPerPersonToDocument(
         document: Document,
         departmentName: String,
         attendees: kotlin.collections.List<Attendee>,

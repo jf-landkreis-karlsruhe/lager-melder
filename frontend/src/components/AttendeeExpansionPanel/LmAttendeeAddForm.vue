@@ -39,6 +39,7 @@ const helperDays = computed<HelperDaySelect[]>(() => getHelperDaySelect(props.ev
 
 const handleSubmit = () => {
   if (isFormValid.value) {
+    // Children and child leaders don't get a tShirt, but it is required currently, therefore this is a hack
     if (props.role === AttendeeRole.CHILD || props.role === AttendeeRole.CHILD_LEADER) {
       current.value.tShirtSize = props.tShirtSizes[0].title
     }
@@ -48,7 +49,7 @@ const handleSubmit = () => {
 
 const tshirtRules = [
   (value: string) => {
-    console.log(value, props.role)
+    // Children and child leaders don't get a tShirt
     if (value || AttendeeRole.CHILD === props.role || AttendeeRole.CHILD_LEADER === props.role) return true
 
     return 'TShirt Größe auswählen'
