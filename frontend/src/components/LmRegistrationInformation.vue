@@ -79,7 +79,7 @@ onMounted(() => {
             v-on:submit.prevent="saveRegistrationInformation"
             class="w-30 d-flex align-center flex-column"
           >
-            <label class="text-caption d-block text-grey">SG 200 (4m x 5,9m)</label>
+            <label class="text-caption d-block">SG 200 (4m x 5,9m)</label>
             <v-btn-toggle class="mb-2" v-model="tents.sg200" divided variant="outlined" required>
               <v-btn icon="mdi-numeric-0"></v-btn>
               <v-btn icon="mdi-numeric-1"></v-btn>
@@ -89,7 +89,7 @@ onMounted(() => {
               <v-btn icon="mdi-numeric-5"></v-btn>
               <v-btn icon="mdi-numeric-6"></v-btn>
             </v-btn-toggle>
-            <label class="text-caption d-block text-grey">SG 20 (5m x 4,74m)</label>
+            <label class="text-caption d-block">SG 20 (5m x 4,74m)</label>
             <v-btn-toggle class="mb-2" v-model="tents.sg20" divided variant="outlined" required>
               <v-btn icon="mdi-numeric-0"></v-btn>
               <v-btn icon="mdi-numeric-1"></v-btn>
@@ -99,7 +99,7 @@ onMounted(() => {
               <v-btn icon="mdi-numeric-5"></v-btn>
               <v-btn icon="mdi-numeric-6"></v-btn>
             </v-btn-toggle>
-            <label class="text-caption d-block text-grey">SG 30 (6m x 5,64m)</label>
+            <label class="text-caption d-block">SG 30 (6m x 5,64m)</label>
             <v-btn-toggle class="mb-2" v-model="tents.sg30" divided variant="outlined" required>
               <v-btn icon="mdi-numeric-0"></v-btn>
               <v-btn icon="mdi-numeric-1"></v-btn>
@@ -109,7 +109,7 @@ onMounted(() => {
               <v-btn icon="mdi-numeric-5"></v-btn>
               <v-btn icon="mdi-numeric-6"></v-btn>
             </v-btn-toggle>
-            <label class="text-caption d-block text-grey">SG 40 (8m x 5,64m)</label>
+            <label class="text-caption d-block">SG 40 (8m x 5,64m)</label>
             <v-btn-toggle class="mb-2" v-model="tents.sg40" divided variant="outlined" required>
               <v-btn icon="mdi-numeric-0"></v-btn>
               <v-btn icon="mdi-numeric-1"></v-btn>
@@ -119,7 +119,7 @@ onMounted(() => {
               <v-btn icon="mdi-numeric-5"></v-btn>
               <v-btn icon="mdi-numeric-6"></v-btn>
             </v-btn-toggle>
-            <label class="text-caption d-block text-grey">SG 50 (10m x 5,64m)</label>
+            <label class="text-caption d-block">SG 50 (10m x 5,64m)</label>
             <v-btn-toggle class="mb-2" v-model="tents.sg50" divided variant="outlined" required>
               <v-btn icon="mdi-numeric-0"></v-btn>
               <v-btn icon="mdi-numeric-1"></v-btn>
