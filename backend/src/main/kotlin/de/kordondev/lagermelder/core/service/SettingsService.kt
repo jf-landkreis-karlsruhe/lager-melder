@@ -52,9 +52,6 @@ class SettingsService(
 
 
     fun canBeEdited(attendee: Attendee): Boolean {
-        if (authorityService.isSpecializedFieldDirectorFilter()) {
-            return true
-        }
         return when (attendee) {
             is YouthEntry, is YouthLeaderEntry -> {
                 attendeesCanBeEdited()
@@ -73,10 +70,16 @@ class SettingsService(
     }
 
     fun attendeesCanBeEdited(): Boolean {
+        if (authorityService.isSpecializedFieldDirectorFilter()) {
+            return true
+        }
         return Instant.now().isBefore(getSettings().registrationEnd)
     }
 
     fun childGroupsCanBeEdited(): Boolean {
+        if (authorityService.isSpecializedFieldDirectorFilter()) {
+            return true
+        }
         return Instant.now().isBefore(getSettings().childGroupsRegistrationEnd)
     }
 
@@ -85,6 +88,9 @@ class SettingsService(
     }
 
     fun helpersCanBeEdited(): Boolean {
+        if (authorityService.isSpecializedFieldDirectorFilter()) {
+            return true
+        }
         return Instant.now().isBefore(getSettings().helpersRegistrationEnd)
     }
 }
