@@ -7,6 +7,7 @@ import LmAttendeeExpansionPanel from '../AttendeeExpansionPanel/LmAttendeeExpans
 import { filterEnteredAttendees } from '@/helper/filterHelper'
 import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeExpansionPanel/helperTypes'
 import type { EventDays } from '@/services/eventDays'
+import { isValidJuleikaExpireDate, isValidJuleikaNumber } from '@/helper/juleika'
 
 const props = defineProps<{
   headerLabel: string
@@ -17,6 +18,7 @@ const props = defineProps<{
   tShirtSizes: TShirtSizeSelect[]
   eventDays: EventDays[]
   departments: DepartmentSelect[]
+  attendeesRegistrationEnd?: Date | null
   loading?: boolean
 }>()
 
@@ -71,6 +73,14 @@ const closeAddNewAttendeeForm = (): void => {
 const handleSaveNewAttendee = (newAttendee: Attendee) => {
   emit('save-new', newAttendee, props.role, closeAddNewAttendeeForm, expansionPanels)
 }
+
+const juleikaIsInvalid = (attendee: Attendee): boolean => {
+  return (
+    attendee.role === AttendeeRole.YOUTH_LEADER &&
+    (!isValidJuleikaNumber(attendee.juleikaNumber) ||
+      !isValidJuleikaExpireDate(attendee.juleikaExpireDate, props.attendeesRegistrationEnd))
+  )
+}
 </script>
 
 <template>
@@ -108,6 +118,7 @@ const handleSaveNewAttendee = (newAttendee: Attendee) => {
         :t-shirt-sizes="props.tShirtSizes"
         :loading="loading"
         :attendeesCanBeEdited="props.attendeesCanBeEdited"
+        :is-highlighted="juleikaIsInvalid(attendee)"
         ref="expansionPanels"
         @update="emit('update', $event, expansionPanels[index])"
         @delete="emit('delete', $event)"

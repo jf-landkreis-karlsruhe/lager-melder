@@ -24,6 +24,7 @@ import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeEx
 import { type EventDays, getEventDays } from '@/services/eventDays'
 import { getErrorMessage } from '@/services/errorConstants'
 import { useToast } from 'vue-toastification'
+import { isValidJuleikaExpireDate, isValidJuleikaNumber } from '@/helper/juleika'
 
 const toast = useToast()
 
@@ -119,27 +120,17 @@ const numberOfValidYouthLeaders = computed<number>(() => {
     .filter(youthLeaderValidJuleikaExpireDateFilter).length
 })
 
-const numberOfNeededValidYouthLeaders = computed<number>(() => {
-  return Math.ceil(attendees.value.youths.length / NUMBER_YOUTH_LEADER_PER_YOUTHS)
-})
-
-const isValidJuleikaExpireDate = (juleikaExpireDate: string | null) => {
-  if (!juleikaExpireDate) return false
-  if (!attendeesRegistrationEnd) return true // if no registration end is set, no validation is needed
-  return new Date(Date.parse(juleikaExpireDate)) >= attendeesRegistrationEnd
-}
-
-const youthLeaderValidJuleikaExpireDateFilter = (youthLeader: Attendee) => {
-  return isValidJuleikaExpireDate(youthLeader.juleikaExpireDate)
-}
-
-const isValidJuleikaNumber = (juleikaNumber: string) => {
-  return juleikaNumber.length > 0
-}
-
 const youthLeaderValidJuleikaNumberFilter = (youthLeader: Attendee) => {
   return isValidJuleikaNumber(youthLeader.juleikaNumber)
 }
+
+const youthLeaderValidJuleikaExpireDateFilter = (youthLeader: Attendee) => {
+  return isValidJuleikaExpireDate(youthLeader.juleikaExpireDate, attendeesRegistrationEnd)
+}
+
+const numberOfNeededValidYouthLeaders = computed<number>(() => {
+  return Math.ceil(attendees.value.youths.length / NUMBER_YOUTH_LEADER_PER_YOUTHS)
+})
 
 const saveNewAttendee = async (
   newAttendee: Attendee,
@@ -305,6 +296,7 @@ function scrollTo(el: HTMLElement, callback: () => void) {
         :departments="departments"
         :event-days="eventDays"
         :loading="loading"
+        :attendees-registration-end="attendeesRegistrationEnd"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"

@@ -17,6 +17,7 @@ const props = defineProps<{
   tShirtSizes: TShirtSizeSelect[]
   loading?: boolean
   attendeesCanBeEdited: boolean
+  isHighlighted?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -41,7 +42,7 @@ const handleFormSave = (editedAttendee: Attendee) => {
 </script>
 
 <template>
-  <v-expansion-panel :readonly="!props.attendeesCanBeEdited">
+  <v-expansion-panel :readonly="!props.attendeesCanBeEdited" :class="{ highlighted: props.isHighlighted }">
     <v-expansion-panel-title
       :expand-icon="props.attendeesCanBeEdited ? 'mdi-menu-down' : ''"
       ref="expansionPanel"
@@ -143,6 +144,11 @@ const handleFormSave = (editedAttendee: Attendee) => {
 <style scoped lang="scss">
 .hidden {
   visibility: hidden;
+}
+
+.highlighted {
+  border: 2px solid red;
+  border-radius: 4px;
 }
 
 .is-attending-icon {
