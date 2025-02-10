@@ -21,6 +21,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - SPRING_DATASOURCE_URL=jdbc:mysql://lm-mysql:3306/lager_melder
+      - JAVA_TOOL_OPTIONS="-XX:UseSVE=0"
     depends_on:
       - "database"
     volumes:
