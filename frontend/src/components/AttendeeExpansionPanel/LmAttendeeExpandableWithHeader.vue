@@ -92,6 +92,10 @@ const handleSaveNewAttendee = (newAttendee: Attendee) => {
       </label>
     </div>
 
+    <div class="default-slot-content">
+      <slot></slot>
+    </div>
+
     <v-expansion-panels class="mb-4" :key="attendeeListWithAllAttributes.length">
       <LmAttendeeExpansionPanel
         v-for="(attendee, index) in attendeeListWithAllAttributes"
@@ -135,5 +139,10 @@ const handleSaveNewAttendee = (newAttendee: Attendee) => {
 .additional-information {
   font-size: 16px;
   color: rgba(0, 0, 0, 0.6);
+}
+
+.default-slot-content {
+  margin-block-start: 16px;
+  margin-block-end: 24px;
 }
 </style>
