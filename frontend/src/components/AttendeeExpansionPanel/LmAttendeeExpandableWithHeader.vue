@@ -19,6 +19,7 @@ const props = defineProps<{
   eventDays: EventDays[]
   departments: DepartmentSelect[]
   attendeesRegistrationEnd?: Date | null
+  showHighlights?: boolean
   loading?: boolean
 }>()
 
@@ -118,7 +119,7 @@ const juleikaIsInvalid = (attendee: Attendee): boolean => {
         :t-shirt-sizes="props.tShirtSizes"
         :loading="loading"
         :attendeesCanBeEdited="props.attendeesCanBeEdited"
-        :is-highlighted="juleikaIsInvalid(attendee)"
+        :is-highlighted="props.showHighlights && juleikaIsInvalid(attendee)"
         ref="expansionPanels"
         @update="emit('update', $event, expansionPanels[index])"
         @delete="emit('delete', $event)"

@@ -114,6 +114,10 @@ const totalAttendeeCount = computed<number>(() => {
   return attendees.value.youths.length + attendees.value.youthLeaders.length
 })
 
+const numberOfNeededValidYouthLeaders = computed<number>(() => {
+  return Math.ceil(attendees.value.youths.length / NUMBER_YOUTH_LEADER_PER_YOUTHS)
+})
+
 const numberOfValidYouthLeaders = computed<number>(() => {
   return youthLeaderAttendeeList.value
     .filter(youthLeaderValidJuleikaNumberFilter)
@@ -127,10 +131,6 @@ const youthLeaderValidJuleikaNumberFilter = (youthLeader: Attendee) => {
 const youthLeaderValidJuleikaExpireDateFilter = (youthLeader: Attendee) => {
   return isValidJuleikaExpireDate(youthLeader.juleikaExpireDate, attendeesRegistrationEnd)
 }
-
-const numberOfNeededValidYouthLeaders = computed<number>(() => {
-  return Math.ceil(attendees.value.youths.length / NUMBER_YOUTH_LEADER_PER_YOUTHS)
-})
 
 const saveNewAttendee = async (
   newAttendee: Attendee,
@@ -296,6 +296,7 @@ function scrollTo(el: HTMLElement, callback: () => void) {
         :departments="departments"
         :event-days="eventDays"
         :loading="loading"
+        :show-highlights="numberOfValidYouthLeaders < numberOfNeededValidYouthLeaders"
         :attendees-registration-end="attendeesRegistrationEnd"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
