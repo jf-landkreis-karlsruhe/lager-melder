@@ -48,6 +48,7 @@ let attendeesCanBeEdited: boolean = false
 let childGroupRegistrationEnd: Date | null = null
 let helpersRegistrationEnd: Date | null = null
 let helpersCanBeEdited: boolean = true
+let eventEnd: Date | null = null
 
 // REFS
 const attendees = ref<Attendees>(defaultAttendees)
@@ -129,7 +130,7 @@ const youthLeaderValidJuleikaNumberFilter = (youthLeader: Attendee) => {
 }
 
 const youthLeaderValidJuleikaExpireDateFilter = (youthLeader: Attendee) => {
-  return isValidJuleikaExpireDate(youthLeader.juleikaExpireDate, attendeesRegistrationEnd)
+  return isValidJuleikaExpireDate(youthLeader.juleikaExpireDate, eventEnd)
 }
 
 const saveNewAttendee = async (
@@ -207,6 +208,7 @@ onBeforeMount(async () => {
   childGroupRegistrationEnd = response.childGroupRegistrationEnd
   helpersRegistrationEnd = response.helpersRegistrationEnd
   helpersCanBeEdited = response.helpersCanBeEdited
+  eventEnd = response.eventEnd
 })
 
 onMounted(async () => {
@@ -297,7 +299,7 @@ function scrollTo(el: HTMLElement, callback: () => void) {
         :event-days="eventDays"
         :loading="loading"
         :show-highlights="numberOfValidYouthLeaders < numberOfNeededValidYouthLeaders"
-        :attendees-registration-end="attendeesRegistrationEnd"
+        :event-end="eventEnd"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"

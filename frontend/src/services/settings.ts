@@ -33,6 +33,7 @@ export interface RegistrationEnd<T = Date> {
   childGroupsCanBeEdited: boolean
   helpersRegistrationEnd: T
   helpersCanBeEdited: boolean
+  eventEnd: T
 }
 
 export const getRegistrationEnd = () => {
@@ -41,7 +42,8 @@ export const getRegistrationEnd = () => {
       ...settings,
       registrationEnd: new Date(settings.registrationEnd),
       childGroupRegistrationEnd: new Date(settings.childGroupsRegistrationEnd),
-      helpersRegistrationEnd: new Date(settings.helpersRegistrationEnd)
+      helpersRegistrationEnd: new Date(settings.helpersRegistrationEnd),
+      eventEnd: new Date(settings.eventEnd)
     }
   })
 }

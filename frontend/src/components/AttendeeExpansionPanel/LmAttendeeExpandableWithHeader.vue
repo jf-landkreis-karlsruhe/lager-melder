@@ -18,7 +18,7 @@ const props = defineProps<{
   tShirtSizes: TShirtSizeSelect[]
   eventDays: EventDays[]
   departments: DepartmentSelect[]
-  attendeesRegistrationEnd?: Date | null
+  eventEnd?: Date | null
   showHighlights?: boolean
   loading?: boolean
 }>()
@@ -79,7 +79,7 @@ const juleikaIsInvalid = (attendee: Attendee): boolean => {
   return (
     attendee.role === AttendeeRole.YOUTH_LEADER &&
     (!isValidJuleikaNumber(attendee.juleikaNumber) ||
-      !isValidJuleikaExpireDate(attendee.juleikaExpireDate, props.attendeesRegistrationEnd))
+      !isValidJuleikaExpireDate(attendee.juleikaExpireDate, props.eventEnd))
   )
 }
 </script>

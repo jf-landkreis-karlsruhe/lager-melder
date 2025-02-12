@@ -1,7 +1,7 @@
-const isValidJuleikaExpireDate = (juleikaExpireDate: string | null, registrationEnd?: Date | null) => {
+const isValidJuleikaExpireDate = (juleikaExpireDate: string | null, eventEnd?: Date | null) => {
   if (!juleikaExpireDate) return false
-  if (!registrationEnd) return true // if no registration end is set, no validation is needed
-  return new Date(Date.parse(juleikaExpireDate)) >= registrationEnd
+  if (!eventEnd) return true // if no event end is set, no validation is needed
+  return new Date(Date.parse(juleikaExpireDate)) >= eventEnd
 }
 
 const isValidJuleikaNumber = (juleikaNumber: string) => {
