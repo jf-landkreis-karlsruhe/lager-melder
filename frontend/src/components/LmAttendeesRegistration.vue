@@ -24,12 +24,16 @@ import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeEx
 import { type EventDays, getEventDays } from '@/services/eventDays'
 import { getErrorMessage } from '@/services/errorConstants'
 import { useToast } from 'vue-toastification'
+import { isValidJuleikaExpireDate, isValidJuleikaNumber } from '@/helper/juleika'
 
 const toast = useToast()
 
 const props = defineProps<{
   department: Department
 }>()
+
+// Constants
+const NUMBER_YOUTH_LEADER_PER_YOUTHS = 5
 
 // Variables
 const attendeeRoleYouth: AttendeeRole = AttendeeRole.YOUTH
@@ -42,9 +46,9 @@ const attendeeRoleHelper: AttendeeRole = AttendeeRole.HELPER
 let attendeesRegistrationEnd: Date | null = null
 let attendeesCanBeEdited: boolean = false
 let childGroupRegistrationEnd: Date | null = null
-let childGroupCanBeEdited: boolean = true
 let helpersRegistrationEnd: Date | null = null
 let helpersCanBeEdited: boolean = true
+let eventEnd: Date | null = null
 
 // REFS
 const attendees = ref<Attendees>(defaultAttendees)
@@ -111,6 +115,24 @@ const totalAttendeeCount = computed<number>(() => {
   return attendees.value.youths.length + attendees.value.youthLeaders.length
 })
 
+const numberOfNeededValidYouthLeaders = computed<number>(() => {
+  return Math.ceil(attendees.value.youths.length / NUMBER_YOUTH_LEADER_PER_YOUTHS)
+})
+
+const numberOfValidYouthLeaders = computed<number>(() => {
+  return youthLeaderAttendeeList.value
+    .filter(youthLeaderValidJuleikaNumberFilter)
+    .filter(youthLeaderValidJuleikaExpireDateFilter).length
+})
+
+const youthLeaderValidJuleikaNumberFilter = (youthLeader: Attendee) => {
+  return isValidJuleikaNumber(youthLeader.juleikaNumber)
+}
+
+const youthLeaderValidJuleikaExpireDateFilter = (youthLeader: Attendee) => {
+  return isValidJuleikaExpireDate(youthLeader.juleikaExpireDate, eventEnd)
+}
+
 const saveNewAttendee = async (
   newAttendee: Attendee,
   role: AttendeeRole,
@@ -142,7 +164,7 @@ const saveNewAttendee = async (
     lastExpansionPanel.classList.add('highlight-bump')
     setTimeout(() => {
       lastExpansionPanel.classList.remove('highlight-bump')
-    }, 1000)
+    }, 500) // animation duration
   })
 }
 
@@ -184,9 +206,9 @@ onBeforeMount(async () => {
   attendeesRegistrationEnd = response.registrationEnd
   attendeesCanBeEdited = response.attendeesCanBeEdited
   childGroupRegistrationEnd = response.childGroupRegistrationEnd
-  childGroupCanBeEdited = response.childGroupsCanBeEdited
   helpersRegistrationEnd = response.helpersRegistrationEnd
   helpersCanBeEdited = response.helpersCanBeEdited
+  eventEnd = response.eventEnd
 })
 
 onMounted(async () => {
@@ -276,10 +298,31 @@ function scrollTo(el: HTMLElement, callback: () => void) {
         :departments="departments"
         :event-days="eventDays"
         :loading="loading"
+        :show-highlights="numberOfValidYouthLeaders < numberOfNeededValidYouthLeaders"
+        :event-end="eventEnd"
         @save-new="saveNewAttendee"
         @update="handleUpdateAttendee"
         @delete="deleteAttendee"
-      />
+      >
+        <Transition name="shake" mode="out-in" :appear="true">
+          <v-alert
+            v-if="numberOfValidYouthLeaders < numberOfNeededValidYouthLeaders"
+            transition="scale-transition"
+            color="error"
+            type="warning"
+            :title="`Zu wenig Jugendleiter mit Juleika vorhanden (${numberOfValidYouthLeaders} von ${numberOfNeededValidYouthLeaders})`"
+            border="top"
+          >
+            <div>
+              <p>
+                Pro angefangene {{ NUMBER_YOUTH_LEADER_PER_YOUTHS }} Jugendliche ist ein Jugendleiter mit gültiger
+                Juleika erforderlich. <br />
+                Dazu bitte Juleikanummer und -Ablaufdatum angeben.
+              </p>
+            </div>
+          </v-alert>
+        </Transition>
+      </LmAttendeeExpandableWithHeader>
 
       <div v-if="department && department.id">
         <RegistrationInformation
@@ -408,6 +451,40 @@ function scrollTo(el: HTMLElement, callback: () => void) {
     100% {
       transform: scale(1);
     }
+  }
+}
+
+.shake-enter-active {
+  animation: horizontal-shaking 0.3s;
+}
+.shake-leave-active {
+  animation: fade-out 0.4s;
+}
+
+@keyframes horizontal-shaking {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(5px);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 </style>

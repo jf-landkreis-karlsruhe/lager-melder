@@ -36,7 +36,7 @@ class SettingsController(
                     it,
                     settingsService.attendeesCanBeEdited(),
                     settingsService.childGroupsCanBeEdited(),
-                    settingsService.helpersCanBeEdited()
+                    settingsService.helpersCanBeEdited(),
                 )
             }
     }
