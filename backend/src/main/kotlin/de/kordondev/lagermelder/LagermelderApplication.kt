@@ -26,7 +26,7 @@ class LagermelderApplication {
         @Value("\${application.admin.passwordHash}") adminHash: String
     ) = ApplicationRunner {
         logger.info("Initializing database")
-        val adminUsername = "admin"
+        val adminUsername = "admin@jf-landkreis-karlsruhe.de"
         userRepository.findOneByUserName(adminUsername)
             ?: createAdmin(departmentRepository, userRepository, adminUsername, adminHash)
     }
