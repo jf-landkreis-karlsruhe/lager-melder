@@ -34,3 +34,4 @@ terraform.rc
 
 account-creator/jugendwarte.csv
 account-creator/main
+account-creator/.idea/

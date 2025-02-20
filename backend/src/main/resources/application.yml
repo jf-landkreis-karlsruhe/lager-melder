@@ -17,8 +17,8 @@ spring:
     password: p
 logging:
   level:
-    org.springframework.web: ERROR
-    org.springframework.web.filter.CommonsRequestLoggingFilter: ERROR
+    org.springframework.web: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
 server:
   error:
     include-message: always
