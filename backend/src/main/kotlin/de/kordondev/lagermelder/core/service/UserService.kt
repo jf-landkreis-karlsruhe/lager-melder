@@ -63,13 +63,13 @@ class UserService(
         userRepository
             .findOneByUserName(newUser.userName)
             ?.let { throw ResourceAlreadyExistsException("Username already exists") }
-        val password = PasswordGenerator.generatePassword()
+        val password = if (newUser.passWord == "") PasswordGenerator.generatePassword() else newUser.passWord
         val userWithEncryptedPassword = newUser.copy(passWord = bCryptPasswordEncoder.encode(password))
         val settings = settingsService.getSettings()
         return userRepository
             .save(userWithEncryptedPassword)
             .copy(passWord = "")
-            .also { sendEmail(it, newUser.passWord, settings) }
+            .also { sendEmail(it, password, settings) }
     }
 
     fun saveResetPassword(userToChange: UserEntry): UserEntry {

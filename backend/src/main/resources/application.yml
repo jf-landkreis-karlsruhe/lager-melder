@@ -9,7 +9,7 @@ spring:
     change-log: classpath:db/changelog-main.xml
 
   mail:
-    port: 25
+    port: 587
     debug: false
     from: test@spam.com
     host: h
@@ -17,8 +17,8 @@ spring:
     password: p
 logging:
   level:
-    org.springframework.web: ERROR
-    org.springframework.web.filter.CommonsRequestLoggingFilter: ERROR
+    org.springframework.web: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
 server:
   error:
     include-message: always
