@@ -12,7 +12,9 @@ import (
 
 func CreateAccount(account models.AccountData, accessToken string, url string) models.RegisterResponse {
 	// Create a new request using http
-	req, err := http.NewRequest("POST", url+"/register", toBody(account))
+	registerUrl := url + "/register"
+	log.Println("Creating account", registerUrl, account)
+	req, err := http.NewRequest("POST", registerUrl, toBody(account))
 	log.Println("Request ", account)
 
 	// add authorization header to the req
@@ -39,8 +41,6 @@ func CreateAccount(account models.AccountData, accessToken string, url string) m
 	log.Println("Created", registerResponse)
 	return registerResponse
 }
-
-// kotlin to go
 
 type RestDepartment struct {
 	Name               string   `json:"name"`
