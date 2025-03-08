@@ -98,12 +98,11 @@ class DepartmentController(
         val department = departmentService.getDepartment(id)
         tentsService.checkCanTentsBeEdited()
         departmentService
-            .saveDepartment(
-                department.copy(
-                    phoneNumber = registrationRequest.departmentPhoneNumber,
-                    nameKommandant = registrationRequest.nameKommandant,
-                    phoneNumberKommandant = registrationRequest.phoneNumberKommandant
-                )
+            .updateContactDetails(
+                department,
+                registrationRequest.departmentPhoneNumber,
+                registrationRequest.nameKommandant,
+                registrationRequest.phoneNumberKommandant
             )
         return tentsService
             .saveForDepartment(RestTents.to(registrationRequest.tents, department))
