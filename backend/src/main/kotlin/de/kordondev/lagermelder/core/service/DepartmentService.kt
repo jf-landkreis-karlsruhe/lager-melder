@@ -61,6 +61,22 @@ class DepartmentService(
     }
 
     @Transactional
+    fun updateContactDetails(
+        department: DepartmentEntry,
+        departmentPhoneNumber: String,
+        nameKommandant: String,
+        phoneNumberKommandant: String
+    ): DepartmentEntry {
+        return departmentRepository.save(
+            department.copy(
+                phoneNumber = departmentPhoneNumber,
+                nameKommandant = nameKommandant,
+                phoneNumberKommandant = phoneNumberKommandant
+            )
+        )
+    }
+
+    @Transactional
     fun updateTentMarkings(
         departmentId: Long,
         tentMarkings: Set<RestDepartmentTentMarkingRequest>,
