@@ -5,7 +5,7 @@ services:
     image: "mysql"
     container_name: lm-mysql
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     volumes:
       - ./data01:/var/lib/mysql
     environment:

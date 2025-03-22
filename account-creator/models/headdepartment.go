@@ -661,4 +661,9 @@ var Departments = map[string]Department{
 		Name:           "Ausbildung",
 		ShortName:      "Ausbildung",
 	},
+	"fgl.zeltlager": {
+		HeadDepartment: "LK Karlsruhe",
+		Name:           "Zeltlager",
+		ShortName:      "Zeltlager",
+	},
 }
