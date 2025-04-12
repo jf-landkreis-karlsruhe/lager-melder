@@ -154,7 +154,7 @@ const saveNewAttendee = async (
   if (!newAtt) return
 
   const type = getAttendeeTypeByRole(role)
-  attendees.value = { ...attendees.value, [type]: [...attendees.value[type], newAttendee] }
+  attendees.value = { ...attendees.value, [type]: [...attendees.value[type], newAtt] }
   handleCloseAddNewForm()
   await nextTick()
   loading.value = false
