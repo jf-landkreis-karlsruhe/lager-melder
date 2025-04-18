@@ -165,6 +165,9 @@ const handleFormSave = (editedAttendee: Attendee) => {
   .food {
     width: 90px;
   }
+  .shirt {
+    width: 60px;
+  }
 }
 .shirt,
 .food {

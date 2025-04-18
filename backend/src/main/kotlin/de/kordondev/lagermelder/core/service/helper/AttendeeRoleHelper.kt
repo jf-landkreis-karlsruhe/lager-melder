@@ -3,7 +3,6 @@ package de.kordondev.lagermelder.core.service.helper
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.BaseAttendeeEntry
-import de.kordondev.lagermelder.core.persistence.entry.YouthLeaderEntry
 import de.kordondev.lagermelder.core.persistence.entry.YouthPlanAttendeeRoleEntry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import org.springframework.stereotype.Service
@@ -33,8 +32,8 @@ class YouthPlanAttendeeRoleHelper {
         fixedLeaderSize: Int
     ): List<YouthPlanAttendeeRoleEntry> {
 
-        val (attendees, leaderWithoutJuleika) = newAttendees
-            .partition { leaderWithInvalidJuleika(it, eventStart) }
+        val (leaderWithoutJuleika, attendees) = newAttendees
+            .partition { attendeeService.leaderWithValidJuleika(it, eventStart) }
 
         // birthday: "2020-03-30" "yyyy-MM-dd"
         var (youth, leader) = attendees
@@ -51,7 +50,12 @@ class YouthPlanAttendeeRoleHelper {
             // move x first of attendees, who are at least 18, to the end of leader
             val newLeader = youth
                 .subList(0, possibleLeaderCount)
-                .filter { Helper.ageAtEvent(it, eventStart) >= 18 && leaderWithInvalidJuleika(it, eventStart) }
+                .filter {
+                    Helper.ageAtEvent(it, eventStart) >= 18 && attendeeService.leaderWithValidJuleika(
+                        it,
+                        eventStart
+                    )
+                }
             leader = leader.plus(newLeader)
             youth = youth.subList(newLeader.size, youth.size)
         }
@@ -77,12 +81,5 @@ class YouthPlanAttendeeRoleHelper {
             )
         }
         return newYouthPlanRoles
-    }
-
-    private fun leaderWithInvalidJuleika(attendee: Attendee, eventStart: LocalDate): Boolean {
-        if (attendee !is YouthLeaderEntry) {
-            return true
-        }
-        return attendee.juleikaNumber.isNotEmpty() && (attendee.juleikaExpireDate?.isAfter(eventStart) ?: false)
     }
 }
