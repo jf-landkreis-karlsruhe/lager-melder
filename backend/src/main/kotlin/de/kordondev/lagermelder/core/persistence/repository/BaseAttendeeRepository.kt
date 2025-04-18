@@ -18,4 +18,7 @@ interface BaseAttendeeRepository : CrudRepository<BaseAttendeeEntry, String> {
     fun findDistinctDepartmentIdsFromAllAttendees(): List<Long>
 
     fun findAllBytShirtSize(tShirtSize: String): List<BaseAttendeeEntry>
+
+    @Query("SELECT a FROM BaseAttendeeEntry a WHERE a.role IN :roles")
+    fun findByRoleIn(roles: List<String>): List<BaseAttendeeEntry>
 }

@@ -1,15 +1,23 @@
 package de.kordondev.lagermelder.core.service.helper
 
 import de.kordondev.lagermelder.Helper
+import de.kordondev.lagermelder.Helper.Companion.ageAtEvent
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.BaseAttendeeEntry
+import de.kordondev.lagermelder.core.persistence.entry.YouthLeaderEntry
 import de.kordondev.lagermelder.core.persistence.entry.YouthPlanAttendeeRoleEntry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import kotlin.math.ceil
 
+// https://jugendarbeitsnetz.de/landesjugendplan/ii-zur-foerderung-der-kinder-und-jugenderholung
 @Service
-class YouthPlanAttendeeRoleHelper {
+class AttendeeRoleHelper {
+
+    private final val minAge = 6
+    private final val maxAgeYouth = 27
+    private final val youthPerLeader = 5
 
     fun getOptimizedLeaderAndAttendeeIds(
         youthPlanAttendeeRoles: List<YouthPlanAttendeeRoleEntry>,
@@ -17,50 +25,66 @@ class YouthPlanAttendeeRoleHelper {
         eventStart: LocalDate
     ): List<YouthPlanAttendeeRoleEntry> {
         if (undistributedAttendees.isNotEmpty()) {
-            val leader = youthPlanAttendeeRoles.filter { it.youthPlanRole === AttendeeRole.YOUTH_LEADER }
-            return distributeNewAttendees(undistributedAttendees, eventStart, youthPlanAttendeeRoles.size, leader.size)
+            val groupedAttendeeRoles = youthPlanAttendeeRoles.groupBy { it.youthPlanRole }
+            return distributeNewAttendees(
+                undistributedAttendees.filter { ageAtEvent(it, eventStart) >= minAge },
+                eventStart,
+                groupedAttendeeRoles[AttendeeRole.YOUTH]?.size ?: 0,
+                groupedAttendeeRoles[AttendeeRole.YOUTH_LEADER]?.size ?: 0,
+            )
         }
         return listOf()
     }
 
-    private val oldFirst = compareBy<Attendee> { Helper.getBirthday(it) }
-    private val oldFirstThenFirstname = oldFirst.thenByDescending { it.firstName }
     private fun distributeNewAttendees(
         newAttendees: List<Attendee>,
         eventStart: LocalDate,
-        fixedDistributedAttendeesSize: Int,
+        fixedYouthsSize: Int,
         fixedLeaderSize: Int
     ): List<YouthPlanAttendeeRoleEntry> {
 
-        val (leaderWithoutJuleika, attendees) = newAttendees
-            .partition { attendeeService.leaderWithValidJuleika(it, eventStart) }
+        val (validJuleika, invalidJuleika) = newAttendees
+            .partition { leaderWithValidJuleika(it, eventStart) }
 
-        // birthday: "2020-03-30" "yyyy-MM-dd"
-        var (youth, leader) = attendees
-            .sortedWith(oldFirstThenFirstname)
-            .filter { Helper.ageAtEvent(it, eventStart) >= 6 }
-            .partition { Helper.ageAtEvent(it, eventStart) <= 26 }
+        val (validJuleikaMaxAge27, validJuleikaOver27) = validJuleika
+            .partition { Helper.ageAtEvent(it, eventStart) <= maxAgeYouth }
+        val (invalidJuleikaMaxAge27, invalidJuleikaOver27) = invalidJuleika
+            .partition { Helper.ageAtEvent(it, eventStart) <= maxAgeYouth }
 
-        youth = youth + leaderWithoutJuleika
-        val allLeaderSize = leader.size + fixedLeaderSize
-        val correctDistributedAttendees = allLeaderSize + allLeaderSize * 5
-        val toMuchYouths = (fixedDistributedAttendeesSize + newAttendees.size) - correctDistributedAttendees
-        val possibleLeaderCount = toMuchYouths / 6
-        if (possibleLeaderCount > 0) {
-            // move x first of attendees, who are at least 18, to the end of leader
-            val newLeader = youth
-                .subList(0, possibleLeaderCount)
-                .filter {
-                    Helper.ageAtEvent(it, eventStart) >= 18 && attendeeService.leaderWithValidJuleika(
-                        it,
-                        eventStart
-                    )
-                }
-            leader = leader.plus(newLeader)
-            youth = youth.subList(newLeader.size, youth.size)
+        val totalYouths = fixedYouthsSize + invalidJuleikaMaxAge27.size
+        val totalYouthLeader = fixedLeaderSize + validJuleikaOver27.size
+
+        var distributableAttendees = validJuleikaMaxAge27
+        val setAsLeader = mutableListOf<Attendee>()
+        val setAsYouth = mutableListOf<Attendee>()
+
+        // more leader that youths, fill up youths
+        if (totalYouths < minYouthsFor(totalYouthLeader)) {
+            val moreYouths = minYouthsFor(totalYouthLeader) - totalYouths
+            setAsYouth.addAll(distributableAttendees.take(moreYouths))
+            distributableAttendees = distributableAttendees.drop(moreYouths)
         }
+
+        // more youths that leader
+        if (totalYouths > minYouthsFor(totalYouthLeader)) {
+            val moreLeader = leaderFor(totalYouths) - totalYouthLeader
+            setAsLeader.addAll(distributableAttendees.take(moreLeader))
+            distributableAttendees = distributableAttendees.drop(moreLeader)
+
+            // fill up until youths
+            val moreYouths = minYouthsFor(totalYouthLeader + 1)
+            setAsYouth.addAll(distributableAttendees.take(moreYouths))
+            distributableAttendees = distributableAttendees.drop(moreYouths)
+        }
+
+        // distribute the rest of the attendees 1:5
+        val maxLeader = leaderOutOfDistributableAttendees(distributableAttendees)
+        setAsLeader.addAll(distributableAttendees.take(maxLeader))
+        distributableAttendees = distributableAttendees.drop(maxLeader)
+        setAsYouth.addAll(distributableAttendees)
+
         var newYouthPlanRoles = listOf<YouthPlanAttendeeRoleEntry>()
-        for (l in leader) {
+        for (l in setAsLeader + validJuleikaOver27) {
             newYouthPlanRoles = newYouthPlanRoles.plus(
                 YouthPlanAttendeeRoleEntry(
                     attendeeId = l.id,
@@ -70,7 +94,7 @@ class YouthPlanAttendeeRoleHelper {
                 )
             )
         }
-        for (y in youth) {
+        for (y in setAsYouth + invalidJuleikaMaxAge27) {
             newYouthPlanRoles = newYouthPlanRoles.plus(
                 YouthPlanAttendeeRoleEntry(
                     attendeeId = y.id,
@@ -82,4 +106,16 @@ class YouthPlanAttendeeRoleHelper {
         }
         return newYouthPlanRoles
     }
+
+    fun leaderWithValidJuleika(attendee: Attendee, eventStart: LocalDate): Boolean {
+        if (attendee !is YouthLeaderEntry) {
+            return false
+        }
+        return attendee.juleikaNumber.isNotEmpty() && (attendee.juleikaExpireDate?.isAfter(eventStart) ?: false)
+    }
+
+    fun minYouthsFor(youthLeaderCount: Int) = youthLeaderCount * youthPerLeader
+    fun leaderFor(youths: Int) = ceil(youths / youthPerLeader.toDouble()).toInt()
+    fun leaderOutOfDistributableAttendees(attendees: List<Attendee>) =
+        ceil(attendees.size / (youthPerLeader + 1.0)).toInt()
 }

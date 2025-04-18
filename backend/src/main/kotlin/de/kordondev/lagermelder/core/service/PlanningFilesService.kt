@@ -13,6 +13,7 @@ import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.security.AuthorityService
+import de.kordondev.lagermelder.core.service.helper.AttendeeRoleHelper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ResourceLoader
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service
 import java.awt.Color
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import kotlin.math.ceil
 
 
 @Service
@@ -31,7 +34,8 @@ class PlanningFilesService(
     private val authorityService: AuthorityService,
     private val settingsService: SettingsService,
     private val tShirtSizeService: TShirtSizeService,
-    private val eventDayService: EventDayService
+    private val eventDayService: EventDayService,
+    private val attendeeRoleHelper: AttendeeRoleHelper
 ) {
     private val yDistanceBetweenBatches = 141F
     private val logger: Logger = LoggerFactory.getLogger(PlanningFilesService::class.java)
@@ -597,6 +601,65 @@ class PlanningFilesService(
 
                 document.newPage()
             }
+        }
+
+        document.close()
+        return out.toByteArray()
+    }
+
+    fun createMissingJuleika(): ByteArray {
+        authorityService.isSpecializedFieldDirector()
+        val out = ByteArrayOutputStream()
+        val document = prepareDocument(out, PageSize.A4)
+        var missingJuleikas = false
+
+        val departments = departmentService.getDepartments(true)
+        val attendeesPerDepartment = attendeeService.getAttendeesPerDepartments()
+        val eventStart = settingsService.getSettings().eventStart
+
+        departments
+            .sortedBy { it.headDepartmentName + it.name }
+            .map { department ->
+                val attendeesPerRole = attendeesPerDepartment[department.id]?.groupBy { it.role }
+                val youthLeader =
+                    attendeeService.getYouthLeaderIn(attendeesPerRole?.get(AttendeeRole.YOUTH_LEADER) ?: emptyList())
+                val (validLeader, invalidLeader) = youthLeader
+                    .partition { attendeeRoleHelper.leaderWithValidJuleika(it, eventStart) }
+                val numberOfYouth = attendeesPerRole?.get(AttendeeRole.YOUTH)?.size ?: 0
+
+                if (validLeader.size >= attendeeRoleHelper.leaderFor(numberOfYouth)) {
+                    return@map
+                }
+                missingJuleikas = true
+                document.add(Paragraph("${department.headDepartmentName} ${department.name}", headlineFont))
+                document.add(Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}, Telefon: ${department.phoneNumber}"))
+
+                document.add(Paragraph("Angemeldete Teilnehmer: ${numberOfYouth}"))
+                document.add(Paragraph("Anzahl Jugendleiter mit gültiger Juleika: ${validLeader.size}"))
+                document.add(
+                    Paragraph(
+                        "Mindestanzahl geforderter Jugendleiter mit gültiger Juleika: ${ceil(numberOfYouth / 5.0).toInt()}"
+                    )
+                )
+                document.add(Paragraph("Anzahl Jugendleiter ohne gültige Juleika: ${invalidLeader.size}"))
+
+                val list = List()
+                list.setListSymbol("\u2022")
+                for (att in invalidLeader) {
+                    list.add(
+                        " ${att.firstName} ${att.lastName} Juleikanummer: ${att.juleikaNumber} Gültig bis: ${
+                            att.juleikaExpireDate?.format(
+                                DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                            ) ?: "-"
+                        }"
+                    )
+                }
+                document.add(list)
+                document.newPage()
+            }
+
+        if (!missingJuleikas) {
+            document.add(Paragraph("Es sind keine fehlenden Juleika vorhanden."))
         }
 
         document.close()

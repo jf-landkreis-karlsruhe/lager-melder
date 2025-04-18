@@ -11,6 +11,7 @@ import {
   getBatchesOrderedByCreationDate,
   getContactOverview,
   getDepartmentOverview,
+  getdMissingJuleika,
   getFoodPDF,
   getTentMarkingPDF,
   getTShirtPDF
@@ -42,6 +43,7 @@ const loadingAdditionalInformation = ref<boolean>(false)
 const loadingTshirt = ref<boolean>(false)
 const loadingDepartmentOverview = ref<boolean>(false)
 const loadingContactList = ref<boolean>(false)
+const loadingMissingJuleika = ref<boolean>(false)
 
 const toast = useToast()
 
@@ -92,6 +94,10 @@ const downloadDepartmentOverview = () => {
 
 const downloadContactList = () => {
   loadFile(getContactOverview, loadingContactList)
+}
+
+const downloadMissingJuleika = () => {
+  loadFile(getdMissingJuleika, loadingMissingJuleika)
 }
 
 const loadFile = (request: () => Promise<FileReponse>, loading: Ref<boolean>) => {
@@ -273,6 +279,20 @@ onMounted(() => {
           Hier können die Zeltmarkierungen heruntergeladen werden.
           <br />
           <v-btn color="var(--lm-c-accent)" @click="downloadTentMarkingPDF" small :loading="loadingTentMarkings">
+            Herunterladen
+            <v-icon right dark> mdi-cloud-download</v-icon>
+          </v-btn>
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2>Jugendfeuerwehren mit zu wenig Juleika</h2>
+      <div class="d-flex align-center justify-space-between">
+        <p class="mr-8">
+          Hier kann heruntergeladen werden, welche Jugendfeuerwehren nicht genug Juleikas haben.
+          <br />
+          <v-btn color="var(--lm-c-accent)" @click="downloadMissingJuleika" small :loading="loadingMissingJuleika">
             Herunterladen
             <v-icon right dark> mdi-cloud-download</v-icon>
           </v-btn>

@@ -121,3 +121,16 @@ export const getContactOverview = (): Promise<FileReponse> => {
       fileName: 'kontaktdatenÜbersicht.pdf'
     }))
 }
+
+export const getdMissingJuleika = (): Promise<FileReponse> => {
+  return fetchData(`planning-files/missing-juleika`, {
+    headers: {
+      ...withAuthenticationHeader()
+    }
+  })
+    .then((r) => r.blob())
+    .then((blob) => ({
+      data: blob,
+      fileName: 'fehlendeJuleika.pdf'
+    }))
+}
