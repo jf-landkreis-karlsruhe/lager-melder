@@ -2,6 +2,7 @@ package de.kordondev.lagermelder.rest.model.request;
 
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import jakarta.validation.constraints.FutureOrPresent
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import java.time.Instant
@@ -52,7 +53,11 @@ data class RestSettingsRequest(
 
     @NotNull
     @NotBlank
-    val helpersRegistrationEnd: Instant
+    val helpersRegistrationEnd: Instant,
+
+    @NotNull
+    @Min(value = 0)
+    val numberOfDuties: Int
 
 ) {
     companion object {
@@ -69,7 +74,8 @@ data class RestSettingsRequest(
             moneyPerYouthLoader = settings.moneyPerYouthLoader,
             startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles,
             childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd,
-            helpersRegistrationEnd = settings.helpersRegistrationEnd
+            helpersRegistrationEnd = settings.helpersRegistrationEnd,
+            numberOfDuties = settings.numberOfDuties
         )
     }
 }

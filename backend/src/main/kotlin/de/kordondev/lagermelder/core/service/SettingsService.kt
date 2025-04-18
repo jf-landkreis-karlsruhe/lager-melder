@@ -35,7 +35,8 @@ class SettingsService(
                     organisationAddress = "",
                     moneyPerYouthLoader = "8,99",
                     childGroupsRegistrationEnd = Instant.now().plus(35, ChronoUnit.DAYS),
-                    helpersRegistrationEnd = Instant.now().plus(33, ChronoUnit.DAYS)
+                    helpersRegistrationEnd = Instant.now().plus(33, ChronoUnit.DAYS),
+                    numberOfDuties = 0
                 )
             )
         }
