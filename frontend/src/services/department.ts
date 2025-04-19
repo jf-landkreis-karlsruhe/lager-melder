@@ -31,11 +31,7 @@ export const updatePauseDepartment = (departmentId: number, pause: boolean) =>
     paused: pause
   })
 
-export const updateTentMarkings = (
-  departmentId: number,
-  evacuationGroupId: string,
-  tentMarkings: TentMarking[]
-) =>
+export const updateTentMarkings = (departmentId: number, evacuationGroupId: string, tentMarkings: TentMarkingRequest[]) =>
   putData<Department>(
     `departments/${departmentId}/evacuation-groups/${evacuationGroupId}/tent-markings`,
     withAuthenticationHeader(),
@@ -85,7 +81,12 @@ export interface RegistrationData {
   phoneNumberKommandant: string
 }
 
-interface TentMarking {
+export interface TentMarkingRequest {
+  name: string
+  id: string | undefined
+}
+
+export interface TentMarking {
   id: string
   name: string
 }
