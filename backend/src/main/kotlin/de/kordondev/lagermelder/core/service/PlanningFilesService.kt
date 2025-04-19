@@ -22,7 +22,6 @@ import java.awt.Color
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.math.ceil
 
 
 @Service
@@ -638,7 +637,9 @@ class PlanningFilesService(
                 document.add(Paragraph("Anzahl Jugendleiter mit gültiger Juleika: ${validLeader.size}"))
                 document.add(
                     Paragraph(
-                        "Mindestanzahl geforderter Jugendleiter mit gültiger Juleika: ${ceil(numberOfYouth / 5.0).toInt()}"
+                        "Mindestanzahl geforderter Jugendleiter mit gültiger Juleika: ${
+                            attendeeRoleHelper.leaderFor(numberOfYouth)
+                        }"
                     )
                 )
                 document.add(Paragraph("Anzahl Jugendleiter ohne gültige Juleika: ${invalidLeader.size}"))

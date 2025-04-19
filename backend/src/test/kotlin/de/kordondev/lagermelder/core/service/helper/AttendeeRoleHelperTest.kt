@@ -6,6 +6,8 @@ import de.kordondev.lagermelder.helper.Entities
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import java.time.LocalDate
 import java.util.*
 
@@ -226,7 +228,7 @@ class AttendeeRoleHelperTest {
         val eventDate = LocalDate.of(2023, 5, 5)
         val youths = createAttendees(10, eventDate)
         val leaderMovable = createLeaderMaxAge27(1, eventDate)
-        val leaderWithoutJuleika = createLeaderWithoutJuleika(3, eventDate)
+        val leaderWithoutJuleika = createLeaderWithoutJuleika(3, eventDate, 27)
 
         val youthPlanAttendees = attendeeRoleHelper.getOptimizedLeaderAndAttendeeIds(
             listOf(),
@@ -235,7 +237,88 @@ class AttendeeRoleHelperTest {
         ).groupBy { it.youthPlanRole }
         Assertions.assertThat(youthPlanAttendees[AttendeeRole.YOUTH_LEADER]).hasSize(1)
         Assertions.assertThat(youthPlanAttendees[AttendeeRole.YOUTH]).hasSize(13)
+    }
 
+    @Test
+    fun leaderWithoutJuleikaAndToOld() {
+        val eventDate = LocalDate.of(2023, 5, 5)
+        val youths = createAttendees(10, eventDate)
+        val leaderMovable = createLeaderMaxAge27(1, eventDate)
+        val leaderWithoutJuleika = createLeaderWithoutJuleika(3, eventDate, 27)
+        val leaderWithoutJuleikaToOld = createLeaderWithoutJuleika(5, eventDate, 99)
+
+        val youthPlanAttendees = attendeeRoleHelper.getOptimizedLeaderAndAttendeeIds(
+            listOf(),
+            leaderWithoutJuleika + youths + leaderMovable + leaderWithoutJuleikaToOld,
+            eventDate
+        ).groupBy { it.youthPlanRole }
+
+        Assertions.assertThat(youthPlanAttendees[AttendeeRole.YOUTH_LEADER]).hasSize(1)
+        Assertions.assertThat(youthPlanAttendees[AttendeeRole.YOUTH]).hasSize(13)
+        val allDistributedAttendeeIds =
+            youthPlanAttendees[AttendeeRole.YOUTH_LEADER]!! + youthPlanAttendees[AttendeeRole.YOUTH]!!
+                .map { it.attendeeId }
+        Assertions.assertThat(allDistributedAttendeeIds)
+            .doesNotContainAnyElementsOf(leaderWithoutJuleikaToOld.map { it.id })
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "0, 0",
+        "1, 5",
+        "2, 10",
+        "3, 15",
+    )
+    fun testMinYouthsFor(numberOfLeaders: Int, expectedNumberOfYouths: Int) {
+        Assertions.assertThat(
+            attendeeRoleHelper.youthsFor(numberOfLeaders)
+        ).isEqualTo(expectedNumberOfYouths)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "0, 0",
+        "1, 1",
+        "5, 1",
+        "6, 2",
+        "7, 2",
+    )
+    fun testLeaderFor(numberOfYouths: Int, expectedNumberOfLeaders: Int) {
+        Assertions.assertThat(
+            attendeeRoleHelper.leaderFor(numberOfYouths)
+        ).isEqualTo(expectedNumberOfLeaders)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "0, 0",
+        "1, 1",
+        "5, 1",
+        "6, 1",
+        "7, 2",
+    )
+    fun testLeaderOutOfDistributableAttendees(numberOfAttendees: Int, expectedNumberOfLeaders: Int) {
+        val attendees = (1..numberOfAttendees).map { createAttendee(randomId(), "2000-01-01", AttendeeRole.YOUTH) }
+        Assertions.assertThat(
+            attendeeRoleHelper.leaderOutOfDistributableAttendees(attendees)
+        ).isEqualTo(expectedNumberOfLeaders)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "0",
+        "1",
+        "2",
+        "5",
+        "6",
+        "1354"
+    )
+    fun testNumberOfLeaderFitsNumberOfAttendees(youths: Int) {
+        val leader = attendeeRoleHelper.leaderFor(youths)
+        val calculatedYouths = attendeeRoleHelper.youthsFor(leader)
+        Assertions.assertThat(
+            attendeeRoleHelper.leaderFor(calculatedYouths)
+        ).isEqualTo(leader)
     }
 
 
@@ -270,10 +353,10 @@ class AttendeeRoleHelperTest {
         return attendees
     }
 
-    private fun createLeaderWithoutJuleika(count: Int, eventDate: LocalDate): List<Attendee> {
+    private fun createLeaderWithoutJuleika(count: Int, eventDate: LocalDate, age: Int): List<Attendee> {
         var attendees = listOf<Attendee>()
         for (i in 1..count) {
-            var attendee = createAttendeeAge(randomId(), 27, eventDate, AttendeeRole.YOUTH_LEADER) as YouthLeaderEntry
+            var attendee = createAttendeeAge(randomId(), age, eventDate, AttendeeRole.YOUTH_LEADER) as YouthLeaderEntry
             attendee = if ((count % 2) == 0) {
                 attendee.copy(juleikaNumber = "")
             } else {
@@ -285,13 +368,8 @@ class AttendeeRoleHelperTest {
         return attendees
     }
 
-    private fun createAttendees(count: Int, eventDate: LocalDate): List<Attendee> {
-        var attendees = listOf<Attendee>()
-        for (i in 1..count) {
-            attendees = attendees.plus(createAttendeeAge(randomId(), 16, eventDate, AttendeeRole.YOUTH))
-        }
-        return attendees
-    }
+    private fun createAttendees(count: Int, eventDate: LocalDate) =
+        (1..count).map { createAttendeeAge(randomId(), 16, eventDate, AttendeeRole.YOUTH) }
 
     private fun createAttendeeAge(
         id: String,
