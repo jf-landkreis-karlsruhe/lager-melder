@@ -5,6 +5,7 @@ import de.kordondev.lagermelder.core.persistence.entry.YouthPlanAttendeeRoleEntr
 import de.kordondev.lagermelder.core.persistence.repository.YouthPlanAttendeeRolesRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.service.helper.AttendeeRoleHelper
+import de.kordondev.lagermelder.exception.WrongTimeException
 import de.kordondev.lagermelder.rest.model.YouthPlanDistribution
 import org.springframework.stereotype.Service
 
@@ -27,6 +28,9 @@ class YouthPlanAttendeeRoleService(
 
     fun getAttendeeDistribution(): YouthPlanDistribution {
         authorityService.isSpecializedFieldDirector()
+        if (settingsService.canRegistrationFilesDownloaded()) {
+            throw WrongTimeException("Erst wenn die Registrierungsunterlagen heruntergeladen werden können, kann die Verteilung der Teilnehmerrollen erfolgen.")
+        }
         val distribution = getOptimizedLeaderAndAttendeeIds().groupBy { it.youthPlanRole }
         return YouthPlanDistribution(
             distribution[AttendeeRole.YOUTH_LEADER]?.size,
