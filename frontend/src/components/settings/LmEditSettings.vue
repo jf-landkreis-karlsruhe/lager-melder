@@ -145,6 +145,14 @@ onMounted(() => {
                 :variant="'underlined'"
                 hint="Benutzt für Pädagogische Betreuer"
               />
+              <h3>Schichten</h3>
+              <v-text-field
+                type="number"
+                v-model="settings.numberOfDuties"
+                label="Anzahl der Schichten"
+                :variant="'underlined'"
+                :min="0"
+              />
             </div>
             <v-card-actions>
               <v-row justify="end">
