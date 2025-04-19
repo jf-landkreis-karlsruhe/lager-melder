@@ -28,7 +28,7 @@ class YouthPlanAttendeeRoleService(
 
     fun getAttendeeDistribution(): YouthPlanDistribution {
         authorityService.isSpecializedFieldDirector()
-        if (settingsService.canRegistrationFilesDownloaded()) {
+        if (!settingsService.canRegistrationFilesDownloaded()) {
             throw WrongTimeException("Erst wenn die Registrierungsunterlagen heruntergeladen werden können, kann die Verteilung der Teilnehmerrollen erfolgen.")
         }
         val distribution = getOptimizedLeaderAndAttendeeIds().groupBy { it.youthPlanRole }

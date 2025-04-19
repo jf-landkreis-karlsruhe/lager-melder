@@ -506,7 +506,7 @@ class PlanningFilesService(
         departmentWithAttendees.keys.sortedBy { it.headDepartmentName + it.name }.map { department ->
             document.add(Paragraph("${department.headDepartmentName} ${department.name}", headlineFont))
             document.add(Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}, Telefon während Kreiszeltlager: ${department.phoneNumber}"))
-            document.add(Paragraph("Kommandent: ${department.nameKommandant}, Telefon: ${department.phoneNumberKommandant}"))
+            document.add(Paragraph("Kommandant: ${department.nameKommandant}, Telefon: ${department.phoneNumberKommandant}"))
             val table = Table(4)
             table.borderWidth = 1F
             table.borderColor = Color(0, 0, 0)
