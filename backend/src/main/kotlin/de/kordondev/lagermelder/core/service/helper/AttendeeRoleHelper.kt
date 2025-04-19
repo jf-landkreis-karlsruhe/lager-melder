@@ -59,20 +59,20 @@ class AttendeeRoleHelper {
         val setAsYouth = mutableListOf<Attendee>()
 
         // more leader that youths, fill up youths
-        if (totalYouths < minYouthsFor(totalYouthLeader)) {
-            val moreYouths = minYouthsFor(totalYouthLeader) - totalYouths
+        if (totalYouths < youthsFor(totalYouthLeader)) {
+            val moreYouths = youthsFor(totalYouthLeader) - totalYouths
             setAsYouth.addAll(distributableAttendees.take(moreYouths))
             distributableAttendees = distributableAttendees.drop(moreYouths)
         }
 
         // more youths that leader
-        if (totalYouths > minYouthsFor(totalYouthLeader)) {
+        if (totalYouths > youthsFor(totalYouthLeader)) {
             val moreLeader = leaderFor(totalYouths) - totalYouthLeader
             setAsLeader.addAll(distributableAttendees.take(moreLeader))
             distributableAttendees = distributableAttendees.drop(moreLeader)
 
             // fill up until youths
-            val moreYouths = minYouthsFor(totalYouthLeader + 1)
+            val moreYouths = youthsFor(totalYouthLeader + moreLeader)
             setAsYouth.addAll(distributableAttendees.take(moreYouths))
             distributableAttendees = distributableAttendees.drop(moreYouths)
         }
@@ -114,7 +114,7 @@ class AttendeeRoleHelper {
         return attendee.juleikaNumber.isNotEmpty() && (attendee.juleikaExpireDate?.isAfter(eventStart) ?: false)
     }
 
-    fun minYouthsFor(youthLeaderCount: Int) = youthLeaderCount * youthPerLeader
+    fun youthsFor(youthLeaderCount: Int) = youthLeaderCount * youthPerLeader
     fun leaderFor(youths: Int) = ceil(youths / youthPerLeader.toDouble()).toInt()
     fun leaderOutOfDistributableAttendees(attendees: List<Attendee>) =
         ceil(attendees.size / (youthPerLeader + 1.0)).toInt()

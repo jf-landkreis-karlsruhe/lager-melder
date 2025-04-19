@@ -5,7 +5,6 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.client.j2se.MatrixToImageWriter
 import com.google.zxing.common.BitMatrix
 import com.lowagie.text.*
-import com.lowagie.text.List
 import com.lowagie.text.pdf.*
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
@@ -23,7 +22,6 @@ import java.awt.Color
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.round
 
@@ -642,7 +640,9 @@ class PlanningFilesService(
                 document.add(Paragraph("Anzahl Jugendleiter mit gültiger Juleika: ${validLeader.size}"))
                 document.add(
                     Paragraph(
-                        "Mindestanzahl geforderter Jugendleiter mit gültiger Juleika: ${ceil(numberOfYouth / 5.0).toInt()}"
+                        "Mindestanzahl geforderter Jugendleiter mit gültiger Juleika: ${
+                            attendeeRoleHelper.leaderFor(numberOfYouth)
+                        }"
                     )
                 )
                 document.add(Paragraph("Anzahl Jugendleiter ohne gültige Juleika: ${invalidLeader.size}"))
