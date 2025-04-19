@@ -356,7 +356,7 @@ class AttendeeRoleHelperTest {
     private fun createLeaderWithoutJuleika(count: Int, eventDate: LocalDate, age: Int): List<Attendee> {
         var attendees = listOf<Attendee>()
         for (i in 1..count) {
-            var attendee = createAttendeeAge(randomId(), 27, eventDate, AttendeeRole.YOUTH_LEADER) as YouthLeaderEntry
+            var attendee = createAttendeeAge(randomId(), age, eventDate, AttendeeRole.YOUTH_LEADER) as YouthLeaderEntry
             attendee = if ((count % 2) == 0) {
                 attendee.copy(juleikaNumber = "")
             } else {
