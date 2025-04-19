@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import CheckedInSummary from '@/components/LmCheckedInSummary.vue'
 import { type Distribution, type GlobalEventSummary, globalEventSummary } from '@/services/event'
 import LmContainer from '../components/LmContainer.vue'
 import LmEvacuationConfiguration from '@/components/LmEvacuationConfiguration.vue'
 import { type Department, getDepartments } from '@/services/department'
 import { type EvacuationGroup, getEvacuationGroup } from '@/services/evacuationGroups'
+import { hasLKKarlsruheRole } from '@/services/authentication'
 
 const departmentSummary = ref<SummaryDepartment | null>(null)
 const evacuationGroups = ref<EvacuationGroup[]>([])
@@ -75,13 +76,10 @@ function sortDepartmentByEvacuationGroup(a: DepartmentDistribution, b: Departmen
 </script>
 
 <template>
-  <LmContainer>
+  <LmContainer v-if="hasLKKarlsruheRole()">
     <h1>Anwesende</h1>
     <div v-if="departmentSummary !== null">
-      <CheckedInSummary
-        :departmentDistribution="departmentSummary.total"
-        :name="departmentSummary.total.name"
-      />
+      <CheckedInSummary :departmentDistribution="departmentSummary.total" :name="departmentSummary.total.name" />
       Pausierte Feuerwehren sind nicht in der Gesamtanzahl enthalten.
       <div v-for="departmentSummary in departmentSummary.departments" :key="departmentSummary.id">
         <CheckedInSummary

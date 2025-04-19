@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { AuthenticationChangedEvent, getTokenData, hasAdministrationRole, isLoggedIn } from '../services/authentication'
+import {
+  AuthenticationChangedEvent,
+  getTokenData,
+  hasLKKarlsruheRole,
+  hasSpecializedFieldDirectorRole,
+  isLoggedIn
+} from '../services/authentication'
 import { pathNeedsAuthentication } from '@/router'
 
 let timeoutId = 0
@@ -53,16 +59,16 @@ const checkToken = () => {
               <li class="nav-item">
                 <router-link to="/files">Anmeldeunterlagen</router-link>
               </li>
-              <li class="nav-item admin" v-if="hasAdministrationRole()">
+              <li class="nav-item admin" v-if="hasSpecializedFieldDirectorRole()">
                 <router-link to="/feuerwehr">Feuerwehren</router-link>
               </li>
-              <li class="nav-item admin" v-if="hasAdministrationRole()">
+              <li class="nav-item admin" v-if="hasLKKarlsruheRole()">
                 <router-link to="/planung"> Planung</router-link>
               </li>
-              <li class="nav-item admin" v-if="hasAdministrationRole()">
+              <li class="nav-item admin" v-if="hasLKKarlsruheRole()">
                 <router-link to="/anwesend"> Anwesend </router-link>
               </li>
-              <li class="nav-item admin" v-if="hasAdministrationRole()">
+              <li class="nav-item admin" v-if="hasSpecializedFieldDirectorRole()">
                 <router-link to="/einstellungen"> Einstellungen </router-link>
               </li>
             </ul>

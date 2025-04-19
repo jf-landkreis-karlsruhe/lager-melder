@@ -43,6 +43,7 @@ class PlanningFilesService(
     private val markingFontSmall = Font(Font.TIMES_ROMAN, 60F, Font.NORMAL, Color.BLACK)
 
     fun createBatchesOrderedByDepartment(): ByteArray {
+        authorityService.isLkKarlsruhe()
         val attendeesFromDB = attendeeService.getAttendees()
         val attendees =
             (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
@@ -55,6 +56,7 @@ class PlanningFilesService(
     }
 
     fun createBatchesOrderedByCreationDate(): ByteArray {
+        authorityService.isLkKarlsruhe()
         val attendeesFromDB = attendeeService.getAttendees()
         val attendees =
             (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
@@ -62,8 +64,7 @@ class PlanningFilesService(
         return createBatches(attendees)
     }
 
-    fun createBatches(attendees: kotlin.collections.List<Attendee>): ByteArray {
-        authorityService.isSpecializedFieldDirector()
+    private fun createBatches(attendees: kotlin.collections.List<Attendee>): ByteArray {
         val documentStream = ByteArrayOutputStream()
         val document = Document(PageSize.A4)
         val pdfCopy = PdfCopy(document, documentStream)
@@ -143,7 +144,7 @@ class PlanningFilesService(
     }
 
     fun createEventPDF(frontendBaseUrl: String): ByteArray {
-        authorityService.isSpecializedFieldDirector()
+        authorityService.isLkKarlsruhe()
         val out = ByteArrayOutputStream()
 
         val document = prepareDocument(out)
@@ -195,7 +196,7 @@ class PlanningFilesService(
     }
 
     fun createTShirtPDF(): ByteArray {
-        authorityService.isSpecializedFieldDirector()
+        authorityService.isLkKarlsruhe()
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out)
 
@@ -345,7 +346,7 @@ class PlanningFilesService(
 
 
     fun createFoodPDF(): ByteArray {
-        authorityService.isSpecializedFieldDirector()
+        authorityService.isLkKarlsruhe()
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out)
 
@@ -405,7 +406,7 @@ class PlanningFilesService(
     }
 
     fun createAdditionalInformationPDF(): ByteArray {
-        authorityService.isSpecializedFieldDirector()
+        authorityService.isLkKarlsruhe()
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out)
         val attendees = attendeeService.getAttendees()
@@ -459,7 +460,7 @@ class PlanningFilesService(
     }
 
     fun createOverviewForEachDepartment(): ByteArray {
-        authorityService.isSpecializedFieldDirector()
+        authorityService.isLkKarlsruhe()
         val eventStart = settingsService.getSettings().eventStart
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out)
@@ -495,7 +496,7 @@ class PlanningFilesService(
     }
 
     fun createContactList(): ByteArray {
-        authorityService.isSpecializedFieldDirector()
+        authorityService.isLkKarlsruhe()
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out)
 
@@ -574,7 +575,7 @@ class PlanningFilesService(
     }
 
     fun createTentMarkings(): ByteArray {
-        authorityService.isSpecializedFieldDirector()
+        authorityService.isLkKarlsruhe()
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out, PageSize.A4.rotate())
 
@@ -607,7 +608,7 @@ class PlanningFilesService(
     }
 
     fun createMissingJuleika(): ByteArray {
-        authorityService.isSpecializedFieldDirector()
+        authorityService.isLkKarlsruhe()
         val out = ByteArrayOutputStream()
         val document = prepareDocument(out, PageSize.A4)
         var missingJuleikas = false

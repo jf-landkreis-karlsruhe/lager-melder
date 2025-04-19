@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { hasAdministrationRole } from '../../services/authentication'
+import { hasSpecializedFieldDirectorRole } from '../../services/authentication'
 import { type Department, getDepartments, updatePauseDepartment } from '../../services/department'
 import EditDepartment from './LmEditDepartment.vue'
 import AddDepartment from '../LmAddDepartment.vue'
@@ -37,7 +37,7 @@ const updatePauseDepartmentInternal = (department: Department) => {
 </script>
 
 <template>
-  <div v-if="hasAdministrationRole()">
+  <div v-if="hasSpecializedFieldDirectorRole()">
     <div v-if="departments.length > 0">
       <LmContainer>
         <h1>Feuerwehren</h1>

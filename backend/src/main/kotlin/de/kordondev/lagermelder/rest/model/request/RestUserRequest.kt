@@ -15,7 +15,10 @@ data class RestUserRequest(
     val password: String?,
     @field:NotNull(message = "departmentId needs to be defined")
     val departmentId: Long,
-    @field:Pattern(regexp = "^(USER|SPECIALIZED_FIELD_DIRECTOR|ADMIN)$",message = "role needs to be one of USER, ADMIN or SPECIALIZED_FIELD_DIRECTOR")
+    @field:Pattern(
+        regexp = "^(USER|LK_KARLSRUHE|SPECIALIZED_FIELD_DIRECTOR|ADMIN)$",
+        message = "role needs to be one of USER, LK_KARLSRUHE, ADMIN or SPECIALIZED_FIELD_DIRECTOR"
+    )
     val role: String
 ) {
     companion object {

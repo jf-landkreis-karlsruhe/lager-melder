@@ -25,6 +25,10 @@ const phoneNumber = ref<string>(props.department.phoneNumber)
 const rolesList = ref<{ value: Roles; title: string }[]>([
   { value: Roles.USER, title: rolesTitle(Roles.USER) },
   {
+    value: Roles.LK_KARLSRUHE,
+    title: rolesTitle(Roles.LK_KARLSRUHE)
+  },
+  {
     value: Roles.SPECIALIZED_FIELD_DIRECTOR,
     title: rolesTitle(Roles.SPECIALIZED_FIELD_DIRECTOR)
   }

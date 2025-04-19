@@ -42,13 +42,13 @@ class EventService(
     }
 
     fun createEvent(event: EventEntry): EventEntry {
-        authorityService.hasRole(listOf(Roles.USER, Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.isSpecializedFieldDirector()
         val code = PasswordGenerator.generateCode()
         return eventRepository.save(event.copy(code = code))
     }
 
     fun saveEvent(id: Long, event: EventEntry): EventEntry {
-        authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.isSpecializedFieldDirector()
         return eventRepository.findByIdAndTrashedIsFalse(id)
             ?.let {
                 eventRepository.save(event.copy(code = it.code, id = id, type = it.type))
@@ -57,7 +57,7 @@ class EventService(
     }
 
     fun deleteEvent(id: Long) {
-        authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.isSpecializedFieldDirector()
         getEvent(id).let {
             if (it.type != EventType.Location) {
                 throw NotDeletableException("Das Event ${it.name} kann nicht gelöscht werden")
@@ -68,7 +68,7 @@ class EventService(
 
 
     fun addAttendeeToEvent(eventCode: String, attendeeCode: String): AttendeeInEvent {
-        authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.isLkKarlsruhe()
         val event = getEventByCode(eventCode)
         val attendee: Attendee = attendeeService.getAttendeeByCode(attendeeCode)
         val attendeeInEvent = AttendeeInEventEntry(id = 0, attendeeCode, eventCode, Instant.now())
@@ -94,6 +94,7 @@ class EventService(
     }
 
     fun getGlobalEventSummary(): RestGlobalEventSummary {
+        authorityService.isLkKarlsruhe()
         val attendees = attendeeService.getAllAttendees()
         val allAttendees = (attendees.youths + attendees.youthLeaders + attendees.childLeaders + attendees.children + attendees.zKids)
         val attendeesByDepartment = allAttendees.groupBy { attendeeService.getPartOfDepartmentOrDepartment(it) }
@@ -145,6 +146,7 @@ class EventService(
     }
 
     fun addDepartmentToEvent(eventCode: String, departmentId: Long): List<AttendeeInEvent> {
+        authorityService.isLkKarlsruhe()
         return departmentService.getDepartment(departmentId)
             .let { attendeeService.getAttendeesForDepartment(it) }
             .let { it.youths + it.youthLeaders }

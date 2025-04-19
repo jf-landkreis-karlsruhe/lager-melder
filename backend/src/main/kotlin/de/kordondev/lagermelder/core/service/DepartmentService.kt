@@ -1,7 +1,6 @@
 package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
-import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.persistence.repository.DepartmentFeatureRepository
 import de.kordondev.lagermelder.core.persistence.repository.DepartmentRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
@@ -24,7 +23,7 @@ class DepartmentService(
     fun getDepartments(onlyWithAttendees: Boolean = false): List<DepartmentEntry> {
         val departments = departmentRepository
             .findAll()
-            .filter { authorityService.hasAuthorityFilter(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
+            .filter { authorityService.hasAuthorityFilter(it, AuthorityService.LK_KARLSRUHE_ALLOWED) }
 
         if (onlyWithAttendees) {
             val departmentsWithAttendees = attendeeService.getDepartmentIdsForAllAttendees()
@@ -42,8 +41,13 @@ class DepartmentService(
     fun getDepartment(id: Long): DepartmentEntry {
         return departmentRepository
             .findByIdOrNull(id)
-            ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
-            ?: throw NotFoundException("Attendee with id $id not found")
+            ?.let {
+                authorityService.hasAuthority(
+                    it,
+                    AuthorityService.LK_KARLSRUHE_ALLOWED
+                )
+            }
+            ?: throw NotFoundException("Department with id $id not found")
     }
 
     @Transactional
@@ -55,6 +59,11 @@ class DepartmentService(
     @Transactional
     fun saveDepartment(department: DepartmentEntry): DepartmentEntry {
         authorityService.isSpecializedFieldDirector()
+        return saveDepartmentForLKKarlsruhe(department)
+    }
+
+    private fun saveDepartmentForLKKarlsruhe(department: DepartmentEntry): DepartmentEntry {
+        authorityService.isLkKarlsruhe()
 
         departmentFeatureRepository.deleteForDepartmentAndNotIn(department.id, department.features.map { it.id })
         return departmentRepository.save(department)
@@ -82,12 +91,13 @@ class DepartmentService(
         tentMarkings: Set<RestDepartmentTentMarkingRequest>,
         evacuationGroupId: String
     ): DepartmentEntry {
+        authorityService.isLkKarlsruhe()
         val department = getDepartment(departmentId)
         val evacuationGroup = evacuationGroupService.getEvacuationGroup(evacuationGroupId)
         val updatedTentMarkings =
             tentMarkings.map { RestDepartmentTentMarkingRequest.to(it, departmentId) }.toSet()
 
-        val updatedDepartment = saveDepartment(
+        val updatedDepartment = saveDepartmentForLKKarlsruhe(
             department.copy(
                 tentMarkings = updatedTentMarkings,
                 evacuationGroup = evacuationGroup

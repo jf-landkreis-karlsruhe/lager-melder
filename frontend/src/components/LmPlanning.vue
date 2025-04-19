@@ -4,7 +4,7 @@ import { type Attendee, type Attendees, defaultAttendees, getAttendees } from '.
 import type { Department } from '../services/department'
 import { getDepartments } from '../services/department'
 import { filterByDepartmentAndSearch, filterEnteredAttendees } from '@/helper/filterHelper'
-import { hasAdministrationRole as hasAdministrationRole } from '../services/authentication'
+import { hasLKKarlsruheRole } from '../services/authentication'
 import {
   getAdditionalInformationPDF,
   getBatches,
@@ -153,7 +153,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <LmContainer v-if="hasAdministrationRole()">
+  <LmContainer v-if="hasLKKarlsruheRole()">
     <h1>Planung</h1>
     <section class="mb-12">
       <h2>Lagerausweise</h2>

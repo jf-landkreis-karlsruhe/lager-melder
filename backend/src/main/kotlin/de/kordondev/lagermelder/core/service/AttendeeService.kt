@@ -51,7 +51,7 @@ class AttendeeService(
     }
 
     fun createAttendee(attendee: Attendee): Attendee {
-        authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.hasAuthority(attendee, AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED)
         checkCanAttendeeBeEdited(attendee)
         checkFirstNameAndLastNameAreUnique(attendee)
         tShirtSizeValidator.validate(attendee.tShirtSize)
@@ -70,7 +70,7 @@ class AttendeeService(
             ?.let {
                 authorityService.hasAuthority(
                     it,
-                    listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
+                    AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED
                 )
             }
             ?.let { saveAttendeeToDB(attendee, it::class, it.id, it.code, it.createdAt) }
@@ -87,7 +87,7 @@ class AttendeeService(
             ?.let {
                 authorityService.hasAuthority(
                     it,
-                    listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
+                    AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED
                 )
                 eventRepository.deleteAllByAttendeeCode(it.code)
                 when (it) {
@@ -216,7 +216,7 @@ class AttendeeService(
     }
 
     private fun byAuthority(attendee: Attendee): Boolean {
-        return authorityService.hasAuthorityFilter(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        return authorityService.hasAuthorityFilter(attendee, AuthorityService.LK_KARLSRUHE_ALLOWED)
     }
 
     private fun hasFeature(attendee: Attendee): Boolean {
@@ -242,7 +242,7 @@ class AttendeeService(
                     AttendeeRole.HELPER -> helperRepository.findByIdOrNull(it.id)
                 }
             }
-            ?.let { authorityService.hasAuthority(it, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
+            ?.let { authorityService.hasAuthority(it, AuthorityService.LK_KARLSRUHE_ALLOWED) }
     }
 
     private fun saveAttendeeToDB(

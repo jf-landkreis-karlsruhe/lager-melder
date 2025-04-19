@@ -37,6 +37,7 @@ class UserService(
     }
 
     fun getUser(id: Long): UserEntry {
+        // is used by reset password, needs to be "public"
         return userRepository.findByIdOrNull(id)
             ?.copy(passWord = "")
             ?: throw NotFoundException("user with id $id not found")
@@ -44,9 +45,11 @@ class UserService(
 
     fun getUserForDepartment(department: DepartmentEntry): UserEntry {
         val user = userRepository.findOneByDepartment(department)
+            ?.let {
+                authorityService.hasAuthority(it, AuthorityService.LK_KARLSRUHE_ALLOWED)
+            }
             ?: throw NotFoundException("user for department id ${department.id} not found")
 
-        authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         return user
     }
 
@@ -77,7 +80,7 @@ class UserService(
     }
 
     fun saveUpdatePassword(userToChange: UserEntry): UserEntry {
-        authorityService.hasAuthority(userToChange, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.hasAuthority(userToChange, AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED)
         return savePassword(userToChange)
     }
 
@@ -99,7 +102,7 @@ class UserService(
 
     @Transactional
     fun updatePasswordAndSendEmail(user: UserEntry): UserEntry {
-        authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.hasAuthority(user, AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED)
         val newPassword = PasswordGenerator.generatePassword()
         val settings = settingsService.getSettings()
         return saveUpdatePassword(user.copy(passWord = newPassword))
@@ -107,7 +110,7 @@ class UserService(
     }
 
     private fun sendEmail(user: UserEntry, password: String, settings: SettingsEntry) {
-        authorityService.hasAuthority(user, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.hasAuthority(user, AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED)
         mailSenderService.sendRegistrationMail(
             to = user.department.leaderEMail,
             leaderName = user.department.leaderName,
