@@ -96,4 +96,12 @@ class PlanningFilesController(
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=fehlendeJuleika.pdf")
         return planningFilesService.createMissingJuleika()
     }
+
+    @ResponseBody
+    @Throws(IOException::class)
+    @GetMapping(value = ["/planning-files/tents-and-duties-csv"], produces = ["text/csv"])
+    fun getTentsAndDutiesCSV(response: HttpServletResponse): String? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=Zeltlager.csv")
+        return planningFilesService.createTentsAndDutiesCSV()
+    }
 }

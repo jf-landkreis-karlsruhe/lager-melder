@@ -47,4 +47,6 @@ data class DepartmentEntry (
 
         @Column(name = "phone_number_kommandant")
         val phoneNumberKommandant: String = "",
-)
+) {
+        fun isOrganizer(): Boolean = this.headDepartmentName == "LK Karlsruhe"
+}

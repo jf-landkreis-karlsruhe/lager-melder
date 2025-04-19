@@ -50,6 +50,8 @@ data class SettingsEntry(
     @Column(name = "helpers_registration_end")
     val helpersRegistrationEnd: Instant,
 
+    @Column(name = "number_of_duties")
+    val numberOfDuties: Int = 0,
 
 ) {
     override fun equals(other: Any?): Boolean {

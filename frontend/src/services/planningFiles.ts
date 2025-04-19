@@ -134,3 +134,16 @@ export const getdMissingJuleika = (): Promise<FileReponse> => {
       fileName: 'fehlendeJuleika.pdf'
     }))
 }
+
+export const getTentsAndDutiesCsv = (): Promise<FileReponse> => {
+  return fetchData(`planning-files/tents-and-duties-csv`, {
+    headers: {
+      ...withAuthenticationHeader()
+    }
+  })
+    .then((r) => r.blob())
+    .then((blob) => ({
+      data: blob,
+      fileName: 'zelt-und-dienste.csv'
+    }))
+}
