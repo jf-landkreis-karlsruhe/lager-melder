@@ -14,6 +14,7 @@ import {
   getdMissingJuleika,
   getFoodPDF,
   getTentMarkingPDF,
+  getTentsAndDutiesCsv,
   getTShirtPDF
 } from '@/services/planningFiles'
 import type { FileReponse } from '@/services/filesHelper'
@@ -44,6 +45,7 @@ const loadingTshirt = ref<boolean>(false)
 const loadingDepartmentOverview = ref<boolean>(false)
 const loadingContactList = ref<boolean>(false)
 const loadingMissingJuleika = ref<boolean>(false)
+const loadingTentsAndDutiesCsv = ref<boolean>(false)
 
 const toast = useToast()
 
@@ -98,6 +100,10 @@ const downloadContactList = () => {
 
 const downloadMissingJuleika = () => {
   loadFile(getdMissingJuleika, loadingMissingJuleika)
+}
+
+const downloadTentsAndDutiesCsv = () => {
+  loadFile(getTentsAndDutiesCsv, loadingTentsAndDutiesCsv)
 }
 
 const loadFile = (request: () => Promise<FileReponse>, loading: Ref<boolean>) => {
@@ -293,6 +299,25 @@ onMounted(() => {
           Hier kann heruntergeladen werden, welche Jugendfeuerwehren nicht genug Juleikas haben.
           <br />
           <v-btn color="var(--lm-c-accent)" @click="downloadMissingJuleika" small :loading="loadingMissingJuleika">
+            Herunterladen
+            <v-icon right dark> mdi-cloud-download</v-icon>
+          </v-btn>
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2>Zelte und Schichten csv</h2>
+      <div class="d-flex align-center justify-space-between">
+        <p class="mr-8">
+          Hier kann eine Übersicht über die Zeltgrößen und Anzahl der Schichten heruntergeladen werden.
+          <br />
+          <v-btn
+            color="var(--lm-c-accent)"
+            @click="downloadTentsAndDutiesCsv"
+            small
+            :loading="loadingTentsAndDutiesCsv"
+          >
             Herunterladen
             <v-icon right dark> mdi-cloud-download</v-icon>
           </v-btn>

@@ -35,7 +35,8 @@ class SettingsService(
                     organisationAddress = "",
                     moneyPerYouthLoader = "8,99",
                     childGroupsRegistrationEnd = Instant.now().plus(35, ChronoUnit.DAYS),
-                    helpersRegistrationEnd = Instant.now().plus(33, ChronoUnit.DAYS)
+                    helpersRegistrationEnd = Instant.now().plus(33, ChronoUnit.DAYS),
+                    numberOfDuties = 0
                 )
             )
         }
@@ -92,5 +93,10 @@ class SettingsService(
             return true
         }
         return Instant.now().isBefore(getSettings().helpersRegistrationEnd)
+    }
+
+    fun canCheckInAttendees(): Boolean {
+        // Check if it is at most one week before the event
+        return LocalDate.now().isAfter(getSettings().eventStart.minus(7, ChronoUnit.DAYS))
     }
 }

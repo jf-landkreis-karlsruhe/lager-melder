@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import type { YouthPlanDistribution } from '@/services/youthPlanAttendees'
 import { getYouthPlanDistribution } from '@/services/youthPlanAttendees'
 import { hasSpecializedFieldDirectorRole } from '../services/authentication'
+import { showErrorToast } from '@/helper/fetch'
+import { useToast } from 'vue-toastification'
 
 const error = ref<boolean>(false)
 const loading = ref<boolean>(false)
@@ -11,6 +13,8 @@ const youthPlanDistribution = ref<YouthPlanDistribution>({
   youthCount: 0,
   leaderCount: 0
 })
+
+const toast = useToast()
 
 const closeModal = () => {
   dialogOpen.value = false
@@ -23,7 +27,10 @@ const openModal = () => {
       youthPlanDistribution.value = newYouthPlanDistribution
       loading.value = false
     })
-    .catch(() => (error.value = true))
+    .catch((e) => {
+      showErrorToast(toast, e, 'Fehler beim Laden der Verteilung')
+      error.value = true
+    })
 }
 </script>
 

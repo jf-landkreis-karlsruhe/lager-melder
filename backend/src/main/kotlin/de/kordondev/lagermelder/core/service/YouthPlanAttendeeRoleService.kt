@@ -21,7 +21,7 @@ class YouthPlanAttendeeRoleService(
     fun getAttendeeDistribution(): YouthPlanDistribution {
         authorityService.isLkKarlsruhe()
         if (!settingsService.canRegistrationFilesDownloaded()) {
-            throw WrongTimeException("Dateien können noch nicht heruntergeladen werden.")
+            throw WrongTimeException("Erst wenn die Registrierungsunterlagen heruntergeladen werden können, kann die Verteilung der Teilnehmerrollen erfolgen.")
         }
         val distribution = getOptimizedLeaderAndAttendeeIds().groupBy { it.youthPlanRole }
         return YouthPlanDistribution(

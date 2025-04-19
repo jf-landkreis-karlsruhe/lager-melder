@@ -9,6 +9,7 @@ import de.kordondev.lagermelder.core.security.PasswordGenerator
 import de.kordondev.lagermelder.core.service.helper.AttendeeInEvent
 import de.kordondev.lagermelder.exception.NotDeletableException
 import de.kordondev.lagermelder.exception.NotFoundException
+import de.kordondev.lagermelder.exception.WrongTimeException
 import de.kordondev.lagermelder.rest.model.Distribution
 import de.kordondev.lagermelder.rest.model.RestGlobalEventSummary
 import org.springframework.stereotype.Service
@@ -20,7 +21,8 @@ class EventService(
     val authorityService: AuthorityService,
     val eventRepository: EventRepository,
     val attendeeInEventRepository: AttendeeInEventRepository,
-    val departmentService: DepartmentService
+    val departmentService: DepartmentService,
+    private val settingsService: SettingsService
 ) {
     fun getEventByCode(code: String): EventEntry {
         return eventRepository.findByCodeAndTrashedIsFalse(code)
@@ -69,6 +71,9 @@ class EventService(
 
     fun addAttendeeToEvent(eventCode: String, attendeeCode: String): AttendeeInEvent {
         authorityService.isLkKarlsruhe()
+        if (!settingsService.canCheckInAttendees()) {
+            throw WrongTimeException("Teilnehmer können ab 1 Woche vor dem Event eingecheckt werden.")
+        }
         val event = getEventByCode(eventCode)
         val attendee: Attendee = attendeeService.getAttendeeByCode(attendeeCode)
         val attendeeInEvent = AttendeeInEventEntry(id = 0, attendeeCode, eventCode, Instant.now())
@@ -147,6 +152,9 @@ class EventService(
 
     fun addDepartmentToEvent(eventCode: String, departmentId: Long): List<AttendeeInEvent> {
         authorityService.isLkKarlsruhe()
+        if (!settingsService.canCheckInAttendees()) {
+            throw WrongTimeException("Teilnehmer können ab 1 Woche vor dem Event eingecheckt werden.")
+        }
         return departmentService.getDepartment(departmentId)
             .let { attendeeService.getAttendeesForDepartment(it) }
             .let { it.youths + it.youthLeaders }
