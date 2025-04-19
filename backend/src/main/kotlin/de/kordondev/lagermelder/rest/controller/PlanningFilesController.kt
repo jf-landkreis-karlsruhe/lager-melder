@@ -3,7 +3,10 @@ package de.kordondev.lagermelder.rest.controller
 import de.kordondev.lagermelder.core.service.PlanningFilesService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.RestController
 import java.io.IOException
 
 @RestController
@@ -84,5 +87,13 @@ class PlanningFilesController(
     fun getTentMarkings(response: HttpServletResponse): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=Zeltschilder.pdf")
         return planningFilesService.createTentMarkings()
+    }
+
+    @ResponseBody
+    @Throws(IOException::class)
+    @GetMapping(value = ["/planning-files/missing-juleika"], produces = ["application/pdf"])
+    fun getMissingJuleika(response: HttpServletResponse): ByteArray? {
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=fehlendeJuleika.pdf")
+        return planningFilesService.createMissingJuleika()
     }
 }

@@ -4,7 +4,7 @@ import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.YouthPlanAttendeeRoleEntry
 import de.kordondev.lagermelder.core.persistence.repository.YouthPlanAttendeeRolesRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
-import de.kordondev.lagermelder.core.service.helper.YouthPlanAttendeeRoleHelper
+import de.kordondev.lagermelder.core.service.helper.AttendeeRoleHelper
 import de.kordondev.lagermelder.rest.model.YouthPlanDistribution
 import org.springframework.stereotype.Service
 
@@ -13,7 +13,7 @@ class YouthPlanAttendeeRoleService(
     private val youthPlanAttendeeRolesRepository: YouthPlanAttendeeRolesRepository,
     private val attendeeService: AttendeeService,
     private val settingsService: SettingsService,
-    private val youthPlanAttendeeRoleHelper: YouthPlanAttendeeRoleHelper,
+    private val attendeeRoleHelper: AttendeeRoleHelper,
     private val authorityService: AuthorityService
 ) {
 
@@ -37,10 +37,10 @@ class YouthPlanAttendeeRoleService(
     fun getOptimizedLeaderAndAttendeeIds(): List<YouthPlanAttendeeRoleEntry> {
         val undistributedAttendees = attendeeService.getAttendeesWithoutYouthPlanRole()
         val distributedAttendees = getAll()
-        val newDistributed = youthPlanAttendeeRoleHelper.getOptimizedLeaderAndAttendeeIds(
+        val newDistributed = attendeeRoleHelper.getOptimizedLeaderAndAttendeeIds(
             distributedAttendees,
             undistributedAttendees,
-            settingsService.getSettings().eventStart
+            settingsService.getSettings().eventStart,
         )
         saveAll(newDistributed)
         return distributedAttendees + newDistributed

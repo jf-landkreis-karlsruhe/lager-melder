@@ -195,6 +195,19 @@ class AttendeeService(
         }
     }
 
+    fun getAttendeesPerDepartments(): Map<Long, List<Attendee>> {
+        return baseAttendeeRepository.findByRoleIn(
+            listOf(
+                AttendeeRole.YOUTH_LEADER.name,
+                AttendeeRole.YOUTH.name
+            )
+        )
+            .groupBy { it.department.id }
+    }
+
+    fun getYouthLeaderIn(attendees: List<Attendee>) =
+        youthLeaderRepository.findAllByIds(attendees.map { it.id })
+
     fun getPartOfDepartmentOrDepartment(attendee: Attendee): DepartmentEntry {
         if (attendee is ZKidEntry) {
             return attendee.partOfDepartment
@@ -252,5 +265,6 @@ class AttendeeService(
             else -> throw UnexpectedTypeException("Attendee type ${toSave.role} to save is not of expected type (AttendeeService)")
         }
     }
+
 
 }
