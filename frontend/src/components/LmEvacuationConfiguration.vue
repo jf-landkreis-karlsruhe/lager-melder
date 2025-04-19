@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Department, updateTentMarkings } from '@/services/department'
+import { type Department, type TentMarkingRequest, updateTentMarkings } from '@/services/department'
 import { ref } from 'vue'
 import type { Distribution } from '@/services/event'
 import type { EvacuationGroup } from '@/services/evacuationGroups'
@@ -16,9 +16,7 @@ const toast = useToast()
 const department = ref<Department>(props.department)
 const loading = ref<boolean>(false)
 const edit = ref<boolean>(false)
-const selectedTentMarkings = ref<string[]>(
-  props.department.tentMarkings?.map((marking) => marking.name) || []
-)
+const selectedTentMarkings = ref<string[]>(props.department.tentMarkings?.map((marking) => marking.name) || [])
 const evacuationGroupsSelect = ref<{ title: string; value: EvacuationGroup }[]>([])
 
 function selectableEvacuationGroups() {
@@ -32,10 +30,10 @@ const saveEvacuationGroups = () => {
   loading.value = true
   const tentMarkings = selectedTentMarkings.value.map((marking) => {
     return (
-      department.value.tentMarkings?.find((tentMarking) => tentMarking.name === marking) || {
-        name: marking,
-        id: ''
-      }
+      department.value.tentMarkings?.find((tentMarking) => tentMarking.name === marking) ||
+      ({
+        name: marking
+      } as TentMarkingRequest)
     )
   })
   if (!department.value.evacuationGroup) {
@@ -52,11 +50,7 @@ const saveEvacuationGroups = () => {
     })
     .catch(async (err) => {
       loading.value = false
-      await showErrorToast(
-        toast,
-        err,
-        `Zelte für ${department.value.name} konnten nicht gespeichert werden.`
-      )
+      await showErrorToast(toast, err, `Zelte für ${department.value.name} konnten nicht gespeichert werden.`)
     })
 }
 
@@ -68,11 +62,7 @@ const startEdit = () => {
 </script>
 
 <template>
-  <div
-    :style="
-      'background: ' + department.evacuationGroup?.color + '33; padding: 9px;border-radius:3px'
-    "
-  >
+  <div :style="'background: ' + department.evacuationGroup?.color + '33; padding: 9px;border-radius:3px'">
     <h4>Zelte</h4>
     <form v-if="edit" v-on:submit.prevent="saveEvacuationGroups()">
       <div>

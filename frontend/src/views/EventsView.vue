@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { getEventByCode, loginToEvent } from '../services/event'
 import { isValidTestCode } from '../assets/config'
 import { useToast } from 'vue-toastification'
 import { useRoute } from 'vue-router'
 import Scanner from '../components/LmScanner.vue'
-import { onBeforeUnmount } from 'vue'
 import { renewToken } from '@/services/authentication'
+import { showErrorToast } from '@/helper/fetch'
 
 const toast = useToast()
 const route = useRoute()
@@ -24,7 +24,7 @@ const submitEvent = async (attendeeCode: string) => {
   }
   const attendeeRes = await loginToEvent(eventCode.value, attendeeCode).catch((e) => {
     console.error(e)
-    toast.error(`${eventName.value} mit "${attendeeCode}" hat nicht geklappt.`)
+    showErrorToast(toast, e, `${eventName.value} mit "${attendeeCode}" hat nicht geklappt.`)
   })
   if (attendeeRes) {
     toast.success(`${eventName.value} von "${attendeeRes.attendeeFirstName} ${attendeeRes.attendeeLastName}".`)
