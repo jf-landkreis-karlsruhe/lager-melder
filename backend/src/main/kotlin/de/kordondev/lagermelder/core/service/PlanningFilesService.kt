@@ -5,6 +5,7 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.client.j2se.MatrixToImageWriter
 import com.google.zxing.common.BitMatrix
 import com.lowagie.text.*
+import com.lowagie.text.List
 import com.lowagie.text.pdf.*
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
@@ -723,7 +724,7 @@ class PlanningFilesService(
             sb.append(";${tents.sg40}")
             sb.append(";${tents.sg50}")
 
-            // Add total tents and number of shifts
+            // Add total tents
             sb.append(";${tents.sg20 + tents.sg30 + tents.sg40 + tents.sg50 + tents.sg200}")
 
             // Get number of duties for this department
@@ -751,7 +752,6 @@ class PlanningFilesService(
         return sb.toString()
     }
 
-    // Fix: Landkreismitarbeiter sollen Keine Schichten bekommen
     private fun calculateNumberOfDuties(
         attendeesPerDepartment: Map<Long, Int>,
         totalAttendees: Int,
@@ -767,8 +767,6 @@ class PlanningFilesService(
                     min(1, round(attendeeCount.toDouble() / totalAttendees * numberOfShifts).toInt())
                 duties[departmentId] = proportionalShifts
                 allocatedShifts += proportionalShifts
-            } else {
-                duties[departmentId] = 0
             }
         }
 
@@ -781,7 +779,7 @@ class PlanningFilesService(
         // Distribute remaining shifts to largest departments first
         while (allocatedShifts < numberOfShifts) {
             val departmentId = departmentsBySize[departmentCounter]
-            duties[departmentId] = duties[departmentId]!! + 1
+            duties[departmentId] = (duties[departmentId] ?: 0) + 1
             allocatedShifts++
             departmentCounter = (departmentCounter + 1) % departmentsBySize.size
         }
@@ -790,7 +788,7 @@ class PlanningFilesService(
         while (allocatedShifts > numberOfShifts) {
             val departmentId = departmentsBySize[departmentCounter]
             if (duties[departmentId]!! > 0) {
-                duties[departmentId] = duties[departmentId]!! - 1
+                duties[departmentId] = (duties[departmentId] ?: 0) - 1
                 allocatedShifts--
             }
             departmentCounter = (departmentCounter + 1) % departmentsBySize.size
