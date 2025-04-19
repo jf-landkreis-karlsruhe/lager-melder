@@ -15,6 +15,7 @@ export interface Settings {
   organisationAddress: string // multiline
   moneyPerYouthLoader: string
   startDownloadRegistrationFiles: string
+  numberOfDuties: number
 }
 
 export const getSettings = () =>

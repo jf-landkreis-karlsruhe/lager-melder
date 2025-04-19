@@ -11,6 +11,7 @@ import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import de.kordondev.lagermelder.core.persistence.entry.Food
+import de.kordondev.lagermelder.core.persistence.entry.TentsEntity
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.service.helper.AttendeeRoleHelper
@@ -22,6 +23,8 @@ import java.awt.Color
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.min
+import kotlin.math.round
 
 
 @Service
@@ -34,7 +37,8 @@ class PlanningFilesService(
     private val settingsService: SettingsService,
     private val tShirtSizeService: TShirtSizeService,
     private val eventDayService: EventDayService,
-    private val attendeeRoleHelper: AttendeeRoleHelper
+    private val attendeeRoleHelper: AttendeeRoleHelper,
+    private val tentsService: TentsService
 ) {
     private val yDistanceBetweenBatches = 141F
     private val logger: Logger = LoggerFactory.getLogger(PlanningFilesService::class.java)
@@ -667,4 +671,154 @@ class PlanningFilesService(
         return out.toByteArray()
     }
 
+    public fun createTentsAndDutiesCSV(): String {
+        authorityService.isSpecializedFieldDirector()
+        val numberOfDuties = settingsService.getSettings().numberOfDuties
+        val departments = departmentService.getDepartments(true)
+        return getTentAndDutiesCsv(departments, numberOfDuties)
+
+    }
+
+    private fun getTentAndDutiesCsv(
+        departments: kotlin.collections.List<DepartmentEntry>,
+        numberOfDuties: Int
+    ): String {
+        val attendeesPerDepartment =
+            attendeeService.getAttendeesPerDepartments()
+                .filterNot { it.value.first().department.isOrganizer() }
+                .mapValues { it.value.size }
+        val tentsByDepartmentId = tentsService.getAllTents()
+        var dutyNumber = 1;
+        val sb = StringBuilder()
+
+        // Calculate total number of attendees
+        val totalAttendees = attendeesPerDepartment.values.sum()
+
+        // Calculate duties based on department sizes
+        val dutiesPerDepartment = calculateNumberOfDuties(attendeesPerDepartment, totalAttendees, numberOfDuties)
+
+        // Add header row
+        sb.append("Jugendfeuer;Teilnehmer;SG 200;SG 20;SG 30;SG 40;SG 50;Zelte gesamt;Anzahl Lagerdienste;Lagerdienste\n")
+
+
+        // Add department rows
+        for (department in departments.sortedBy { it.headDepartmentName + it.name }) {
+            val totalDepartmentAttendees = attendeesPerDepartment[department.id] ?: 0
+            val tents = tentsByDepartmentId.find { it.department.id == department.id } ?: TentsEntity(
+                0,
+                department,
+                0,
+                0,
+                0,
+                0,
+                0
+            )
+
+            sb.append("${department.name};$totalDepartmentAttendees")
+
+
+            // Add tent counts by type
+            sb.append(";${tents.sg200}")
+            sb.append(";${tents.sg20}")
+            sb.append(";${tents.sg30}")
+            sb.append(";${tents.sg40}")
+            sb.append(";${tents.sg50}")
+
+            // Add total tents
+            sb.append(";${tents.sg20 + tents.sg30 + tents.sg40 + tents.sg50 + tents.sg200}")
+
+            // Get number of duties for this department
+            val numberOfDuties = dutiesPerDepartment[department.id] ?: 0
+            sb.append(";$numberOfDuties")
+            val duties = (dutyNumber..dutyNumber + numberOfDuties - 1).joinToString(", ")
+            dutyNumber += numberOfDuties
+            sb.append(";$duties")
+
+            sb.append("\n")
+        }
+
+        val summedUpTents = sumUpTents(tentsByDepartmentId)
+        sb.append("Gesamt; $totalAttendees")
+        // Add tent counts by type
+        sb.append(";${summedUpTents.sg200}")
+        sb.append(";${summedUpTents.sg20}")
+        sb.append(";${summedUpTents.sg30}")
+        sb.append(";${summedUpTents.sg40}")
+        sb.append(";${summedUpTents.sg50}")
+
+        // Add total tents and number of shifts
+        sb.append(";${summedUpTents.sg20 + summedUpTents.sg30 + summedUpTents.sg40 + summedUpTents.sg50 + summedUpTents.sg200}")
+
+        return sb.toString()
+    }
+
+    private fun calculateNumberOfDuties(
+        attendeesPerDepartment: Map<Long, Int>,
+        totalAttendees: Int,
+        numberOfShifts: Int
+    ): Map<Long, Int> {
+        val duties = mutableMapOf<Long, Int>()
+        var allocatedShifts = 0
+
+        // First distribute the shifts proportionally
+        for ((departmentId, attendeeCount) in attendeesPerDepartment) {
+            if (totalAttendees > 0) {
+                val proportionalShifts =
+                    min(1, round(attendeeCount.toDouble() / totalAttendees * numberOfShifts).toInt())
+                duties[departmentId] = proportionalShifts
+                allocatedShifts += proportionalShifts
+            }
+        }
+
+        val departmentsBySize = attendeesPerDepartment.entries
+            .sortedByDescending { it.value }
+            .map { it.key }
+
+        var departmentCounter = 0
+
+        // Distribute remaining shifts to largest departments first
+        while (allocatedShifts < numberOfShifts) {
+            val departmentId = departmentsBySize[departmentCounter]
+            duties[departmentId] = (duties[departmentId] ?: 0) + 1
+            allocatedShifts++
+            departmentCounter = (departmentCounter + 1) % departmentsBySize.size
+        }
+
+        // Handle case where we might have allocated too many shifts due to rounding
+        while (allocatedShifts > numberOfShifts) {
+            val departmentId = departmentsBySize[departmentCounter]
+            if (duties[departmentId]!! > 0) {
+                duties[departmentId] = (duties[departmentId] ?: 0) - 1
+                allocatedShifts--
+            }
+            departmentCounter = (departmentCounter + 1) % departmentsBySize.size
+        }
+
+        return duties
+    }
+
+    private fun sumUpTents(tentsByDepartmentId: kotlin.collections.List<TentsEntity>): TentsEntity {
+        return tentsByDepartmentId.stream()
+            .reduce(
+                TentsEntity(
+                    0,
+                    DepartmentEntry(0, "Gesamt", "", "", "", "", emptySet(), "", false, emptySet(), null),
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                )
+            ) { acc, tents ->
+                TentsEntity(
+                    0,
+                    acc.department,
+                    acc.sg200 + tents.sg200,
+                    acc.sg20 + tents.sg20,
+                    acc.sg30 + tents.sg30,
+                    acc.sg40 + tents.sg40,
+                    acc.sg50 + tents.sg50
+                )
+            }
+    }
 }
