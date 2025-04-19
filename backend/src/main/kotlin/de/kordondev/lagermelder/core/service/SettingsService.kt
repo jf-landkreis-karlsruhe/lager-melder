@@ -93,4 +93,9 @@ class SettingsService(
         }
         return Instant.now().isBefore(getSettings().helpersRegistrationEnd)
     }
+
+    fun canCheckInAttendees(): Boolean {
+        // Check if it is at most one week before the event
+        return LocalDate.now().isAfter(getSettings().eventStart.minus(7, ChronoUnit.DAYS))
+    }
 }

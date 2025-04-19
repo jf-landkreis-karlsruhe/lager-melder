@@ -19,7 +19,8 @@ class DepartmentService(
     private val attendeeService: AttendeeService,
     private val authorityService: AuthorityService,
     private val evacuationGroupService: EvacuationGroupService,
-    private val tentMarkingService: TentMarkingService
+    private val tentMarkingService: TentMarkingService,
+    private val settingsService: SettingsService
 ) {
     fun getDepartments(onlyWithAttendees: Boolean = false): List<DepartmentEntry> {
         val departments = departmentRepository
