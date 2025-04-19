@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { hasAdministrationRole } from '../../services/authentication'
-import { type Department, getDepartments, updatePauseDepartment } from '../../services/department'
+import { hasSpecializedFieldDirectorRole } from '../../services/authentication'
+import { type Department, getDepartments } from '../../services/department'
 import EditDepartment from './LmEditDepartment.vue'
 import AddDepartment from '../LmAddDepartment.vue'
 import AttendeesShort from './LMAttendeesShort.vue'
@@ -27,17 +27,10 @@ onMounted(async () => {
   )
   getEventByType(EventType.GLOBAL_ENTER).then((event: Event) => (enterEvent.value = event))
 })
-
-const updatePauseDepartmentInternal = (department: Department) => {
-  updatePauseDepartment(department.id, !department.paused).then(() => {
-    department.paused = !department.paused
-    toast.success(` ${department.name} erfolgreich ${department.paused ? 'abgemeldet' : 'zurückgemeldet'}`)
-  })
-}
 </script>
 
 <template>
-  <div v-if="hasAdministrationRole()">
+  <div v-if="hasSpecializedFieldDirectorRole()">
     <div v-if="departments.length > 0">
       <LmContainer>
         <h1>Feuerwehren</h1>
@@ -50,13 +43,6 @@ const updatePauseDepartmentInternal = (department: Department) => {
             <AttendeesShort :department-id="department.id" />
             <TentsShort :department-id="department.id" />
             <router-link :to="'/feuerwehr/' + department.id">Details</router-link>
-            <div class="d-flex justify-space-between align-center flex-grow-1 flex-wrap mt-4">
-              <v-btn @click="updatePauseDepartmentInternal(department)" class="checkin" rounded>
-                <span v-if="department.paused">Zurückmelden</span>
-                <span v-if="!department.paused">Anwesenheit pausieren</span>
-              </v-btn>
-              <router-link :to="'/feuerwehr-betreten/' + department.id"> Teilnehmer einchecken</router-link>
-            </div>
           </v-card>
         </div>
       </LmContainer>

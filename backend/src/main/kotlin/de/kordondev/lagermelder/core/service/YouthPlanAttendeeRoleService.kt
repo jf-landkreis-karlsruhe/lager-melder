@@ -5,6 +5,7 @@ import de.kordondev.lagermelder.core.persistence.entry.YouthPlanAttendeeRoleEntr
 import de.kordondev.lagermelder.core.persistence.repository.YouthPlanAttendeeRolesRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.service.helper.AttendeeRoleHelper
+import de.kordondev.lagermelder.exception.WrongTimeException
 import de.kordondev.lagermelder.rest.model.YouthPlanDistribution
 import org.springframework.stereotype.Service
 
@@ -17,16 +18,11 @@ class YouthPlanAttendeeRoleService(
     private val authorityService: AuthorityService
 ) {
 
-    fun saveAll(attendeeRoles: List<YouthPlanAttendeeRoleEntry>): List<YouthPlanAttendeeRoleEntry> {
-        return youthPlanAttendeeRolesRepository.saveAll(attendeeRoles).toList()
-    }
-
-    fun getAll(): List<YouthPlanAttendeeRoleEntry> {
-        return youthPlanAttendeeRolesRepository.findAll().toList()
-    }
-
     fun getAttendeeDistribution(): YouthPlanDistribution {
-        authorityService.isSpecializedFieldDirector()
+        authorityService.isLkKarlsruhe()
+        if (!settingsService.canRegistrationFilesDownloaded()) {
+            throw WrongTimeException("Dateien können noch nicht heruntergeladen werden.")
+        }
         val distribution = getOptimizedLeaderAndAttendeeIds().groupBy { it.youthPlanRole }
         return YouthPlanDistribution(
             distribution[AttendeeRole.YOUTH_LEADER]?.size,
@@ -44,6 +40,14 @@ class YouthPlanAttendeeRoleService(
         )
         saveAll(newDistributed)
         return distributedAttendees + newDistributed
+    }
+
+    private fun getAll(): List<YouthPlanAttendeeRoleEntry> {
+        return youthPlanAttendeeRolesRepository.findAll().toList()
+    }
+
+    private fun saveAll(attendeeRoles: List<YouthPlanAttendeeRoleEntry>): List<YouthPlanAttendeeRoleEntry> {
+        return youthPlanAttendeeRolesRepository.saveAll(attendeeRoles).toList()
     }
 
 }

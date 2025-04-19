@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { getYouthPlanDistribution } from '@/services/youthPlanAttendees'
 import type { YouthPlanDistribution } from '@/services/youthPlanAttendees'
-import { hasAdministrationRole } from '../services/authentication'
+import { getYouthPlanDistribution } from '@/services/youthPlanAttendees'
+import { hasSpecializedFieldDirectorRole } from '../services/authentication'
 
 const error = ref<boolean>(false)
 const loading = ref<boolean>(false)
@@ -29,7 +29,7 @@ const openModal = () => {
 
 <template>
   <v-dialog v-model="dialogOpen" persistent max-width="500">
-    <template v-slot:activator="{ props }" v-if="hasAdministrationRole()">
+    <template v-slot:activator="{ props }" v-if="hasSpecializedFieldDirectorRole()">
       <v-btn rounded color="primary" dark v-bind="props" @click="openModal" class="mb-2">
         Verteilung Pädagogischer Betreuer anzeigen
       </v-btn>

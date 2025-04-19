@@ -5,8 +5,9 @@ const TOKEN_STORAGE = 'access_token'
 export enum Roles {
   UNAUTHORIZED = 'UNAUTHORIZED',
   USER = 'USER',
-  ADMIN = 'ADMIN',
-  SPECIALIZED_FIELD_DIRECTOR = 'SPECIALIZED_FIELD_DIRECTOR'
+  LK_KARLSRUHE = 'LK_KARLSRUHE',
+  SPECIALIZED_FIELD_DIRECTOR = 'SPECIALIZED_FIELD_DIRECTOR',
+  ADMIN = 'ADMIN'
 }
 
 export function rolesText(role?: Roles): string {
@@ -15,6 +16,8 @@ export function rolesText(role?: Roles): string {
       return 'Admin'
     case Roles.USER:
       return 'Benutzer'
+    case Roles.LK_KARLSRUHE:
+      return 'LK Karlsruhe'
     case Roles.SPECIALIZED_FIELD_DIRECTOR:
       return 'Fachgebietsleiter'
     case Roles.UNAUTHORIZED:
@@ -114,7 +117,10 @@ export const getToken = () => {
   return jwt
 }
 
-export const hasAdministrationRole = () => [Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR].includes(getTokenData().role)
+export const hasLKKarlsruheRole = () =>
+  [Roles.LK_KARLSRUHE, Roles.SPECIALIZED_FIELD_DIRECTOR, Roles.ADMIN].includes(getTokenData().role)
+export const hasSpecializedFieldDirectorRole = () =>
+  [Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR].includes(getTokenData().role)
 
 export const getTokenData = () => {
   const token = getToken()

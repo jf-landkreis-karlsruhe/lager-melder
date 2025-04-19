@@ -1,7 +1,6 @@
 package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
-import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.persistence.entry.TentsEntity
 import de.kordondev.lagermelder.core.persistence.repository.TentsRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
@@ -17,16 +16,19 @@ class TentsService(
 
     fun getAllTents(): List<TentsEntity> {
         return tentsRepository.findAll()
-            .filter { authorityService.hasAuthorityFilter(it.department, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
+            .filter { authorityService.hasAuthorityFilter(it.department, AuthorityService.LK_KARLSRUHE_ALLOWED) }
     }
 
     fun getForDepartment(department: DepartmentEntry): TentsEntity {
         return tentsRepository.findByDepartment(department)
+            ?.let {
+                authorityService.hasAuthority(it, AuthorityService.LK_KARLSRUHE_ALLOWED)
+            }
             ?: TentsEntity(0, department, 0, 0, 0, 0, 0)
     }
 
     fun saveForDepartment(tents: TentsEntity): TentsEntity {
-        authorityService.hasAuthority(tents, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.hasAuthority(tents, AuthorityService.LK_KARLSRUHE_ALLOWED)
         checkCanTentsBeEdited()
         return tentsRepository.save(tents)
     }
