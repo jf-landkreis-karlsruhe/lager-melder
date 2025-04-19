@@ -4,9 +4,10 @@ import CheckedInSummary from '@/components/LmCheckedInSummary.vue'
 import { type Distribution, type GlobalEventSummary, globalEventSummary } from '@/services/event'
 import LmContainer from '../components/LmContainer.vue'
 import LmEvacuationConfiguration from '@/components/LmEvacuationConfiguration.vue'
-import { type Department, getDepartments } from '@/services/department'
+import { type Department, getDepartments, updatePauseDepartment } from '@/services/department'
 import { type EvacuationGroup, getEvacuationGroup } from '@/services/evacuationGroups'
 import { hasLKKarlsruheRole } from '@/services/authentication'
+import { useToast } from 'vue-toastification'
 
 const departmentSummary = ref<SummaryDepartment | null>(null)
 const evacuationGroups = ref<EvacuationGroup[]>([])
@@ -21,6 +22,8 @@ interface DepartmentDistribution {
   department: Department
   distribution: Distribution
 }
+
+const toast = useToast()
 
 onMounted(() => {
   getEvacuationGroup().then((evacGroup) => {
@@ -73,6 +76,18 @@ function sortDepartmentByEvacuationGroup(a: DepartmentDistribution, b: Departmen
   }
   return evacuationA.localeCompare(evacuationB)
 }
+
+const updatePauseDepartmentInternal = (department: Department) => {
+  updatePauseDepartment(department.id, !department.paused).then(() => {
+    departmentSummary.value = {
+      ...departmentSummary.value!,
+      departments: departmentSummary.value!.departments.map((dep) =>
+        dep.id === department.id ? { ...dep, paused: !department.paused } : dep
+      )
+    }
+    toast.success(` ${department.name} erfolgreich ${department.paused ? 'abgemeldet' : 'zurückgemeldet'}`)
+  })
+}
 </script>
 
 <template>
@@ -91,6 +106,15 @@ function sortDepartmentByEvacuationGroup(a: DepartmentDistribution, b: Departmen
           :distribution="departmentSummary.distribution"
           :evacuation-groups="evacuationGroups"
         />
+        <div class="d-flex justify-space-between align-center flex-grow-1 flex-wrap mt-4">
+          <v-btn @click="updatePauseDepartmentInternal(departmentSummary.department)" class="checkin" rounded>
+            <span v-if="departmentSummary.department.paused">Zurückmelden</span>
+            <span v-if="!departmentSummary.department.paused">Anwesenheit pausieren</span>
+          </v-btn>
+          <router-link :to="'/feuerwehr-betreten/' + departmentSummary.department.id">
+            Teilnehmer einchecken
+          </router-link>
+        </div>
       </div>
     </div>
   </LmContainer>

@@ -120,7 +120,7 @@ class DepartmentController(
         // TODO: 1 week before event
         val department = departmentService.getDepartment(id)
         return departmentService
-            .saveDepartment(department.copy(paused = pauseRequest.paused))
+            .saveDepartmentForLKKarlsruhe(department.copy(paused = pauseRequest.paused))
             .let { RestDepartment.of(it) }
     }
 

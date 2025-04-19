@@ -62,7 +62,8 @@ class DepartmentService(
         return saveDepartmentForLKKarlsruhe(department)
     }
 
-    private fun saveDepartmentForLKKarlsruhe(department: DepartmentEntry): DepartmentEntry {
+    @Transactional
+    fun saveDepartmentForLKKarlsruhe(department: DepartmentEntry): DepartmentEntry {
         authorityService.isLkKarlsruhe()
 
         departmentFeatureRepository.deleteForDepartmentAndNotIn(department.id, department.features.map { it.id })
