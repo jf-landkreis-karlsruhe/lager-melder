@@ -580,9 +580,11 @@ class PlanningFilesService(
         val document = prepareDocument(out, PageSize.A4.rotate())
 
         val departments = departmentService.getDepartments(true)
+        var hasTentMarkings = false
 
         departments.sortedBy { it.headDepartmentName + it.name }.map { department ->
             department.tentMarkings.forEach { tentMarking ->
+                hasTentMarkings = true
                 val tentName = Paragraph("Zelt: ${tentMarking.name}", markingFont)
                 tentName.alignment = Element.ALIGN_CENTER
                 val departmentName = Paragraph("${department.headDepartmentName} ${department.name}", markingFontSmall)
@@ -601,6 +603,10 @@ class PlanningFilesService(
 
                 document.newPage()
             }
+        }
+
+        if (!hasTentMarkings) {
+            document.add(Paragraph("Es sind keine Zeltmarkierungen vorhanden."))
         }
 
         document.close()
