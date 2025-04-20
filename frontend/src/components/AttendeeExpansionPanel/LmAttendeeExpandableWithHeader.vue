@@ -102,6 +102,10 @@ const juleikaIsInvalid = (attendee: Attendee): boolean => {
         </v-btn>
       </label>
     </div>
+    <div v-if="props.role === AttendeeRole.CHILD_LEADER">
+      <v-icon>mdi-information</v-icon>
+      Hier nur Kindergruppenleiter eintragen, die nicht als Jugendleiter beim Kreiszeltlager dabei sind.
+    </div>
 
     <div class="default-slot-content">
       <slot></slot>
