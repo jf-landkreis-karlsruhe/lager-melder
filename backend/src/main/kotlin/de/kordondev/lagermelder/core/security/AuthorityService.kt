@@ -94,7 +94,7 @@ class AuthorityService {
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
-            .anyMatch { it == ROLE_PREFIX + Roles.ADMIN }
+            .anyMatch { requesterRole -> ADMIN_ALLOWED.any { ROLE_PREFIX + it == requesterRole } }
     }
 
     fun isAdmin() {
@@ -110,7 +110,7 @@ class AuthorityService {
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
-            .anyMatch { it == ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR || it == ROLE_PREFIX + Roles.ADMIN }
+            .anyMatch { requesterRole -> SPECIALIZED_FIELD_DIRECTOR_ALLOWED.any { ROLE_PREFIX + it == requesterRole } }
     }
 
     fun isSpecializedFieldDirector() {
@@ -132,14 +132,14 @@ class AuthorityService {
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
-            .anyMatch { it == ROLE_PREFIX + Roles.LK_KARLSRUHE || it == ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR || it == ROLE_PREFIX + Roles.ADMIN }
+            .anyMatch { requesterRole -> LK_KARLSRUHE_ALLOWED.any { ROLE_PREFIX + it == requesterRole } }
     }
 
     companion object {
         val USER_ALLOWED = listOf(Roles.USER, Roles.LK_KARLSRUHE, Roles.SPECIALIZED_FIELD_DIRECTOR, Roles.ADMIN)
         val LK_KARLSRUHE_ALLOWED = listOf(Roles.LK_KARLSRUHE, Roles.SPECIALIZED_FIELD_DIRECTOR, Roles.ADMIN)
         val SPECIALIZED_FIELD_DIRECTOR_ALLOWED =
-            listOf(Roles.LK_KARLSRUHE, Roles.SPECIALIZED_FIELD_DIRECTOR)
+            listOf(Roles.SPECIALIZED_FIELD_DIRECTOR, Roles.ADMIN)
         val ADMIN_ALLOWED = listOf(Roles.ADMIN)
     }
 

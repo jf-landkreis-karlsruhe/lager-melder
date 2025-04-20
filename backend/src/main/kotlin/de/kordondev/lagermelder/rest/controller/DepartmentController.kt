@@ -117,7 +117,6 @@ class DepartmentController(
         @RequestBody(required = true) @Valid pauseRequest: RestDepartmentPauseRequest
     ): RestDepartment {
         authorityService.isLkKarlsruhe()
-        // TODO: 1 week before event
         val department = departmentService.getDepartment(id)
         return departmentService
             .saveDepartmentForLKKarlsruhe(department.copy(paused = pauseRequest.paused))
