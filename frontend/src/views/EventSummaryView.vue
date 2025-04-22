@@ -79,12 +79,20 @@ function sortDepartmentByEvacuationGroup(a: DepartmentDistribution, b: Departmen
 
 const updatePauseDepartmentInternal = (department: Department) => {
   updatePauseDepartment(department.id, !department.paused).then(() => {
+    if (!departmentSummary.value) {
+      return
+    }
+
     departmentSummary.value = {
-      ...departmentSummary.value!,
-      departments: departmentSummary.value!.departments.map((dep) =>
-        dep.id === department.id ? { ...dep, paused: !department.paused } : dep
+      ...departmentSummary.value,
+      departments: departmentSummary.value.departments.map((depWrapper) =>
+        depWrapper.id === department.id
+          ? { ...depWrapper, department: { ...depWrapper.department, paused: !department.paused } }
+          : depWrapper
       )
     }
+  })
+}
     toast.success(` ${department.name} erfolgreich ${department.paused ? 'abgemeldet' : 'zurückgemeldet'}`)
   })
 }
