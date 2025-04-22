@@ -100,6 +100,14 @@ const updatePauseDepartmentInternal = (department: Department) => {
       }
     }*/
 
+    departmentSummary.value = {
+      ...departmentSummary.value,
+      departments: departmentSummary.value.departments.map((depWrapper) =>
+        depWrapper.id === department.id
+          ? { ...depWrapper, department: { ...depWrapper.department, paused: !department.paused } }
+          : depWrapper
+      )
+    }
     toast.success(` ${department.name} erfolgreich ${department.paused ? 'abgemeldet' : 'zurückgemeldet'}`)
   })
 }
