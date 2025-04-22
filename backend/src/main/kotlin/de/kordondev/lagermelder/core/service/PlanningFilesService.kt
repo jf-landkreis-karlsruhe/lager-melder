@@ -680,7 +680,7 @@ class PlanningFilesService(
     }
 
     public fun createTentsAndDutiesCSV(): String {
-        authorityService.isSpecializedFieldDirector()
+        authorityService.isLkKarlsruhe()
         val numberOfDuties = settingsService.getSettings().numberOfDuties
         val departments = departmentService.getDepartments(true)
         return getTentAndDutiesCsv(departments, numberOfDuties)

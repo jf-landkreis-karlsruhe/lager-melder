@@ -83,16 +83,23 @@ const updatePauseDepartmentInternal = (department: Department) => {
       return
     }
 
-    departmentSummary.value = {
-      ...departmentSummary.value,
-      departments: departmentSummary.value.departments.map((depWrapper) =>
-        depWrapper.id === department.id
-          ? { ...depWrapper, department: { ...depWrapper.department, paused: !department.paused } }
-          : depWrapper
-      )
-    }
-  })
-}
+    // FixME: update is always to late
+    /*
+    // Find the department in the array and update it directly
+    const depToUpdate = departmentSummary.value.departments.find((depWrapper) => depWrapper.id === department.id)
+
+    if (depToUpdate) {
+      // Update the paused state directly on the existing object to trigger reactivity
+      depToUpdate.department.paused = !department.paused
+      console.log(!department.paused)
+
+      // Update the distribution if needed
+      // This ensures the UI reflects the paused state properly
+      if (depToUpdate.distribution) {
+        //depToUpdate.distribution.paused = !department.paused
+      }
+    }*/
+
     toast.success(` ${department.name} erfolgreich ${department.paused ? 'abgemeldet' : 'zurückgemeldet'}`)
   })
 }

@@ -10,7 +10,7 @@ const props = defineProps<{
 <template>
   <v-container>
     <div>
-      <h2>
+      <h2 class="mt-8">
         <span v-if="props.departmentDistribution.paused">⏸️ </span>
         {{ props.name }}
       </h2>
