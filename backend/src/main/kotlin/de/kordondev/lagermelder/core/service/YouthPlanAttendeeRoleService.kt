@@ -18,16 +18,8 @@ class YouthPlanAttendeeRoleService(
     private val authorityService: AuthorityService
 ) {
 
-    fun saveAll(attendeeRoles: List<YouthPlanAttendeeRoleEntry>): List<YouthPlanAttendeeRoleEntry> {
-        return youthPlanAttendeeRolesRepository.saveAll(attendeeRoles).toList()
-    }
-
-    fun getAll(): List<YouthPlanAttendeeRoleEntry> {
-        return youthPlanAttendeeRolesRepository.findAll().toList()
-    }
-
     fun getAttendeeDistribution(): YouthPlanDistribution {
-        authorityService.isSpecializedFieldDirector()
+        authorityService.isLkKarlsruhe()
         if (!settingsService.canRegistrationFilesDownloaded()) {
             throw WrongTimeException("Erst wenn die Registrierungsunterlagen heruntergeladen werden können, kann die Verteilung der Teilnehmerrollen erfolgen.")
         }
@@ -48,6 +40,14 @@ class YouthPlanAttendeeRoleService(
         )
         saveAll(newDistributed)
         return distributedAttendees + newDistributed
+    }
+
+    private fun getAll(): List<YouthPlanAttendeeRoleEntry> {
+        return youthPlanAttendeeRolesRepository.findAll().toList()
+    }
+
+    private fun saveAll(attendeeRoles: List<YouthPlanAttendeeRoleEntry>): List<YouthPlanAttendeeRoleEntry> {
+        return youthPlanAttendeeRolesRepository.saveAll(attendeeRoles).toList()
     }
 
 }

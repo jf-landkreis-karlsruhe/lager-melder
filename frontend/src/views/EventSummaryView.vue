@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import CheckedInSummary from '@/components/LmCheckedInSummary.vue'
 import { type Distribution, type GlobalEventSummary, globalEventSummary } from '@/services/event'
 import LmContainer from '../components/LmContainer.vue'
 import LmEvacuationConfiguration from '@/components/LmEvacuationConfiguration.vue'
-import { type Department, getDepartments } from '@/services/department'
+import { type Department, getDepartments, updatePauseDepartment } from '@/services/department'
 import { type EvacuationGroup, getEvacuationGroup } from '@/services/evacuationGroups'
+import { hasLKKarlsruheRole } from '@/services/authentication'
+import { useToast } from 'vue-toastification'
 
 const departmentSummary = ref<SummaryDepartment | null>(null)
 const evacuationGroups = ref<EvacuationGroup[]>([])
@@ -20,6 +22,8 @@ interface DepartmentDistribution {
   department: Department
   distribution: Distribution
 }
+
+const toast = useToast()
 
 onMounted(() => {
   getEvacuationGroup().then((evacGroup) => {
@@ -72,16 +76,40 @@ function sortDepartmentByEvacuationGroup(a: DepartmentDistribution, b: Departmen
   }
   return evacuationA.localeCompare(evacuationB)
 }
+
+const updatePauseDepartmentInternal = (department: Department) => {
+  updatePauseDepartment(department.id, !department.paused).then(() => {
+    if (!departmentSummary.value) {
+      return
+    }
+
+    // FixME: update is always to late
+    /*
+    // Find the department in the array and update it directly
+    const depToUpdate = departmentSummary.value.departments.find((depWrapper) => depWrapper.id === department.id)
+
+    if (depToUpdate) {
+      // Update the paused state directly on the existing object to trigger reactivity
+      depToUpdate.department.paused = !department.paused
+      console.log(!department.paused)
+
+      // Update the distribution if needed
+      // This ensures the UI reflects the paused state properly
+      if (depToUpdate.distribution) {
+        //depToUpdate.distribution.paused = !department.paused
+      }
+    }*/
+
+    toast.success(` ${department.name} erfolgreich ${department.paused ? 'abgemeldet' : 'zurückgemeldet'}`)
+  })
+}
 </script>
 
 <template>
-  <LmContainer>
+  <LmContainer v-if="hasLKKarlsruheRole()">
     <h1>Anwesende</h1>
     <div v-if="departmentSummary !== null">
-      <CheckedInSummary
-        :departmentDistribution="departmentSummary.total"
-        :name="departmentSummary.total.name"
-      />
+      <CheckedInSummary :departmentDistribution="departmentSummary.total" :name="departmentSummary.total.name" />
       Pausierte Feuerwehren sind nicht in der Gesamtanzahl enthalten.
       <div v-for="departmentSummary in departmentSummary.departments" :key="departmentSummary.id">
         <CheckedInSummary
@@ -93,6 +121,15 @@ function sortDepartmentByEvacuationGroup(a: DepartmentDistribution, b: Departmen
           :distribution="departmentSummary.distribution"
           :evacuation-groups="evacuationGroups"
         />
+        <div class="d-flex justify-space-between align-center flex-grow-1 flex-wrap mt-4">
+          <v-btn @click="updatePauseDepartmentInternal(departmentSummary.department)" class="checkin" rounded>
+            <span v-if="departmentSummary.department.paused">Zurückmelden</span>
+            <span v-if="!departmentSummary.department.paused">Anwesenheit pausieren</span>
+          </v-btn>
+          <router-link :to="'/feuerwehr-betreten/' + departmentSummary.department.id">
+            Teilnehmer einchecken
+          </router-link>
+        </div>
       </div>
     </div>
   </LmContainer>

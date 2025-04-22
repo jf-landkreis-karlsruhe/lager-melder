@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import type { YouthPlanDistribution } from '@/services/youthPlanAttendees'
 import { getYouthPlanDistribution } from '@/services/youthPlanAttendees'
-import { hasAdministrationRole } from '../services/authentication'
+import { hasSpecializedFieldDirectorRole } from '../services/authentication'
 import { showErrorToast } from '@/helper/fetch'
 import { useToast } from 'vue-toastification'
 
@@ -36,7 +36,7 @@ const openModal = () => {
 
 <template>
   <v-dialog v-model="dialogOpen" persistent max-width="500">
-    <template v-slot:activator="{ props }" v-if="hasAdministrationRole()">
+    <template v-slot:activator="{ props }" v-if="hasSpecializedFieldDirectorRole()">
       <v-btn rounded color="primary" dark v-bind="props" @click="openModal" class="mb-2">
         Verteilung Pädagogischer Betreuer anzeigen
       </v-btn>

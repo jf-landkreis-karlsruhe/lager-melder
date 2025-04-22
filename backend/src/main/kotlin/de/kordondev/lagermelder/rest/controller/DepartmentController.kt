@@ -1,5 +1,6 @@
 package de.kordondev.lagermelder.rest.controller
 
+import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.service.AttendeeService
 import de.kordondev.lagermelder.core.service.DepartmentService
 import de.kordondev.lagermelder.core.service.TentsService
@@ -19,7 +20,8 @@ import kotlin.random.Random
 class DepartmentController(
     private val departmentService: DepartmentService,
     private val attendeeService: AttendeeService,
-    private val tentsService: TentsService
+    private val tentsService: TentsService,
+    private val authorityService: AuthorityService
 ) {
     @GetMapping("/departments")
     fun getDepartments(@RequestParam(defaultValue = "false") onlyWithAttendees: Boolean): List<RestDepartment> {
@@ -114,9 +116,10 @@ class DepartmentController(
         @PathVariable("id") id: Long,
         @RequestBody(required = true) @Valid pauseRequest: RestDepartmentPauseRequest
     ): RestDepartment {
+        authorityService.isLkKarlsruhe()
         val department = departmentService.getDepartment(id)
         return departmentService
-            .saveDepartment(department.copy(paused = pauseRequest.paused))
+            .saveDepartmentForLKKarlsruhe(department.copy(paused = pauseRequest.paused))
             .let { RestDepartment.of(it) }
     }
 
@@ -126,6 +129,7 @@ class DepartmentController(
         @PathVariable("evacuationGroupId") evacuationGroupId: String,
         @RequestBody(required = true) @Valid tentMarkings: Set<RestDepartmentTentMarkingRequest>
     ): RestDepartment {
+        authorityService.isLkKarlsruhe()
         return departmentService
             .updateTentMarkings(id, tentMarkings, evacuationGroupId)
             .let { RestDepartment.of(it) }

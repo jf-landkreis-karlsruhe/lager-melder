@@ -44,7 +44,7 @@ class SettingsService(
     }
 
     fun saveSettings(settings: SettingsEntry): SettingsEntry {
-        authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.isSpecializedFieldDirector()
         if (settings.registrationEnd.isAfter(settings.startDownloadRegistrationFiles)) {
             throw BadRequestException("Registrierungsende muss vor dem Start der Downloads der Anmeldeunterlagen sein.")
         }

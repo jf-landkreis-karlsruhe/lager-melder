@@ -44,13 +44,13 @@ class EventService(
     }
 
     fun createEvent(event: EventEntry): EventEntry {
-        authorityService.hasRole(listOf(Roles.USER, Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.isSpecializedFieldDirector()
         val code = PasswordGenerator.generateCode()
         return eventRepository.save(event.copy(code = code))
     }
 
     fun saveEvent(id: Long, event: EventEntry): EventEntry {
-        authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.isSpecializedFieldDirector()
         return eventRepository.findByIdAndTrashedIsFalse(id)
             ?.let {
                 eventRepository.save(event.copy(code = it.code, id = id, type = it.type))
@@ -59,7 +59,7 @@ class EventService(
     }
 
     fun deleteEvent(id: Long) {
-        authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
+        authorityService.isSpecializedFieldDirector()
         getEvent(id).let {
             if (it.type != EventType.Location) {
                 throw NotDeletableException("Das Event ${it.name} kann nicht gelöscht werden")
@@ -70,10 +70,10 @@ class EventService(
 
 
     fun addAttendeeToEvent(eventCode: String, attendeeCode: String): AttendeeInEvent {
+        authorityService.isLkKarlsruhe()
         if (!settingsService.canCheckInAttendees()) {
             throw WrongTimeException("Teilnehmer können ab 1 Woche vor dem Event eingecheckt werden.")
         }
-        authorityService.hasRole(listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))
         val event = getEventByCode(eventCode)
         val attendee: Attendee = attendeeService.getAttendeeByCode(attendeeCode)
         val attendeeInEvent = AttendeeInEventEntry(id = 0, attendeeCode, eventCode, Instant.now())
@@ -99,6 +99,7 @@ class EventService(
     }
 
     fun getGlobalEventSummary(): RestGlobalEventSummary {
+        authorityService.isLkKarlsruhe()
         val attendees = attendeeService.getAllAttendees()
         val allAttendees = (attendees.youths + attendees.youthLeaders + attendees.childLeaders + attendees.children + attendees.zKids)
         val attendeesByDepartment = allAttendees.groupBy { attendeeService.getPartOfDepartmentOrDepartment(it) }
@@ -150,6 +151,7 @@ class EventService(
     }
 
     fun addDepartmentToEvent(eventCode: String, departmentId: Long): List<AttendeeInEvent> {
+        authorityService.isLkKarlsruhe()
         if (!settingsService.canCheckInAttendees()) {
             throw WrongTimeException("Teilnehmer können ab 1 Woche vor dem Event eingecheckt werden.")
         }

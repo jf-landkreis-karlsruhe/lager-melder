@@ -29,6 +29,7 @@ class Roles {
         const val USER = "USER"
         const val ADMIN = "ADMIN"
         const val SPECIALIZED_FIELD_DIRECTOR = "SPECIALIZED_FIELD_DIRECTOR"
+        const val LK_KARLSRUHE = "LK_KARLSRUHE"
         private val existingRoles = listOf(ADMIN, SPECIALIZED_FIELD_DIRECTOR, USER)
 
         fun filterToExistingRoles(role: String): String {

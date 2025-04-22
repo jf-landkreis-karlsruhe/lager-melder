@@ -20,8 +20,7 @@ class MailService(
         return departmentService.getDepartments()
             .filter { filterDepartmentsBy(it, sendTo) }
             .map { mailSenderService.sendReminderMail(it.leaderEMail, it.leaderName, settings) }
-            .filter { it }
-            .count()
+            .count { it }
     }
 
     fun sendRegistrationFinishedMail(sendTo: SendTo): Number {
@@ -30,8 +29,7 @@ class MailService(
         return departmentService.getDepartments()
             .filter { filterDepartmentsBy(it, sendTo) }
             .map { mailSenderService.sendRegistrationFinishedMail(it.leaderEMail, it.leaderName, settings) }
-            .filter { it }
-            .count()
+            .count { it }
     }
 
     private fun filterDepartmentsBy(department: DepartmentEntry, sendTo: SendTo): Boolean {
