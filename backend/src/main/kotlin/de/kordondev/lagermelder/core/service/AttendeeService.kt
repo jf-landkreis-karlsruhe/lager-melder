@@ -51,7 +51,7 @@ class AttendeeService(
     }
 
     fun createAttendee(attendee: Attendee): Attendee {
-        authorityService.hasAuthority(attendee, AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED)
+        authorityService.hasAuthority(attendee, AuthorityService.LK_KARLSRUHE_ALLOWED)
         checkCanAttendeeBeEdited(attendee)
         checkFirstNameAndLastNameAreUnique(attendee)
         tShirtSizeValidator.validate(attendee.tShirtSize)

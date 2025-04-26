@@ -66,6 +66,10 @@ class SettingsService(
                 helpersCanBeEdited()
             }
 
+            is ZKidEntry -> {
+                attendeesCanBeEdited()
+            }
+
             else -> false
         }
     }
