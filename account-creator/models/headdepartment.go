@@ -32,12 +32,12 @@ var Departments = map[string]Department{
 		ShortName:      "Blankenloch",
 	},
 	"vjf-bretten": {
-		HeadDepartment: "",
+		HeadDepartment: "Bretten",
 		Name:           "Bretten",
 		ShortName:      "Bretten",
 	},
 	"vjf-brettenstadt": {
-		HeadDepartment: "",
+		HeadDepartment: "Bretten",
 		Name:           "Bretten Stadt",
 		ShortName:      "Bretten Stadt",
 	},
@@ -52,7 +52,7 @@ var Departments = map[string]Department{
 		ShortName:      "Bruchsal",
 	},
 	"vjf-bruchsalstadt": {
-		HeadDepartment: "",
+		HeadDepartment: "Bruchsal",
 		Name:           "Bruchsal Stadt",
 		ShortName:      "Bruchsal Stadt",
 	},
@@ -97,7 +97,7 @@ var Departments = map[string]Department{
 		ShortName:      "Eggenstein",
 	},
 	"vjf-eggensteinleopoldshafen": {
-		HeadDepartment: "",
+		HeadDepartment: "Eggenstein-Leopoldshafen",
 		Name:           "Eggenstein-Leopoldshafen",
 		ShortName:      "Egg-Leo",
 	},
@@ -107,12 +107,12 @@ var Departments = map[string]Department{
 		ShortName:      "Eichelberg",
 	},
 	"vjf-ettlingen": {
-		HeadDepartment: "",
+		HeadDepartment: "Ettlingen",
 		Name:           "Ettlingen",
 		ShortName:      "Ettlingen",
 	},
 	"vjf-ettlingenstadt": {
-		HeadDepartment: "",
+		HeadDepartment: "Ettlingen",
 		Name:           "Ettlingen Stadt",
 		ShortName:      "Ettlingen Stadt",
 	},
@@ -152,19 +152,19 @@ var Departments = map[string]Department{
 		ShortName:      "Gölshausen",
 	},
 	"vjf-gondelsheim": {
-		HeadDepartment: "",
+		HeadDepartment: "Gondelsheim",
 		Name:           "Gondelsheim",
 		ShortName:      "Gondelsheim",
 	},
 	"vjf-graben": {
-		HeadDepartment: "Grabennneudorf",
+		HeadDepartment: "Graben-Neudorf",
 		Name:           "Graben",
 		ShortName:      "Graben",
 	},
 	"vjf-grabenneudorf": {
-		HeadDepartment: "",
-		Name:           "Grabennneudorf",
-		ShortName:      "Grabennneudorf",
+		HeadDepartment: "Graben-Neudorf",
+		Name:           "Graben-Neudorf",
+		ShortName:      "Graben-Neudorf",
 	},
 	"vjf-grossvillars": {
 		HeadDepartment: "Oberderdingen",
@@ -172,7 +172,7 @@ var Departments = map[string]Department{
 		ShortName:      "Großvillars",
 	},
 	"vjf-hambruecken": {
-		HeadDepartment: "",
+		HeadDepartment: "Hambrücken",
 		Name:           "Hambrücken",
 		ShortName:      "Hambrücken",
 	},
@@ -207,7 +207,7 @@ var Departments = map[string]Department{
 		ShortName:      "Jöhlingen",
 	},
 	"vjf-karlsbad": {
-		HeadDepartment: "",
+		HeadDepartment: "Karlsbad",
 		Name:           "Karlsbad",
 		ShortName:      "Karlsbad",
 	},
@@ -217,7 +217,7 @@ var Departments = map[string]Department{
 		ShortName:      "Karlsdorf",
 	},
 	"vjf-karlsdorfneuthard": {
-		HeadDepartment: "",
+		HeadDepartment: "Karlsdorf-Neuthard",
 		Name:           "Karlsdorf-Neuthard",
 		ShortName:      "Karlsdorf-Neuthard",
 	},
@@ -232,17 +232,17 @@ var Departments = map[string]Department{
 		ShortName:      "Kleinsteinbach",
 	},
 	"vjf-kraichtal": {
-		HeadDepartment: "",
+		HeadDepartment: "Kraichtal",
 		Name:           "Kraichtal",
 		ShortName:      "Kraichtal",
 	},
 	"vjf-kronau": {
-		HeadDepartment: "",
+		HeadDepartment: "Kronau",
 		Name:           "Kronau",
 		ShortName:      "Kronau",
 	},
 	"vjf-kuernbach": {
-		HeadDepartment: "",
+		HeadDepartment: "Kürnbach",
 		Name:           "Kürnbach",
 		ShortName:      "Kürnbach",
 	},
@@ -277,22 +277,22 @@ var Departments = map[string]Department{
 		ShortName:      "Linkenheim",
 	},
 	"vjf-linkenheimhochstetten": {
-		HeadDepartment: "",
+		HeadDepartment: "Linkenheim-Hochstetten",
 		Name:           "Linkenheim-Hochstetten",
-		ShortName:      "Linkenheim-Hochstetten",
+		ShortName:      "LiHo",
 	},
 	"vjf-malsch": {
-		HeadDepartment: "",
+		HeadDepartment: "Malsch",
 		Name:           "Malsch",
 		ShortName:      "Malsch",
 	},
 	"vjf-malschort": {
-		HeadDepartment: "",
+		HeadDepartment: "Malsch",
 		Name:           "Malsch Ort",
 		ShortName:      "Malsch Ort",
 	},
 	"vjf-marxzell": {
-		HeadDepartment: "",
+		HeadDepartment: "Marxzell",
 		Name:           "Marxzell",
 		ShortName:      "Marxzell",
 	},
@@ -347,17 +347,17 @@ var Departments = map[string]Department{
 		ShortName:      "Oberacker",
 	},
 	"vjf-oberderdingen": {
-		HeadDepartment: "",
+		HeadDepartment: "Oberderdingen",
 		Name:           "Oberderdingen",
 		ShortName:      "Oberderdingen",
 	},
 	"vjf-oberderdingenstadt": {
-		HeadDepartment: "",
+		HeadDepartment: "Oberderdingen",
 		Name:           "Oberderdingen Stadt",
 		ShortName:      "Oberderdingen Stadt",
 	},
 	"vjf-obergrombach": {
-		HeadDepartment: "",
+		HeadDepartment: "Bruchsal",
 		Name:           "Obergrombach",
 		ShortName:      "Obergrombach",
 	},
@@ -367,7 +367,7 @@ var Departments = map[string]Department{
 		ShortName:      "Oberhausen",
 	},
 	"vjf-oberhausenrheinhausen": {
-		HeadDepartment: "",
+		HeadDepartment: "Oberhausen-Rheinhausen",
 		Name:           "Oberhausen-Rheinhausen",
 		ShortName:      "Oberhausen-Rhein",
 	},
@@ -387,12 +387,12 @@ var Departments = map[string]Department{
 		ShortName:      "Odenheim",
 	},
 	"vjf-oestringen": {
-		HeadDepartment: "",
+		HeadDepartment: "Östringen",
 		Name:           "Östringen",
 		ShortName:      "Östringen",
 	},
 	"vjf-oestringenstadt": {
-		HeadDepartment: "",
+		HeadDepartment: "Östringen",
 		Name:           "Östringen Stadt",
 		ShortName:      "Östringen Stadt",
 	},
@@ -402,17 +402,17 @@ var Departments = map[string]Department{
 		ShortName:      "Pfaffenrot",
 	},
 	"vjf-pfinztal": {
-		HeadDepartment: "",
+		HeadDepartment: "Pfinztal",
 		Name:           "Pfinztal",
 		ShortName:      "Pfinztal",
 	},
 	"vjf-philippsburg": {
-		HeadDepartment: "",
+		HeadDepartment: "Philippsburg",
 		Name:           "Philippsburg",
 		ShortName:      "Philippsburg",
 	},
 	"vjf-philippsburgstadt": {
-		HeadDepartment: "",
+		HeadDepartment: "Philippsburg",
 		Name:           "Philippsburg Stadt",
 		ShortName:      "Philippsburg Stadt",
 	},
@@ -432,12 +432,12 @@ var Departments = map[string]Department{
 		ShortName:      "Rheinsheim",
 	},
 	"vjf-rheinstetten": {
-		HeadDepartment: "",
+		HeadDepartment: "Rheinstetten",
 		Name:           "Rheinstetten",
 		ShortName:      "Rheinstetten",
 	},
 	"vjf-rheinstettenstadt": {
-		HeadDepartment: "",
+		HeadDepartment: "Rheinstetten",
 		Name:           "Rheinstetten Stadt",
 		ShortName:      "Rheinstetten Stadt",
 	},
@@ -507,7 +507,7 @@ var Departments = map[string]Department{
 		ShortName:      "Stettfeld",
 	},
 	"vjf-stutensee": {
-		HeadDepartment: "",
+		HeadDepartment: "Stutensee",
 		Name:           "Stutensee",
 		ShortName:      "Stutensee",
 	},
@@ -517,7 +517,7 @@ var Departments = map[string]Department{
 		ShortName:      "Sulzbach",
 	},
 	"vjf-sulzfeld": {
-		HeadDepartment: "",
+		HeadDepartment: "Sulzfeld",
 		Name:           "Sulzfeld",
 		ShortName:      "Sulzfeld",
 	},
@@ -532,7 +532,7 @@ var Departments = map[string]Department{
 		ShortName:      "Ubstadt",
 	},
 	"vjf-ubstadtweiher": {
-		HeadDepartment: "",
+		HeadDepartment: "Ubstadt-Weiher",
 		Name:           "Ubstadt-Weiher",
 		ShortName:      "Ubstadt-Weiher",
 	},
@@ -552,17 +552,17 @@ var Departments = map[string]Department{
 		ShortName:      "Völkersbach",
 	},
 	"vjf-waghaeusel": {
-		HeadDepartment: "",
+		HeadDepartment: "Waghäusel",
 		Name:           "Waghäusel",
 		ShortName:      "Waghäusel",
 	},
 	"vjf-waghaeuselstadt": {
-		HeadDepartment: "",
+		HeadDepartment: "Waghäusel",
 		Name:           "Waghäusel Stadt",
 		ShortName:      "Waghäusel Stadt",
 	},
 	"vjf-waldbronn": {
-		HeadDepartment: "",
+		HeadDepartment: "Waldbronn",
 		Name:           "Waldbronn",
 		ShortName:      "Waldbronn",
 	},
@@ -572,7 +572,7 @@ var Departments = map[string]Department{
 		ShortName:      "Waldprechtsweier",
 	},
 	"vjf-walzbachtal": {
-		HeadDepartment: "",
+		HeadDepartment: "Walzbachtal",
 		Name:           "Walzbachtal",
 		ShortName:      "Walzbachtal",
 	},
@@ -582,7 +582,7 @@ var Departments = map[string]Department{
 		ShortName:      "Weiher",
 	},
 	"vjf-weingarten": {
-		HeadDepartment: "",
+		HeadDepartment: "Weingarten",
 		Name:           "Weingarten",
 		ShortName:      "Weingarten",
 	},
@@ -602,7 +602,7 @@ var Departments = map[string]Department{
 		ShortName:      "Wössingen",
 	},
 	"vjf-zaisenhausen": {
-		HeadDepartment: "",
+		HeadDepartment: "Zaisenhausen",
 		Name:           "Zaisenhausen",
 		ShortName:      "Zaisenhausen",
 	},
@@ -612,7 +612,7 @@ var Departments = map[string]Department{
 		ShortName:      "Zeutern",
 	},
 	"kreisjugendwart": {
-		HeadDepartment: "",
+		HeadDepartment: "LK Karlsruhe",
 		Name:           "LK Karlsruhe",
 		ShortName:      "LK Karlsruhe",
 	},
@@ -665,5 +665,15 @@ var Departments = map[string]Department{
 		HeadDepartment: "LK Karlsruhe",
 		Name:           "Zeltlager",
 		ShortName:      "Zeltlager",
+	},
+	"fgl.kindergruppen": {
+		HeadDepartment: "LK Karlsruhe",
+		Name:           "Kindergruppen",
+		ShortName:      "Kindergruppen",
+	},
+	"ver.b.a.organisationen": {
+		HeadDepartment: "LK Karlsruhe",
+		Name:           "Vertretung bei andere Organisationen",
+		ShortName:      "Ver.b.a. Org.",
 	},
 }
