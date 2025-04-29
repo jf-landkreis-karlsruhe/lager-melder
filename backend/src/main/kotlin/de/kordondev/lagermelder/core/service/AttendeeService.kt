@@ -95,6 +95,9 @@ class AttendeeService(
                     is YouthLeaderEntry -> youthLeaderRepository.delete(it)
                     is ChildEntry -> childRepository.delete(it)
                     is ChildLeaderEntry -> childLeaderRepository.delete(it)
+                    is HelperEntity -> helperRepository.delete(it)
+                    is ZKidEntry -> zKidRepository.delete(it)
+                    else -> throw UnexpectedTypeException("Attendee from db is not of expected type")
                 }
             }
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
