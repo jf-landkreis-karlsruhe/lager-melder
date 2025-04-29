@@ -95,6 +95,7 @@ class AttendeeService(
                     is YouthLeaderEntry -> youthLeaderRepository.delete(it)
                     is ChildEntry -> childRepository.delete(it)
                     is ChildLeaderEntry -> childLeaderRepository.delete(it)
+                    is HelperEntity -> helperRepository.delete(it)
                 }
             }
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
