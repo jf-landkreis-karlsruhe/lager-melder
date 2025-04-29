@@ -3,6 +3,7 @@ import type { Distribution } from '@/services/event'
 
 const props = defineProps<{
   departmentDistribution: Distribution
+  paused: boolean
   name: string
 }>()
 </script>
@@ -11,7 +12,7 @@ const props = defineProps<{
   <v-container>
     <div>
       <h2 class="mt-8">
-        <span v-if="props.departmentDistribution.paused">⏸️ </span>
+        <span v-if="props.paused">⏸️ </span>
         {{ props.name }}
       </h2>
       <div class="d-flex flex-wrap">

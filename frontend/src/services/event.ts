@@ -26,8 +26,7 @@ export interface AttendeeResponse {
   time: string
 }
 
-export const getEvents = (): Promise<Event[]> =>
-  getData<Event[]>('events', withAuthenticationHeader())
+export const getEvents = (): Promise<Event[]> => getData<Event[]>('events', withAuthenticationHeader())
 
 export const getEventByCode = (eventCode: string): Promise<Event> =>
   getData<Event>(`events/by-code/${eventCode}`, withAuthenticationHeader())
@@ -35,10 +34,7 @@ export const getEventByCode = (eventCode: string): Promise<Event> =>
 export const createEvent = (event: NewEvent): Promise<Event> =>
   postData<Event>('events', withAuthenticationHeader(), event)
 
-export const loginToEvent = async (
-  eventCode: string,
-  attendeeCode: string
-): Promise<AttendeeResponse> => {
+export const loginToEvent = async (eventCode: string, attendeeCode: string): Promise<AttendeeResponse> => {
   const result = await postData<AttendeeResponse>(
     `events/by-code/${eventCode}/${attendeeCode}`,
     withAuthenticationHeader(),
@@ -47,11 +43,9 @@ export const loginToEvent = async (
   return result
 }
 
-export const updateEvent = (event: Event) =>
-  putData<Event>(`events/${event.id}`, withAuthenticationHeader(), event)
+export const updateEvent = (event: Event) => putData<Event>(`events/${event.id}`, withAuthenticationHeader(), event)
 
-export const deleteEvent = (id: string): Promise<Response> =>
-  deleteData(`events/${id}`, withAuthenticationHeader())
+export const deleteEvent = (id: string): Promise<Response> => deleteData(`events/${id}`, withAuthenticationHeader())
 
 export const batchEnterAttendees = (eventCode: string, attendeeCodes: string[]) =>
   postData<AttendeeResponse[]>(`events/batch-enter/${eventCode}`, withAuthenticationHeader(), {
@@ -65,7 +59,6 @@ export interface GlobalEventSummary {
 
 export interface Distribution {
   name: string
-  paused: boolean
   youths: number
   youthLeaders: number
   zKids: number
@@ -73,8 +66,7 @@ export interface Distribution {
   childLeaders: number
 }
 
-export const globalEventSummary = () =>
-  getData<GlobalEventSummary>('events/global/summary', withAuthenticationHeader())
+export const globalEventSummary = () => getData<GlobalEventSummary>('events/global/summary', withAuthenticationHeader())
 
 export const checkinDepartmentToEvent = (event: Event, departmentId: number) => {
   return postData<AttendeeResponse[]>(
@@ -84,5 +76,4 @@ export const checkinDepartmentToEvent = (event: Event, departmentId: number) => 
   )
 }
 
-export const getEventByType = (type: EventType) =>
-  getData<Event>(`events/by-type/${type}`, withAuthenticationHeader())
+export const getEventByType = (type: EventType) => getData<Event>(`events/by-type/${type}`, withAuthenticationHeader())

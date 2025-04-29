@@ -55,7 +55,6 @@ const emptySummary: Distribution = {
   zKids: 0,
   children: 0,
   childLeaders: 0,
-  paused: false,
   name: 'empty'
 }
 
@@ -83,22 +82,17 @@ const updatePauseDepartmentInternal = (department: Department) => {
       return
     }
 
-    // FixME: update is always to late
-    /*
-    // Find the department in the array and update it directly
-    const depToUpdate = departmentSummary.value.departments.find((depWrapper) => depWrapper.id === department.id)
-
-    if (depToUpdate) {
-      // Update the paused state directly on the existing object to trigger reactivity
-      depToUpdate.department.paused = !department.paused
-      console.log(!department.paused)
-
-      // Update the distribution if needed
-      // This ensures the UI reflects the paused state properly
-      if (depToUpdate.distribution) {
-        //depToUpdate.distribution.paused = !department.paused
-      }
-    }*/
+    departmentSummary.value = {
+      ...departmentSummary.value,
+      departments: departmentSummary.value.departments.map((depWrapper) =>
+        depWrapper.id === department.id
+          ? {
+              ...depWrapper,
+              department: { ...depWrapper.department, paused: !department.paused }
+            }
+          : depWrapper
+      )
+    }
 
     toast.success(` ${department.name} erfolgreich ${department.paused ? 'abgemeldet' : 'zurückgemeldet'}`)
   })
@@ -109,26 +103,29 @@ const updatePauseDepartmentInternal = (department: Department) => {
   <LmContainer v-if="hasLKKarlsruheRole()">
     <h1>Anwesende</h1>
     <div v-if="departmentSummary !== null">
-      <CheckedInSummary :departmentDistribution="departmentSummary.total" :name="departmentSummary.total.name" />
+      <CheckedInSummary
+        :departmentDistribution="departmentSummary.total"
+        :paused="false"
+        :name="departmentSummary.total.name"
+      />
       Pausierte Feuerwehren sind nicht in der Gesamtanzahl enthalten.
-      <div v-for="departmentSummary in departmentSummary.departments" :key="departmentSummary.id">
+      <div v-for="dep in departmentSummary.departments" :key="dep.id">
         <CheckedInSummary
-          :departmentDistribution="departmentSummary.distribution"
-          :name="departmentSummary.department.name"
+          :departmentDistribution="dep.distribution"
+          :paused="dep.department.paused"
+          :name="dep.department.name"
         />
         <LmEvacuationConfiguration
-          :department="departmentSummary.department"
-          :distribution="departmentSummary.distribution"
+          :department="dep.department"
+          :distribution="dep.distribution"
           :evacuation-groups="evacuationGroups"
         />
         <div class="d-flex justify-space-between align-center flex-grow-1 flex-wrap mt-4">
-          <v-btn @click="updatePauseDepartmentInternal(departmentSummary.department)" class="checkin" rounded>
-            <span v-if="departmentSummary.department.paused">Zurückmelden</span>
-            <span v-if="!departmentSummary.department.paused">Anwesenheit pausieren</span>
+          <v-btn @click="updatePauseDepartmentInternal(dep.department)" class="checkin" rounded>
+            <span v-if="dep.department.paused">Zurückmelden</span>
+            <span v-if="!dep.department.paused">Anwesenheit pausieren</span>
           </v-btn>
-          <router-link :to="'/feuerwehr-betreten/' + departmentSummary.department.id">
-            Teilnehmer einchecken
-          </router-link>
+          <router-link :to="'/feuerwehr-betreten/' + dep.department.id"> Teilnehmer einchecken </router-link>
         </div>
       </div>
     </div>

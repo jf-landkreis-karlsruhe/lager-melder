@@ -9,7 +9,6 @@ data class RestGlobalEventSummary(
 
 data class Distribution(
     val name: String,
-    val paused: Boolean,
     val youths: Int,
     val youthLeaders: Int,
     @get:JsonProperty("zKids")

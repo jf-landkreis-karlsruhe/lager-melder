@@ -109,8 +109,8 @@ class EventService(
             .flatMap { it.value }
 
         return RestGlobalEventSummary(
-            total = sumUp(notPausedAttendees, "Zeltlager Gesamt", false),
-            departments = attendeesByDepartment.keys.map { sumUp(attendeesByDepartment[it]!!, it.name, it.paused) }
+            total = sumUp(notPausedAttendees, "Zeltlager Gesamt"),
+            departments = attendeesByDepartment.keys.map { sumUp(attendeesByDepartment[it]!!, it.name) }
         )
     }
 
@@ -118,11 +118,10 @@ class EventService(
         return attendeeCodes.map { addAttendeeToEvent(eventCode, it) }
     }
 
-    private fun sumUp(attendees: List<Attendee>, name: String, paused: Boolean): Distribution {
+    private fun sumUp(attendees: List<Attendee>, name: String): Distribution {
         val groupedAttendees = attendees.groupBy { attendeeRoleStatus(it.status, it.role) }
         return Distribution(
             name = name,
-            paused = paused,
             youths = groupedAttendees[attendeeRoleStatus(
                 AttendeeStatus.ENTERED,
                 AttendeeRole.YOUTH
