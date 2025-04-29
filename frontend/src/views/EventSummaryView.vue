@@ -29,7 +29,7 @@ onMounted(() => {
   getEvacuationGroup().then((evacGroup) => {
     evacuationGroups.value = evacGroup
   })
-  Promise.all([globalEventSummary() as Promise<any>, getDepartments()]).then(
+  Promise.all([globalEventSummary() as Promise<any>, getDepartments({ onlyWithAttendees: true })]).then(
     ([summary, deps]: [GlobalEventSummary, Department[]]) => {
       departmentSummary.value = {
         total: summary.total,
@@ -82,16 +82,39 @@ const updatePauseDepartmentInternal = (department: Department) => {
       return
     }
 
+    const departmentWrappers = departmentSummary.value.departments.map((depWrapper) =>
+      depWrapper.id === department.id
+        ? {
+            ...depWrapper,
+            department: { ...depWrapper.department, paused: !department.paused }
+          }
+        : depWrapper
+    )
+    const newTotal = departmentWrappers
+      .filter((dep) => !dep.department.paused)
+      .reduce(
+        (acc, dep) => ({
+          name: acc.name,
+          youths: acc.youths + dep.distribution.youths,
+          youthLeaders: acc.youthLeaders + dep.distribution.youthLeaders,
+          zKids: acc.zKids + dep.distribution.zKids,
+          children: acc.children + dep.distribution.children,
+          childLeaders: acc.childLeaders + dep.distribution.childLeaders
+        }),
+        emptySummary
+      )
+
     departmentSummary.value = {
       ...departmentSummary.value,
-      departments: departmentSummary.value.departments.map((depWrapper) =>
-        depWrapper.id === department.id
-          ? {
-              ...depWrapper,
-              department: { ...depWrapper.department, paused: !department.paused }
-            }
-          : depWrapper
-      )
+      total: {
+        ...departmentSummary.value.total,
+        youths: newTotal.youths,
+        youthLeaders: newTotal.youthLeaders,
+        zKids: newTotal.zKids,
+        children: newTotal.children,
+        childLeaders: newTotal.childLeaders
+      },
+      departments: departmentWrappers
     }
 
     toast.success(` ${department.name} erfolgreich ${department.paused ? 'abgemeldet' : 'zurückgemeldet'}`)
