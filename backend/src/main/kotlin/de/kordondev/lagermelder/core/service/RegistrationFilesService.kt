@@ -3,7 +3,9 @@ package de.kordondev.lagermelder.core.service
 import de.kordondev.lagermelder.core.pdf.AttendeesCommunal
 import de.kordondev.lagermelder.core.pdf.AttendeesKarlsruhe
 import de.kordondev.lagermelder.core.pdf.StateYouthPlanAttendees
+import de.kordondev.lagermelder.core.pdf.StateYouthPlanLeader
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
+import de.kordondev.lagermelder.core.service.models.Group
 import de.kordondev.lagermelder.exception.WrongTimeException
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
@@ -21,17 +23,23 @@ class RegistrationFilesService(
     val attendeesCommunal: AttendeesCommunal,
     val departmentService: DepartmentService,
     val settingsService: SettingsService,
-    val youthPlanAttendeeRoleService: YouthPlanAttendeeRoleService
+    val youthPlanAttendeeRoleService: YouthPlanAttendeeRoleService,
+    private val stateYouthPlanLeader: StateYouthPlanLeader
 ) {
     private val logger: Logger = LoggerFactory.getLogger(RegistrationFilesService::class.java)
 
-    fun getAttendeesKarlsruhe(id: Long): ByteArray {
+    fun getAttendeesKarlsruhe(id: Long, group: Group): ByteArray {
         if (!settingsService.canRegistrationFilesDownloaded()) {
             throw WrongTimeException("Dateien können noch nicht heruntergeladen werden.")
         }
         val result = departmentService.getDepartment(id)
             .let { attendeeService.getAttendeesForDepartment(it) }
-            .let { it.youths + it.youthLeaders }
+            .let {
+                when (group) {
+                    Group.PARTICIPANT -> it.youths + it.youthLeaders
+                    Group.CHILD_GROUP -> it.children + it.childLeaders
+                }
+            }
             .let { attendeesKarlsruhe.createAttendeesKarlsruhePdf(it) }
         val out = ByteArrayOutputStream()
         result.save(out)
@@ -39,13 +47,18 @@ class RegistrationFilesService(
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
     }
 
-    fun getStateYouthPlanYouth(id: Long): ByteArray {
+    fun getStateYouthPlanYouth(id: Long, group: Group): ByteArray {
         if (!settingsService.canRegistrationFilesDownloaded()) {
             throw WrongTimeException("Dateien können noch nicht heruntergeladen werden.")
         }
         val department = departmentService.getDepartment(id)
         val result = youthPlanAttendeeRoleService.getOptimizedLeaderAndAttendeeIds()
-            .filter { it.youthPlanRole == AttendeeRole.YOUTH }
+            .filter {
+                when (group) {
+                    Group.PARTICIPANT -> it.youthPlanRole == AttendeeRole.YOUTH && it.attendee.role == AttendeeRole.YOUTH
+                    Group.CHILD_GROUP -> it.youthPlanRole == AttendeeRole.YOUTH && it.youthPlanRole == AttendeeRole.CHILD
+                }
+            }
             .filter { it.departmentId == department.id }
             .map { it.attendee }
             .let { attendees -> attendeeService.getAllAttendeesIn(attendees.map { it.id }) }
@@ -57,17 +70,22 @@ class RegistrationFilesService(
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
     }
 
-    fun getStateYouthPlanLeader(id: Long): ByteArray {
+    fun getStateYouthPlanLeader(id: Long, group: Group): ByteArray {
         if (!settingsService.canRegistrationFilesDownloaded()) {
             throw WrongTimeException("Dateien können noch nicht heruntergeladen werden.")
         }
         val department = departmentService.getDepartment(id)
         val result = youthPlanAttendeeRoleService.getOptimizedLeaderAndAttendeeIds()
-            .filter { it.youthPlanRole == AttendeeRole.YOUTH_LEADER }
+            .filter {
+                when (group) {
+                    Group.PARTICIPANT -> it.youthPlanRole == AttendeeRole.YOUTH_LEADER && it.attendee.role == AttendeeRole.YOUTH_LEADER
+                    Group.CHILD_GROUP -> it.youthPlanRole == AttendeeRole.YOUTH_LEADER && it.youthPlanRole == AttendeeRole.CHILD_LEADER
+                }
+            }
             .filter { it.departmentId == department.id }
             .map { it.attendee }
             .let { attendees -> attendeeService.getAllAttendeesIn(attendees.map { it.id }) }
-            .let { stateYouthPlanAttendees.createStateYouthPlanAttendees(it) }
+            .let { stateYouthPlanLeader.createStateYouthPlanLeaderPdf(it) }
         val out = ByteArrayOutputStream()
         result.save(out)
         result.close()

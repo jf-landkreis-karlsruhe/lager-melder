@@ -2,6 +2,9 @@ package de.kordondev.lagermelder.core.pdf
 
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.pdmodel.PDPageContentStream
+import org.apache.pdfbox.pdmodel.font.PDType1Font
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox
 import org.apache.pdfbox.pdmodel.interactive.form.PDField
@@ -41,4 +44,25 @@ class PDFHelper {
     fun formatBirthday(birthday: String, formatter: DateTimeFormatter): String {
         return Helper.birthdayToDate(birthday).format(formatter)
     }
+
+    fun writeDocumentTitle(pdfDocument: PDDocument, text: String, x: Float, y: Float) {
+        for (page in 0..pdfDocument.numberOfPages - 1) {
+            val page = pdfDocument.getPage(page)
+            val contentStream = PDPageContentStream(
+                pdfDocument,
+                page,
+                PDPageContentStream.AppendMode.APPEND,
+                true,
+                true
+            )
+
+            contentStream.beginText()
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12F)
+            contentStream.newLineAtOffset(x, y)
+            contentStream.showText(text)
+            contentStream.endText()
+            contentStream.close()
+        }
+    }
+
 }

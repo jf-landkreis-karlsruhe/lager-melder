@@ -9,6 +9,7 @@ import { dateLocalized } from '@/helper/displayDate'
 import FileList from './LmFileList.vue'
 import YouthPlanDistribution from './LmYouthPlanDistribution.vue'
 import LmContainer from './LmContainer.vue'
+import { Group } from '@/services/registrationFiles'
 
 const departmentId = ref<number | undefined>()
 const departmentName = ref<string>('')
@@ -47,7 +48,18 @@ onMounted(() => {
         Teilnehmerlisten vorbefüllt und sollen so bei der unterschrieben Anmeldung abgegeben werden, damit eine
         reibungslose Anmeldung gewährleistet werden kann.
       </p>
-      <FileList v-if="departmentId" :departmentId="departmentId" :departmentName="departmentName" />
+      <FileList
+        v-if="departmentId"
+        :departmentId="departmentId"
+        :departmentName="departmentName"
+        :group="Group.PARTICIPANT"
+      />
+      <FileList
+        v-if="departmentId"
+        :departmentId="departmentId"
+        :departmentName="departmentName"
+        :group="Group.CHILD_GROUP"
+      />
       <p>
         ⚠️ In einigen PDF Viewern kommt es zu Probleme mit der Anzeige, es funktionieren mit Google Chrome und Adobe
         Acrobat Reader. ⚠️
@@ -59,7 +71,8 @@ onMounted(() => {
         <h2>Anmeldeunterlagen aller Feuerwehren</h2>
         <div v-for="department in departments" :key="department.id">
           <h3>Feuerwehr {{ department.name }}</h3>
-          <FileList :departmentId="department.id" :departmentName="department.name" />
+          <FileList :departmentId="department.id" :departmentName="department.name" :group="Group.PARTICIPANT" />
+          <FileList :departmentId="department.id" :departmentName="department.name" :group="Group.CHILD_GROUP" />
           <br />
         </div>
       </div>
