@@ -3,7 +3,9 @@ package de.kordondev.lagermelder.core.pdf
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
+import de.kordondev.lagermelder.core.persistence.entry.ChildLeaderEntry
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
+import de.kordondev.lagermelder.core.persistence.entry.YouthLeaderEntry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
@@ -135,6 +137,22 @@ class StateYouthPlanLeader(
                     Helper.getBirthday(attendee),
                     germanDate
                 )
+            } ${
+                when (attendee) {
+                    is YouthLeaderEntry -> "\nJuleika: ${attendee.juleikaNumber} bis ${
+                        attendee.juleikaExpireDate?.format(
+                            germanDate
+                        )
+                    }"
+
+                    is ChildLeaderEntry -> "\nJuleika: ${attendee.juleikaNumber} bis ${
+                        attendee.juleikaExpireDate?.format(
+                            germanDate
+                        )
+                    }"
+
+                    else -> ""
+                }
             }",
             page
         )?.let { fields.add(it) }
