@@ -7,6 +7,7 @@ import de.kordondev.lagermelder.core.pdf.StateYouthPlanLeader
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.service.models.Group
 import de.kordondev.lagermelder.exception.WrongTimeException
+import de.kordondev.lagermelder.rest.model.RestSubsidy
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -109,5 +110,19 @@ class RegistrationFilesService(
         result.save(out)
         result.close()
         return IOUtils.toByteArray(ByteArrayInputStream(out.toByteArray()))
+    }
+
+    fun getSubsidy(id: Long): RestSubsidy {
+        val department = departmentService.getDepartment(id)
+        val youthPlanAttendees = youthPlanAttendeeRoleService.getOptimizedLeaderAndAttendeeIds()
+            .filter { it.departmentId == department.id }
+        val attendees = attendeeService.getAttendeesForDepartment(department)
+        return RestSubsidy(
+            id = id,
+            stateYouthPlanLeaders = youthPlanAttendees.count { it.youthPlanRole == AttendeeRole.YOUTH_LEADER },
+            stateYouthPlanParticipants = youthPlanAttendees.count { it.youthPlanRole == AttendeeRole.YOUTH },
+            karlsruheLeaders = attendees.youthLeaders.count(),
+            karlsruheParticipants = attendees.youths.count(),
+        )
     }
 }

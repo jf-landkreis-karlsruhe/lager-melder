@@ -1,4 +1,4 @@
-import { fetchData } from '../helper/fetch'
+import { fetchData, getData } from '../helper/fetch'
 import { withAuthenticationHeader } from './authentication'
 import type { FileReponse } from './filesHelper'
 
@@ -63,6 +63,17 @@ export const getAttendeesCommunal = (
       data: blob,
       fileName: `Teilnehmerliste-Kommandant-${departmentName}.pdf`
     }))
+}
+
+export const getSubsidy = (departmentId: number) =>
+  getData<Subsidy>(`departments/${departmentId}/subsidy`, withAuthenticationHeader())
+
+export interface Subsidy {
+  id: number
+  stateYouthPlanLeaders: number
+  stateYouthPlanParticipants: number
+  karlsruheLeaders: number
+  karlsruheParticipants: number
 }
 
 export enum Group {

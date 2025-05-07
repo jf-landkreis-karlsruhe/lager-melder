@@ -676,4 +676,9 @@ var Departments = map[string]Department{
 		Name:           "Vertretung bei andere Organisationen",
 		ShortName:      "Ver.b.a. Org.",
 	},
+	"fgl.oeffentlichkeit": {
+		HeadDepartment: "LK Karlsruhe",
+		Name:           "Öffentlichkeitsarbeit",
+		ShortName:      "Öffentlichkeitsarbeit",
+	},
 }

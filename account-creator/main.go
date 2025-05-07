@@ -28,7 +28,7 @@ func departmentToAccount(departments map[string]models.Department, domain string
 			LeaderName:     department.Name,
 			LeaderEMail:    email + domain,
 			Features:       []string{"YOUTH_GROUPS", "CHILD_GROUPS"},
-			//Features: []string{"HELPER"},
+			//Features: []string{"YOUTH_GROUPS", "HELPER"},
 			//Features: []string{"HELPER", "ZKIDS"},
 		}
 		account.Username = strings.ReplaceAll(account.Username, " ", "")
