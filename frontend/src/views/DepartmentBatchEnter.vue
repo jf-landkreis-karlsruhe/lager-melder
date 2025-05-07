@@ -6,6 +6,7 @@ import { useToast } from 'vue-toastification'
 import { useRoute } from 'vue-router'
 import type { Department } from '@/services/department'
 import AttendeeBatchEvent from '@/components/batch/AttendeeBatchEvent.vue'
+import SubsidyOverview from '@/components/batch/SubsidyOverview.vue'
 
 const toast = useToast()
 const route = useRoute()
@@ -35,6 +36,7 @@ const hasFeature = (feature: DepartmentFeatures) => {
 <template>
   <div>
     <v-container class="event-root">
+      <SubsidyOverview v-if="departmentId" :departmentId="departmentId" />
       <h1>{{ department?.name }} beitreten</h1>
       <AttendeeBatchEvent
         v-if="hasFeature(DepartmentFeatures.YOUTH_GROUPS)"
