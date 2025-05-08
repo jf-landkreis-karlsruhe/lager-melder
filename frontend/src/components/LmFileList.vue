@@ -53,12 +53,12 @@ const downloadAttendeesCommunal = () => {
         für den Landesjugendplan
       </li>
       <li>
-        <button class="underline" @click="downloadStateYouthPlanLeader">Pädagogische Betreuer</button>
+        <button class="underline" @click="downloadStateYouthPlanLeader">Betreuer</button>
         für den Landesjugendplan
       </li>
       <li>
         <button class="underline" @click="downloadAttendeesKarlsruhe">Teilnehmerliste</button>
-        für den Zuschuss des Landkreis Karlsruhe
+        für den Zuschuss des Jugendamt Karlsruhe
       </li>
     </ul>
   </div>

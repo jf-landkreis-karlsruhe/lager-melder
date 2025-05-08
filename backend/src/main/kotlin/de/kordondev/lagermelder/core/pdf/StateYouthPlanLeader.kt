@@ -71,7 +71,7 @@ class StateYouthPlanLeader(
         if (attendees.isNotEmpty()) {
             pdfHelper.writeDocumentTitle(
                 result,
-                "${attendees.first().department.name} - Pädagogische Betreuer",
+                "${attendees.first().department.name} - Betreuer Landesjugendplan",
                 50F,
                 50F
             )

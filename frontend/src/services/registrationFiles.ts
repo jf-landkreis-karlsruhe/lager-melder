@@ -15,7 +15,7 @@ export const getStateYouthPlanLeader = (
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `betreuerBW-${group}-${departmentName}.pdf`
+      fileName: `Betreuer-Landesjugendplan-${group}-${departmentName}.pdf`
     }))
 }
 
@@ -28,7 +28,7 @@ export const getAttendeesKarlsruhe = (departmentId: number, departmentName: stri
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteKarlsruhe-${group}-${departmentName}.pdf`
+      fileName: `Teilnehmer-Jugendamt-${group}-${departmentName}.pdf`
     }))
 }
 
@@ -45,7 +45,7 @@ export const getStateYouthPlanAttendees = (
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteBW-${group}-${departmentName}.pdf`
+      fileName: `Teilnehmer-Landesjugendplan-${group}-${departmentName}.pdf`
     }))
 }
 
@@ -61,7 +61,7 @@ export const getAttendeesCommunal = (
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteKommandant-${departmentName}.pdf`
+      fileName: `Teilnehmerliste-Kommandant-${departmentName}.pdf`
     }))
 }
 

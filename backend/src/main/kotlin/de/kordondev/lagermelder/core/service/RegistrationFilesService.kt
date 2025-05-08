@@ -55,8 +55,12 @@ class RegistrationFilesService(
         val result = youthPlanAttendeeRoleService.getOptimizedLeaderAndAttendeeIds()
             .filter {
                 when (group) {
-                    Group.PARTICIPANT -> it.youthPlanRole == AttendeeRole.YOUTH && it.attendee.role == AttendeeRole.YOUTH
-                    Group.CHILD_GROUP -> it.youthPlanRole == AttendeeRole.YOUTH && it.youthPlanRole == AttendeeRole.CHILD
+                    Group.PARTICIPANT -> it.youthPlanRole == AttendeeRole.YOUTH && listOf(
+                        AttendeeRole.YOUTH_LEADER,
+                        AttendeeRole.YOUTH
+                    ).contains(it.attendee.role)
+
+                    Group.CHILD_GROUP -> it.youthPlanRole == AttendeeRole.YOUTH && it.attendee.role == AttendeeRole.CHILD
                 }
             }
             .filter { it.departmentId == department.id }
@@ -79,7 +83,7 @@ class RegistrationFilesService(
             .filter {
                 when (group) {
                     Group.PARTICIPANT -> it.youthPlanRole == AttendeeRole.YOUTH_LEADER && it.attendee.role == AttendeeRole.YOUTH_LEADER
-                    Group.CHILD_GROUP -> it.youthPlanRole == AttendeeRole.YOUTH_LEADER && it.youthPlanRole == AttendeeRole.CHILD_LEADER
+                    Group.CHILD_GROUP -> it.youthPlanRole == AttendeeRole.YOUTH_LEADER && it.attendee.role == AttendeeRole.CHILD_LEADER
                 }
             }
             .filter { it.departmentId == department.id }

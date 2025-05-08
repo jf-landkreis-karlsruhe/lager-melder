@@ -112,7 +112,7 @@ class StateYouthPlanAttendees(
         if (attendees.isNotEmpty()) {
             pdfHelper.writeDocumentTitle(
                 result,
-                "${attendees.first().department.name} - Landesjugendplan",
+                "${attendees.first().department.name} - Teilnehmer Landesjugendplan",
                 50F,
                 15F
             )

@@ -24,7 +24,7 @@ class RegistrationFilesController(
         val group = Group.getGroup(requestGroup)
         response.addHeader(
             HttpHeaders.CONTENT_DISPOSITION,
-            "attachment;filename=teilnehmerlisteKarlsruhe-${group.name}.pdf"
+            "attachment;filename=Jugendamt-${group.name}.pdf"
         )
         return registrationFilesService.getAttendeesKarlsruhe(id, group)
     }
@@ -40,7 +40,7 @@ class RegistrationFilesController(
         val group = Group.getGroup(requestGroup)
         response.addHeader(
             HttpHeaders.CONTENT_DISPOSITION,
-            "attachment;filename=betreuerBadenWürttemberg-${group.name}.pdf"
+            "attachment;filename=Betreuer-Landesjugendplan-${group.name}.pdf"
         )
         return registrationFilesService.getStateYouthPlanLeader(id, group)
     }
@@ -55,7 +55,7 @@ class RegistrationFilesController(
         val group = Group.getGroup(requestGroup)
         response.addHeader(
             HttpHeaders.CONTENT_DISPOSITION,
-            "attachment;filename=teilnehmerlisteBadenWürttemberg-${group.name}.pdf"
+            "attachment;filename=Teilnehmer-Landesjugendplan-${group.name}.pdf"
         )
         return registrationFilesService.getStateYouthPlanYouth(id, group)
     }
@@ -64,7 +64,7 @@ class RegistrationFilesController(
     @Throws(IOException::class)
     @GetMapping(value = ["registrationFiles/attendeesCommunal/{id}"], produces = ["application/pdf"])
     fun getAttendeesCommunal(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
-        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=teilnehmerKommandant.pdf")
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=Teilnehmer-Kommandant.pdf")
         return registrationFilesService.getAttendeesCommunal(id)
     }
 
