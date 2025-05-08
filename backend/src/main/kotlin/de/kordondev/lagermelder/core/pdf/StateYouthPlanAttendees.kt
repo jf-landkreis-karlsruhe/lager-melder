@@ -109,6 +109,15 @@ class StateYouthPlanAttendees(
             }
         }
 
+        if (attendees.isNotEmpty()) {
+            pdfHelper.writeDocumentTitle(
+                result,
+                "${attendees.first().department.name} - Teilnehmer Landesjugendplan",
+                50F,
+                15F
+            )
+        }
+
         val finalForm = PDAcroForm(result)
         result.documentCatalog.acroForm = finalForm
         finalForm.fields = fields

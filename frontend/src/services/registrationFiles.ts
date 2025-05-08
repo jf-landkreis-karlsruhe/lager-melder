@@ -4,9 +4,10 @@ import type { FileReponse } from './filesHelper'
 
 export const getStateYouthPlanLeader = (
   departmentId: number,
-  departmentName: string
+  departmentName: string,
+  group: Group
 ): Promise<FileReponse> => {
-  return fetchData(`registrationFiles/stateYouthPlanLeader/${departmentId}`, {
+  return fetchData(`registrationFiles/stateYouthPlanLeader/${departmentId}?group=${group}`, {
     headers: {
       ...withAuthenticationHeader()
     }
@@ -14,15 +15,12 @@ export const getStateYouthPlanLeader = (
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `betreuerBW-${departmentName}.pdf`
+      fileName: `Betreuer-Landesjugendplan-${group}-${departmentName}.pdf`
     }))
 }
 
-export const getAttendeesKarlsruhe = (
-  departmentId: number,
-  departmentName: string
-): Promise<FileReponse> => {
-  return fetchData(`registrationFiles/attendeesKarlsruhe/${departmentId}`, {
+export const getAttendeesKarlsruhe = (departmentId: number, departmentName: string, group: Group): Promise<FileReponse> => {
+  return fetchData(`registrationFiles/attendeesKarlsruhe/${departmentId}?group=${group}`, {
     headers: {
       ...withAuthenticationHeader()
     }
@@ -30,15 +28,16 @@ export const getAttendeesKarlsruhe = (
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteKarlsruhe-${departmentName}.pdf`
+      fileName: `Teilnehmer-Jugendamt-${group}-${departmentName}.pdf`
     }))
 }
 
 export const getStateYouthPlanAttendees = (
   departmentId: number,
-  departmentName: string
+  departmentName: string,
+  group: Group
 ): Promise<FileReponse> => {
-  return fetchData(`registrationFiles/stateYouthPlanAttendees/${departmentId}`, {
+  return fetchData(`registrationFiles/stateYouthPlanAttendees/${departmentId}?group=${group}`, {
     headers: {
       ...withAuthenticationHeader()
     }
@@ -46,7 +45,7 @@ export const getStateYouthPlanAttendees = (
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteBW-${departmentName}.pdf`
+      fileName: `Teilnehmer-Landesjugendplan-${group}-${departmentName}.pdf`
     }))
 }
 
@@ -62,6 +61,11 @@ export const getAttendeesCommunal = (
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
-      fileName: `teilnehmerlisteKommandant-${departmentName}.pdf`
+      fileName: `Teilnehmerliste-Kommandant-${departmentName}.pdf`
     }))
+}
+
+export enum Group {
+  PARTICIPANT = 'teilnehmer',
+  CHILD_GROUP = 'kindergruppe'
 }

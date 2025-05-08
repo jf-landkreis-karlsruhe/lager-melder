@@ -77,6 +77,15 @@ class AttendeesKarlsruhe(
             }
         }
 
+        if (attendees.isNotEmpty()) {
+            pdfHelper.writeDocumentTitle(
+                result,
+                "${attendees.first().department.name} - Jugendamt",
+                50F,
+                40F
+            )
+        }
+
         val finalForm = PDAcroForm(result)
         result.documentCatalog.acroForm = finalForm
         finalForm.fields = fields

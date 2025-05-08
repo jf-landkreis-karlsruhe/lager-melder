@@ -1,31 +1,33 @@
 <script setup lang="ts">
 import {
-  getStateYouthPlanAttendees,
   getAttendeesCommunal,
   getAttendeesKarlsruhe,
-  getStateYouthPlanLeader
+  getStateYouthPlanAttendees,
+  getStateYouthPlanLeader,
+  Group
 } from '../services/registrationFiles'
 import { showFile } from '../services/filesHelper'
 
 const props = defineProps<{
   departmentId: number
   departmentName: string
+  group: Group
 }>()
 
 const downloadStateYouthPlanLeader = () => {
-  getStateYouthPlanLeader(props.departmentId, props.departmentName).then((fileData) =>
+  getStateYouthPlanLeader(props.departmentId, props.departmentName, props.group).then((fileData) =>
     showFile(fileData.data, fileData.fileName)
   )
 }
 
 const downloadAttendeesKarlsruhe = () => {
-  getAttendeesKarlsruhe(props.departmentId, props.departmentName).then((fileData) =>
+  getAttendeesKarlsruhe(props.departmentId, props.departmentName, props.group).then((fileData) =>
     showFile(fileData.data, fileData.fileName)
   )
 }
 
 const downloadStateYouthPlanAttendees = () => {
-  getStateYouthPlanAttendees(props.departmentId, props.departmentName).then((fileData) =>
+  getStateYouthPlanAttendees(props.departmentId, props.departmentName, props.group).then((fileData) =>
     showFile(fileData.data, fileData.fileName)
   )
 }
@@ -39,8 +41,10 @@ const downloadAttendeesCommunal = () => {
 
 <template>
   <div>
+    <h3 v-if="group === Group.PARTICIPANT">Für Teilnehmer</h3>
+    <h3 v-if="group === Group.CHILD_GROUP">Für Kindergruppen</h3>
     <ul>
-      <li>
+      <li v-if="group === Group.PARTICIPANT">
         <button class="underline" @click="downloadAttendeesCommunal">Anmeldung</button>
         mit Unterschrift des Kommandanten
       </li>
@@ -49,14 +53,12 @@ const downloadAttendeesCommunal = () => {
         für den Landesjugendplan
       </li>
       <li>
-        <button class="underline" @click="downloadStateYouthPlanLeader">
-          Pädagogische Betreuer
-        </button>
+        <button class="underline" @click="downloadStateYouthPlanLeader">Betreuer</button>
         für den Landesjugendplan
       </li>
       <li>
         <button class="underline" @click="downloadAttendeesKarlsruhe">Teilnehmerliste</button>
-        für den Zuschuss des Landkreis Karlsruhe
+        für den Zuschuss des Jugendamt Karlsruhe
       </li>
     </ul>
   </div>

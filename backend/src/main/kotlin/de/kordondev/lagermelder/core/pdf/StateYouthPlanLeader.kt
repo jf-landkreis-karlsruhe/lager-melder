@@ -3,7 +3,9 @@ package de.kordondev.lagermelder.core.pdf
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.core.pdf.PDFHelper.Companion.germanDate
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
+import de.kordondev.lagermelder.core.persistence.entry.ChildLeaderEntry
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
+import de.kordondev.lagermelder.core.persistence.entry.YouthLeaderEntry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.service.SettingsService
 import org.apache.pdfbox.pdmodel.PDDocument
@@ -47,9 +49,8 @@ class StateYouthPlanLeader(
         val fields = mutableListOf<PDField>()
 
         var page = 1
+        val pdfDocument = PDDocument.load(resource.inputStream)
         for (i in youthLeaders.indices step ATTENDEES_ON_PAGE) {
-
-            val pdfDocument = PDDocument.load(resource.inputStream)
 
             val attendeesForPage = if (youthLeaders.size <= i + ATTENDEES_ON_PAGE) {
                 youthLeaders.subList(i, youthLeaders.size)
@@ -61,11 +62,38 @@ class StateYouthPlanLeader(
             page++
         }
 
+        if (youthLeaders.isEmpty()) {
+            val form = pdfDocument.documentCatalog.acroForm;
+            fillGeneralData(form, page, settings, fields)
+            result.addPage(pdfDocument.getPage(0))
+        }
+
+        if (attendees.isNotEmpty()) {
+            pdfHelper.writeDocumentTitle(
+                result,
+                "${attendees.first().department.name} - Betreuer Landesjugendplan",
+                50F,
+                50F
+            )
+        }
+
         val finalForm = PDAcroForm(result)
         result.documentCatalog.acroForm = finalForm
         finalForm.fields = fields
         finalForm.needAppearances = true
         return result
+    }
+
+    fun fillGeneralData(
+        form: PDAcroForm,
+        page: Int,
+        settings: SettingsEntry,
+        fields: MutableList<PDField>
+    ) {
+        pdfHelper.fillField(form, YEAR, settings.eventStart.year.toString(), page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, MONEY_PRO_YOUTH_LEADER, settings.moneyPerYouthLoader, page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, ORGANISATION_ADDRESS, settings.organisationAddress, page)?.let { fields.add(it) }
+        // pdfHelper.fillField(form, SELECT_HEIMFREIZEIT_ZELTLAGER, dataYear, page)?.let { fields.add(it) }
     }
 
 
@@ -79,10 +107,7 @@ class StateYouthPlanLeader(
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm;
 
-        pdfHelper.fillField(form, YEAR, settings.eventStart.year.toString(), page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, MONEY_PRO_YOUTH_LEADER, settings.moneyPerYouthLoader, page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, ORGANISATION_ADDRESS, settings.organisationAddress, page)?.let { fields.add(it) }
-        // pdfHelper.fillField(form, SELECT_HEIMFREIZEIT_ZELTLAGER, dataYear, page)?.let { fields.add(it) }
+        fillGeneralData(form, page, settings, fields)
 
         for (i in attendees.indices) {
             fields.addAll(fillAttendeeInForm(attendees[i], form, cellIds[i], page, settings))
@@ -112,6 +137,22 @@ class StateYouthPlanLeader(
                     Helper.getBirthday(attendee),
                     germanDate
                 )
+            } ${
+                when (attendee) {
+                    is YouthLeaderEntry -> "\nJuleika: ${attendee.juleikaNumber} bis ${
+                        attendee.juleikaExpireDate?.format(
+                            germanDate
+                        )
+                    }"
+
+                    is ChildLeaderEntry -> "\nJuleika: ${attendee.juleikaNumber} bis ${
+                        attendee.juleikaExpireDate?.format(
+                            germanDate
+                        )
+                    }"
+
+                    else -> ""
+                }
             }",
             page
         )?.let { fields.add(it) }
