@@ -32,6 +32,7 @@ class YouthPlanAttendeeRoleService(
 
     fun getOptimizedLeaderAndAttendeeIds(): List<YouthPlanAttendeeRoleEntry> {
         val undistributedAttendees = attendeeService.getAttendeesWithoutYouthPlanRole()
+            .filter { it.department.name == "Küche" && it.department.headDepartmentName == "LK Karlsruhe" }
         val distributedAttendees = getAll()
         val newDistributed = attendeeRoleHelper.getOptimizedLeaderAndAttendeeIds(
             distributedAttendees,
