@@ -164,9 +164,13 @@ class AttendeesKarlsruhe(
         pdfHelper.fillField(form, "$daysCellId", "$DAYS_OF_EVENT", page)?.let { fields.add(it) }
         when (attendee.role) {
             AttendeeRole.YOUTH -> pdfHelper.fillField(form, "$youthCellId", "x", page)?.let { fields.add(it) }
+            AttendeeRole.CHILD -> pdfHelper.fillField(form, "$youthCellId", "x", page)?.let { fields.add(it) }
             AttendeeRole.YOUTH_LEADER -> pdfHelper.fillField(form, "$youthLeaderCellId", "x", page)
                 ?.let { fields.add(it) }
-            AttendeeRole.CHILD, AttendeeRole.CHILD_LEADER, AttendeeRole.Z_KID, AttendeeRole.HELPER -> {} // should not happen
+            AttendeeRole.CHILD_LEADER -> pdfHelper.fillField(form, "$youthLeaderCellId", "x", page)
+                ?.let { fields.add(it) }
+
+            AttendeeRole.Z_KID, AttendeeRole.HELPER -> {} // should not happen
         }
         return fields
     }
