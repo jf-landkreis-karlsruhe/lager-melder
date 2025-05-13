@@ -14,16 +14,21 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-card class="pa-6">
+  <v-card class="pa-6" v-if="subsidy && subsidy.participants">
     <h2>Zuschüsse</h2>
     <p>
-      <b>Landesjugendplan:</b> {{ subsidy.stateYouthPlanParticipants }} Teilnehmer,
-      {{ subsidy.stateYouthPlanLeaders }} Betreuer,
-      {{ subsidy.stateYouthPlanParticipants + subsidy.stateYouthPlanLeaders }} Gesamt
+      <b>Jugendgruppe</b><br />
+      Landesjugendplan: {{ subsidy.participants.stateYouthPlanParticipants }} Teilnehmer,
+      {{ subsidy.participants.stateYouthPlanLeaders }} Betreuer <br />
+      Jugendamt: {{ subsidy.participants.karlsruheParticipants }} Teilnehmer,
+      {{ subsidy.participants.karlsruheLeaders }} Betreuer
     </p>
     <p>
-      <b>Jugendamt:</b> {{ subsidy.karlsruheParticipants }} Teilnehmer, {{ subsidy.karlsruheLeaders }} Betreuer,
-      {{ subsidy.karlsruheParticipants + subsidy.karlsruheLeaders }} Gesamt
+      <b>Kindergruppe</b> <br />
+      Landesjugendplan: {{ subsidy.childGroup.stateYouthPlanParticipants }} Teilnehmer,
+      {{ subsidy.childGroup.stateYouthPlanLeaders }} Betreuer <br />
+      Jugendamt: {{ subsidy.childGroup.karlsruheParticipants }} Teilnehmer,
+      {{ subsidy.childGroup.karlsruheLeaders }} Betreuer
     </p>
   </v-card>
 </template>

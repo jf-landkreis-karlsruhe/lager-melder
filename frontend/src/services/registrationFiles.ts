@@ -70,6 +70,11 @@ export const getSubsidy = (departmentId: number) =>
 
 export interface Subsidy {
   id: number
+  participants: SubsidyDistribution
+  childGroup: SubsidyDistribution
+}
+
+interface SubsidyDistribution {
   stateYouthPlanLeaders: number
   stateYouthPlanParticipants: number
   karlsruheLeaders: number

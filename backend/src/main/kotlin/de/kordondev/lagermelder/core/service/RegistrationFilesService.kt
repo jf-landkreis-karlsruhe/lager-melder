@@ -8,6 +8,7 @@ import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.service.models.Group
 import de.kordondev.lagermelder.exception.WrongTimeException
 import de.kordondev.lagermelder.rest.model.RestSubsidy
+import de.kordondev.lagermelder.rest.model.SubsidyDistribution
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -119,10 +120,26 @@ class RegistrationFilesService(
         val attendees = attendeeService.getAttendeesForDepartment(department)
         return RestSubsidy(
             id = id,
-            stateYouthPlanLeaders = youthPlanAttendees.count { it.youthPlanRole == AttendeeRole.YOUTH_LEADER },
-            stateYouthPlanParticipants = youthPlanAttendees.count { it.youthPlanRole == AttendeeRole.YOUTH },
-            karlsruheLeaders = attendees.youthLeaders.count(),
-            karlsruheParticipants = attendees.youths.count(),
+            participants = SubsidyDistribution(
+                stateYouthPlanLeaders = youthPlanAttendees.count { it.youthPlanRole == AttendeeRole.YOUTH_LEADER && it.attendee.role == AttendeeRole.YOUTH_LEADER },
+                stateYouthPlanParticipants = youthPlanAttendees.count {
+                    it.youthPlanRole == AttendeeRole.YOUTH && listOf(
+                        AttendeeRole.YOUTH_LEADER, AttendeeRole.YOUTH
+                    ).contains(it.attendee.role)
+                },
+                karlsruheLeaders = attendees.youthLeaders.count(),
+                karlsruheParticipants = attendees.youths.count(),
+            ),
+            childGroup = SubsidyDistribution(
+                stateYouthPlanLeaders = youthPlanAttendees.count { it.youthPlanRole == AttendeeRole.YOUTH_LEADER && it.attendee.role == AttendeeRole.CHILD_LEADER },
+                stateYouthPlanParticipants = youthPlanAttendees.count {
+                    it.youthPlanRole == AttendeeRole.YOUTH && listOf(
+                        AttendeeRole.CHILD_LEADER, AttendeeRole.CHILD
+                    ).contains(it.attendee.role)
+                },
+                karlsruheLeaders = attendees.childLeaders.count(),
+                karlsruheParticipants = attendees.children.count(),
+            )
         )
     }
 }
