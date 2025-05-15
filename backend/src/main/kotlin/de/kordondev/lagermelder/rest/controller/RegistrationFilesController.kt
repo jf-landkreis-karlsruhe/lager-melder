@@ -1,7 +1,9 @@
 package de.kordondev.lagermelder.rest.controller
 
+import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.service.RegistrationFilesService
 import de.kordondev.lagermelder.core.service.models.Group
+import de.kordondev.lagermelder.rest.model.RestSubsidy
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.*
@@ -10,7 +12,8 @@ import java.io.IOException
 
 @RestController
 class RegistrationFilesController(
-    private val registrationFilesService: RegistrationFilesService
+    private val registrationFilesService: RegistrationFilesService,
+    private val authorityService: AuthorityService
 ) {
 
     @ResponseBody
@@ -66,6 +69,14 @@ class RegistrationFilesController(
     fun getAttendeesCommunal(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=Teilnehmer-Kommandant.pdf")
         return registrationFilesService.getAttendeesCommunal(id)
+    }
+
+    @GetMapping("departments/{id}/subsidy")
+    fun getSubsidy(
+        @PathVariable("id") id: Long,
+    ): RestSubsidy {
+        authorityService.isLkKarlsruhe()
+        return registrationFilesService.getSubsidy(id)
     }
 
 }
