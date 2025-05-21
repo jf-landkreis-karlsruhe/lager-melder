@@ -36,6 +36,7 @@ class StateYouthPlanLeader(
     val DURATION = "Einsatztage_"
     val ATTENDEES_ON_PAGE = 5
     val TABLE_ROW_START = listOf(1, 2, 3, 4, 5)
+    val LIZENZ = "Lizenz_"
 
     val DAYS_OF_EVENT = 5
 
@@ -137,24 +138,26 @@ class StateYouthPlanLeader(
                     Helper.getBirthday(attendee),
                     germanDate
                 )
-            } ${
-                when (attendee) {
-                    is YouthLeaderEntry -> "\nJuleika: ${attendee.juleikaNumber} bis ${
-                        attendee.juleikaExpireDate?.format(
-                            germanDate
-                        )
-                    }"
-
-                    is ChildLeaderEntry -> "\nJuleika: ${attendee.juleikaNumber} bis ${
-                        attendee.juleikaExpireDate?.format(
-                            germanDate
-                        )
-                    }"
-
-                    else -> ""
-                }
-            }",
+            }\nAnschrift: ",
             page
+        )?.let { fields.add(it) }
+        pdfHelper.fillField(
+            form, "$LIZENZ$cellId",
+            when (attendee) {
+                is YouthLeaderEntry -> "Juleikanummer: ${attendee.juleikaNumber}\nGültig bis: ${
+                    attendee.juleikaExpireDate?.format(
+                        germanDate
+                    )
+                }\nSonderurlaub: nein"
+
+                is ChildLeaderEntry -> "Juleikanummer: ${attendee.juleikaNumber}\nGültig bis: ${
+                    attendee.juleikaExpireDate?.format(
+                        germanDate
+                    )
+                }\nSonderurlaub: nein"
+
+                else -> ""
+            }, page
         )?.let { fields.add(it) }
         pdfHelper.fillField(form, startDateCell, settings.eventStart.format(germanDate), page)?.let { fields.add(it) }
         pdfHelper.fillField(form, "$END_DATE$cellId", settings.eventStart.format(germanDate), page)
