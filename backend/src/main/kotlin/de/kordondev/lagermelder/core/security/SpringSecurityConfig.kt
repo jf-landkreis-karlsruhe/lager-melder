@@ -38,6 +38,7 @@ class SpringSecurityConfig(
                 .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("/users/forgotPasswordToken").permitAll()
                 .requestMatchers("/users/resetPasswordWithToken").permitAll()
+                .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/**").authenticated()
         }
             .sessionManagement { c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }

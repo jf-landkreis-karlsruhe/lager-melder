@@ -7,6 +7,7 @@ import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.security.PasswordGenerator
 import de.kordondev.lagermelder.core.service.helper.TShirtSizeValidator
 import de.kordondev.lagermelder.core.service.models.Attendees
+import de.kordondev.lagermelder.core.service.models.RoleCount
 import de.kordondev.lagermelder.exception.*
 import jakarta.transaction.Transactional
 import org.slf4j.Logger
@@ -269,5 +270,16 @@ class AttendeeService(
         }
     }
 
+    fun getPresentByExecutedRoleCount(): RoleCount {
+        return baseAttendeeRepository.countByExecutedRole().let {
+            RoleCount(
+                helper = it.find { it.getExecutedRole() == AttendeeRole.HELPER.toString() }?.getCount() ?: 0,
+                youth = it.find { it.getExecutedRole() == AttendeeRole.YOUTH.toString() }?.getCount() ?: 0,
+                youthLeader = it.find { it.getExecutedRole() == AttendeeRole.YOUTH_LEADER.toString() }?.getCount() ?: 0,
+                children = it.find { it.getExecutedRole() == AttendeeRole.CHILD.toString() }?.getCount() ?: 0,
+                childLeader = it.find { it.getExecutedRole() == AttendeeRole.CHILD_LEADER.toString() }?.getCount() ?: 0,
+            )
+        }
+    }
 
 }
