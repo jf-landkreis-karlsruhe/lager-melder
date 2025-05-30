@@ -7,6 +7,7 @@ import jakarta.persistence.Table
 import org.hibernate.Hibernate
 import java.time.Instant
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 @Entity
 @Table(name = "settings")
@@ -54,6 +55,15 @@ data class SettingsEntry(
     val numberOfDuties: Int = 0,
 
 ) {
+
+    fun childEventDay(): LocalDate {
+        return eventStart.plusDays(1)
+    }
+
+    fun getDaysOfEvent(): Long {
+        return ChronoUnit.DAYS.between(eventStart, eventEnd) + 1
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
@@ -64,7 +74,6 @@ data class SettingsEntry(
 
     override fun hashCode(): Int = javaClass.hashCode()
 
-    @Override
     override fun toString(): String {
         return this::class.simpleName + "(id = $id )"
     }
