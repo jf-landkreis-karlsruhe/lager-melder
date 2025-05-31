@@ -269,5 +269,4 @@ class AttendeeService(
         }
     }
 
-
 }

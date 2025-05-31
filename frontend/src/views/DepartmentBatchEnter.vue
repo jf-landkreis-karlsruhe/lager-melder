@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { DepartmentFeatures, getDepartment } from '../services/department'
-import { type Attendees, getAttendeesForDepartment } from '../services/attendee'
+import { type Attendees, getAttendeesPartOfDepartment } from '../services/attendee'
 import { useToast } from 'vue-toastification'
 import { useRoute } from 'vue-router'
 import type { Department } from '@/services/department'
@@ -22,7 +22,7 @@ onMounted(async () => {
     : parseInt(route.params.departmentId)
 
   department.value = await getDepartment(departmentId.value)
-  attendees.value = await getAttendeesForDepartment(departmentId.value)
+  attendees.value = await getAttendeesPartOfDepartment(departmentId.value)
 })
 
 const hasFeature = (feature: DepartmentFeatures) => {
@@ -43,7 +43,8 @@ const hasFeature = (feature: DepartmentFeatures) => {
         headline="Jugendgruppe"
         :attendeeGroups="[
           { headline: 'Jugendliche', attendees: attendees.youths || [] },
-          { headline: 'Betreuer', attendees: attendees.youthLeaders || [] }
+          { headline: 'Betreuer', attendees: attendees.youthLeaders || [] },
+          { headline: 'Z Kids', attendees: attendees.zKids || [] }
         ]"
         :enterCode="eventCode"
         :leaveCode="leaveCode"
@@ -55,13 +56,6 @@ const hasFeature = (feature: DepartmentFeatures) => {
           { headline: 'Kindergruppe', attendees: attendees.children || [] },
           { headline: 'Kindergruppenleiter', attendees: attendees.childLeaders || [] }
         ]"
-        :enterCode="eventCode"
-        :leaveCode="leaveCode"
-      ></AttendeeBatchEvent>
-      <AttendeeBatchEvent
-        v-if="hasFeature(DepartmentFeatures.ZKIDS)"
-        headline="ZKids"
-        :attendeeGroups="[{ headline: 'Z Kids', attendees: attendees.zKids || [] }]"
         :enterCode="eventCode"
         :leaveCode="leaveCode"
       ></AttendeeBatchEvent>

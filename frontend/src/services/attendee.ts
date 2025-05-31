@@ -6,6 +6,9 @@ export const getAttendees = () => getData<Attendees>('attendees', withAuthentica
 export const getAttendeesForDepartment = (departmentId: number) =>
   getData<Attendees>(`departments/${departmentId}/attendees`, withAuthenticationHeader())
 
+export const getAttendeesPartOfDepartment = (departmentId: number) =>
+  getData<Attendees>(`part-of-departments/${departmentId}/attendees`, withAuthenticationHeader())
+
 export const getAttendee = (id: number) => getData<Attendee>(`attendees/${id}`, withAuthenticationHeader())
 
 export const createAttendee = (attendee: NewAttendee) =>

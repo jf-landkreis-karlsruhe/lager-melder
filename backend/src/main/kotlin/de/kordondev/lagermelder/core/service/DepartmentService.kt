@@ -35,7 +35,7 @@ class DepartmentService(
     }
 
     fun getDepartmentsForSelecting(): List<DepartmentEntry> {
-        return departmentRepository.findAll().sortedBy { it.headDepartmentName + it.name }
+        return departmentRepository.findAll().sortedBy { it.name }
     }
 
     fun getDepartment(id: Long): DepartmentEntry {

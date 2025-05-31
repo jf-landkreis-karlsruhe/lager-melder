@@ -52,9 +52,9 @@ function createSummary(department: Department, distributions: Distribution[]): D
 const emptySummary: Distribution = {
   youths: 0,
   youthLeaders: 0,
-  zKids: 0,
   children: 0,
   childLeaders: 0,
+  helpers: 0,
   name: 'empty'
 }
 
@@ -97,7 +97,7 @@ const updatePauseDepartmentInternal = (department: Department) => {
           name: acc.name,
           youths: acc.youths + dep.distribution.youths,
           youthLeaders: acc.youthLeaders + dep.distribution.youthLeaders,
-          zKids: acc.zKids + dep.distribution.zKids,
+          helpers: acc.helpers + dep.distribution.helpers,
           children: acc.children + dep.distribution.children,
           childLeaders: acc.childLeaders + dep.distribution.childLeaders
         }),
@@ -110,7 +110,7 @@ const updatePauseDepartmentInternal = (department: Department) => {
         ...departmentSummary.value.total,
         youths: newTotal.youths,
         youthLeaders: newTotal.youthLeaders,
-        zKids: newTotal.zKids,
+        helpers: newTotal.helpers,
         children: newTotal.children,
         childLeaders: newTotal.childLeaders
       },
