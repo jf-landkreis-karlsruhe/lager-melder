@@ -1,6 +1,5 @@
-import { getData, postData, putData, deleteData } from '../helper/fetch'
-import { withAuthenticationHeader, getTokenData } from './authentication'
-import type { Department } from '@/services/department'
+import { deleteData, getData, postData, putData } from '../helper/fetch'
+import { withAuthenticationHeader } from './authentication'
 
 export interface NewEvent {
   name: string
@@ -61,9 +60,9 @@ export interface Distribution {
   name: string
   youths: number
   youthLeaders: number
-  zKids: number
   children: number
   childLeaders: number
+  helpers: number
 }
 
 export const globalEventSummary = () => getData<GlobalEventSummary>('events/global/summary', withAuthenticationHeader())

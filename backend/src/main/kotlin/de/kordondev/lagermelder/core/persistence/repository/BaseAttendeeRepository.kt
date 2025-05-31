@@ -21,28 +21,4 @@ interface BaseAttendeeRepository : CrudRepository<BaseAttendeeEntry, String> {
 
     @Query("SELECT a FROM BaseAttendeeEntry a WHERE a.role IN :roles")
     fun findByRoleIn(roles: List<String>): List<BaseAttendeeEntry>
-
-    @Query(
-        """
-            SELECT
-             CASE
-                    WHEN b.role = 'Z_KID'
-                        THEN 'YOUTH'
-                     WHEN b.department.headDepartmentName = 'LK Karlsruhe'
-                        THEN 'HELPER'
-                    ELSE b.role
-                END AS executedRole,
-                COUNT(*) AS count
-            FROM BaseAttendeeEntry b
-            WHERE b.status = 'ENTERED'
-            AND b.department.paused = false
-            GROUP BY executedRole
-    """
-    )
-    fun countByExecutedRole(): List<RoleCount>
-
-    interface RoleCount {
-        fun getExecutedRole(): String
-        fun getCount(): Long
-    }
 }

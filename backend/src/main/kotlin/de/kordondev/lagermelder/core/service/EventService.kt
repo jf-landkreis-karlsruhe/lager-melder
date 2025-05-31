@@ -98,10 +98,25 @@ class EventService(
             }
     }
 
-    fun getGlobalEventSummary(): RestGlobalEventSummary {
+    fun getFullEventSummary(): RestGlobalEventSummary {
         authorityService.isLkKarlsruhe()
+        return calculateEventSummary()
+    }
+
+    fun getGlobalEventSummary(): Distribution {
+        return calculateEventSummary().total
+    }
+
+    private fun calculateEventSummary(): RestGlobalEventSummary {
         val attendees = attendeeService.getAllAttendees()
-        val allAttendees = (attendees.youths + attendees.youthLeaders + attendees.childLeaders + attendees.children + attendees.zKids)
+        val updatedZKid = attendees.zKids
+            .map { it.copy(role = if (it.partOfDepartment.headDepartmentName == "LK Karlsruhe") AttendeeRole.HELPER else AttendeeRole.YOUTH) }
+        val updatedYouthLeaders = attendees.youthLeaders
+            .map { if (it.department.headDepartmentName == "LK Karlsruhe") it.copy(role = AttendeeRole.HELPER) else it }
+        val updatedYouths = attendees.youths
+            .map { if (it.department.headDepartmentName == "LK Karlsruhe") it.copy(role = AttendeeRole.HELPER) else it }
+        val allAttendees =
+            (updatedYouths + updatedYouthLeaders + attendees.childLeaders + attendees.children + updatedZKid + attendees.helpers)
         val attendeesByDepartment = allAttendees.groupBy { attendeeService.getPartOfDepartmentOrDepartment(it) }
 
         val notPausedAttendees = attendeesByDepartment.entries
@@ -130,10 +145,6 @@ class EventService(
                 AttendeeStatus.ENTERED,
                 AttendeeRole.YOUTH_LEADER
             )]?.size ?: 0,
-            zKids = groupedAttendees[attendeeRoleStatus(
-                AttendeeStatus.ENTERED,
-                AttendeeRole.Z_KID
-            )]?.size ?: 0,
             children = groupedAttendees[attendeeRoleStatus(
                 AttendeeStatus.ENTERED,
                 AttendeeRole.CHILD
@@ -142,6 +153,10 @@ class EventService(
                 AttendeeStatus.ENTERED,
                 AttendeeRole.CHILD_LEADER
             )]?.size ?: 0,
+            helpers = groupedAttendees[attendeeRoleStatus(
+                AttendeeStatus.ENTERED,
+                AttendeeRole.HELPER
+            )]?.size ?: 0
         )
     }
 

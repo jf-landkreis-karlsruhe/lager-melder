@@ -1,22 +1,20 @@
 package de.kordondev.lagermelder.rest.model
 
-import de.kordondev.lagermelder.core.service.models.RoleCount
-
 data class RestRoleCount(
-    val helper: Long,
-    val youth: Long,
-    val youthLeader: Long,
-    val children: Long,
-    val childLeader: Long,
+    val helpers: Int,
+    val youths: Int,
+    val youthLeaders: Int,
+    val children: Int,
+    val childLeaders: Int,
 ) {
     companion object {
-        fun of(roleCount: RoleCount): RestRoleCount {
+        fun of(distribution: Distribution): RestRoleCount {
             return RestRoleCount(
-                helper = roleCount.helper,
-                youth = roleCount.youth,
-                youthLeader = roleCount.youthLeader,
-                children = roleCount.children,
-                childLeader = roleCount.childLeader
+                helpers = distribution.helpers,
+                youths = distribution.youths,
+                youthLeaders = distribution.youthLeaders,
+                children = distribution.children,
+                childLeaders = distribution.childLeaders
             )
         }
     }

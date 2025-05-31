@@ -57,7 +57,7 @@ class EventController(
 
     @GetMapping("/events/global/summary")
     fun getGlobalEventSummary(): RestGlobalEventSummary {
-        return eventService.getGlobalEventSummary()
+        return eventService.getFullEventSummary()
     }
 
     @GetMapping("/events")

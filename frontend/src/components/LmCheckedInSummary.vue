@@ -25,8 +25,8 @@ const props = defineProps<{
           <h5>Jugendleiter</h5>
         </div>
         <div class="number-container">
-          <h3>{{ props.departmentDistribution.zKids }}</h3>
-          <h5>ZKids</h5>
+          <h3>{{ props.departmentDistribution.helpers }}</h3>
+          <h5>Helfer</h5>
         </div>
         <div class="number-container">
           <h3>{{ props.departmentDistribution.children }}</h3>
