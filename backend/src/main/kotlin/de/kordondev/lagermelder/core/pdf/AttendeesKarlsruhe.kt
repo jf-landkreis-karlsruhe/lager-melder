@@ -6,6 +6,7 @@ import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.service.SettingsService
+import de.kordondev.lagermelder.core.service.models.Group
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import org.apache.pdfbox.pdmodel.interactive.form.PDField
@@ -33,9 +34,9 @@ class AttendeesKarlsruhe(
     private val EVENT_END = "bis"
     private val DAYS_OF_EVENT = 5
 
-    fun createAttendeesKarlsruhePdf(attendees: List<Attendee>): PDDocument {
+    fun createAttendeesKarlsruhePdf(attendees: List<Attendee>, group: Group): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/attendees_LRA_KA.pdf")
-        val settings = settingsService.getSettings()
+        val settings = getSettings(group)
 
         logger.info("attendeeSize ${attendees.size}")
 
@@ -45,7 +46,7 @@ class AttendeesKarlsruhe(
         if (attendees.size <= ATTENDEES_ON_FIRST_PAGE) {
             val pdfDocument = PDDocument.load(resource.inputStream)
             fields.addAll(fillPage(pdfDocument, attendees, TABLE_ROW_START_PAGE_1, 1000, settings))
-            fields.addAll(fillFirstPage(pdfDocument, attendees, 1000, settings))
+            fields.addAll(fillFirstPage(pdfDocument, 1000, settings))
             result.addPage(pdfDocument.getPage(0))
 
         } else {
@@ -59,7 +60,7 @@ class AttendeesKarlsruhe(
                     settings
                 )
             )
-            fields.addAll(fillFirstPage(pdfDocument, attendees, 1000, settings))
+            fields.addAll(fillFirstPage(pdfDocument, 1000, settings))
             result.addPage(pdfDocument.getPage(0))
             var page = 1002
             for (i in ATTENDEES_ON_FIRST_PAGE until attendees.size step ATTENDEES_ON_SECOND_PAGE) {
@@ -110,9 +111,8 @@ class AttendeesKarlsruhe(
 
     fun fillFirstPage(
         pdfDocument: PDDocument,
-        attendees: List<Attendee>,
         page: Int,
-        settings: SettingsEntry
+        settings: SettingsEntry,
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm
@@ -122,6 +122,18 @@ class AttendeesKarlsruhe(
             ?.let { fields.add(it) }
         pdfHelper.fillField(form, EVENT_END, settings.eventEnd.format(germanDate), page)?.let { fields.add(it) }
         return fields
+    }
+
+    fun getSettings(group: Group): SettingsEntry {
+        return when (group) {
+            Group.PARTICIPANT -> settingsService.getSettings()
+            Group.CHILD_GROUP -> settingsService.getSettings()
+                .copy(
+                    eventStart = settingsService.getSettings().childEventDay(),
+                    eventEnd = settingsService.getSettings().childEventDay(),
+                    eventAddress = "Am Marktplatz 2, 76275 Ettlingen"
+                )
+        }
     }
 
     fun fillAttendeeInForm(
@@ -161,7 +173,7 @@ class AttendeesKarlsruhe(
         pdfHelper.fillField(form, "$startCellId", settings.eventStart.format(germanDateShort), page)
             ?.let { fields.add(it) }
         pdfHelper.fillField(form, "$endCellId", settings.eventEnd.format(germanDateShort), page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, "$daysCellId", "$DAYS_OF_EVENT", page)?.let { fields.add(it) }
+        pdfHelper.fillField(form, "$daysCellId", "${settings.getDaysOfEvent()}", page)?.let { fields.add(it) }
         when (attendee.role) {
             AttendeeRole.YOUTH -> pdfHelper.fillField(form, "$youthCellId", "x", page)?.let { fields.add(it) }
             AttendeeRole.CHILD -> pdfHelper.fillField(form, "$youthCellId", "x", page)?.let { fields.add(it) }

@@ -48,11 +48,11 @@ const downloadAttendeesCommunal = () => {
         <button class="underline" @click="downloadAttendeesCommunal">Anmeldung</button>
         mit Unterschrift des Kommandanten
       </li>
-      <li>
+      <li v-if="group === Group.PARTICIPANT">
         <button class="underline" @click="downloadStateYouthPlanAttendees">Teilnehmerlisten</button>
         für den Landesjugendplan
       </li>
-      <li>
+      <li v-if="group === Group.PARTICIPANT">
         <button class="underline" @click="downloadStateYouthPlanLeader">Betreuer</button>
         für den Landesjugendplan
       </li>

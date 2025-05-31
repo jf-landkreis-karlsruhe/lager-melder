@@ -42,7 +42,7 @@ class RegistrationFilesService(
                     Group.CHILD_GROUP -> it.children + it.childLeaders
                 }
             }
-            .let { attendeesKarlsruhe.createAttendeesKarlsruhePdf(it) }
+            .let { attendeesKarlsruhe.createAttendeesKarlsruhePdf(it, group) }
         val out = ByteArrayOutputStream()
         result.save(out)
         result.close()
