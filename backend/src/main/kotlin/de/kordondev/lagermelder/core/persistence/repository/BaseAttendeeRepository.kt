@@ -26,6 +26,8 @@ interface BaseAttendeeRepository : CrudRepository<BaseAttendeeEntry, String> {
         """
             SELECT
              CASE
+                    WHEN b.role = 'Z_KID'
+                        THEN 'YOUTH'
                      WHEN b.department.headDepartmentName = 'LK Karlsruhe'
                         THEN 'HELPER'
                     ELSE b.role
