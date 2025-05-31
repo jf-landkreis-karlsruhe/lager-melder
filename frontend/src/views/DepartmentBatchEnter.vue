@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { DepartmentFeatures, getDepartment } from '../services/department'
-import { type Attendees, getAttendeesForDepartment } from '../services/attendee'
+import { type Attendees, getAttendeesPartOfDepartment } from '../services/attendee'
 import { useToast } from 'vue-toastification'
 import { useRoute } from 'vue-router'
 import type { Department } from '@/services/department'
@@ -22,7 +22,7 @@ onMounted(async () => {
     : parseInt(route.params.departmentId)
 
   department.value = await getDepartment(departmentId.value)
-  attendees.value = await getAttendeesForDepartment(departmentId.value)
+  attendees.value = await getAttendeesPartOfDepartment(departmentId.value)
 })
 
 const hasFeature = (feature: DepartmentFeatures) => {

@@ -82,6 +82,12 @@ class DepartmentController(
             .let { RestAttendees.of(it) }
     }
 
+    @GetMapping("/part-of-departments/{id}/attendees")
+    fun getAttendeesPartOfDepartment(@PathVariable(value = "id") id: Long): RestAttendees {
+        return attendeeService.getAttendeesForDepartmentWithZKidsBeingPartOf(id)
+            .let { RestAttendees.of(it) }
+    }
+
     @GetMapping("departments/{id}/tents")
     fun getForDepartment(
         @PathVariable(required = true)id: Long,
