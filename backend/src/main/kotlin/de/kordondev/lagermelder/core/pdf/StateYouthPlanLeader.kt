@@ -50,8 +50,8 @@ class StateYouthPlanLeader(
         val fields = mutableListOf<PDField>()
 
         var page = 1
-        val pdfDocument = PDDocument.load(resource.inputStream)
         for (i in youthLeaders.indices step ATTENDEES_ON_PAGE) {
+            val pdfDocument = PDDocument.load(resource.inputStream)
 
             val attendeesForPage = if (youthLeaders.size <= i + ATTENDEES_ON_PAGE) {
                 youthLeaders.subList(i, youthLeaders.size)
@@ -64,6 +64,7 @@ class StateYouthPlanLeader(
         }
 
         if (youthLeaders.isEmpty()) {
+            val pdfDocument = PDDocument.load(resource.inputStream)
             val form = pdfDocument.documentCatalog.acroForm;
             fillGeneralData(form, page, settings, fields)
             result.addPage(pdfDocument.getPage(0))
