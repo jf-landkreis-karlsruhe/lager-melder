@@ -161,7 +161,7 @@ class StateYouthPlanLeader(
             }, page
         )?.let { fields.add(it) }
         pdfHelper.fillField(form, startDateCell, settings.eventStart.format(germanDate), page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, "$END_DATE$cellId", settings.eventStart.format(germanDate), page)
+        pdfHelper.fillField(form, "$END_DATE$cellId", settings.eventEnd.format(germanDate), page)
             ?.let { fields.add(it) }
         pdfHelper.fillField(form, "$DURATION$cellId", "$DAYS_OF_EVENT", page)?.let { fields.add(it) }
         return fields
