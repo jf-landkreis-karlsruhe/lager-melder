@@ -37,6 +37,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./page-to-pdf
+          context: ./page-to-pdf2
           push: true
           tags: "latest"
