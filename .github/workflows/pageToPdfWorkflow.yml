@@ -39,4 +39,4 @@ jobs:
         with:
           context: ./page-to-pdf2
           push: true
-          tags: "latest"
+          tags: "ghcr.io/kordondev/page-to-paf/latest"
