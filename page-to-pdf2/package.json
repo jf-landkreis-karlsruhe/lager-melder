@@ -1,6 +1,6 @@
 {
-  "name": "@kordondev/page-to-pdf",
-  "repository": "https://github.com/kordondev/page-to-pdf",
+  "name": "@jf-landkreis-karlsruhe/page-to-pdf",
+  "repository": "https://github.com/jf-landkreis-karlsruhe/page-to-pdf",
   "version": "1.0.0",
   "description": "Script to login to a Vue app and save a page as PDF",
   "main": "index.js",
