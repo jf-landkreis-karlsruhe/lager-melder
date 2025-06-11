@@ -1,5 +1,5 @@
 {
-  "name": "page-to-pdf",
+  "name": "@kordondev/page-to-pdf",
   "version": "1.0.0",
   "description": "Script to login to a Vue app and save a page as PDF",
   "main": "index.js",
