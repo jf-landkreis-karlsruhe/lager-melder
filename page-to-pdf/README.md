@@ -99,15 +99,9 @@ docker run \
 You can also use the pre-built Docker image from GitHub Container Registry:
 
 ```
-docker pull ghcr.io/kordondev/page-to-pdf:latest
-docker run -v $(pwd)/output:/app/output -e USERNAME=user -e PASSWORD=pass ghcr.io/kordondev/page-to-pdf:latest
+docker pull ghcr.io/jf-landkreis-karlsruhe/page-to-pdf:latest
+docker run -v $(pwd)/output:/app/output -e USERNAME=user -e PASSWORD=pass ghcr.io/jf-landkreis-karlsruhe/page-to-pdf:latest
 ```
-
-Replace `your-username` with your GitHub username.
-
-## Customization
-
-If the login form on your Vue app has different selectors than the defaults, you may need to modify the selectors in `index.js`.
 
 ## Install playwright
 `npx playwright install`
