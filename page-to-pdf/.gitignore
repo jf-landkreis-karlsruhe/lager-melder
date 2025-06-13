@@ -1,0 +1,4 @@
+.env
+*.pdf
+.idea/
+node_modules

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import { login, isLoggedIn } from '../services/authentication'
+import { isLoggedIn, login } from '../services/authentication'
 import LmContainer from './LmContainer.vue'
-import {showErrorToast} from "@/helper/fetch";
+import { showErrorToast } from '@/helper/fetch'
 
 const router = useRouter()
 const toast = useToast()
@@ -46,11 +46,13 @@ onMounted(() => {
                   variant="underlined"
                   prepend-icon="mdi-account"
                   v-model="username"
+                  id="username"
                   label="Benutzername"
                   type="email"
                 />
                 <v-text-field
                   type="password"
+                  id="password"
                   prepend-icon="mdi-lock"
                   v-model="password"
                   label="Passwort"
@@ -60,9 +62,7 @@ onMounted(() => {
               <v-card-actions>
                 <v-container>
                   <v-row justify="end">
-                    <v-btn color="primary" type="submit" :loading="loading" rounded>
-                      Einloggen
-                    </v-btn>
+                    <v-btn color="primary" type="submit" :loading="loading" rounded> Einloggen </v-btn>
                   </v-row>
                 </v-container>
               </v-card-actions>

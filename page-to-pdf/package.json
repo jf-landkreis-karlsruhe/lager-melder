@@ -1,0 +1,16 @@
+{
+  "name": "@jf-landkreis-karlsruhe/page-to-pdf",
+  "repository": "https://github.com/jf-landkreis-karlsruhe/page-to-pdf",
+  "version": "1.0.0",
+  "description": "Script to login to a Vue app and save a page as PDF",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0",
+    "dotenv": "^16.3.1",
+    "yargs": "^17.7.2"
+  }
+}
