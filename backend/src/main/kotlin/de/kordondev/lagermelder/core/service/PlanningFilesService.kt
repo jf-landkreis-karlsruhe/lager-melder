@@ -524,7 +524,7 @@ class PlanningFilesService(
             table.endHeaders()
             val attendeeByType = departmentWithAttendees[department]?.groupBy { it.role }
             if (attendeeByType != null) {
-                table.addCell((attendeeByType[AttendeeRole.YOUTH]?.plus(attendeeByType[AttendeeRole.Z_KID]))?.size?.toString() ?: "0")
+                table.addCell(attendeeByType[AttendeeRole.YOUTH]?.size?.toString() ?: "0")
                 table.addCell(attendeeByType[AttendeeRole.YOUTH_LEADER]?.size?.toString() ?: "0")
                 table.addCell(attendeeByType[AttendeeRole.CHILD]?.size?.toString() ?: "0")
                 table.addCell(attendeeByType[AttendeeRole.CHILD_LEADER]?.size?.toString() ?: "0")
