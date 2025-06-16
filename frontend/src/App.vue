@@ -35,6 +35,9 @@ import Header from './components/LmHeader.vue'
 
   .header {
     flex: 0 1 auto;
+    @media print {
+      display: none !important;
+    }
   }
 
   .content {

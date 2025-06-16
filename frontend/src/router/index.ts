@@ -68,6 +68,11 @@ const router = createRouter({
       component: () => import('../views/EventSummaryView.vue')
     },
     {
+      path: '/anwesend-print',
+      name: 'Anwesende Drucken',
+      component: () => import('../views/EventSummaryPrintView.vue')
+    },
+    {
       path: '/account',
       name: 'Account',
       component: () => import('../views/AccountView.vue')

@@ -5,23 +5,17 @@ import { type Distribution, type GlobalEventSummary, globalEventSummary } from '
 import LmContainer from '../components/LmContainer.vue'
 import LmEvacuationConfiguration from '@/components/LmEvacuationConfiguration.vue'
 import { type Department, getDepartments, updatePauseDepartment } from '@/services/department'
-import { type EvacuationGroup, getEvacuationGroup } from '@/services/evacuationGroups'
+import {
+  type EvacuationGroup,
+  getEvacuationGroup,
+  sortDepartmentByEvacuationGroup,
+  type SummaryDepartment
+} from '@/services/evacuationGroups'
 import { hasLKKarlsruheRole } from '@/services/authentication'
 import { useToast } from 'vue-toastification'
 
 const departmentSummary = ref<SummaryDepartment | null>(null)
 const evacuationGroups = ref<EvacuationGroup[]>([])
-
-interface SummaryDepartment {
-  total: Distribution
-  departments: DepartmentDistribution[]
-}
-
-interface DepartmentDistribution {
-  id: number
-  department: Department
-  distribution: Distribution
-}
 
 const toast = useToast()
 
@@ -56,24 +50,6 @@ const emptySummary: Distribution = {
   childLeaders: 0,
   helpers: 0,
   name: 'empty'
-}
-
-function sortDepartmentByEvacuationGroup(a: DepartmentDistribution, b: DepartmentDistribution) {
-  const evacuationA = a.department.evacuationGroup?.name
-  const evacuationB = b.department.evacuationGroup?.name
-  if (evacuationA === undefined && evacuationB === undefined) {
-    return a.department.name.localeCompare(b.department.name)
-  }
-  if (evacuationA === evacuationB) {
-    return a.department.name.localeCompare(b.department.name)
-  }
-  if (evacuationA === undefined) {
-    return 1
-  }
-  if (evacuationB === undefined) {
-    return -1
-  }
-  return evacuationA.localeCompare(evacuationB)
 }
 
 const updatePauseDepartmentInternal = (department: Department) => {
@@ -125,6 +101,7 @@ const updatePauseDepartmentInternal = (department: Department) => {
 <template>
   <LmContainer v-if="hasLKKarlsruheRole()">
     <h1>Anwesende</h1>
+    <router-link to="/anwesend-print"> Druckansicht </router-link>
     <div v-if="departmentSummary !== null">
       <CheckedInSummary
         :departmentDistribution="departmentSummary.total"
