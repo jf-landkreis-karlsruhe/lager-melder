@@ -10,14 +10,11 @@ import {
   type SummaryDepartment
 } from '@/services/evacuationGroups'
 import { hasLKKarlsruheRole } from '@/services/authentication'
-import { useToast } from 'vue-toastification'
 import LmDepartmentSummaryShort from '@/components/LmDepartmentSummaryShort.vue'
 import CheckedInSummary from '@/components/LmCheckedInSummary.vue'
 
 const departmentSummary = ref<SummaryDepartment | null>(null)
 const evacuationGroups = ref<EvacuationGroup[]>([])
-
-const toast = useToast()
 
 onMounted(() => {
   getEvacuationGroup().then((evacGroup) => {
@@ -33,6 +30,14 @@ onMounted(() => {
             department: dep,
             distribution: createSummary(dep, summary.departments)
           }))
+          .filter(
+            (dep) =>
+              dep.distribution.helpers != 0 ||
+              dep.distribution.children != 0 ||
+              dep.distribution.youths != 0 ||
+              dep.distribution.youthLeaders != 0 ||
+              dep.distribution.childLeaders != 0
+          )
           .sort(sortDepartmentByEvacuationGroup)
       }
     }
