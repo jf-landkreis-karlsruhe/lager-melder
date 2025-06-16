@@ -70,14 +70,6 @@ class AttendeesCommunal(
             page++
         }
 
-        if (attendees.size <= ATTENDEES_ON_FIRST_PAGE) {
-            val pdfDocument = PDDocument.load(resource.inputStream)
-            fields.addAll(fillFirstPage(pdfDocument, department.name, attendees, page))
-            result.addPage(pdfDocument.getPage(0))
-            page++
-            lastAttendeeIndex = attendees.size
-        }
-
         val attendeesForPage = attendees.subList(lastAttendeeIndex, attendees.size)
         fields.addAll(fillSecondPage(pdfDocument, attendeesForPage, page, settings, department))
         result.addPage(pdfDocument.getPage(1))
