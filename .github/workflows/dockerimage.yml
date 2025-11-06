@@ -1,9 +1,10 @@
 name: Build and publish
 on:
   push:
-    branches: [main]
-    tags: [deploy]
-  pull_request:
+    branches:
+      - "*"
+    tags: 
+      - "*"
 
 jobs:
   build-and-push-backend:
@@ -27,20 +28,18 @@ jobs:
       - name: Build java
         run: mvn compile
         working-directory: ./backend
-      - name: Extract branch name
-        shell: bash
-        run: echo "branch=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
-        id: extract_branch
-        working-directory: ./backend
-      - name: Login to DockerHub
+      - name: Login to Github Container Registry
         uses: docker/login-action@v3
-        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/tags/deploy' }}
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN}}
+      - name: Set Tag as Environment Variable
+        run: echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
       - name: Deploy
-        run: mvn jib:build -Djib.to.tags=${{ steps.extract_branch.outputs.branch }}-${{ github.run_id }}
-        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/tags/deploy' }}
+        if: startsWith(github.ref, 'refs/tags/')
+        run: mvn jib:build -Djib.to.tags=ghcr.io/${{ github.repository_owner }}/lager-melder-backend:${{ env.TAG_NAME }},ghcr.io/${{ github.repository_owner }}/lager-melder-backend:latest
         working-directory: ./backend
 
   build-and-push-frontend:
@@ -62,22 +61,20 @@ jobs:
         working-directory: ./frontend
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Extract branch name
-        shell: bash
-        run: echo "branch=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
-        id: extract_branch
-        working-directory: ./backend
-      - name: Login to DockerHub
+      - name: Login to Github Container Registry
         uses: docker/login-action@v3
-        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/tags/deploy' }}
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN}}
       - name: Build and push
         uses: docker/build-push-action@v5
-        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/tags/deploy' }}
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          push: true
-          tags: kordondev/lager-melder-frontend:${{ steps.extract_branch.outputs.branch }}-${{ github.run_id }}
-          file: ./frontend/Dockerfile
           context: ./frontend
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/lager-melder-backend:${{ env.TAG_NAME }}
+            ghcr.io/${{ github.repository_owner }}/lager-melder-backend:latest
