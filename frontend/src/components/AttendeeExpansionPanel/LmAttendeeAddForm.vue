@@ -209,7 +209,7 @@ const requiredRule = [
         </v-select>
 
         <v-textarea
-          label="Kommentar"
+          label="Kücheninfo"
           variant="outlined"
           row-height="12"
           :rows="[AttendeeRole.YOUTH, AttendeeRole.CHILD].includes(props.role) ? 7 : 2"
