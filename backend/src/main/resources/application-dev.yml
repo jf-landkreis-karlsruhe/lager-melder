@@ -18,3 +18,6 @@ application:
   admin:
     passwordHash: $2a$12$3B.Ct9RY4FxjO/qrHZGe4uHN1IsGnh.cezLNcbE8/K0eXDHoGK59q
   corsOrigins: http://localhost:9000, http://lagermelder.kordondev.de
+  juleika:
+    use-mock: false
+    token: "KhWLeuZ8oXZrrCuxzTs9Z26dFwH2fw6ze6v5DzJB8d684bd5"
