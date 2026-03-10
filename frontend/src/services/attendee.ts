@@ -32,7 +32,6 @@ export const getAttendeeDefault = (role: AttendeeRole, departmentId: number): At
     helperDays: [],
     juleikaNumber: '',
     food: Food.MEAT,
-    juleikaExpireDate: '',
     birthday: '',
     status: undefined,
     additionalInformation: '',
@@ -83,8 +82,8 @@ export interface NewAttendee {
   tShirtSize: string
   additionalInformation: string
   role: AttendeeRole
-  juleikaNumber: string
-  juleikaExpireDate: string
+    juleikaNumber: string
+  juleikaExpireDate?: string
   partOfDepartmentId: number | undefined
   helperDays: string[]
   code: string
@@ -99,14 +98,12 @@ export interface Youth extends Attendee {}
 
 export interface YouthLeader extends Attendee {
   juleikaNumber: string
-  juleikaExpireDate: string
 }
 
 export interface Child extends Attendee {}
 
 export interface ChildLeader extends Attendee {
   juleikaNumber: string
-  juleikaExpireDate: string
 }
 
 export interface ZKid extends Attendee {

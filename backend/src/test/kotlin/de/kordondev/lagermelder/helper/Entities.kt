@@ -3,7 +3,6 @@ package de.kordondev.lagermelder.helper
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.rest.model.request.*
-import java.time.LocalDate
 import java.util.*
 
 
@@ -73,7 +72,7 @@ class Entities() {
                 additionalInformation = "n",
                 role = AttendeeRole.YOUTH,
                 juleikaNumber = "12345678",
-                juleikaExpireDate = LocalDate.of(2099, 5, 5).toString(),
+                juleikaExpireDate = null,
                 partOfDepartmentId = departmentId,
                 helperDays = emptySet()
             )
