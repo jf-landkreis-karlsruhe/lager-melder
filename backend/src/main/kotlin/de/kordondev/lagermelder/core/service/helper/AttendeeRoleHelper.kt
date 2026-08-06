@@ -2,6 +2,7 @@ package de.kordondev.lagermelder.core.service.helper
 
 import de.kordondev.lagermelder.Helper
 import de.kordondev.lagermelder.Helper.Companion.ageAtEvent
+import de.kordondev.lagermelder.core.juleika.JuleikaValidationService
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.BaseAttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.YouthLeaderEntry
@@ -13,7 +14,7 @@ import kotlin.math.ceil
 
 // https://jugendarbeitsnetz.de/landesjugendplan/ii-zur-foerderung-der-kinder-und-jugenderholung
 @Service
-class AttendeeRoleHelper {
+class AttendeeRoleHelper(private val juleikaValidationService: JuleikaValidationService) {
 
     private final val minAge = 6
     private final val maxAgeYouth = 27
@@ -111,7 +112,7 @@ class AttendeeRoleHelper {
         if (attendee !is YouthLeaderEntry) {
             return false
         }
-        return attendee.juleikaNumber.isNotEmpty() && (attendee.juleikaExpireDate?.isAfter(eventStart) ?: false)
+        return juleikaValidationService.isValid(attendee.juleikaNumber, attendee.lastName)
     }
 
     fun youthsFor(youthLeaderCount: Int) = youthLeaderCount * youthPerLeader

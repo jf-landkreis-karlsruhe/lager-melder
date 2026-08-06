@@ -1,5 +1,6 @@
 package de.kordondev.lagermelder.core.service.helper
 
+import de.kordondev.lagermelder.core.juleika.MockJuleikaValidationService
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.helper.Entities
@@ -16,7 +17,7 @@ class AttendeeRoleHelperTest {
 
     @BeforeEach
     fun setup() {
-        attendeeRoleHelper = AttendeeRoleHelper()
+        attendeeRoleHelper = AttendeeRoleHelper(MockJuleikaValidationService())
     }
 
 
@@ -356,14 +357,8 @@ class AttendeeRoleHelperTest {
     private fun createLeaderWithoutJuleika(count: Int, eventDate: LocalDate, age: Int): List<Attendee> {
         var attendees = listOf<Attendee>()
         for (i in 1..count) {
-            var attendee = createAttendeeAge(randomId(), age, eventDate, AttendeeRole.YOUTH_LEADER) as YouthLeaderEntry
-            attendee = if ((count % 2) == 0) {
-                attendee.copy(juleikaNumber = "")
-            } else {
-                attendee.copy(juleikaExpireDate = eventDate.minusDays(1))
-            }
-
-            attendees = attendees.plus(attendee)
+            val attendee = createAttendeeAge(randomId(), age, eventDate, AttendeeRole.YOUTH_LEADER) as YouthLeaderEntry
+            attendees = attendees.plus(attendee.copy(juleikaNumber = ""))
         }
         return attendees
     }

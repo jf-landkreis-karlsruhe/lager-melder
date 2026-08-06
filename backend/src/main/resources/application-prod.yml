@@ -30,3 +30,6 @@ application:
   mail:
     send: true
   corsOrigins: http://localhost:9000
+  juleika:
+    use-mock: false
+    token: ${JULEIKA_TOKEN}
