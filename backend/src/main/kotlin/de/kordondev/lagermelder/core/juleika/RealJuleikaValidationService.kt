@@ -1,5 +1,7 @@
 package de.kordondev.lagermelder.core.juleika
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -10,6 +12,12 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class JuleikaApiResponse(
+    val status: String?,
+    @JsonProperty("valid_till") val validTill: String?
+)
 
 @Service
 @ConditionalOnProperty(name = ["application.juleika.use-mock"], havingValue = "false", matchIfMissing = true)
@@ -44,11 +52,9 @@ class RealJuleikaValidationService(
                 return JuleikaValidationResult(valid = false, expireDate = null)
             }
 
-            val body = objectMapper.readTree(response.body())
-            val valid = body.path("status")?.asText() == "valid"
-            val expireDate = body.path("valid_till").takeIf { !it.isMissingNode && !it.isNull }?.asText()
+            val body = objectMapper.readValue(response.body(), JuleikaApiResponse::class.java)
 
-            JuleikaValidationResult(valid = valid, expireDate = expireDate)
+            JuleikaValidationResult(valid = body.status == "valid", expireDate = body.validTill)
         } catch (e: Exception) {
             logger.error("Juleika API call failed for card $cardNumber: ${e.message}")
             JuleikaValidationResult(valid = false, expireDate = null)
