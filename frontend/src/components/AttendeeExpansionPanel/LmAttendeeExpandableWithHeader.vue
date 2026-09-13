@@ -7,7 +7,7 @@ import LmAttendeeExpansionPanel from '../AttendeeExpansionPanel/LmAttendeeExpans
 import { filterEnteredAttendees } from '@/helper/filterHelper'
 import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeExpansionPanel/helperTypes'
 import type { EventDays } from '@/services/eventDays'
-import { isValidJuleikaExpireDate, isValidJuleikaNumber } from '@/helper/juleika'
+import { isValidJuleikaNumber } from '@/helper/juleika'
 
 const props = defineProps<{
   headerLabel: string
@@ -48,9 +48,6 @@ const attendeeListWithAllAttributes = computed<Attendee[]>(() => {
     if (!attendee.juleikaNumber) {
       newAttendee.juleikaNumber = ''
     }
-    if (!attendee.juleikaExpireDate) {
-      newAttendee.juleikaExpireDate = ''
-    }
     return newAttendee
   })
 })
@@ -77,9 +74,8 @@ const handleSaveNewAttendee = (newAttendee: Attendee) => {
 
 const juleikaIsInvalid = (attendee: Attendee): boolean => {
   return (
-    attendee.role === AttendeeRole.YOUTH_LEADER &&
-    (!isValidJuleikaNumber(attendee.juleikaNumber) ||
-      !isValidJuleikaExpireDate(attendee.juleikaExpireDate, props.eventEnd))
+    (attendee.role === AttendeeRole.YOUTH_LEADER || attendee.role === AttendeeRole.CHILD_LEADER) &&
+    !isValidJuleikaNumber(attendee.juleikaNumber)
   )
 }
 </script>

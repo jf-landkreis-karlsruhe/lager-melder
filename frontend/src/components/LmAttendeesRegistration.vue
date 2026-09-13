@@ -24,7 +24,7 @@ import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeEx
 import { type EventDays, getEventDays } from '@/services/eventDays'
 import { getErrorMessage } from '@/services/errorConstants'
 import { useToast } from 'vue-toastification'
-import { isValidJuleikaExpireDate, isValidJuleikaNumber } from '@/helper/juleika'
+import { isValidJuleikaNumber } from '@/helper/juleika'
 
 const toast = useToast()
 
@@ -121,17 +121,11 @@ const numberOfNeededValidYouthLeaders = computed<number>(() => {
 })
 
 const numberOfValidYouthLeaders = computed<number>(() => {
-  return youthLeaderAttendeeList.value
-    .filter(youthLeaderValidJuleikaNumberFilter)
-    .filter(youthLeaderValidJuleikaExpireDateFilter).length
+  return youthLeaderAttendeeList.value.filter(youthLeaderValidJuleikaNumberFilter).length
 })
 
 const youthLeaderValidJuleikaNumberFilter = (youthLeader: Attendee) => {
   return isValidJuleikaNumber(youthLeader.juleikaNumber)
-}
-
-const youthLeaderValidJuleikaExpireDateFilter = (youthLeader: Attendee) => {
-  return isValidJuleikaExpireDate(youthLeader.juleikaExpireDate, eventEnd)
 }
 
 const saveNewAttendee = async (
@@ -319,7 +313,7 @@ function scrollTo(el: HTMLElement, callback: () => void) {
               <p>
                 Pro angefangene {{ NUMBER_YOUTH_LEADER_PER_YOUTHS }} Jugendliche ist ein Jugendleiter mit gültiger
                 Juleika erforderlich. <br />
-                Dazu bitte Juleikanummer und -Ablaufdatum angeben.
+                Bitte Juleika-Nummer beim Hinzufügen prüfen und bestätigen.
               </p>
             </div>
           </v-alert>

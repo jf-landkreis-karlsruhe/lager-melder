@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
-import java.time.LocalDate
 
 @Transactional
 @SpringBootTest
@@ -78,7 +77,7 @@ class AttendeeControllerTest(val context: WebApplicationContext) {
             additionalInformation = "no",
             role = AttendeeRole.YOUTH_LEADER,
             juleikaNumber = "12345678",
-            juleikaExpireDate = LocalDate.of(2099, 5, 5).toString(),
+            juleikaExpireDate = null,
             partOfDepartmentId = department.id,
             helperDays = emptySet()
         )
