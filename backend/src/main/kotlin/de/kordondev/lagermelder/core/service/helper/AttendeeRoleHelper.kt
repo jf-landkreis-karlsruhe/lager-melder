@@ -120,7 +120,7 @@ class AttendeeRoleHelper(
         if (attendee !is YouthLeaderEntry) {
             return false
         }
-        return juleikaValidationService.isValid(attendee.juleikaNumber, attendee.lastName)
+        return attendee.juleikaNumber.isNotEmpty() && (attendee.juleikaExpireDate?.isAfter(eventStart) ?: false)
     }
 
     fun youthsFor(youthLeaderCount: Int) = youthLeaderCount * youthPerLeader
