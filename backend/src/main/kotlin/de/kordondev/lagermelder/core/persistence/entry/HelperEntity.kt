@@ -53,7 +53,7 @@ data class HelperEntity(
         joinColumns = [JoinColumn(name = "helper_id")],
         inverseJoinColumns = [JoinColumn(name = "event_day_id")]
     )
-    val helperDays: Set<EventDayEntity> = emptySet()
+    val helperDays: Set<EventDayEntity> = mutableSetOf()
 
 ) : Attendee {
     override fun equals(other: Any?): Boolean {
