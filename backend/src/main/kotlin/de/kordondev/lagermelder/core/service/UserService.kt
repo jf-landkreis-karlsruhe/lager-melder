@@ -67,7 +67,7 @@ class UserService(
             .findOneByUserName(newUser.userName)
             ?.let { throw ResourceAlreadyExistsException("Username already exists") }
         val password = if (newUser.passWord == "") PasswordGenerator.generatePassword() else newUser.passWord
-        val userWithEncryptedPassword = newUser.copy(passWord = bCryptPasswordEncoder.encode(password))
+        val userWithEncryptedPassword = newUser.copy(passWord = bCryptPasswordEncoder.encode(password)!!)
         val settings = settingsService.getSettings()
         return userRepository
             .save(userWithEncryptedPassword)
@@ -86,7 +86,7 @@ class UserService(
 
     private fun savePassword(userToChange: UserEntry): UserEntry {
         return userRepository.findByIdOrNull(userToChange.id)
-            ?.copy(passWord = bCryptPasswordEncoder.encode(userToChange.passWord))
+            ?.copy(passWord = bCryptPasswordEncoder.encode(userToChange.passWord)!!)
             ?.let { userRepository.save(it) }
             ?.copy(passWord = "")
             ?: throw NotFoundException("user with id ${userToChange.id} not found")

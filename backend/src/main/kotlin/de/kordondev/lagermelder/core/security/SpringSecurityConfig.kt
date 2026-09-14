@@ -52,8 +52,7 @@ class SpringSecurityConfig(
 
     @Bean
     fun authenticationProvider(): AuthenticationProvider {
-        val authenticationProvider = DaoAuthenticationProvider()
-        authenticationProvider.setUserDetailsService(userDetailsService)
+        val authenticationProvider = DaoAuthenticationProvider(userDetailsService)
         authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder)
         return authenticationProvider
     }
