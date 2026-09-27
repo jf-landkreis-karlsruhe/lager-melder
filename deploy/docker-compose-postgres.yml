@@ -1,0 +1,17 @@
+version: '3.6'
+
+services:
+  database:
+    image: "postgres:18"
+    container_name: lm-postgres
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ./data01:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=lager_melder
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+    restart: always
+    expose:
+      - '5432'

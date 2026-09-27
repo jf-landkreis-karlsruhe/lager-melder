@@ -2,17 +2,16 @@ version: "3.6"
 
 services:
   database:
-    image: "mysql:9.0.1"
-    container_name: lm-mysql
+    image: "postgres:18"
+    container_name: lm-postgres
     ports:
-      - "3306:3306"
+      - "5432:5432"
     environment:
-      - MYSQL_DATABASE=lager_melder
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=pass
-      - MYSQL_ROOT_PASSWORD=secRET
+      - POSTGRES_DB=lager_melder
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
     expose:
-      - "3306"
+      - "5432"
   backend:
     image: "openjdk:25"
     container_name: lm-backend
@@ -20,7 +19,7 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:mysql://lm-mysql:3306/lager_melder
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://lm-postgres:5432/lager_melder
       - JAVA_TOOL_OPTIONS="-XX:UseSVE=0"
     depends_on:
       - "database"

@@ -30,7 +30,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-liquibase")
     implementation("org.liquibase:liquibase-core")
-    runtimeOnly("com.mysql:mysql-connector-j")
+    runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("com.h2database:h2")
 
     implementation("com.auth0:java-jwt:3.4.0")
