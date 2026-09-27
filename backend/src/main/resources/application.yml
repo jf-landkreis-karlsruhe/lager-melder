@@ -3,8 +3,13 @@ spring:
     show-sql: false
     hibernate:
       ddl-auto: none
-  datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/lager_melder
+    properties:
+      jakarta:
+        persistence:
+          jdbc:
+            url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/lager_melder
+            user: ${spring.datasource.username}
+            password: ${spring.datasource.password}
   liquibase:
     change-log: classpath:db/changelog-main.xml
 

@@ -20,12 +20,12 @@
 
 ## Run backend
 
-It is a spring boot application in kotlin with maven.
+It is a spring boot application in kotlin with gradle.
 
 ```
 cd backend
-./mvnw install
-SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
+./gradlew build
+SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 ```
 
 ## Run frontend

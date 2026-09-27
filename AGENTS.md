@@ -7,7 +7,7 @@ Monorepo with four sub-projects:
 | Directory        | Stack                              |
 |------------------|------------------------------------|
 | `frontend/`      | Vue 3 + TypeScript + Vite (primary)|
-| `backend/`       | Spring Boot + Kotlin + Maven       |
+| `backend/`       | Spring Boot + Kotlin + Gradle       |
 | `account-creator/` | Go CLI                           |
 | `page-to-pdf/`   | Node.js + Puppeteer                |
 
@@ -55,14 +55,14 @@ Test files live in `__tests__/` subdirectories next to the code they test and us
 
 ```sh
 cd backend
-./mvnw install
-SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
+./gradlew build
+SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 
 # Run a single test class
-./mvnw test -Dtest=MyTestClass
+./gradlew test --tests "*MyTestClass"
 
 # Run a single test method
-./mvnw test -Dtest=MyTestClass#myMethod
+./gradlew test --tests "*MyTestClass.myMethod"
 ```
 
 ---

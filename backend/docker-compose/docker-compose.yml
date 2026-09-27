@@ -14,7 +14,7 @@ services:
     expose:
       - "3306"
   backend:
-    image: "openjdk:21"
+    image: "openjdk:25"
     container_name: lm-backend
     ports:
       - "8080:8080"
@@ -26,7 +26,7 @@ services:
       - "database"
     volumes:
       - "..:/app/:rw"
-    command: sh -c "cd /app && ./mvnw clean install -DskipTests && ./mvnw spring-boot:run"
+    command: sh -c "cd /app && ./gradlew bootRun"
   # frontend:
   #   image: "node:lts-alpine"
   #   container_name: lm-frontend

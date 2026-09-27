@@ -1,8 +1,10 @@
 HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
+!gradle/wrapper/gradle-wrapper.jar
+.gradle/
 !**/src/main/**
 !**/src/test/**
+target/**
+
 
 .DS_Store
 ### STS ###
