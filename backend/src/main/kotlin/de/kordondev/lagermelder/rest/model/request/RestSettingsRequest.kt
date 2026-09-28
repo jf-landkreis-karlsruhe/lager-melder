@@ -44,15 +44,12 @@ data class RestSettingsRequest(
     val moneyPerYouthLoader: String,
 
     @NotNull
-    @NotBlank
     val startDownloadRegistrationFiles: Instant,
 
     @NotNull
-    @NotBlank
     val childGroupsRegistrationEnd: Instant,
 
     @NotNull
-    @NotBlank
     val helpersRegistrationEnd: Instant,
 
     @NotNull
