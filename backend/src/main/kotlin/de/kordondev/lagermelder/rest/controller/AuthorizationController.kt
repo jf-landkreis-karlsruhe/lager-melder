@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import kotlin.random.Random
 
 @RestController
 class AuthorizationController(
@@ -41,10 +40,10 @@ class AuthorizationController(
             throw ResourceAlreadyExistsException("Department with name ${departmentWithUser.departmentName} or user with name ${departmentWithUser.username} already exists")
         }
 
-        val newDepartment = RestDepartmentWithUserRequest.toDepartment(departmentWithUser, Random.nextLong())
+        val newDepartment = RestDepartmentWithUserRequest.toDepartment(departmentWithUser, 0)
         val features = newDepartment.features
 
-        val departmentWithoutFeatures = newDepartment.copy(features = emptySet())
+        val departmentWithoutFeatures = newDepartment.copy(features = mutableSetOf())
         val savedDepartment = departmentService.createDepartment(departmentWithoutFeatures)
 
         val departmentWithFeatures = savedDepartment.copy(features = features.map { it.copy(departmentId = savedDepartment.id) }.toSet())

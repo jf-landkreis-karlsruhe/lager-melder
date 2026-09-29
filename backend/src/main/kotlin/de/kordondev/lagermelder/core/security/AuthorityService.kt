@@ -20,7 +20,7 @@ class AuthorityService {
     fun hasAuthorityFilter(department: DepartmentEntry, allowedRoles: List<String>): Boolean {
         return SecurityContextHolder
             .getContext()
-            .authentication
+            .authentication!!
             .authorities
             .map { it.authority }
             .any { authority -> authority == DEPARTMENT_ID_PREFIX + department.id.toString() || allowedRoles.any { ROLE_PREFIX + it.toString() == authority } }
@@ -69,10 +69,10 @@ class AuthorityService {
     fun getUserId(): Optional<String> {
         return SecurityContextHolder
             .getContext()
-            .authentication
+            .authentication!!
             .authorities
             .stream()
-            .map(GrantedAuthority::getAuthority)
+            .map { it.authority!! }
             .filter { it.startsWith(USER_ID_PREFIX) }
             .findFirst()
     }
@@ -80,7 +80,7 @@ class AuthorityService {
     fun hasRole(allowedRoles: List<String>): Boolean {
         return SecurityContextHolder
             .getContext()
-            .authentication
+            .authentication!!
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
@@ -90,7 +90,7 @@ class AuthorityService {
     fun isAdminFilter(): Boolean {
         return SecurityContextHolder
             .getContext()
-            .authentication
+            .authentication!!
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
@@ -106,7 +106,7 @@ class AuthorityService {
     fun isSpecializedFieldDirectorFilter(): Boolean {
         return SecurityContextHolder
             .getContext()
-            .authentication
+            .authentication!!
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
@@ -128,7 +128,7 @@ class AuthorityService {
     fun isLkKarlsruheFilter(): Boolean {
         return SecurityContextHolder
             .getContext()
-            .authentication
+            .authentication!!
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)

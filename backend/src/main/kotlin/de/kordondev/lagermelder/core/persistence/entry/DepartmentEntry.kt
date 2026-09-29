@@ -26,7 +26,7 @@ data class DepartmentEntry (
 
         @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.EAGER)
         @JoinColumn(name = "department_id")
-        val features: Set<DepartmentFeatureEntry> = emptySet(),
+        val features: Set<DepartmentFeatureEntry> = mutableSetOf(),
 
         @Column(name = "head_department_name")
         val headDepartmentName: String = "",
@@ -36,7 +36,7 @@ data class DepartmentEntry (
 
         @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
         @JoinColumn(name = "department_id")
-        val tentMarkings: Set<TentMarkingEntry> = emptySet(),
+        val tentMarkings: Set<TentMarkingEntry> = mutableSetOf(),
 
         @ManyToOne
         @JoinColumn(name = "evacuation_group_id")

@@ -17,7 +17,7 @@
             <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="trashed" type="bit(1)">
+            <column name="trashed" type="boolean">
                 <constraints nullable="false"/>
             </column>
         </createTable>

@@ -51,4 +51,46 @@ class AuthorizationControllerTest(val context: WebApplicationContext) {
             .andExpect(MockMvcResultMatchers.jsonPath("$.leaderEMail").value(departmentWithUserRequest.leaderEMail))
     }
 
+    @Test
+    @WithMockUser(authorities = [ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
+    fun addDepartmentAndUserFailsWhenDepartmentNameAlreadyExists() {
+        val departmentWithUserRequest = Entities.restDepartmentWithUserRequest()
+
+        restMockMvc.perform(
+            post("/register").contentType(WebTestHelper.CONTENT_TYPE_JSON)
+                .content(webTestHelper.toJSON(departmentWithUserRequest))
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+
+        val secondRequestWithSameDepartmentName = departmentWithUserRequest.copy(username = "other-user@email.de")
+
+        restMockMvc.perform(
+            post("/register").contentType(WebTestHelper.CONTENT_TYPE_JSON)
+                .content(webTestHelper.toJSON(secondRequestWithSameDepartmentName))
+        )
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.key").value("RESOURCE_ALREADY_EXISTS_ERROR"))
+    }
+
+    @Test
+    @WithMockUser(authorities = [ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
+    fun addDepartmentAndUserFailsWhenUsernameAlreadyExists() {
+        val departmentWithUserRequest = Entities.restDepartmentWithUserRequest()
+
+        restMockMvc.perform(
+            post("/register").contentType(WebTestHelper.CONTENT_TYPE_JSON)
+                .content(webTestHelper.toJSON(departmentWithUserRequest))
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+
+        val secondRequestWithSameUsername = departmentWithUserRequest.copy(departmentName = "other department")
+
+        restMockMvc.perform(
+            post("/register").contentType(WebTestHelper.CONTENT_TYPE_JSON)
+                .content(webTestHelper.toJSON(secondRequestWithSameUsername))
+        )
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.key").value("RESOURCE_ALREADY_EXISTS_ERROR"))
+    }
+
 }

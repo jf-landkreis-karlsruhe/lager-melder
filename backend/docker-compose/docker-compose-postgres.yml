@@ -1,0 +1,14 @@
+version: '3.6'
+
+services:
+  database:
+    image: "postgres:18"
+    container_name: lm-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=lager_melder
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+    expose:
+      - '5432'

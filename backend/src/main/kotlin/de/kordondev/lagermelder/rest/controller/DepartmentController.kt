@@ -14,7 +14,6 @@ import de.kordondev.lagermelder.rest.model.request.RestDepartmentRequest
 import de.kordondev.lagermelder.rest.model.request.RestDepartmentTentMarkingRequest
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
-import kotlin.random.Random
 
 @RestController
 class DepartmentController(
@@ -46,9 +45,8 @@ class DepartmentController(
 
     @PostMapping("/departments")
     fun addDepartment(@RequestBody(required = true) @Valid department: RestDepartmentRequest): RestDepartment {
-        val departmentId = Random.nextLong()
         return departmentService
-            .createDepartment(RestDepartmentRequest.to(department, departmentId, emptySet(), null, emptySet()))
+            .createDepartment(RestDepartmentRequest.to(department, 0, emptySet(), null, emptySet()))
                 .let { RestDepartment.of(it) }
     }
 
