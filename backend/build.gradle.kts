@@ -49,6 +49,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.testcontainers:testcontainers-postgresql")
     testImplementation("com.lemonappdev:konsist:0.17.3")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:6.4.0")
 }
 
 kotlin {

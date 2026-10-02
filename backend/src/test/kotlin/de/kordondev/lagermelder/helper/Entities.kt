@@ -3,7 +3,9 @@ package de.kordondev.lagermelder.helper
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.rest.model.request.*
+import java.time.Instant
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 class Entities {
@@ -116,5 +118,28 @@ class Entities {
             )
 
         fun event(): RestEventRequest = RestEventRequest("event")
+
+        fun eventEntry(type: EventType = EventType.Location): EventEntry =
+            EventEntry(id = 1L, name = "event", code = "eventCode", type = type, trashed = false)
+
+        fun settings(): SettingsEntry {
+            val now = Instant.now()
+            return SettingsEntry(
+                id = 1L,
+                registrationEnd = now.plus(10, ChronoUnit.DAYS),
+                hostCity = "city",
+                eventStart = LocalDate.now().plusDays(60),
+                eventEnd = LocalDate.now().plusDays(65),
+                eventName = "event",
+                eventAddress = "address",
+                organizer = "organizer",
+                organisationAddress = "organisation",
+                moneyPerYouthLoader = "8,99",
+                startDownloadRegistrationFiles = now.plus(20, ChronoUnit.DAYS),
+                childGroupsRegistrationEnd = now.plus(10, ChronoUnit.DAYS),
+                helpersRegistrationEnd = now.plus(10, ChronoUnit.DAYS),
+                numberOfDuties = 0,
+            )
+        }
     }
 }
