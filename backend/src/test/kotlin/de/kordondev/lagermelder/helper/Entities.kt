@@ -122,6 +122,25 @@ class Entities {
         fun eventEntry(type: EventType = EventType.Location): EventEntry =
             EventEntry(id = 1L, name = "event", code = "eventCode", type = type, trashed = false)
 
+        fun restSettingsRequest(): RestSettingsRequest {
+            val settings = settings()
+            return RestSettingsRequest(
+                registrationEnd = settings.registrationEnd,
+                hostCity = settings.hostCity,
+                eventStart = settings.eventStart,
+                eventEnd = settings.eventEnd,
+                eventName = settings.eventName,
+                eventAddress = settings.eventAddress,
+                organizer = settings.organizer,
+                organisationAddress = settings.organisationAddress,
+                moneyPerYouthLoader = settings.moneyPerYouthLoader,
+                startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles,
+                childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd,
+                helpersRegistrationEnd = settings.helpersRegistrationEnd,
+                numberOfDuties = settings.numberOfDuties,
+            )
+        }
+
         fun settings(): SettingsEntry {
             val now = Instant.now()
             return SettingsEntry(

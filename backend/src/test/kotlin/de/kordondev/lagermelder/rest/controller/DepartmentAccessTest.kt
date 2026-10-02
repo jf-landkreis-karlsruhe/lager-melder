@@ -11,7 +11,6 @@ import de.kordondev.lagermelder.helper.IntegrationTest
 import de.kordondev.lagermelder.helper.WebTestHelper
 import de.kordondev.lagermelder.rest.model.RestAttendee
 import de.kordondev.lagermelder.rest.model.RestDepartment
-import de.kordondev.lagermelder.rest.model.request.RestSettingsRequest
 import jakarta.transaction.Transactional
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
@@ -28,9 +27,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
-import java.time.Instant
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 /**
  * Department-level authorization enforced by AuthorityService in the services:
@@ -143,7 +139,7 @@ class DepartmentAccessTest(
     @Test
     fun userCannotChangeSettings() {
         mockMvc
-            .perform(webTestHelper.put("/settings", settingsRequest()).with(departmentUser()))
+            .perform(webTestHelper.put("/settings", Entities.restSettingsRequest()).with(departmentUser()))
             .andExpect(status().isForbidden)
     }
 
@@ -157,14 +153,14 @@ class DepartmentAccessTest(
     @Test
     fun lkKarlsruheCannotChangeSettings() {
         mockMvc
-            .perform(webTestHelper.put("/settings", settingsRequest()).with(roleUser(Roles.LK_KARLSRUHE)))
+            .perform(webTestHelper.put("/settings", Entities.restSettingsRequest()).with(roleUser(Roles.LK_KARLSRUHE)))
             .andExpect(status().isForbidden)
     }
 
     @Test
     fun specializedFieldDirectorCanChangeSettings() {
         mockMvc
-            .perform(webTestHelper.put("/settings", settingsRequest()).with(roleUser(Roles.SPECIALIZED_FIELD_DIRECTOR)))
+            .perform(webTestHelper.put("/settings", Entities.restSettingsRequest()).with(roleUser(Roles.SPECIALIZED_FIELD_DIRECTOR)))
             .andExpect(status().isOk)
     }
 
@@ -192,23 +188,4 @@ class DepartmentAccessTest(
                 .andExpect(status().isOk),
             RestAttendee::class.java,
         )
-
-    private fun settingsRequest(): RestSettingsRequest {
-        val now = Instant.now()
-        return RestSettingsRequest(
-            registrationEnd = now.plus(10, ChronoUnit.DAYS),
-            hostCity = "city",
-            eventStart = LocalDate.now().plusDays(60),
-            eventEnd = LocalDate.now().plusDays(65),
-            eventName = "event",
-            eventAddress = "address",
-            organizer = "organizer",
-            organisationAddress = "organisation",
-            moneyPerYouthLoader = "8,99",
-            startDownloadRegistrationFiles = now.plus(20, ChronoUnit.DAYS),
-            childGroupsRegistrationEnd = now.plus(10, ChronoUnit.DAYS),
-            helpersRegistrationEnd = now.plus(10, ChronoUnit.DAYS),
-            numberOfDuties = 0,
-        )
-    }
 }
