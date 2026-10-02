@@ -5,6 +5,9 @@ plugins {
     kotlin("jvm") version "2.4.20"
     kotlin("plugin.spring") version "2.4.20"
     kotlin("plugin.jpa") version "2.4.20"
+    id("com.diffplug.spotless") version "8.10.3"
+    id("dev.detekt") version "2.0.0-alpha.6"
+    jacoco
 }
 
 group = "de.kordondev"
@@ -43,7 +46,6 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.testng:testng:7.7.0")
 }
 
 kotlin {
@@ -55,6 +57,29 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+spotless {
+    kotlin {
+        ktlint("1.8.0")
+    }
+    kotlinGradle {
+        ktlint("1.8.0")
+    }
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(files("config/detekt/detekt.yml"))
+    baseline = file("config/detekt/baseline.xml")
 }
 
 jib {
@@ -62,4 +87,16 @@ jib {
         image = "registry.hub.docker.com/kordondev/lager-melder-backend"
     }
     setAllowInsecureRegistries(false)
+}
+
+// The Spring dependency-management plugin would otherwise align detekt's Kotlin compiler with the project's Kotlin version.
+configurations.matching { it.name.startsWith("detekt") }.configureEach {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin") {
+            useVersion(
+                dev.detekt.gradle.plugin
+                    .getSupportedKotlinVersion(),
+            )
+        }
+    }
 }
