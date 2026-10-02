@@ -15,6 +15,45 @@ Most active development happens in `frontend/`. All commands below assume you ar
 
 ---
 
+## Rules for Agents
+
+These rules are mandatory. Follow them for every change.
+
+### Before every commit
+
+Run the checks for every sub-project you touched. Only commit when they pass.
+
+| Sub-project | Commands (run inside the directory) |
+|---|---|
+| `backend/` | `./gradlew spotlessApply` then `./gradlew check` (ktlint, detekt, all tests incl. architecture tests) |
+| `frontend/` | `npm run format`, `npm run lint`, `npm run type-check`, `npx vitest run` |
+
+- Never commit with failing or skipped checks. If a check fails for reasons unrelated to your change, stop and report it instead of working around it.
+- Never bypass checks (`--no-verify`, `@Disabled`, deleting tests, raising thresholds, adding entries to the detekt baseline or to the allow-lists in `ArchitectureTest`).
+- Backend integration tests need a running Docker daemon (Testcontainers). If Docker is unavailable, say so. Do not skip the tests silently.
+
+### Tests
+
+- New or changed behaviour needs tests in the same commit. Bug fixes start with a test that reproduces the bug.
+- Every test function must carry `@Test` / `@ParameterizedTest`. Methods without them never run, and `ArchitectureTest` fails on them.
+- Backend: use `@IntegrationTest` (never plain `@SpringBootTest`) for tests that need Spring or the database. Prefer plain unit tests for logic in services and helpers.
+- Backend authorization: when an endpoint touches department-owned data, test both the allowed case and the forbidden case (a `USER` of another department gets 403).
+
+### Architecture
+
+- Read [`backend/ARCHITECTURE.md`](backend/ARCHITECTURE.md) before changing the backend, and update it when you change the structure, the security model or conventions.
+- Layering: `rest.controller` → `core.service` → `core.persistence`. Controllers never use repositories. `core` never imports from `rest`. These rules are enforced by `ArchitectureTest`.
+- Authorization happens in services via `AuthorityService`, not in controllers.
+- Database changes: add a new Liquibase script `backend/src/main/resources/db/scripts/NNN_description.xml` and include it in `changelog-main.xml`. Never modify an existing changeset.
+- New error keys must be added to both `backend/.../exception/ErrorConstants.kt` and `frontend/src/services/errorConstants.ts`.
+
+### Commits
+
+- Keep commits small and focused. Put mechanical changes (formatting, renames) in a separate commit from behaviour changes.
+- Do not reformat code you did not otherwise touch, unless that is the purpose of the commit.
+
+---
+
 ## Frontend Commands
 
 ```sh
@@ -55,8 +94,11 @@ Test files live in `__tests__/` subdirectories next to the code they test and us
 
 ```sh
 cd backend
-./gradlew build
-SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
+./gradlew build                 # compile, lint, test, assemble
+./gradlew check                 # spotlessCheck (ktlint) + detekt + test + JaCoCo report
+./gradlew spotlessApply         # auto-format Kotlin sources and *.gradle.kts (ktlint)
+./gradlew detekt                # static analysis, report in build/reports/detekt/
+SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun   # needs local Postgres (docker-compose/docker-compose-postgres.yml)
 
 # Run a single test class
 ./gradlew test --tests "*MyTestClass"
@@ -64,6 +106,11 @@ SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 # Run a single test method
 ./gradlew test --tests "*MyTestClass.myMethod"
 ```
+
+- Architecture, layers, security model and test setup: see [`backend/ARCHITECTURE.md`](backend/ARCHITECTURE.md).
+- Formatting: ktlint (`ktlint_official` style) via Spotless, configured in `backend/.editorconfig` (max line length 140, wildcard imports allowed).
+- Static analysis: detekt with `backend/config/detekt/detekt.yml`. Existing findings are frozen in `baseline.xml`; new code must not add findings.
+- Tests: JUnit 5, Mockito, AssertJ, MockMvc. Integration tests run against Postgres 18 via Testcontainers (Docker required). Coverage report: `build/reports/jacoco/test/html/index.html`.
 
 ---
 
