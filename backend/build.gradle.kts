@@ -48,6 +48,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.testcontainers:testcontainers-postgresql")
+    testImplementation("com.lemonappdev:konsist:0.17.3")
 }
 
 kotlin {
@@ -99,6 +100,17 @@ configurations.matching { it.name.startsWith("detekt") }.configureEach {
                 dev.detekt.gradle.plugin
                     .getSupportedKotlinVersion(),
             )
+        }
+    }
+}
+
+// Konsist parses sources with the Kotlin compiler it was built against; keep Spring's BOM from upgrading it.
+configurations.testRuntimeClasspath {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin" &&
+            requested.name in setOf("kotlin-compiler-embeddable", "kotlin-daemon-embeddable")
+        ) {
+            useVersion("2.0.21")
         }
     }
 }
