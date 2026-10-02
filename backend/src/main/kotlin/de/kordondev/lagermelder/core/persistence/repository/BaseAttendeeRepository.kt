@@ -1,5 +1,6 @@
 package de.kordondev.lagermelder.core.persistence.repository
 
+import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
 import de.kordondev.lagermelder.core.persistence.entry.BaseAttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.DepartmentEntry
 import org.springframework.data.jpa.repository.Query
@@ -20,5 +21,5 @@ interface BaseAttendeeRepository : CrudRepository<BaseAttendeeEntry, String> {
     fun findAllBytShirtSize(tShirtSize: String): List<BaseAttendeeEntry>
 
     @Query("SELECT a FROM BaseAttendeeEntry a WHERE a.role IN :roles")
-    fun findByRoleIn(roles: List<String>): List<BaseAttendeeEntry>
+    fun findByRoleIn(roles: List<AttendeeRole>): List<BaseAttendeeEntry>
 }

@@ -206,8 +206,8 @@ class AttendeeService(
         baseAttendeeRepository
             .findByRoleIn(
                 listOf(
-                    AttendeeRole.YOUTH_LEADER.name,
-                    AttendeeRole.YOUTH.name,
+                    AttendeeRole.YOUTH_LEADER,
+                    AttendeeRole.YOUTH,
                 ),
             ).groupBy { it.department.id }
 
