@@ -206,9 +206,28 @@ Local Postgres: `docker compose -f docker-compose/docker-compose-postgres.yml up
 
 Test data builders live in `helper/Entities.kt`. Integration tests need a running Docker daemon.
 
+Things to know when writing integration tests:
+
+- MockMvc built with `webAppContextSetup(context).build()` bypasses the security filter chain. Authorization in the
+  services still applies via `@WithMockUser`. To test authentication or department scoping, add
+  `.apply(springSecurity())` and use `.with(user(...).authorities(...))` (see `DepartmentAccessTest`, `SecurityConfigTest`).
+- `@Transactional` tests run all requests in one transaction, while production uses one per request. Call
+  `webTestHelper.flushAndClear()` between creating and reading attendees, because all attendee types share `base_attendees`.
+- Use `webTestHelper.createDepartment(mockMvc, features)` to create departments. Attendees are only visible if the
+  department has the matching feature (e.g. `YOUTH_GROUPS`).
+- Birthdays are ISO dates (`yyyy-MM-dd`).
+- Settings are created lazily on first read, and only a specialized field director may do that.
+
 ## Known technical debt
 
 - The JWT signing secret is hard-coded in `SecurityConstants.SECRET`. It should come from configuration/an environment variable.
 - `PlanningFilesService` is very large (800+ lines) and has no tests.
 - Some services return `rest.model` types (see known violations).
 - detekt findings are frozen in `config/detekt/baseline.xml`.
+- `POST /departments` with features fails, because the features are saved with `department_id = 0`.
+  `POST /register` (used by the frontend) works around it by saving the features in a second step.
+- `SettingsService.getSettings()` creates the default settings through `saveSettings()`, which requires the specialized
+  field director role. If the first read on an empty database comes from another role, it fails with 403.
+- The frontend `errorConstants.ts` lacks `CHANGED_ROLE`, `WRONG_TYPE` and `MAIL_NOT_SEND_ERROR`, so those messages are not shown.
+- An unknown `group` parameter for registration files raises `IllegalArgumentException`, which results in a 500.
+- `getAttendeesForDepartment` filters child leaders without the feature check that the other attendee types have.
