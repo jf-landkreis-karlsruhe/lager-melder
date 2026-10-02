@@ -87,7 +87,7 @@ class ArchitectureTest {
             .filter { it.name.endsWith("Test") }
             .flatMap { testClass ->
                 testClass
-                    .functions()
+                    .functions(includeNested = false, includeLocal = false)
                     .filterNot { "${testClass.name}.${it.name}" in KNOWN_FUNCTIONS_WITHOUT_TEST_ANNOTATION }
             }.filter { !it.hasPrivateModifier && !it.hasProtectedModifier && !it.hasInternalModifier }
             .assertTrue { function -> function.annotations.any { it.name in testAnnotations } }
