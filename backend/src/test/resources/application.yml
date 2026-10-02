@@ -12,6 +12,11 @@ spring:
     username: u
     password: p
 
+management:
+  health:
+    mail:
+      enabled: false
+
 application:
   mail:
     send: false
