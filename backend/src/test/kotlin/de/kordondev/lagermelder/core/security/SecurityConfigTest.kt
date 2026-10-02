@@ -1,5 +1,7 @@
 package de.kordondev.lagermelder.core.security
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.jayway.jsonpath.JsonPath
 import de.kordondev.lagermelder.helper.IntegrationTest
 import de.kordondev.lagermelder.helper.WebTestHelper
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import java.util.Date
 
 /**
  * Runs requests through the real security filter chain (login, JWT filter, permitAll rules).
@@ -80,6 +83,51 @@ class SecurityConfigTest(
         mockMvc
             .perform(webTestHelper.post("/login", RestLoginUser(ADMIN_USERNAME, "wrong")))
             .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun tokenWithWrongSignatureIsRejected() {
+        val token = login(ADMIN_USERNAME, ADMIN_PASSWORD)
+        val tamperedToken = token.dropLast(2) + if (token.endsWith("AA")) "BB" else "AA"
+
+        mockMvc
+            .perform(webTestHelper.get("/users/me").header("Authorization", "Bearer $tamperedToken"))
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun expiredTokenIsRejected() {
+        val expiredToken =
+            JWT
+                .create()
+                .withSubject(ADMIN_USERNAME)
+                .withExpiresAt(Date(System.currentTimeMillis() - 1000))
+                .sign(Algorithm.HMAC512(SecurityConstants.SECRET))
+
+        mockMvc
+            .perform(webTestHelper.get("/users/me").header("Authorization", "Bearer $expiredToken"))
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun tokenOfUnknownUserIsRejected() {
+        val token =
+            JWT
+                .create()
+                .withSubject("unknown@user.de")
+                .withExpiresAt(Date(System.currentTimeMillis() + 60_000))
+                .sign(Algorithm.HMAC512(SecurityConstants.SECRET))
+
+        mockMvc
+            .perform(webTestHelper.get("/users/me").header("Authorization", "Bearer $token"))
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun invalidTokenDoesNotBreakPublicEndpoints() {
+        mockMvc
+            .perform(webTestHelper.get("/public/present-by-executed-role").header("Authorization", "Bearer invalid"))
+            .andExpect(status().isOk)
     }
 
     private fun login(
