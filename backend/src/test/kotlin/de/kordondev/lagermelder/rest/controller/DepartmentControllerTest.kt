@@ -1,5 +1,6 @@
 package de.kordondev.lagermelder.rest.controller
 
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentFeatures
 import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.security.SecurityConstants
 import de.kordondev.lagermelder.helper.Entities
@@ -107,17 +108,10 @@ class DepartmentControllerTest(
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
+    @Test
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun getAttendeesForDepartment() {
-        val department = Entities.restDepartmentRequest()
-
-        var createdDepartment =
-            webTestHelper.toObject(
-                restMockMvc
-                    .perform(webTestHelper.post("/departments", department))
-                    .andExpect(MockMvcResultMatchers.status().isOk),
-                RestDepartment::class.java,
-            )
+        val createdDepartment = webTestHelper.createDepartment(restMockMvc, setOf(DepartmentFeatures.YOUTH_GROUPS))
 
         val attendee1 = Entities.restAttendeeRequest().copy(departmentId = createdDepartment.id)
         val attendee2 = Entities.restAttendeeRequest().copy(departmentId = createdDepartment.id, firstName = "first")
@@ -132,6 +126,6 @@ class DepartmentControllerTest(
         restMockMvc
             .perform(webTestHelper.get("/departments/${createdDepartment.id}/attendees"))
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.*", hasSize<Any>(2)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.youths", hasSize<Any>(2)))
     }
 }

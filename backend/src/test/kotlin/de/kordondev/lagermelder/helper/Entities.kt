@@ -10,7 +10,7 @@ class Entities {
     enum class TShirtSizeMock(
         val size: String,
     ) {
-        S164("164"),
+        S("S"),
         M("M"),
         L("L"),
     }
@@ -53,7 +53,7 @@ class Entities {
                 "endee",
                 "20-09-2005",
                 Food.MEAT,
-                TShirtSizeMock.S164.size,
+                TShirtSizeMock.S.size,
                 "",
                 "code",
                 AttendeeRole.YOUTH,
@@ -68,7 +68,7 @@ class Entities {
                 departmentId = departmentId,
                 birthday = "05-09-2005",
                 food = Food.MEAT,
-                tShirtSize = TShirtSizeMock.S164.size,
+                tShirtSize = TShirtSizeMock.S.size,
                 additionalInformation = "n",
                 role = AttendeeRole.YOUTH,
                 juleikaNumber = "12345678",

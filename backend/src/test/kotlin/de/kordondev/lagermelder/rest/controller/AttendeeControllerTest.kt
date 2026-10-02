@@ -1,9 +1,11 @@
 package de.kordondev.lagermelder.rest.controller
 
 import de.kordondev.lagermelder.core.persistence.entry.AttendeeRole
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentFeatures
 import de.kordondev.lagermelder.core.persistence.entry.Food
 import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.security.SecurityConstants
+import de.kordondev.lagermelder.exception.ErrorConstants
 import de.kordondev.lagermelder.helper.Entities
 import de.kordondev.lagermelder.helper.IntegrationTest
 import de.kordondev.lagermelder.helper.WebTestHelper
@@ -12,6 +14,7 @@ import de.kordondev.lagermelder.rest.model.RestDepartment
 import de.kordondev.lagermelder.rest.model.request.RestAttendeeRequest
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
@@ -36,16 +39,10 @@ class AttendeeControllerTest(
     fun setUp() {
         restMockMvc = MockMvcBuilders.webAppContextSetup(context).build()
 
-        val departmentRequest = Entities.restDepartmentRequest()
-        department =
-            webTestHelper.toObject(
-                restMockMvc
-                    .perform(webTestHelper.post("/departments", departmentRequest))
-                    .andExpect(MockMvcResultMatchers.status().isOk),
-                RestDepartment::class.java,
-            )
+        department = webTestHelper.createDepartment(restMockMvc, setOf(DepartmentFeatures.YOUTH_GROUPS))
     }
 
+    @Test
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun addAttendee() {
         val attendee = Entities.restAttendeeRequest(department.id)
@@ -57,13 +54,14 @@ class AttendeeControllerTest(
             .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(attendee.firstName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(attendee.lastName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.birthday").value(attendee.birthday))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.food").value(attendee.food))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.food").value(attendee.food.toString()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.tShirtSize").value(attendee.tShirtSize))
             .andExpect(MockMvcResultMatchers.jsonPath("$.additionalInformation").value(attendee.additionalInformation))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(attendee.role))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(attendee.role.name))
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").isNotEmpty)
     }
 
+    @Test
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun updateAttendee() {
         val attendee = Entities.restAttendeeRequest(department.id)
@@ -75,6 +73,7 @@ class AttendeeControllerTest(
                     .andExpect(MockMvcResultMatchers.status().isOk),
                 RestAttendee::class.java,
             )
+        webTestHelper.flushAndClear()
 
         val updatedAttendee =
             RestAttendeeRequest(
@@ -85,7 +84,7 @@ class AttendeeControllerTest(
                 food = Food.VEGETARIAN,
                 tShirtSize = Entities.TShirtSizeMock.M.size,
                 additionalInformation = "no",
-                role = AttendeeRole.YOUTH_LEADER,
+                role = AttendeeRole.YOUTH,
                 juleikaNumber = "12345678",
                 juleikaExpireDate = LocalDate.of(2099, 5, 5).toString(),
                 partOfDepartmentId = department.id,
@@ -99,14 +98,15 @@ class AttendeeControllerTest(
             .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(updatedAttendee.firstName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(updatedAttendee.lastName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.birthday").value(updatedAttendee.birthday))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.food").value(updatedAttendee.food))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.food").value(updatedAttendee.food.toString()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.tShirtSize").value(updatedAttendee.tShirtSize))
             .andExpect(
                 MockMvcResultMatchers.jsonPath("$.additionalInformation").value(updatedAttendee.additionalInformation),
-            ).andExpect(MockMvcResultMatchers.jsonPath("$.role").value(updatedAttendee.role))
+            ).andExpect(MockMvcResultMatchers.jsonPath("$.role").value(updatedAttendee.role.name))
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").isNotEmpty)
     }
 
+    @Test
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun deleteAttendee() {
         val attendee = Entities.restAttendeeRequest(department.id)
@@ -118,6 +118,7 @@ class AttendeeControllerTest(
                     .andExpect(MockMvcResultMatchers.status().isOk),
                 RestAttendee::class.java,
             )
+        webTestHelper.flushAndClear()
 
         restMockMvc
             .perform(webTestHelper.get("/attendees/${createdAttendee.id}"))
@@ -126,9 +127,29 @@ class AttendeeControllerTest(
         restMockMvc
             .perform(webTestHelper.delete("/attendees/${createdAttendee.id}"))
             .andExpect(MockMvcResultMatchers.status().isOk)
+        webTestHelper.flushAndClear()
 
         restMockMvc
             .perform(webTestHelper.get("/attendees/${createdAttendee.id}"))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
+    }
+
+    @Test
+    @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
+    fun updateAttendeeCannotChangeRole() {
+        val attendee = Entities.restAttendeeRequest(department.id)
+        val createdAttendee =
+            webTestHelper.toObject(
+                restMockMvc
+                    .perform(webTestHelper.post("/attendees", attendee))
+                    .andExpect(MockMvcResultMatchers.status().isOk),
+                RestAttendee::class.java,
+            )
+        webTestHelper.flushAndClear()
+
+        restMockMvc
+            .perform(webTestHelper.put("/attendees/${createdAttendee.id}", attendee.copy(role = AttendeeRole.YOUTH_LEADER)))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.key").value(ErrorConstants.CHANGED_ROLE))
     }
 }

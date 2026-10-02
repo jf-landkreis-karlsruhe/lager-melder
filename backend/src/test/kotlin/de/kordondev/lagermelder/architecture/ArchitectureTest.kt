@@ -128,17 +128,6 @@ class ArchitectureTest {
 
         private val KNOWN_CONTROLLER_TO_REPOSITORY_VIOLATIONS = setOf("AuthorizationController.kt")
 
-        private val KNOWN_FUNCTIONS_WITHOUT_TEST_ANNOTATION =
-            setOf(
-                "AttendeeControllerTest.addAttendee",
-                "AttendeeControllerTest.updateAttendee",
-                "AttendeeControllerTest.deleteAttendee",
-                "DepartmentControllerTest.getAttendeesForDepartment",
-                "EventControllerTest.addAttendeeToEvent",
-                "EventControllerTest.addInvalidAttendeeToEvent",
-                "EventControllerTest.addAttendeeToInvalidEvent",
-                "AuthorityServiceTest.isSpecializedFieldDirector__isSpecializedFieldDirector",
-                "AuthorityServiceTest.isUser__hasAuthority",
-            )
+        private val KNOWN_FUNCTIONS_WITHOUT_TEST_ANNOTATION = emptySet<String>()
     }
 }

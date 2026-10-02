@@ -499,6 +499,7 @@ class AuthorityServiceTest {
         }
     }
 
+    @Test
     fun `isSpecializedFieldDirector__isSpecializedFieldDirector`() {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
@@ -595,6 +596,7 @@ class AuthorityServiceTest {
         assertThat(authorityService.isAdmin()).isEqualTo(Unit)
     }
 
+    @Test
     fun `isUser__hasAuthority`() {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
