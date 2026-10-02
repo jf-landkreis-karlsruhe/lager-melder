@@ -3,6 +3,7 @@ package de.kordondev.lagermelder.rest.controller
 import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.security.SecurityConstants
 import de.kordondev.lagermelder.helper.Entities
+import de.kordondev.lagermelder.helper.IntegrationTest
 import de.kordondev.lagermelder.helper.WebTestHelper
 import de.kordondev.lagermelder.rest.model.RestDepartment
 import de.kordondev.lagermelder.rest.model.RestUser
@@ -10,7 +11,6 @@ import jakarta.transaction.Transactional
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @Transactional
-@SpringBootTest
+@IntegrationTest
 class UserControllerTest(
     val context: WebApplicationContext,
 ) {

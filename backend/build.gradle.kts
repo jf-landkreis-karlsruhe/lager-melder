@@ -34,7 +34,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-liquibase")
     implementation("org.liquibase:liquibase-core")
     runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("com.h2database:h2")
 
     implementation("com.auth0:java-jwt:3.4.0")
     implementation("org.passay:passay:1.3.1")
@@ -46,6 +45,9 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers-postgresql")
 }
 
 kotlin {
