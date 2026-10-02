@@ -21,12 +21,11 @@ data class RestAttendee(
     val juleikaNumber: String? = null,
     val juleikaExpireDate: String? = null,
     val partOfDepartmentId: Long? = null,
-    val helperDays: Set<String>? = null
+    val helperDays: Set<String>? = null,
 ) {
     companion object {
-
-        fun of(attendee: Attendee): RestAttendee {
-            return when (attendee) {
+        fun of(attendee: Attendee): RestAttendee =
+            when (attendee) {
                 is YouthEntry -> of(attendee)
                 is YouthLeaderEntry -> of(attendee)
                 is ChildEntry -> of(attendee)
@@ -35,95 +34,100 @@ data class RestAttendee(
                 is HelperEntity -> of(attendee)
                 else -> throw UnexpectedTypeException("attendee is of type ${attendee.javaClass} and can not be be a RestAttendee")
             }
-        }
 
-        fun of(attendee: YouthEntry) = RestAttendee(
-            id = attendee.id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            birthday = attendee.birthday,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            departmentId = attendee.department.id,
-            code = attendee.code,
-            status = attendee.status?.toString()
-        )
+        fun of(attendee: YouthEntry) =
+            RestAttendee(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName,
+                birthday = attendee.birthday,
+                food = attendee.food,
+                tShirtSize = attendee.tShirtSize,
+                additionalInformation = attendee.additionalInformation,
+                role = attendee.role,
+                departmentId = attendee.department.id,
+                code = attendee.code,
+                status = attendee.status?.toString(),
+            )
 
-        fun of(attendee: YouthLeaderEntry) = RestAttendee(
-            id = attendee.id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            birthday = attendee.birthday,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            departmentId = attendee.department.id,
-            code = attendee.code,
-            status = attendee.status?.toString(),
-            juleikaNumber = attendee.juleikaNumber,
-            juleikaExpireDate = attendee.juleikaExpireDate?.toString()
-        )
+        fun of(attendee: YouthLeaderEntry) =
+            RestAttendee(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName,
+                birthday = attendee.birthday,
+                food = attendee.food,
+                tShirtSize = attendee.tShirtSize,
+                additionalInformation = attendee.additionalInformation,
+                role = attendee.role,
+                departmentId = attendee.department.id,
+                code = attendee.code,
+                status = attendee.status?.toString(),
+                juleikaNumber = attendee.juleikaNumber,
+                juleikaExpireDate = attendee.juleikaExpireDate?.toString(),
+            )
 
-        fun of(attendee: ChildEntry) = RestAttendee(
-            id = attendee.id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            birthday = attendee.birthday,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            departmentId = attendee.department.id,
-            code = attendee.code,
-            status = attendee.status?.toString()
-        )
+        fun of(attendee: ChildEntry) =
+            RestAttendee(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName,
+                birthday = attendee.birthday,
+                food = attendee.food,
+                tShirtSize = attendee.tShirtSize,
+                additionalInformation = attendee.additionalInformation,
+                role = attendee.role,
+                departmentId = attendee.department.id,
+                code = attendee.code,
+                status = attendee.status?.toString(),
+            )
 
-        fun of(attendee: ChildLeaderEntry) = RestAttendee(
-            id = attendee.id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            birthday = attendee.birthday,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            departmentId = attendee.department.id,
-            code = attendee.code,
-            status = attendee.status.toString(),
-            juleikaNumber = attendee.juleikaNumber,
-            juleikaExpireDate = attendee.juleikaExpireDate?.toString()
-        )
+        fun of(attendee: ChildLeaderEntry) =
+            RestAttendee(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName,
+                birthday = attendee.birthday,
+                food = attendee.food,
+                tShirtSize = attendee.tShirtSize,
+                additionalInformation = attendee.additionalInformation,
+                role = attendee.role,
+                departmentId = attendee.department.id,
+                code = attendee.code,
+                status = attendee.status.toString(),
+                juleikaNumber = attendee.juleikaNumber,
+                juleikaExpireDate = attendee.juleikaExpireDate?.toString(),
+            )
 
-        fun of(attendee: ZKidEntry) = RestAttendee(
-            id = attendee.id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            birthday = attendee.birthday,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            departmentId = attendee.department.id,
-            code = attendee.code,
-            status = attendee.status?.toString(),
-            partOfDepartmentId = attendee.partOfDepartment.id
-        )
+        fun of(attendee: ZKidEntry) =
+            RestAttendee(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName,
+                birthday = attendee.birthday,
+                food = attendee.food,
+                tShirtSize = attendee.tShirtSize,
+                additionalInformation = attendee.additionalInformation,
+                role = attendee.role,
+                departmentId = attendee.department.id,
+                code = attendee.code,
+                status = attendee.status?.toString(),
+                partOfDepartmentId = attendee.partOfDepartment.id,
+            )
 
-        fun of(attendee: HelperEntity) = RestAttendee(
-            id = attendee.id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            departmentId = attendee.department.id,
-            code = attendee.code,
-            status = attendee.status?.toString(),
-            helperDays = attendee.helperDays.map { it.id }.toSet()
-        )
+        fun of(attendee: HelperEntity) =
+            RestAttendee(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName,
+                food = attendee.food,
+                tShirtSize = attendee.tShirtSize,
+                additionalInformation = attendee.additionalInformation,
+                role = attendee.role,
+                departmentId = attendee.department.id,
+                code = attendee.code,
+                status = attendee.status?.toString(),
+                helperDays = attendee.helperDays.map { it.id }.toSet(),
+            )
     }
 }

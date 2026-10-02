@@ -11,7 +11,6 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField
 import org.springframework.stereotype.Service
 import java.time.format.DateTimeFormatter
 
-
 @Service
 class PDFHelper {
     companion object {
@@ -19,7 +18,12 @@ class PDFHelper {
         var germanDateShort = DateTimeFormatter.ofPattern("dd.MM.yy")
     }
 
-    fun fillField(form: PDAcroForm, fieldName: String, fieldText: String, page: Number): PDField? {
+    fun fillField(
+        form: PDAcroForm,
+        fieldName: String,
+        fieldText: String,
+        page: Number,
+    ): PDField? {
         val field = form.getField(fieldName)
         field?.setValue(fieldText)
         field?.partialName = "$page$fieldName"
@@ -27,7 +31,11 @@ class PDFHelper {
         return field
     }
 
-    fun checkField(form: PDAcroForm, fieldName: String, page: Number): PDField? {
+    fun checkField(
+        form: PDAcroForm,
+        fieldName: String,
+        page: Number,
+    ): PDField? {
         val field = form.getField(fieldName)
         if (field != null) {
             (field as PDCheckBox).check()
@@ -37,24 +45,32 @@ class PDFHelper {
         return field
     }
 
-    fun getAndFormatBirthday(attendee: Attendee, formatter: DateTimeFormatter): String {
-        return formatBirthday(Helper.getBirthday(attendee), formatter)
-    }
+    fun getAndFormatBirthday(
+        attendee: Attendee,
+        formatter: DateTimeFormatter,
+    ): String = formatBirthday(Helper.getBirthday(attendee), formatter)
 
-    fun formatBirthday(birthday: String, formatter: DateTimeFormatter): String {
-        return Helper.birthdayToDate(birthday).format(formatter)
-    }
+    fun formatBirthday(
+        birthday: String,
+        formatter: DateTimeFormatter,
+    ): String = Helper.birthdayToDate(birthday).format(formatter)
 
-    fun writeDocumentTitle(pdfDocument: PDDocument, text: String, x: Float, y: Float) {
+    fun writeDocumentTitle(
+        pdfDocument: PDDocument,
+        text: String,
+        x: Float,
+        y: Float,
+    ) {
         for (page in 0..pdfDocument.numberOfPages - 1) {
             val page = pdfDocument.getPage(page)
-            val contentStream = PDPageContentStream(
-                pdfDocument,
-                page,
-                PDPageContentStream.AppendMode.APPEND,
-                true,
-                true
-            )
+            val contentStream =
+                PDPageContentStream(
+                    pdfDocument,
+                    page,
+                    PDPageContentStream.AppendMode.APPEND,
+                    true,
+                    true,
+                )
 
             contentStream.beginText()
             contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12F)
@@ -64,5 +80,4 @@ class PDFHelper {
             contentStream.close()
         }
     }
-
 }

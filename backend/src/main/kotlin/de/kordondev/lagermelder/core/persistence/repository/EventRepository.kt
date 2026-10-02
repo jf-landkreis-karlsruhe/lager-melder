@@ -6,7 +6,9 @@ import org.springframework.data.repository.CrudRepository
 
 interface EventRepository : CrudRepository<EventEntry, Long> {
     fun findByCodeAndTrashedIsFalse(code: String): EventEntry?
+
     fun findByIdAndTrashedIsFalse(id: Long): EventEntry?
+
     fun findAllByTrashedIsFalse(): List<EventEntry>
 
     fun findByTypeAndTrashedIsFalse(type: EventType): EventEntry?

@@ -8,16 +8,12 @@ import org.springframework.stereotype.Service
 
 @Service
 class EvacuationGroupService(
-    private val evacuationGroupRepository: EvacuationGroupRepository
+    private val evacuationGroupRepository: EvacuationGroupRepository,
 ) {
-    fun getEvacuationGroup(id: String): EvacuationGroupEntry {
-        return evacuationGroupRepository
+    fun getEvacuationGroup(id: String): EvacuationGroupEntry =
+        evacuationGroupRepository
             .findByIdOrNull(id)
             ?: throw NotFoundException("Evacuation group with id $id not found")
-    }
 
-    fun getEvacuationGroups(): List<EvacuationGroupEntry> {
-        return evacuationGroupRepository.findAll().toList()
-    }
-
+    fun getEvacuationGroups(): List<EvacuationGroupEntry> = evacuationGroupRepository.findAll().toList()
 }

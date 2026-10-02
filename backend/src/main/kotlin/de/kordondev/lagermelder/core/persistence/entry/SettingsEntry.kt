@@ -14,55 +14,36 @@ import java.time.temporal.ChronoUnit
 data class SettingsEntry(
     @Id
     val id: Long = 0,
-
     @Column(name = "registration_end")
     val registrationEnd: Instant,
-
     @Column(name = "host_city")
     val hostCity: String,
-
     @Column(name = "event_start")
     val eventStart: LocalDate,
-
     @Column(name = "event_end")
     val eventEnd: LocalDate,
-
     @Column(name = "event_name")
     val eventName: String,
-
     @Column(name = "event_address")
     val eventAddress: String,
-
     @Column(name = "organizer")
     val organizer: String,
-
     @Column(name = "organisationAddress")
     val organisationAddress: String, // Multiline
-
     @Column(name = "moneyPerYouthLoader")
     val moneyPerYouthLoader: String,
-
     @Column(name = "start_download_registration_files")
     val startDownloadRegistrationFiles: Instant,
-
     @Column(name = "child_groups_registration_end")
     val childGroupsRegistrationEnd: Instant,
-
     @Column(name = "helpers_registration_end")
     val helpersRegistrationEnd: Instant,
-
     @Column(name = "number_of_duties")
     val numberOfDuties: Int = 0,
-
 ) {
+    fun childEventDay(): LocalDate = eventStart.plusDays(1)
 
-    fun childEventDay(): LocalDate {
-        return eventStart.plusDays(1)
-    }
-
-    fun getDaysOfEvent(): Long {
-        return ChronoUnit.DAYS.between(eventStart, eventEnd) + 1
-    }
+    fun getDaysOfEvent(): Long = ChronoUnit.DAYS.between(eventStart, eventEnd) + 1
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -74,7 +55,5 @@ data class SettingsEntry(
 
     override fun hashCode(): Int = javaClass.hashCode()
 
-    override fun toString(): String {
-        return this::class.simpleName + "(id = $id )"
-    }
+    override fun toString(): String = this::class.simpleName + "(id = $id )"
 }

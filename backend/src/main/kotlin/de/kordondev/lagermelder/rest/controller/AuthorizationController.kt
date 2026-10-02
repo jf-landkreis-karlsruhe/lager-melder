@@ -24,20 +24,24 @@ class AuthorizationController(
     private val departmentService: DepartmentService,
     private val userRepository: UserRepository,
     private val userService: UserService,
-    private val createJWTAuthentication: CreateJWTAuthentication
+    private val createJWTAuthentication: CreateJWTAuthentication,
 ) {
-
     private val logger: Logger = LoggerFactory.getLogger(AuthorizationController::class.java)
 
     @PostMapping("/register")
-    fun addDepartmentAndUser(@RequestBody(required = true) @Valid departmentWithUser: RestDepartmentWithUserRequest): RestDepartmentWithUser {
+    fun addDepartmentAndUser(
+        @RequestBody(required = true) @Valid departmentWithUser: RestDepartmentWithUserRequest,
+    ): RestDepartmentWithUser {
         logger.info("Try to register new user")
         if (departmentRepository.findOneByName(departmentWithUser.departmentName) != null ||
             userRepository.findOneByUserName(departmentWithUser.username) != null
         ) {
-
-            logger.error("Department with name ${departmentWithUser.departmentName} or user with name ${departmentWithUser.username} already exists")
-            throw ResourceAlreadyExistsException("Department with name ${departmentWithUser.departmentName} or user with name ${departmentWithUser.username} already exists")
+            logger.error(
+                "Department with name ${departmentWithUser.departmentName} or user with name ${departmentWithUser.username} already exists",
+            )
+            throw ResourceAlreadyExistsException(
+                "Department with name ${departmentWithUser.departmentName} or user with name ${departmentWithUser.username} already exists",
+            )
         }
 
         val newDepartment = RestDepartmentWithUserRequest.toDepartment(departmentWithUser, 0)

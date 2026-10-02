@@ -5,5 +5,5 @@ import jakarta.validation.constraints.NotNull
 
 data class RestSendMailRequest(
     @field:NotNull(message = "sendTo cannot be missing")
-    val sendTo: SendTo
+    val sendTo: SendTo,
 )

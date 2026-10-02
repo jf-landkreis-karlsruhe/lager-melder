@@ -18,11 +18,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-
 @Transactional
 @SpringBootTest
-class EventControllerTest(val context: WebApplicationContext) {
-
+class EventControllerTest(
+    val context: WebApplicationContext,
+) {
     lateinit var restMockMvc: MockMvc
 
     @Autowired
@@ -36,10 +36,10 @@ class EventControllerTest(val context: WebApplicationContext) {
     @Test
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun addEvent() {
-
         val event = Entities.event()
 
-        restMockMvc.perform(webTestHelper.post("/events", event))
+        restMockMvc
+            .perform(webTestHelper.post("/events", event))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(event.name))
@@ -54,7 +54,8 @@ class EventControllerTest(val context: WebApplicationContext) {
         var createdEvent = webTestHelper.toObject(createdResponse, RestEvent::class.java)
 
         createdEvent = createdEvent.copy(name = "new name")
-        restMockMvc.perform(webTestHelper.put("/events/${createdEvent.id}", createdEvent))
+        restMockMvc
+            .perform(webTestHelper.put("/events/${createdEvent.id}", createdEvent))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(createdEvent.id))
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(createdEvent.name))
@@ -70,7 +71,8 @@ class EventControllerTest(val context: WebApplicationContext) {
 
         val oldCode = createdEvent.code
         createdEvent = createdEvent.copy(code = "new code")
-        restMockMvc.perform(webTestHelper.put("/events/${createdEvent.id}", createdEvent))
+        restMockMvc
+            .perform(webTestHelper.put("/events/${createdEvent.id}", createdEvent))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(createdEvent.id))
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(createdEvent.name))
@@ -84,7 +86,8 @@ class EventControllerTest(val context: WebApplicationContext) {
         val createdResponse = restMockMvc.perform(webTestHelper.post("/events", event))
         var createdEvent = webTestHelper.toObject(createdResponse, RestEvent::class.java)
 
-        restMockMvc.perform(webTestHelper.get("/events/by-code/${createdEvent.code}"))
+        restMockMvc
+            .perform(webTestHelper.get("/events/by-code/${createdEvent.code}"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(createdEvent.id))
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(createdEvent.name))
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(createdEvent.code))
@@ -96,18 +99,19 @@ class EventControllerTest(val context: WebApplicationContext) {
         val createdResponse = restMockMvc.perform(webTestHelper.post("/events", event))
         var createdEvent = webTestHelper.toObject(createdResponse, RestEvent::class.java)
 
-        var createdAttendee = webTestHelper.toObject(
-            restMockMvc.perform(webTestHelper.post("/attendees", Entities.attendee())),
-            RestAttendee::class.java
-        )
-
-        restMockMvc.perform(
-            webTestHelper.post(
-                "/events-by-code/${createdEvent.code}/${createdAttendee.code}",
-                null
+        var createdAttendee =
+            webTestHelper.toObject(
+                restMockMvc.perform(webTestHelper.post("/attendees", Entities.attendee())),
+                RestAttendee::class.java,
             )
-        )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+
+        restMockMvc
+            .perform(
+                webTestHelper.post(
+                    "/events-by-code/${createdEvent.code}/${createdAttendee.code}",
+                    null,
+                ),
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.attendeeFirstName").value(createdAttendee.firstName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.attendeeLastName").value(createdAttendee.lastName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.eventName").value(createdEvent.name))
@@ -120,71 +124,78 @@ class EventControllerTest(val context: WebApplicationContext) {
         restMockMvc.perform(webTestHelper.post("/events", event))
 
         val attendee = Entities.attendee()
-        var createdAttendee = webTestHelper.toObject(
-            restMockMvc.perform(webTestHelper.post("/attendees", attendee)),
-            RestAttendee::class.java
-        )
-
-        restMockMvc.perform(
-            webTestHelper.post(
-                "/events-by-code/invalid-attendee/${createdAttendee.code}",
-                null
+        var createdAttendee =
+            webTestHelper.toObject(
+                restMockMvc.perform(webTestHelper.post("/attendees", attendee)),
+                RestAttendee::class.java,
             )
-        )
-            .andExpect(MockMvcResultMatchers.status().isNotFound)
+
+        restMockMvc
+            .perform(
+                webTestHelper.post(
+                    "/events-by-code/invalid-attendee/${createdAttendee.code}",
+                    null,
+                ),
+            ).andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun addAttendeeToInvalidEvent() {
         val event = Entities.event()
-        val createdResponse = restMockMvc.perform(webTestHelper.post("/events", event))
-            .andExpect(MockMvcResultMatchers.status().isOk)
+        val createdResponse =
+            restMockMvc
+                .perform(webTestHelper.post("/events", event))
+                .andExpect(MockMvcResultMatchers.status().isOk)
         var createdEvent = webTestHelper.toObject(createdResponse, RestEvent::class.java)
 
-        val department = webTestHelper.toObject(
-            restMockMvc.perform(
-                webTestHelper.post("/register", Entities.restDepartmentWithUserRequest()),
-            ).andExpect(MockMvcResultMatchers.status().isOk),
-            RestDepartmentWithUser::class.java
-        )
+        val department =
+            webTestHelper.toObject(
+                restMockMvc
+                    .perform(
+                        webTestHelper.post("/register", Entities.restDepartmentWithUserRequest()),
+                    ).andExpect(MockMvcResultMatchers.status().isOk),
+                RestDepartmentWithUser::class.java,
+            )
         var attendee = Entities.restAttendeeRequest()
         attendee = attendee.copy(departmentId = department.departmentId, firstName = "")
         val response = restMockMvc.perform(webTestHelper.post("/attendees", attendee))
 
-        restMockMvc.perform(
-            webTestHelper.post(
-                "/events-by-code/${createdEvent.code}/invalid-event",
-                null
-            )
-        )
-            .andExpect(MockMvcResultMatchers.status().isNotFound)
-
+        restMockMvc
+            .perform(
+                webTestHelper.post(
+                    "/events-by-code/${createdEvent.code}/invalid-event",
+                    null,
+                ),
+            ).andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
     @Test
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun deleteEvent() {
-
         val event = Entities.event()
 
-        val createdEvent = webTestHelper.toObject(
-            restMockMvc.perform(webTestHelper.post("/events", event))
-                .andExpect(MockMvcResultMatchers.status().isOk),
-            RestEvent::class.java
-        )
+        val createdEvent =
+            webTestHelper.toObject(
+                restMockMvc
+                    .perform(webTestHelper.post("/events", event))
+                    .andExpect(MockMvcResultMatchers.status().isOk),
+                RestEvent::class.java,
+            )
 
-        restMockMvc.perform(webTestHelper.get("/events/${createdEvent.id}"))
+        restMockMvc
+            .perform(webTestHelper.get("/events/${createdEvent.id}"))
             .andExpect(MockMvcResultMatchers.status().isOk)
 
-        restMockMvc.perform(webTestHelper.delete("/events/${createdEvent.id}"))
+        restMockMvc
+            .perform(webTestHelper.delete("/events/${createdEvent.id}"))
             .andExpect(MockMvcResultMatchers.status().isOk)
 
-        restMockMvc.perform(webTestHelper.get("/events/${createdEvent.id}"))
+        restMockMvc
+            .perform(webTestHelper.get("/events/${createdEvent.id}"))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
-
-    //add attendeeToEvent, delete event and attendeeToEvent need to be still there
+    // add attendeeToEvent, delete event and attendeeToEvent need to be still there
     // errror unknown event code
-    //error unknown att code
+    // error unknown att code
 }

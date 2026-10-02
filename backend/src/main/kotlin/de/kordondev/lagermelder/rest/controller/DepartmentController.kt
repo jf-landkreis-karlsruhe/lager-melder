@@ -20,38 +20,43 @@ class DepartmentController(
     private val departmentService: DepartmentService,
     private val attendeeService: AttendeeService,
     private val tentsService: TentsService,
-    private val authorityService: AuthorityService
+    private val authorityService: AuthorityService,
 ) {
     @GetMapping("/departments")
-    fun getDepartments(@RequestParam(defaultValue = "false") onlyWithAttendees: Boolean): List<RestDepartment> {
-        return departmentService
+    fun getDepartments(
+        @RequestParam(defaultValue = "false") onlyWithAttendees: Boolean,
+    ): List<RestDepartment> =
+        departmentService
             .getDepartments(onlyWithAttendees)
-                .map{ RestDepartment.of(it)}
-    }
+            .map { RestDepartment.of(it) }
 
     @GetMapping("/departments/for-selecting")
-    fun getDepartmentsForSelecting(): List<RestDepartmentShort> {
-        return departmentService
+    fun getDepartmentsForSelecting(): List<RestDepartmentShort> =
+        departmentService
             .getDepartmentsForSelecting()
-            .map{ RestDepartmentShort.of(it)}
-    }
+            .map { RestDepartmentShort.of(it) }
 
     @GetMapping("/departments/{id}")
-    fun getDepartment(@PathVariable(value = "id") id: Long): RestDepartment {
-        return departmentService
-                .getDepartment(id)
-                .let{ RestDepartment.of(it)}
-    }
+    fun getDepartment(
+        @PathVariable(value = "id") id: Long,
+    ): RestDepartment =
+        departmentService
+            .getDepartment(id)
+            .let { RestDepartment.of(it) }
 
     @PostMapping("/departments")
-    fun addDepartment(@RequestBody(required = true) @Valid department: RestDepartmentRequest): RestDepartment {
-        return departmentService
+    fun addDepartment(
+        @RequestBody(required = true) @Valid department: RestDepartmentRequest,
+    ): RestDepartment =
+        departmentService
             .createDepartment(RestDepartmentRequest.to(department, 0, emptySet(), null, emptySet()))
-                .let { RestDepartment.of(it) }
-    }
+            .let { RestDepartment.of(it) }
 
     @PutMapping("/departments/{id}")
-    fun saveDepartment(@RequestBody(required = true) @Valid department: RestDepartmentRequest, @PathVariable("id") id: Long): RestDepartment {
+    fun saveDepartment(
+        @RequestBody(required = true) @Valid department: RestDepartmentRequest,
+        @PathVariable("id") id: Long,
+    ): RestDepartment {
         val departmentFromDB = departmentService.getDepartment(id)
 
         return departmentService
@@ -61,45 +66,48 @@ class DepartmentController(
                     id,
                     departmentFromDB.features,
                     departmentFromDB.evacuationGroup,
-                    departmentFromDB.tentMarkings
-                )
-            )
-                .let { RestDepartment.of(it) }
+                    departmentFromDB.tentMarkings,
+                ),
+            ).let { RestDepartment.of(it) }
     }
 
     @DeleteMapping("/departments/{id}")
-    fun deleteDepartment(@PathVariable("id") id: Long) {
+    fun deleteDepartment(
+        @PathVariable("id") id: Long,
+    ) {
         departmentService.deleteDepartment(id)
     }
 
     @GetMapping("/departments/{id}/attendees")
-    fun getAttendeesForDepartment(@PathVariable(value = "id") id: Long): RestAttendees {
-        return departmentService
-                .getDepartment(id)
+    fun getAttendeesForDepartment(
+        @PathVariable(value = "id") id: Long,
+    ): RestAttendees =
+        departmentService
+            .getDepartment(id)
             .let { attendeeService.getAttendeesForDepartment(it) }
             .let { RestAttendees.of(it) }
-    }
 
     @GetMapping("/part-of-departments/{id}/attendees")
-    fun getAttendeesPartOfDepartment(@PathVariable(value = "id") id: Long): RestAttendees {
-        return attendeeService.getAttendeesForDepartmentWithZKidsBeingPartOf(id)
+    fun getAttendeesPartOfDepartment(
+        @PathVariable(value = "id") id: Long,
+    ): RestAttendees =
+        attendeeService
+            .getAttendeesForDepartmentWithZKidsBeingPartOf(id)
             .let { RestAttendees.of(it) }
-    }
 
     @GetMapping("departments/{id}/tents")
     fun getForDepartment(
         @PathVariable(required = true)id: Long,
-    ): RestTents {
-        return departmentService
+    ): RestTents =
+        departmentService
             .getDepartment(id)
             .let(tentsService::getForDepartment)
             .let { RestTents.of(it) }
-    }
 
     @PutMapping("departments/registration/{id}")
     fun registerDepartment(
         @PathVariable("id") id: Long,
-        @RequestBody(required = true) @Valid registrationRequest: RestDepartmentRegistrationRequest
+        @RequestBody(required = true) @Valid registrationRequest: RestDepartmentRegistrationRequest,
     ): RestTents {
         val department = departmentService.getDepartment(id)
         tentsService.checkCanTentsBeEdited()
@@ -108,7 +116,7 @@ class DepartmentController(
                 department,
                 registrationRequest.departmentPhoneNumber,
                 registrationRequest.nameKommandant,
-                registrationRequest.phoneNumberKommandant
+                registrationRequest.phoneNumberKommandant,
             )
         return tentsService
             .saveForDepartment(RestTents.to(registrationRequest.tents, department))
@@ -118,7 +126,7 @@ class DepartmentController(
     @PutMapping("departments/{id}/change-pausing")
     fun changePausingDepartment(
         @PathVariable("id") id: Long,
-        @RequestBody(required = true) @Valid pauseRequest: RestDepartmentPauseRequest
+        @RequestBody(required = true) @Valid pauseRequest: RestDepartmentPauseRequest,
     ): RestDepartment {
         authorityService.isLkKarlsruhe()
         val department = departmentService.getDepartment(id)
@@ -131,12 +139,11 @@ class DepartmentController(
     fun updateTentMarkings(
         @PathVariable("id") id: Long,
         @PathVariable("evacuationGroupId") evacuationGroupId: String,
-        @RequestBody(required = true) @Valid tentMarkings: Set<RestDepartmentTentMarkingRequest>
+        @RequestBody(required = true) @Valid tentMarkings: Set<RestDepartmentTentMarkingRequest>,
     ): RestDepartment {
         authorityService.isLkKarlsruhe()
         return departmentService
             .updateTentMarkings(id, tentMarkings, evacuationGroupId)
             .let { RestDepartment.of(it) }
     }
-
 }

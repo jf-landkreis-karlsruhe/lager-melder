@@ -11,10 +11,8 @@ import java.util.*
 data class TentMarkingEntry(
     @Id
     val id: String = UUID.randomUUID().toString(),
-
     @Column(name = "name")
     val name: String,
-
     @Column(name = "department_id")
-    val departmentId: Long
+    val departmentId: Long,
 )

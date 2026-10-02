@@ -18,14 +18,13 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId
 
-
 @Service("MailSenderService")
 class MailSenderService(
     @Value("\${application.mail.send}") private val shouldSendMail: Boolean,
     @Value("\${spring.mail.from}") private val sendFrom: String,
     private val authorityService: AuthorityService,
     private val mailSender: JavaMailSender,
-    private val htmlTemplateEngine: TemplateEngine
+    private val htmlTemplateEngine: TemplateEngine,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MailSenderService::class.java)
     private val newUserMailTemplate = "new-user"
@@ -38,7 +37,7 @@ class MailSenderService(
         leaderName: String,
         username: String,
         password: String,
-        settings: SettingsEntry
+        settings: SettingsEntry,
     ) {
         try {
             authorityService.isSpecializedFieldDirector()
@@ -70,7 +69,11 @@ class MailSenderService(
         }
     }
 
-    fun sendReminderMail(to: String, leaderName: String, settings: SettingsEntry): Boolean {
+    fun sendReminderMail(
+        to: String,
+        leaderName: String,
+        settings: SettingsEntry,
+    ): Boolean {
         try {
             authorityService.isAdmin()
             val headerLogoName = headerLogo
@@ -103,7 +106,11 @@ class MailSenderService(
         }
     }
 
-    fun sendRegistrationFinishedMail(to: String, leaderName: String, settings: SettingsEntry): Boolean {
+    fun sendRegistrationFinishedMail(
+        to: String,
+        leaderName: String,
+        settings: SettingsEntry,
+    ): Boolean {
         try {
             authorityService.isAdmin()
             val headerLogoName = headerLogo
@@ -134,32 +141,38 @@ class MailSenderService(
             return false
         }
     }
-    
-    fun sendForgotPasswordMail(to: String, changePasswordLink: String): Boolean {
-      try {
-          val headerLogoName = headerLogo
-          val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
 
-          val cxt = Context()
-          cxt.setVariable("headerLogo", headerLogoName)
-          cxt.setVariable("changePasswordLink", changePasswordLink)
-          val mimeMessage = this.mailSender.createMimeMessage()
-          val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
-          message.setFrom(sendFrom)
-          message.setTo(to)
-          val htmlContent = this.htmlTemplateEngine.process("forgot-password", cxt)
-          message.setText(htmlContent, true)
-          message.addInline(headerLogoName, headerLogo)
-          logger.info("Forgot password mail send to $to")
-          sendMail(mimeMessage, htmlContent)
-          return true
-      } catch (exception: MailException) {
-          logger.error(exception.message)
-          return false
-      }
+    fun sendForgotPasswordMail(
+        to: String,
+        changePasswordLink: String,
+    ): Boolean {
+        try {
+            val headerLogoName = headerLogo
+            val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
+
+            val cxt = Context()
+            cxt.setVariable("headerLogo", headerLogoName)
+            cxt.setVariable("changePasswordLink", changePasswordLink)
+            val mimeMessage = this.mailSender.createMimeMessage()
+            val message = MimeMessageHelper(mimeMessage, true, "UTF-8")
+            message.setFrom(sendFrom)
+            message.setTo(to)
+            val htmlContent = this.htmlTemplateEngine.process("forgot-password", cxt)
+            message.setText(htmlContent, true)
+            message.addInline(headerLogoName, headerLogo)
+            logger.info("Forgot password mail send to $to")
+            sendMail(mimeMessage, htmlContent)
+            return true
+        } catch (exception: MailException) {
+            logger.error(exception.message)
+            return false
+        }
     }
 
-    private fun sendMail(mimeMessage: MimeMessage, content: String) {
+    private fun sendMail(
+        mimeMessage: MimeMessage,
+        content: String,
+    ) {
         if (shouldSendMail) {
             this.mailSender.send(mimeMessage)
         } else {
@@ -167,20 +180,24 @@ class MailSenderService(
         }
     }
 
-    private fun mimeMessageToString(mimeMessage: MimeMessage, content: String): String {
-        return """
-            From: ${mimeMessage.from.map { it.toString() }}
-            To: ${mimeMessage.allRecipients.map { it.toString() }}
-            Subject: ${mimeMessage.subject}
-            Message: $content
+    private fun mimeMessageToString(
+        mimeMessage: MimeMessage,
+        content: String,
+    ): String =
+        """
+        From: ${mimeMessage.from.map { it.toString() }}
+        To: ${mimeMessage.allRecipients.map { it.toString() }}
+        Subject: ${mimeMessage.subject}
+        Message: $content
         """.trimIndent()
-    }
 
-    private fun daysUntilEnd(today: LocalDate, end: LocalDate): Long {
+    private fun daysUntilEnd(
+        today: LocalDate,
+        end: LocalDate,
+    ): Long {
         if (today.isAfter(end)) {
             return 0
         }
         return Duration.between(today.atStartOfDay(), end.atStartOfDay()).toDays()
     }
-
 }

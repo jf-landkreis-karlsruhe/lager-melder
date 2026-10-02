@@ -18,22 +18,23 @@ data class RestZKid(
     val role: AttendeeRole,
     val code: String,
     val status: String,
-    val partOfDepartmentId: Long
+    val partOfDepartmentId: Long,
 ) {
     companion object {
-        fun of(attendee: ZKidEntry) = RestZKid(
-            id = attendee.id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            birthday = attendee.birthday,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            departmentId = attendee.department.id,
-            code = attendee.code,
-            status = attendee.status.toString(),
-            partOfDepartmentId = attendee.partOfDepartment.id
-        )
+        fun of(attendee: ZKidEntry) =
+            RestZKid(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName,
+                birthday = attendee.birthday,
+                food = attendee.food,
+                tShirtSize = attendee.tShirtSize,
+                additionalInformation = attendee.additionalInformation,
+                role = attendee.role,
+                departmentId = attendee.department.id,
+                code = attendee.code,
+                status = attendee.status.toString(),
+                partOfDepartmentId = attendee.partOfDepartment.id,
+            )
     }
 }

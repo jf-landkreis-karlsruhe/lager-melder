@@ -6,7 +6,9 @@ import jakarta.servlet.http.HttpServletRequest
 const val HEADER_STRING = "Authorization"
 const val TOKEN_PREFIX = "Bearer "
 
-class RestJWT(private var token: String) {
+class RestJWT(
+    private var token: String,
+) {
     @get:JsonProperty("Authorization")
     val authorization: String = "$TOKEN_PREFIX$token"
 
@@ -19,5 +21,4 @@ class RestJWT(private var token: String) {
             return null
         }
     }
-
 }

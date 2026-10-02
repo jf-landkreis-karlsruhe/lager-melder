@@ -12,10 +12,13 @@ data class RestDepartmentWithUser(
     val departmentName: String,
     val leaderName: String,
     val leaderEMail: String,
-    val features: Set<DepartmentFeatures>
+    val features: Set<DepartmentFeatures>,
 ) {
     companion object {
-        fun from(department: DepartmentEntry, user: UserEntry) = RestDepartmentWithUser(
+        fun from(
+            department: DepartmentEntry,
+            user: UserEntry,
+        ) = RestDepartmentWithUser(
             userId = user.id,
             username = user.userName,
             role = user.role,
@@ -23,7 +26,7 @@ data class RestDepartmentWithUser(
             departmentName = department.name,
             leaderName = department.leaderName,
             leaderEMail = department.leaderEMail,
-            features = department.features.map { it.feature }.toSet()
+            features = department.features.map { it.feature }.toSet(),
         )
     }
 }

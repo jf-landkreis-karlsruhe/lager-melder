@@ -5,12 +5,15 @@ import java.time.Instant
 
 data class RestStartDownloadRegistrationFiles(
     val startDownloadRegistrationFiles: Instant,
-    val registrationFilesCanBeDownloaded: Boolean
+    val registrationFilesCanBeDownloaded: Boolean,
 ) {
     companion object {
-        fun of(settings: SettingsEntry, registrationFilesCanBeDownloaded: Boolean) = RestStartDownloadRegistrationFiles(
+        fun of(
+            settings: SettingsEntry,
+            registrationFilesCanBeDownloaded: Boolean,
+        ) = RestStartDownloadRegistrationFiles(
             startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles,
-            registrationFilesCanBeDownloaded = registrationFilesCanBeDownloaded
+            registrationFilesCanBeDownloaded = registrationFilesCanBeDownloaded,
         )
     }
 }

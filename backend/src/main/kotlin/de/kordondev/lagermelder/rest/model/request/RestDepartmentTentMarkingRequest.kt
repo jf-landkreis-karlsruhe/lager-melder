@@ -12,7 +12,10 @@ data class RestDepartmentTentMarkingRequest(
     val name: String,
 ) {
     companion object {
-        fun to(tentMarking: RestDepartmentTentMarkingRequest, departmentId: Long) = TentMarkingEntry(
+        fun to(
+            tentMarking: RestDepartmentTentMarkingRequest,
+            departmentId: Long,
+        ) = TentMarkingEntry(
             id = tentMarking.id ?: UUID.randomUUID().toString(),
             name = tentMarking.name,
             departmentId = departmentId,

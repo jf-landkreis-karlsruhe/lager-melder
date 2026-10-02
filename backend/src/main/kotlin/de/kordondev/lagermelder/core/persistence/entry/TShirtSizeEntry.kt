@@ -6,9 +6,7 @@ import jakarta.persistence.*
 @Table(name = "t_shirt_sizes")
 data class TShirtSizeEntry(
     @Id
-    val size: String
+    val size: String,
 ) {
-    override fun toString(): String {
-        return size
-    }
+    override fun toString(): String = size
 }

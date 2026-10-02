@@ -11,15 +11,14 @@ import java.io.IOException
 
 @RestController
 class PlanningFilesController(
-    private val planningFilesService: PlanningFilesService
+    private val planningFilesService: PlanningFilesService,
 ) {
-
     @ResponseBody
     @Throws(IOException::class)
     @GetMapping(value = ["/planning-files/events"], produces = ["application/pdf"])
     fun getEventsPDF(
         @RequestParam(value = "frontendBaseUrl") frontendBaseUrl: String,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=events.pdf")
         return planningFilesService.createEventPDF(frontendBaseUrl)

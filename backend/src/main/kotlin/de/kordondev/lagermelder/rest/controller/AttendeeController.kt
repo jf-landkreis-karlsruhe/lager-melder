@@ -16,24 +16,26 @@ import org.springframework.web.bind.annotation.*
 class AttendeeController(
     private val attendeeService: AttendeeService,
     private val departmentService: DepartmentService,
-    private val eventDayService: EventDayService
+    private val eventDayService: EventDayService,
 ) {
     @GetMapping("/attendees")
-    fun getAttendees(): RestAttendees {
-        return attendeeService
+    fun getAttendees(): RestAttendees =
+        attendeeService
             .getAttendees()
             .let { RestAttendees.of(it) }
-    }
 
     @GetMapping("/attendees/{id}")
-    fun getAttendee(@PathVariable(value = "id") id: String): RestAttendee {
-        return attendeeService
+    fun getAttendee(
+        @PathVariable(value = "id") id: String,
+    ): RestAttendee =
+        attendeeService
             .getAttendee(id)
             .let { RestAttendee.of(it) }
-    }
 
     @PostMapping("/attendees")
-    fun addAttendee(@RequestBody(required = true) @Valid attendee: RestAttendeeRequest): RestAttendee {
+    fun addAttendee(
+        @RequestBody(required = true) @Valid attendee: RestAttendeeRequest,
+    ): RestAttendee {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
             .createAttendee(
@@ -41,24 +43,28 @@ class AttendeeController(
                     attendee,
                     department,
                     getPartOfDepartmentForZKid(attendee),
-                    getEventDays(attendee)
-                )
+                    getEventDays(attendee),
+                ),
             ).let { RestAttendee.of(it) }
     }
 
     @PutMapping("/attendees/{id}")
     fun saveAttendee(
         @RequestBody(required = true) @Valid attendee: RestAttendeeRequest,
-        @PathVariable("id") id: String
+        @PathVariable("id") id: String,
     ): RestAttendee {
         val department = departmentService.getDepartment(attendee.departmentId)
         return attendeeService
-                .saveAttendee(id, RestAttendeeRequest.to(attendee, department, getPartOfDepartmentForZKid(attendee), getEventDays(attendee)))
-                .let { RestAttendee.of(it)}
+            .saveAttendee(
+                id,
+                RestAttendeeRequest.to(attendee, department, getPartOfDepartmentForZKid(attendee), getEventDays(attendee)),
+            ).let { RestAttendee.of(it) }
     }
 
     @DeleteMapping("/attendees/{id}")
-    fun deleteAttendee(@PathVariable(value = "id") id: String) {
+    fun deleteAttendee(
+        @PathVariable(value = "id") id: String,
+    ) {
         attendeeService.deleteAttendee(id)
     }
 

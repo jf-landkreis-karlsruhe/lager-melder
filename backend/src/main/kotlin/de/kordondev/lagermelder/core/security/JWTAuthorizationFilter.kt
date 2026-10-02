@@ -17,19 +17,21 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 
 class JWTAuthorizationFilter(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : OncePerRequestFilter() {
-
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        chain: FilterChain,
+    ) {
         val token = RestJWT.getToken(request)
-
 
         if (token == null) {
             chain.doFilter(request, response)
             return
         }
 
-        val authentication = getAuthentication(request);
+        val authentication = getAuthentication(request)
 
         if (authentication != null) {
             SecurityContextHolder.getContext().authentication = authentication
@@ -40,12 +42,15 @@ class JWTAuthorizationFilter(
     private fun getAuthentication(request: HttpServletRequest): UsernamePasswordAuthenticationToken? {
         val token = RestJWT.getToken(request)
         if (token != null) {
-            val username = JWT.require(Algorithm.HMAC512(SECRET))
-                .build()
-                .verify(token)
-                .subject
+            val username =
+                JWT
+                    .require(Algorithm.HMAC512(SECRET))
+                    .build()
+                    .verify(token)
+                    .subject
             if (username != null) {
-                return userRepository.findOneByUserName(username)
+                return userRepository
+                    .findOneByUserName(username)
                     ?.let { user ->
                         UsernamePasswordAuthenticationToken(
                             user.userName,
@@ -53,8 +58,8 @@ class JWTAuthorizationFilter(
                             listOf(
                                 SimpleGrantedAuthority(USER_ID_PREFIX + user.id.toString()),
                                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + user.department.id.toString()),
-                                SimpleGrantedAuthority(ROLE_PREFIX + user.role)
-                            )
+                                SimpleGrantedAuthority(ROLE_PREFIX + user.role),
+                            ),
                         )
                     }
             }

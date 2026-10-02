@@ -14,7 +14,9 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import org.thymeleaf.templateresolver.ITemplateResolver
 
 @Configuration
-class SpringMailConfig: ApplicationContextAware, EnvironmentAware {
+class SpringMailConfig :
+    ApplicationContextAware,
+    EnvironmentAware {
     private lateinit var applicationContext: ApplicationContext
     private lateinit var environment: Environment
 

@@ -17,21 +17,22 @@ data class RestHelper(
     val role: AttendeeRole,
     val code: String,
     val status: String,
-    val helperDays: Set<String>
+    val helperDays: Set<String>,
 ) {
     companion object {
-        fun of(attendee: HelperEntity) = RestHelper(
-            id = attendee.id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            departmentId = attendee.department.id,
-            code = attendee.code,
-            status = attendee.status.toString(),
-            helperDays = attendee.helperDays.map { it.id }.toSet()
-        )
+        fun of(attendee: HelperEntity) =
+            RestHelper(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName,
+                food = attendee.food,
+                tShirtSize = attendee.tShirtSize,
+                additionalInformation = attendee.additionalInformation,
+                role = attendee.role,
+                departmentId = attendee.department.id,
+                code = attendee.code,
+                status = attendee.status.toString(),
+                helperDays = attendee.helperDays.map { it.id }.toSet(),
+            )
     }
 }

@@ -5,13 +5,11 @@ import java.util.*
 
 @Entity
 @Table(name = "evacuation_groups")
-data class EvacuationGroupEntry (
-        @Id
-        val id: String = UUID.randomUUID().toString(),
-
-        @Column(name = "name")
-        val name: String,
-
-        @Column(name = "color")
-        val color: String
+data class EvacuationGroupEntry(
+    @Id
+    val id: String = UUID.randomUUID().toString(),
+    @Column(name = "name")
+    val name: String,
+    @Column(name = "color")
+    val color: String,
 )

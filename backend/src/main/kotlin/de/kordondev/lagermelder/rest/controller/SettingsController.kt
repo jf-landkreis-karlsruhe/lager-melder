@@ -13,24 +13,26 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class SettingsController(
-    private val settingsService: SettingsService
+    private val settingsService: SettingsService,
 ) {
-
     @GetMapping("/settings")
-    fun getSettings(): RestSettings {
-        return settingsService.getSettings()
+    fun getSettings(): RestSettings =
+        settingsService
+            .getSettings()
             .let { RestSettings.of(it) }
-    }
 
     @PutMapping("/settings")
-    fun updateSettings(@RequestBody(required = true) @Valid settings: RestSettingsRequest): RestSettings {
-        return settingsService.saveSettings(RestSettingsRequest.to(settings))
+    fun updateSettings(
+        @RequestBody(required = true) @Valid settings: RestSettingsRequest,
+    ): RestSettings =
+        settingsService
+            .saveSettings(RestSettingsRequest.to(settings))
             .let { RestSettings.of(it) }
-    }
 
     @GetMapping("/settings/registration-end")
-    fun getRegistrationEnd(): RestRegistrationEnd {
-        return settingsService.getSettings()
+    fun getRegistrationEnd(): RestRegistrationEnd =
+        settingsService
+            .getSettings()
             .let {
                 RestRegistrationEnd.of(
                     it,
@@ -39,12 +41,10 @@ class SettingsController(
                     settingsService.helpersCanBeEdited(),
                 )
             }
-    }
 
     @GetMapping("/settings/start-download-registration-files")
-    fun getStartDownloadRegistrationFiles(): RestStartDownloadRegistrationFiles {
-        return settingsService.getSettings()
+    fun getStartDownloadRegistrationFiles(): RestStartDownloadRegistrationFiles =
+        settingsService
+            .getSettings()
             .let { RestStartDownloadRegistrationFiles.of(it, settingsService.canRegistrationFilesDownloaded()) }
-    }
-
 }

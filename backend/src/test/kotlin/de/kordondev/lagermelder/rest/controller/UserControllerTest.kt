@@ -17,11 +17,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-
 @Transactional
 @SpringBootTest
-class UserControllerTest(val context: WebApplicationContext) {
-
+class UserControllerTest(
+    val context: WebApplicationContext,
+) {
     lateinit var restMockMvc: MockMvc
 
     @Autowired
@@ -33,10 +33,13 @@ class UserControllerTest(val context: WebApplicationContext) {
     fun setUp() {
         restMockMvc = MockMvcBuilders.webAppContextSetup(context).build()
 
-        department = webTestHelper.toObject(
-            restMockMvc.perform(webTestHelper.post("/departments", Entities.restDepartmentRequest()))
-                .andExpect(MockMvcResultMatchers.status().isOk), RestDepartment::class.java
-        )
+        department =
+            webTestHelper.toObject(
+                restMockMvc
+                    .perform(webTestHelper.post("/departments", Entities.restDepartmentRequest()))
+                    .andExpect(MockMvcResultMatchers.status().isOk),
+                RestDepartment::class.java,
+            )
     }
 
     @Test
@@ -44,14 +47,14 @@ class UserControllerTest(val context: WebApplicationContext) {
     fun addUserToDepartment() {
         val user = Entities.restUserRequest(department.id)
 
-        restMockMvc.perform(
-            webTestHelper.post("/users", user)
-        )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+        restMockMvc
+            .perform(
+                webTestHelper.post("/users", user),
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(user.username))
             .andExpect(MockMvcResultMatchers.jsonPath("$.departmentId").value(user.departmentId))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(Roles.USER));
+            .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(Roles.USER))
     }
 
     @Test
@@ -59,21 +62,21 @@ class UserControllerTest(val context: WebApplicationContext) {
     fun getUserOfDepartment() {
         val user = Entities.restUserRequest(department.id)
 
-        val createdUser = webTestHelper.toObject(
-            restMockMvc.perform(
-                webTestHelper.post("/users", user)
+        val createdUser =
+            webTestHelper.toObject(
+                restMockMvc
+                    .perform(
+                        webTestHelper.post("/users", user),
+                    ).andExpect(MockMvcResultMatchers.status().isOk),
+                RestUser::class.java,
             )
-                .andExpect(MockMvcResultMatchers.status().isOk),
-            RestUser::class.java
-        )
 
-        restMockMvc.perform(
-            webTestHelper.get("/users/department/${department.id}")
-        )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+        restMockMvc
+            .perform(
+                webTestHelper.get("/users/department/${department.id}"),
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(createdUser.id))
             .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(user.username))
             .andExpect(MockMvcResultMatchers.jsonPath("$.departmentId").value(user.departmentId))
     }
 }
-

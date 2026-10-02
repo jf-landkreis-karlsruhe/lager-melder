@@ -16,23 +16,24 @@ data class RestDepartment(
     val tentMarkings: Set<RestTentMarking>,
     val evacuationGroup: RestEvacuationGroup?,
     val nameKommandant: String,
-    val phoneNumberKommandant: String
+    val phoneNumberKommandant: String,
 ) {
     companion object {
-        fun of(department: DepartmentEntry) = RestDepartment(
-            id = department.id,
-            name = department.name,
-            leaderName = department.leaderName,
-            leaderEMail = department.leaderEMail,
-            phoneNumber = department.phoneNumber,
-            shortName = department.shortName,
-            features = department.features.map { it.feature }.toSet(),
-            headDepartmentName = department.headDepartmentName,
-            paused = department.paused,
-            tentMarkings = department.tentMarkings.map { RestTentMarking.of(it) }.toSet(),
-            evacuationGroup = department.evacuationGroup?.let { RestEvacuationGroup.of(it) },
-            nameKommandant = department.nameKommandant,
-            phoneNumberKommandant = department.phoneNumberKommandant
-        )
+        fun of(department: DepartmentEntry) =
+            RestDepartment(
+                id = department.id,
+                name = department.name,
+                leaderName = department.leaderName,
+                leaderEMail = department.leaderEMail,
+                phoneNumber = department.phoneNumber,
+                shortName = department.shortName,
+                features = department.features.map { it.feature }.toSet(),
+                headDepartmentName = department.headDepartmentName,
+                paused = department.paused,
+                tentMarkings = department.tentMarkings.map { RestTentMarking.of(it) }.toSet(),
+                evacuationGroup = department.evacuationGroup?.let { RestEvacuationGroup.of(it) },
+                nameKommandant = department.nameKommandant,
+                phoneNumberKommandant = department.phoneNumberKommandant,
+            )
     }
 }

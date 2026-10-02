@@ -26,7 +26,6 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.min
 import kotlin.math.round
 
-
 @Service
 class PlanningFilesService(
     private val resourceLoader: ResourceLoader,
@@ -38,7 +37,7 @@ class PlanningFilesService(
     private val tShirtSizeService: TShirtSizeService,
     private val eventDayService: EventDayService,
     private val attendeeRoleHelper: AttendeeRoleHelper,
-    private val tentsService: TentsService
+    private val tentsService: TentsService,
 ) {
     private val yDistanceBetweenBatches = 141F
     private val logger: Logger = LoggerFactory.getLogger(PlanningFilesService::class.java)
@@ -50,12 +49,16 @@ class PlanningFilesService(
         authorityService.isLkKarlsruhe()
         val attendeesFromDB = attendeeService.getAttendees()
         val attendees =
-            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
-                .sortedBy {
-                    attendeeService.getPartOfDepartmentOrDepartment(it).headDepartmentName + attendeeService.getPartOfDepartmentOrDepartment(
-                        it
-                    ).name
-                }
+            (
+                attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders +
+                    attendeesFromDB.zKids
+            ).sortedBy {
+                attendeeService.getPartOfDepartmentOrDepartment(it).headDepartmentName +
+                    attendeeService
+                        .getPartOfDepartmentOrDepartment(
+                            it,
+                        ).name
+            }
         return createBatches(attendees)
     }
 
@@ -63,8 +66,10 @@ class PlanningFilesService(
         authorityService.isLkKarlsruhe()
         val attendeesFromDB = attendeeService.getAttendees()
         val attendees =
-            (attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders + attendeesFromDB.zKids)
-                .sortedByDescending { it.createdAt }
+            (
+                attendeesFromDB.youths + attendeesFromDB.youthLeaders + attendeesFromDB.children + attendeesFromDB.childLeaders +
+                    attendeesFromDB.zKids
+            ).sortedByDescending { it.createdAt }
         return createBatches(attendees)
     }
 
@@ -77,7 +82,6 @@ class PlanningFilesService(
         logger.info("Creating batches for ${attendees.size} on ${1 + (attendees.size / 5)} pages")
         var attendeeIndex = 0
         while (attendeeIndex < attendees.size) {
-
             val resource = resourceLoader.getResource("classpath:data/batch.pdf")
             val pdfReader = PdfReader(resource.inputStream)
             val pageStream = ByteArrayOutputStream()
@@ -87,7 +91,7 @@ class PlanningFilesService(
             content.setColorFill(Color.BLACK)
             content.setFontAndSize(
                 BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED),
-                16F
+                16F,
             )
 
             var attendeesOnPage = 0
@@ -115,7 +119,11 @@ class PlanningFilesService(
         return documentStream.toByteArray()
     }
 
-    private fun addName(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
+    private fun addName(
+        content: PdfContentByte,
+        attendee: Attendee,
+        attendeesOnPage: Int,
+    ) {
         content.beginText()
         val xValue = 345F
         val yValue = 738F
@@ -124,7 +132,11 @@ class PlanningFilesService(
         content.endText()
     }
 
-    private fun addDepartment(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
+    private fun addDepartment(
+        content: PdfContentByte,
+        attendee: Attendee,
+        attendeesOnPage: Int,
+    ) {
         content.beginText()
         val xValue = 335F
         val yValue = 723F
@@ -133,7 +145,11 @@ class PlanningFilesService(
         content.endText()
     }
 
-    private fun addBarCode(content: PdfContentByte, attendee: Attendee, attendeesOnPage: Int) {
+    private fun addBarCode(
+        content: PdfContentByte,
+        attendee: Attendee,
+        attendeesOnPage: Int,
+    ) {
         val barcode = Barcode128()
         barcode.code = attendee.code
         barcode.barHeight = 40F
@@ -153,12 +169,13 @@ class PlanningFilesService(
 
         val document = prepareDocument(out)
 
-        val font = Font(
-            BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED),
-            20F,
-            Font.BOLD,
-            Color.BLACK
-        )
+        val font =
+            Font(
+                BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED),
+                20F,
+                Font.BOLD,
+                Color.BLACK,
+            )
 
         val events = eventService.getEvents()
 
@@ -170,7 +187,6 @@ class PlanningFilesService(
             document.open()
             document.add(headline)
             document.add(Paragraph("Bitte beim Kommen und Gehen scannen."))
-
 
             val qrCode = Image.getInstance(createEventCode(createEventUrl(frontendBaseUrl, event.code)))
             qrCode.scaleToFit(PageSize.A4.width, PageSize.A4.height)
@@ -192,7 +208,10 @@ class PlanningFilesService(
         return out.toByteArray()
     }
 
-    private fun createEventUrl(frontendBaseUrl: String, eventCode: String): String {
+    private fun createEventUrl(
+        frontendBaseUrl: String,
+        eventCode: String,
+    ): String {
         if (frontendBaseUrl.endsWith("/", true)) {
             return "$frontendBaseUrl$eventCode"
         }
@@ -210,10 +229,11 @@ class PlanningFilesService(
         val totalTShirtCount =
             countTShirtPerSize(allAttendees.youths + allAttendees.youthLeaders + allAttendees.zKids + allAttendees.helpers)
         val eventStart = settingsService.getSettings().eventStart
-        val totalBraceletCount = countBracelet(
-            allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids,
-            eventStart
-        )
+        val totalBraceletCount =
+            countBracelet(
+                allAttendees.youths + allAttendees.youthLeaders + allAttendees.children + allAttendees.childLeaders + allAttendees.zKids,
+                eventStart,
+            )
         val tShirtSizes = tShirtSizeService.getTShirtSizes().map { it.size }.toMutableList()
 
         addTShirtsAndBraceletForDepartment(
@@ -221,7 +241,7 @@ class PlanningFilesService(
             tShirtSizes,
             totalTShirtCount,
             totalBraceletCount,
-            document
+            document,
         )
 
         val departments = departmentService.getDepartments().sortedBy { it.headDepartmentName + it.name }
@@ -240,7 +260,7 @@ class PlanningFilesService(
                     mapOf<String, Int>().toMutableMap(),
                     braceletCount,
                     document,
-                    true
+                    true,
                 )
             }
             if (attendees.helpers.isNotEmpty()) {
@@ -251,7 +271,7 @@ class PlanningFilesService(
                     tShirtSizes,
                     tShirtCount,
                     braceletCount,
-                    document
+                    document,
                 )
             }
         }
@@ -265,7 +285,7 @@ class PlanningFilesService(
         tShirtCount: MutableMap<String, Int>,
         braceletCount: MutableMap<Color, Int>,
         document: Document,
-        skipTShirt: Boolean = false
+        skipTShirt: Boolean = false,
     ) {
         val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
         document.add(Paragraph("Abteilung: $departmentName", headlineFont))
@@ -317,7 +337,7 @@ class PlanningFilesService(
 
     private fun countBracelet(
         attendees: kotlin.collections.List<Attendee>,
-        eventStart: LocalDate
+        eventStart: LocalDate,
     ): MutableMap<Color, Int> {
         val braceletCount = mutableMapOf<Color, Int>()
         for (attendee in attendees) {
@@ -328,7 +348,10 @@ class PlanningFilesService(
         return braceletCount
     }
 
-    private fun colorForAgeGroup(attendee: Attendee, eventStart: LocalDate): Color {
+    private fun colorForAgeGroup(
+        attendee: Attendee,
+        eventStart: LocalDate,
+    ): Color {
         val age = Helper.ageAtEvent(attendee, eventStart, 18)
         if (age < 16) {
             return Color.RED
@@ -339,15 +362,13 @@ class PlanningFilesService(
         return Color.GREEN
     }
 
-    private fun colorToString(color: Color): String {
-        return when (color) {
+    private fun colorToString(color: Color): String =
+        when (color) {
             Color.GREEN -> "Grün"
             Color.YELLOW -> "Gelb"
             Color.RED -> "Rot"
             else -> color.toString()
         }
-    }
-
 
     fun createFoodPDF(): ByteArray {
         authorityService.isLkKarlsruhe()
@@ -371,7 +392,6 @@ class PlanningFilesService(
             addFoodToDocument(document, foodEventDay, "Helferessen - ${eventDay.name}")
         }
 
-
         document.close()
         return out.toByteArray()
     }
@@ -391,7 +411,7 @@ class PlanningFilesService(
     private fun addFoodToDocument(
         document: Document,
         foodAttendees: Map<Food, MutableList<Attendee>>,
-        headline: String
+        headline: String,
     ) {
         document.add(Paragraph(headline, headlineFont))
         for (food in Food.entries) {
@@ -400,7 +420,9 @@ class PlanningFilesService(
             list.setListSymbol("\u2022")
             for (att in foodAttendees[food]!!) {
                 if (att.additionalInformation.isNotEmpty()) {
-                    list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}. Kommentar: ${att.additionalInformation}. (Jugendwart: ${att.department.leaderEMail}, EMail: ${att.department.leaderEMail})")
+                    list.add(
+                        " ${att.firstName} ${att.lastName} aus ${att.department.name}. Kommentar: ${att.additionalInformation}. (Jugendwart: ${att.department.leaderEMail}, EMail: ${att.department.leaderEMail})",
+                    )
                 } else if (food != Food.MEAT) {
                     list.add(" ${att.firstName} ${att.lastName} aus ${att.department.name}")
                 }
@@ -431,7 +453,9 @@ class PlanningFilesService(
         return out.toByteArray()
     }
 
-    private fun attendeesWithAdditionalInformation(attendees: kotlin.collections.List<Attendee>): Map<DepartmentEntry, MutableList<Attendee>> {
+    private fun attendeesWithAdditionalInformation(
+        attendees: kotlin.collections.List<Attendee>,
+    ): Map<DepartmentEntry, MutableList<Attendee>> {
         val departmentAttendees = mutableMapOf<DepartmentEntry, MutableList<Attendee>>()
         for (attendee in attendees) {
             if (attendee.additionalInformation.isEmpty()) {
@@ -472,7 +496,9 @@ class PlanningFilesService(
         val departments = departmentService.getDepartments().sortedBy { it.headDepartmentName + it.name }
         for (department in departments) {
             val attendees = attendeeService.getAttendeesForDepartmentWithZKidsBeingPartOf(department.id)
-            if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty() && attendees.zKids.isEmpty() && attendees.helpers.isEmpty()) {
+            if (attendees.youths.isEmpty() && attendees.youthLeaders.isEmpty() && attendees.zKids.isEmpty() &&
+                attendees.helpers.isEmpty()
+            ) {
                 continue
             }
             if (attendees.youths.isNotEmpty() || attendees.youthLeaders.isNotEmpty() || attendees.zKids.isNotEmpty()) {
@@ -480,7 +506,7 @@ class PlanningFilesService(
                     document,
                     department.name,
                     attendees.youths + attendees.youthLeaders + attendees.zKids,
-                    eventStart
+                    eventStart,
                 )
             }
 
@@ -489,7 +515,7 @@ class PlanningFilesService(
                     document,
                     "${department.name} Helfer",
                     attendees.helpers,
-                    eventStart
+                    eventStart,
                 )
             }
 
@@ -505,12 +531,20 @@ class PlanningFilesService(
         val document = prepareDocument(out)
 
         val dbAttendees = attendeeService.getAllAttendees()
-        val departmentWithAttendees = (dbAttendees.youths + dbAttendees.youthLeaders + dbAttendees.children + dbAttendees.childLeaders + dbAttendees.zKids + dbAttendees.helpers)
-            .groupBy { attendeeService.getPartOfDepartmentOrDepartment(it) }
+        val departmentWithAttendees =
+            (
+                dbAttendees.youths + dbAttendees.youthLeaders + dbAttendees.children + dbAttendees.childLeaders +
+                    dbAttendees.zKids +
+                    dbAttendees.helpers
+            ).groupBy { attendeeService.getPartOfDepartmentOrDepartment(it) }
 
         departmentWithAttendees.keys.sortedBy { it.headDepartmentName + it.name }.map { department ->
             document.add(Paragraph("${department.headDepartmentName} ${department.name}", headlineFont))
-            document.add(Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}, Telefon während Kreiszeltlager: ${department.phoneNumber}"))
+            document.add(
+                Paragraph(
+                    "Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}, Telefon während Kreiszeltlager: ${department.phoneNumber}",
+                ),
+            )
             document.add(Paragraph("Kommandant: ${department.nameKommandant}, Telefon: ${department.phoneNumberKommandant}"))
             val table = Table(4)
             table.borderWidth = 1F
@@ -540,7 +574,7 @@ class PlanningFilesService(
         document: Document,
         departmentName: String,
         attendees: kotlin.collections.List<Attendee>,
-        eventStart: LocalDate
+        eventStart: LocalDate,
     ) {
         document.add(Paragraph(departmentName, headlineFont))
 
@@ -561,7 +595,10 @@ class PlanningFilesService(
         document.add(table)
     }
 
-    private fun prepareDocument(documentStream: ByteArrayOutputStream, pageSize: Rectangle = PageSize.A4): Document {
+    private fun prepareDocument(
+        documentStream: ByteArrayOutputStream,
+        pageSize: Rectangle = PageSize.A4,
+    ): Document {
         val document = Document(pageSize)
         val writer = PdfWriter.getInstance(document, documentStream)
 
@@ -571,7 +608,10 @@ class PlanningFilesService(
         return document
     }
 
-    private fun getPartOfDepartmentOrDepartmentName(attendee: Attendee, withShortName: Boolean = false): String {
+    private fun getPartOfDepartmentOrDepartmentName(
+        attendee: Attendee,
+        withShortName: Boolean = false,
+    ): String {
         val department = attendeeService.getPartOfDepartmentOrDepartment(attendee)
         if (withShortName && department.shortName.isNotEmpty()) {
             return department.shortName
@@ -596,10 +636,10 @@ class PlanningFilesService(
                 departmentName.alignment = Element.ALIGN_CENTER
 
                 val evacuationGroupName = Paragraph("     ${department.evacuationGroup?.name}     ", markingFont)
-                val chunk = Chunk(evacuationGroupName.getContent());
+                val chunk = Chunk(evacuationGroupName.getContent())
                 chunk.setBackground(Color.decode(department.evacuationGroup?.color))
-                evacuationGroupName.clear();
-                evacuationGroupName.add(chunk);
+                evacuationGroupName.clear()
+                evacuationGroupName.add(chunk)
                 evacuationGroupName.alignment = Element.ALIGN_CENTER
 
                 document.add(tentName)
@@ -634,8 +674,9 @@ class PlanningFilesService(
                 val attendeesPerRole = attendeesPerDepartment[department.id]?.groupBy { it.role }
                 val youthLeader =
                     attendeeService.getYouthLeaderIn(attendeesPerRole?.get(AttendeeRole.YOUTH_LEADER) ?: emptyList())
-                val (validLeader, invalidLeader) = youthLeader
-                    .partition { attendeeRoleHelper.leaderWithValidJuleika(it, eventStart) }
+                val (validLeader, invalidLeader) =
+                    youthLeader
+                        .partition { attendeeRoleHelper.leaderWithValidJuleika(it, eventStart) }
                 val numberOfYouth = attendeesPerRole?.get(AttendeeRole.YOUTH)?.size ?: 0
 
                 if (validLeader.size >= attendeeRoleHelper.leaderFor(numberOfYouth)) {
@@ -643,16 +684,18 @@ class PlanningFilesService(
                 }
                 missingJuleikas = true
                 document.add(Paragraph("${department.headDepartmentName} ${department.name}", headlineFont))
-                document.add(Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}, Telefon: ${department.phoneNumber}"))
+                document.add(
+                    Paragraph("Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}, Telefon: ${department.phoneNumber}"),
+                )
 
-                document.add(Paragraph("Angemeldete Teilnehmer: ${numberOfYouth}"))
+                document.add(Paragraph("Angemeldete Teilnehmer: $numberOfYouth"))
                 document.add(Paragraph("Anzahl Jugendleiter mit gültiger Juleika: ${validLeader.size}"))
                 document.add(
                     Paragraph(
                         "Mindestanzahl geforderter Jugendleiter mit gültiger Juleika: ${
                             attendeeRoleHelper.leaderFor(numberOfYouth)
-                        }"
-                    )
+                        }",
+                    ),
                 )
                 document.add(Paragraph("Anzahl Jugendleiter ohne gültige Juleika: ${invalidLeader.size}"))
 
@@ -662,9 +705,9 @@ class PlanningFilesService(
                     list.add(
                         " ${att.firstName} ${att.lastName} Juleikanummer: ${att.juleikaNumber} Gültig bis: ${
                             att.juleikaExpireDate?.format(
-                                DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                                DateTimeFormatter.ofPattern("dd.MM.yyyy"),
                             ) ?: "-"
-                        }"
+                        }",
                     )
                 }
                 document.add(list)
@@ -684,19 +727,23 @@ class PlanningFilesService(
         val numberOfDuties = settingsService.getSettings().numberOfDuties
         val departments = departmentService.getDepartments(true)
         return getTentAndDutiesCsv(departments, numberOfDuties)
-
     }
 
     private fun getTentAndDutiesCsv(
         departments: kotlin.collections.List<DepartmentEntry>,
-        numberOfDuties: Int
+        numberOfDuties: Int,
     ): String {
         val attendeesPerDepartment =
-            attendeeService.getAttendeesPerDepartments()
-                .filterNot { it.value.first().department.isOrganizer() }
-                .mapValues { it.value.size }
+            attendeeService
+                .getAttendeesPerDepartments()
+                .filterNot {
+                    it.value
+                        .first()
+                        .department
+                        .isOrganizer()
+                }.mapValues { it.value.size }
         val tentsByDepartmentId = tentsService.getAllTents()
-        var dutyNumber = 1;
+        var dutyNumber = 1
         val sb = StringBuilder()
 
         // Calculate total number of attendees
@@ -708,22 +755,21 @@ class PlanningFilesService(
         // Add header row
         sb.append("Jugendfeuer;Teilnehmer;SG 200;SG 20;SG 30;SG 40;SG 50;Zelte gesamt;Anzahl Lagerdienste;Lagerdienste\n")
 
-
         // Add department rows
         for (department in departments.sortedBy { it.headDepartmentName + it.name }) {
             val totalDepartmentAttendees = attendeesPerDepartment[department.id] ?: 0
-            val tents = tentsByDepartmentId.find { it.department.id == department.id } ?: TentsEntity(
-                0,
-                department,
-                0,
-                0,
-                0,
-                0,
-                0
-            )
+            val tents =
+                tentsByDepartmentId.find { it.department.id == department.id } ?: TentsEntity(
+                    0,
+                    department,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                )
 
             sb.append("${department.name};$totalDepartmentAttendees")
-
 
             // Add tent counts by type
             sb.append(";${tents.sg200}")
@@ -763,7 +809,7 @@ class PlanningFilesService(
     private fun calculateNumberOfDuties(
         attendeesPerDepartment: Map<Long, Int>,
         totalAttendees: Int,
-        numberOfShifts: Int
+        numberOfShifts: Int,
     ): Map<Long, Int> {
         val duties = mutableMapOf<Long, Int>()
         var allocatedShifts = 0
@@ -778,9 +824,10 @@ class PlanningFilesService(
             }
         }
 
-        val departmentsBySize = attendeesPerDepartment.entries
-            .sortedByDescending { it.value }
-            .map { it.key }
+        val departmentsBySize =
+            attendeesPerDepartment.entries
+                .sortedByDescending { it.value }
+                .map { it.key }
 
         var departmentCounter = 0
 
@@ -805,8 +852,9 @@ class PlanningFilesService(
         return duties
     }
 
-    private fun sumUpTents(tentsByDepartmentId: kotlin.collections.List<TentsEntity>): TentsEntity {
-        return tentsByDepartmentId.stream()
+    private fun sumUpTents(tentsByDepartmentId: kotlin.collections.List<TentsEntity>): TentsEntity =
+        tentsByDepartmentId
+            .stream()
             .reduce(
                 TentsEntity(
                     0,
@@ -815,8 +863,8 @@ class PlanningFilesService(
                     0,
                     0,
                     0,
-                    0
-                )
+                    0,
+                ),
             ) { acc, tents ->
                 TentsEntity(
                     0,
@@ -825,8 +873,7 @@ class PlanningFilesService(
                     acc.sg20 + tents.sg20,
                     acc.sg30 + tents.sg30,
                     acc.sg40 + tents.sg40,
-                    acc.sg50 + tents.sg50
+                    acc.sg50 + tents.sg50,
                 )
             }
-    }
 }

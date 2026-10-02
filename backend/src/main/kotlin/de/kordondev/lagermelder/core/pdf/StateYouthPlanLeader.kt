@@ -21,24 +21,26 @@ import org.springframework.stereotype.Service
 class StateYouthPlanLeader(
     val resourceLoader: ResourceLoader,
     val pdfHelper: PDFHelper,
-    private val settingsService: SettingsService
+    private val settingsService: SettingsService,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(StateYouthPlanLeader::class.java)
 
-    val YEAR = "Landesjugendplan_"
-    val MONEY_PRO_YOUTH_LEADER = "bewilligter_Zuschuss_"
-    val ORGANISATION_ADDRESS = "Anschrift_und_Telefonnumm"
-    val SELECT_HEIMFREIZEIT_ZELTLAGER = "Ankreuzfeld5" // 5, 6 or 7
-    val COUNT = "Lfd"
-    val NAME_AND_BIRTHDAY = "Betreuer_"
-    val START_DATE = "Beginn" // with _ for all except the first one
-    val END_DATE = "Ende_"
-    val DURATION = "Einsatztage_"
-    val ATTENDEES_ON_PAGE = 5
-    val TABLE_ROW_START = listOf(1, 2, 3, 4, 5)
-    val LIZENZ = "Lizenz_"
+    companion object {
+        private const val YEAR = "Landesjugendplan_"
+        private const val MONEY_PRO_YOUTH_LEADER = "bewilligter_Zuschuss_"
+        private const val ORGANISATION_ADDRESS = "Anschrift_und_Telefonnumm"
+        private const val SELECT_HEIMFREIZEIT_ZELTLAGER = "Ankreuzfeld5" // 5, 6 or 7
+        private const val COUNT = "Lfd"
+        private const val NAME_AND_BIRTHDAY = "Betreuer_"
+        private const val START_DATE = "Beginn" // with _ for all except the first one
+        private const val END_DATE = "Ende_"
+        private const val DURATION = "Einsatztage_"
+        private const val ATTENDEES_ON_PAGE = 5
+        private val TABLE_ROW_START = listOf(1, 2, 3, 4, 5)
+        private const val LIZENZ = "Lizenz_"
 
-    val DAYS_OF_EVENT = 5
+        private const val DAYS_OF_EVENT = 5
+    }
 
     fun createStateYouthPlanLeaderPdf(attendees: List<Attendee>): PDDocument {
         val resource: Resource = resourceLoader.getResource("classpath:data/stateYouthPlanLeader.pdf")
@@ -53,11 +55,12 @@ class StateYouthPlanLeader(
         for (i in youthLeaders.indices step ATTENDEES_ON_PAGE) {
             val pdfDocument = PDDocument.load(resource.inputStream)
 
-            val attendeesForPage = if (youthLeaders.size <= i + ATTENDEES_ON_PAGE) {
-                youthLeaders.subList(i, youthLeaders.size)
-            } else {
-                youthLeaders.subList(i, i + ATTENDEES_ON_PAGE)
-            }
+            val attendeesForPage =
+                if (youthLeaders.size <= i + ATTENDEES_ON_PAGE) {
+                    youthLeaders.subList(i, youthLeaders.size)
+                } else {
+                    youthLeaders.subList(i, i + ATTENDEES_ON_PAGE)
+                }
             fields.addAll(fillPage(pdfDocument, attendeesForPage, TABLE_ROW_START, page, settings))
             result.addPage(pdfDocument.getPage(0))
             page++
@@ -65,7 +68,7 @@ class StateYouthPlanLeader(
 
         if (youthLeaders.isEmpty()) {
             val pdfDocument = PDDocument.load(resource.inputStream)
-            val form = pdfDocument.documentCatalog.acroForm;
+            val form = pdfDocument.documentCatalog.acroForm
             fillGeneralData(form, page, settings, fields)
             result.addPage(pdfDocument.getPage(0))
         }
@@ -75,7 +78,7 @@ class StateYouthPlanLeader(
                 result,
                 "${attendees.first().department.name} - Betreuer Landesjugendplan",
                 50F,
-                50F
+                50F,
             )
         }
 
@@ -90,7 +93,7 @@ class StateYouthPlanLeader(
         form: PDAcroForm,
         page: Int,
         settings: SettingsEntry,
-        fields: MutableList<PDField>
+        fields: MutableList<PDField>,
     ) {
         pdfHelper.fillField(form, YEAR, settings.eventStart.year.toString(), page)?.let { fields.add(it) }
         pdfHelper.fillField(form, MONEY_PRO_YOUTH_LEADER, settings.moneyPerYouthLoader, page)?.let { fields.add(it) }
@@ -98,16 +101,15 @@ class StateYouthPlanLeader(
         // pdfHelper.fillField(form, SELECT_HEIMFREIZEIT_ZELTLAGER, dataYear, page)?.let { fields.add(it) }
     }
 
-
     fun fillPage(
         pdfDocument: PDDocument,
         attendees: List<Attendee>,
         cellIds: List<Int>,
         page: Int,
-        settings: SettingsEntry
+        settings: SettingsEntry,
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
-        val form = pdfDocument.documentCatalog.acroForm;
+        val form = pdfDocument.documentCatalog.acroForm
 
         fillGeneralData(form, page, settings, fields)
 
@@ -122,46 +124,58 @@ class StateYouthPlanLeader(
         form: PDAcroForm,
         cellId: Int,
         page: Int,
-        settings: SettingsEntry
+        settings: SettingsEntry,
     ): List<PDField> {
         val fields = mutableListOf<PDField>()
-        val startDateCell = if (cellId == 1) {
-            "$START_DATE$cellId"
-        } else {
-            "${START_DATE}_$cellId"
-        }
+        val startDateCell =
+            if (cellId == 1) {
+                "$START_DATE$cellId"
+            } else {
+                "${START_DATE}_$cellId"
+            }
         pdfHelper.fillField(form, "$COUNT$cellId", "${(page - 1) * 5 + cellId}", page)?.let { fields.add(it) }
-        pdfHelper.fillField(
-            form,
-            "$NAME_AND_BIRTHDAY$cellId",
-            "${attendee.lastName}, ${attendee.firstName}, ${
-                pdfHelper.formatBirthday(
-                    Helper.getBirthday(attendee),
-                    germanDate
-                )
-            }\nAnschrift: ",
-            page
-        )?.let { fields.add(it) }
-        pdfHelper.fillField(
-            form, "$LIZENZ$cellId",
-            when (attendee) {
-                is YouthLeaderEntry -> "Juleikanummer: ${attendee.juleikaNumber}\nGültig bis: ${
-                    attendee.juleikaExpireDate?.format(
-                        germanDate
+        pdfHelper
+            .fillField(
+                form,
+                "$NAME_AND_BIRTHDAY$cellId",
+                "${attendee.lastName}, ${attendee.firstName}, ${
+                    pdfHelper.formatBirthday(
+                        Helper.getBirthday(attendee),
+                        germanDate,
                     )
-                }\nSonderurlaub: nein"
+                }\nAnschrift: ",
+                page,
+            )?.let { fields.add(it) }
+        pdfHelper
+            .fillField(
+                form,
+                "$LIZENZ$cellId",
+                when (attendee) {
+                    is YouthLeaderEntry -> {
+                        "Juleikanummer: ${attendee.juleikaNumber}\nGültig bis: ${
+                            attendee.juleikaExpireDate?.format(
+                                germanDate,
+                            )
+                        }\nSonderurlaub: nein"
+                    }
 
-                is ChildLeaderEntry -> "Juleikanummer: ${attendee.juleikaNumber}\nGültig bis: ${
-                    attendee.juleikaExpireDate?.format(
-                        germanDate
-                    )
-                }\nSonderurlaub: nein"
+                    is ChildLeaderEntry -> {
+                        "Juleikanummer: ${attendee.juleikaNumber}\nGültig bis: ${
+                            attendee.juleikaExpireDate?.format(
+                                germanDate,
+                            )
+                        }\nSonderurlaub: nein"
+                    }
 
-                else -> ""
-            }, page
-        )?.let { fields.add(it) }
+                    else -> {
+                        ""
+                    }
+                },
+                page,
+            )?.let { fields.add(it) }
         pdfHelper.fillField(form, startDateCell, settings.eventStart.format(germanDate), page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, "$END_DATE$cellId", settings.eventEnd.format(germanDate), page)
+        pdfHelper
+            .fillField(form, "$END_DATE$cellId", settings.eventEnd.format(germanDate), page)
             ?.let { fields.add(it) }
         pdfHelper.fillField(form, "$DURATION$cellId", "$DAYS_OF_EVENT", page)?.let { fields.add(it) }
         return fields

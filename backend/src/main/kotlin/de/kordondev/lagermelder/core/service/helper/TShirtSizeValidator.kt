@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class TShirtSizeValidator(
-    private val tShirtSizeRepository: TShirtSizeRepository
+    private val tShirtSizeRepository: TShirtSizeRepository,
 ) {
     fun validate(tShirtSize: String) {
         val validTShirtSizes = tShirtSizeRepository.findAll()
@@ -15,5 +15,4 @@ class TShirtSizeValidator(
         }
         throw BadRequestException("T-Shirt Größe $tShirtSize existiert nicht")
     }
-
 }

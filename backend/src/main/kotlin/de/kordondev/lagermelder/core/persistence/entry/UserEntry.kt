@@ -5,23 +5,18 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "users")
 data class UserEntry(
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
-
     @Column(name = "role")
     val role: String = Roles.USER,
-
     @Column(name = "username")
     val userName: String,
-
     @Column(name = "password")
     val passWord: String,
-
     @ManyToOne
     @JoinColumn(name = "department_id")
-    val department: DepartmentEntry
+    val department: DepartmentEntry,
 )
 
 class Roles {
@@ -39,5 +34,4 @@ class Roles {
             return USER
         }
     }
-
 }

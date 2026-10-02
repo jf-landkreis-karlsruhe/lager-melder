@@ -17,12 +17,16 @@ data class RestUserRequest(
     val departmentId: Long,
     @field:Pattern(
         regexp = "^(USER|LK_KARLSRUHE|SPECIALIZED_FIELD_DIRECTOR|ADMIN)$",
-        message = "role needs to be one of USER, LK_KARLSRUHE, ADMIN or SPECIALIZED_FIELD_DIRECTOR"
+        message = "role needs to be one of USER, LK_KARLSRUHE, ADMIN or SPECIALIZED_FIELD_DIRECTOR",
     )
-    val role: String
+    val role: String,
 ) {
     companion object {
-        fun to(user: RestUserRequest, id: Long, department: DepartmentEntry): UserEntry {
+        fun to(
+            user: RestUserRequest,
+            id: Long,
+            department: DepartmentEntry,
+        ): UserEntry {
             if (user.password == null) {
                 throw BadRequestException("password missing")
             }
@@ -31,9 +35,8 @@ data class RestUserRequest(
                 userName = user.username,
                 passWord = user.password,
                 department = department,
-                role = user.role
+                role = user.role,
             )
         }
     }
 }
-

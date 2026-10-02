@@ -9,26 +9,26 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class TShirtSizeController(
-    private val tShirtSizeService: TShirtSizeService
+    private val tShirtSizeService: TShirtSizeService,
 ) {
-
     @GetMapping("/tShirtSizes")
-    fun getTShirtSizes(): List<String> {
-        return tShirtSizeService.getTShirtSizes()
+    fun getTShirtSizes(): List<String> =
+        tShirtSizeService
+            .getTShirtSizes()
             .map { it.toString() }
-    }
 
     @PostMapping("/tShirtSizes")
-    fun addTShirtSize(@RequestBody(required = true) @Valid tShirtSize: RestTShirtSizeRequest): RestTShirtSize {
-        return tShirtSizeService
+    fun addTShirtSize(
+        @RequestBody(required = true) @Valid tShirtSize: RestTShirtSizeRequest,
+    ): RestTShirtSize =
+        tShirtSizeService
             .createTShirtSize(TShirtSizeEntry(tShirtSize.size))
             .let { RestTShirtSize.from(it) }
-    }
 
     @DeleteMapping("/tShirtSizes/{size}")
     fun deleteTShirtSize(
         @PathVariable(value = "size") size: String,
-        @RequestBody(required = true) @Valid replacementSize: RestTShirtSizeRequest
+        @RequestBody(required = true) @Valid replacementSize: RestTShirtSizeRequest,
     ) {
         tShirtSizeService.deleteAndReplaceTShirtSize(size, replacementSize.size)
     }

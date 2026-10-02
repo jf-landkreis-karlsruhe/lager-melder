@@ -7,12 +7,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class EventDayController(
-    val eventDayService: EventDayService
+    val eventDayService: EventDayService,
 ) {
-
     @GetMapping("/event-days")
-    fun getEventDays(): List<RestEventDay> {
-        return eventDayService.getEventDays()
+    fun getEventDays(): List<RestEventDay> =
+        eventDayService
+            .getEventDays()
             .map { RestEventDay.of(it) }
-    }
 }

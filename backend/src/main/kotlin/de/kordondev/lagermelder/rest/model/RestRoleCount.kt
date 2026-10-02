@@ -8,14 +8,13 @@ data class RestRoleCount(
     val childLeaders: Int,
 ) {
     companion object {
-        fun of(distribution: Distribution): RestRoleCount {
-            return RestRoleCount(
+        fun of(distribution: Distribution): RestRoleCount =
+            RestRoleCount(
                 helpers = distribution.helpers,
                 youths = distribution.youths,
                 youthLeaders = distribution.youthLeaders,
                 children = distribution.children,
-                childLeaders = distribution.childLeaders
+                childLeaders = distribution.childLeaders,
             )
-        }
     }
 }

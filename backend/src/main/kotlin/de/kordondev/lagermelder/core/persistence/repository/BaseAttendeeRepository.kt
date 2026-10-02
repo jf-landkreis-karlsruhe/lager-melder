@@ -9,7 +9,7 @@ interface BaseAttendeeRepository : CrudRepository<BaseAttendeeEntry, String> {
     fun findByDepartmentAndFirstNameAndLastName(
         department: DepartmentEntry,
         firstName: String,
-        lastName: String
+        lastName: String,
     ): BaseAttendeeEntry?
 
     fun findByCode(code: String): BaseAttendeeEntry?

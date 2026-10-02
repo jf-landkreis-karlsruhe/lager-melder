@@ -8,24 +8,23 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-
 @RestController
 class MailController(
-        private val mailService: MailService
+    private val mailService: MailService,
 ) {
-
     @PostMapping("mail/reminder")
-    fun sendReminderMail(@RequestBody(required = true) @Valid sendMailRequest: RestSendMailRequest): RestSendMail {
-        return RestSendMail(
-                mailService.sendReminderMail(sendTo = sendMailRequest.sendTo)
+    fun sendReminderMail(
+        @RequestBody(required = true) @Valid sendMailRequest: RestSendMailRequest,
+    ): RestSendMail =
+        RestSendMail(
+            mailService.sendReminderMail(sendTo = sendMailRequest.sendTo),
         )
-    }
 
     @PostMapping("mail/registration-finished")
-    fun sendRegistrationFinishedMail(@RequestBody(required = true) @Valid sendMailRequest: RestSendMailRequest): RestSendMail {
-        return RestSendMail(
-                mailService.sendRegistrationFinishedMail(sendTo = sendMailRequest.sendTo)
+    fun sendRegistrationFinishedMail(
+        @RequestBody(required = true) @Valid sendMailRequest: RestSendMailRequest,
+    ): RestSendMail =
+        RestSendMail(
+            mailService.sendRegistrationFinishedMail(sendTo = sendMailRequest.sendTo),
         )
-    }
 }
-

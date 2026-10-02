@@ -18,7 +18,6 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -26,29 +25,33 @@ class SpringSecurityConfig(
     private val userDetailsService: UserDetailsServiceImpl,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
     private val userRepository: UserRepository,
-    @Value("\${application.corsOrigins}") private val corsAllowedOrigins: List<String>
+    @Value("\${application.corsOrigins}") private val corsAllowedOrigins: List<String>,
 ) {
-
     // Secure the endpoins with HTTP Basic authentication
     @Bean
-    fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        return http.authorizeHttpRequests { request ->
-            request
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/actuator/health").permitAll()
-                .requestMatchers("/users/forgotPasswordToken").permitAll()
-                .requestMatchers("/users/resetPasswordWithToken").permitAll()
-                .requestMatchers("/public/**").permitAll()
-                .requestMatchers("/**").authenticated()
-        }
-            .sessionManagement { c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+    fun filterChain(http: HttpSecurity): SecurityFilterChain =
+        http
+            .authorizeHttpRequests { request ->
+                request
+                    .requestMatchers("/login")
+                    .permitAll()
+                    .requestMatchers("/actuator/health")
+                    .permitAll()
+                    .requestMatchers("/users/forgotPasswordToken")
+                    .permitAll()
+                    .requestMatchers("/users/resetPasswordWithToken")
+                    .permitAll()
+                    .requestMatchers("/public/**")
+                    .permitAll()
+                    .requestMatchers("/**")
+                    .authenticated()
+            }.sessionManagement { c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .csrf { csrf -> csrf.disable() }
             .cors { cors -> cors.configurationSource(corsConfigurationSource()) }
             .formLogin { formLogin -> formLogin.disable() }
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(JWTAuthorizationFilter(userRepository), CreateJWTAuthentication::class.java)
             .build()
-    }
 
     @Bean
     fun authenticationProvider(): AuthenticationProvider {
@@ -59,9 +62,7 @@ class SpringSecurityConfig(
 
     @Bean
     @Throws(Exception::class)
-    fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager {
-        return config.authenticationManager
-    }
+    fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager = config.authenticationManager
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
@@ -78,5 +79,4 @@ class SpringSecurityConfig(
         source.registerCorsConfiguration("/**", configuration)
         return source
     }
-
 }

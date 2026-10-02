@@ -6,16 +6,18 @@ import de.kordondev.lagermelder.rest.model.request.*
 import java.time.LocalDate
 import java.util.*
 
-
-class Entities() {
-    enum class TShirtSizeMock(val size: String) {
+class Entities {
+    enum class TShirtSizeMock(
+        val size: String,
+    ) {
         S164("164"),
         M("M"),
         L("L"),
     }
+
     companion object {
-        fun department(): DepartmentEntry {
-            return DepartmentEntry(
+        fun department(): DepartmentEntry =
+            DepartmentEntry(
                 id = 1L,
                 name = "Dep",
                 leaderName = "depLeader",
@@ -26,12 +28,11 @@ class Entities() {
                 "",
                 paused = false,
                 emptySet(),
-                null
+                null,
             )
-        }
 
-        fun departmentEntry(): DepartmentEntry {
-            return DepartmentEntry(
+        fun departmentEntry(): DepartmentEntry =
+            DepartmentEntry(
                 id = 1L,
                 name = "Dep",
                 leaderName = "depLeader",
@@ -42,12 +43,11 @@ class Entities() {
                 "",
                 paused = false,
                 emptySet(),
-                null
+                null,
             )
-        }
 
-        fun attendee(): Attendee {
-            return YouthEntry(
+        fun attendee(): Attendee =
+            YouthEntry(
                 UUID.randomUUID().toString(),
                 "att",
                 "endee",
@@ -60,10 +60,9 @@ class Entities() {
                 department(),
                 status = null,
             )
-        }
 
-        fun restAttendeeRequest(departmentId: Long = department().id): RestAttendeeRequest {
-            return RestAttendeeRequest(
+        fun restAttendeeRequest(departmentId: Long = department().id): RestAttendeeRequest =
+            RestAttendeeRequest(
                 firstName = "att",
                 lastName = "endee",
                 departmentId = departmentId,
@@ -75,42 +74,37 @@ class Entities() {
                 juleikaNumber = "12345678",
                 juleikaExpireDate = LocalDate.of(2099, 5, 5).toString(),
                 partOfDepartmentId = departmentId,
-                helperDays = emptySet()
+                helperDays = emptySet(),
             )
 
-        }
-
-        fun restUserRequest(departmentId: Long = department().id): RestUserRequest {
-            return RestUserRequest(
+        fun restUserRequest(departmentId: Long = department().id): RestUserRequest =
+            RestUserRequest(
                 username = "username@email.de",
                 password = "password",
                 departmentId = departmentId,
-                role = Roles.USER
+                role = Roles.USER,
             )
-        }
 
-        fun user(): UserEntry {
-            return UserEntry(
+        fun user(): UserEntry =
+            UserEntry(
                 id = 1L,
                 role = Roles.USER,
                 department = departmentEntry(),
                 userName = "user@email.de",
-                passWord = "pass"
+                passWord = "pass",
             )
-        }
 
-        fun restDepartmentWithUserRequest(): RestDepartmentWithUserRequest {
-            return RestDepartmentWithUserRequest(
+        fun restDepartmentWithUserRequest(): RestDepartmentWithUserRequest =
+            RestDepartmentWithUserRequest(
                 username = "username@email.de",
                 departmentName = "department",
                 leaderName = "leaderName",
                 leaderEMail = "leader@department.de",
-                features = setOf(DepartmentFeatures.CHILD_GROUPS, DepartmentFeatures.YOUTH_GROUPS)
+                features = setOf(DepartmentFeatures.CHILD_GROUPS, DepartmentFeatures.YOUTH_GROUPS),
             )
-        }
 
-        fun restDepartmentRequest(): RestDepartmentRequest {
-            return RestDepartmentRequest(
+        fun restDepartmentRequest(): RestDepartmentRequest =
+            RestDepartmentRequest(
                 name = "department",
                 leaderEMail = "leader@mail.de",
                 leaderName = "leader",
@@ -118,13 +112,9 @@ class Entities() {
                 shortName = "",
                 features = emptySet(),
                 headDepartmentName = "",
-                paused = false
+                paused = false,
             )
-        }
 
-        fun event(): RestEventRequest {
-            return RestEventRequest("event")
-        }
-
+        fun event(): RestEventRequest = RestEventRequest("event")
     }
 }

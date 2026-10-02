@@ -18,12 +18,13 @@ class DepartmentService(
     private val attendeeService: AttendeeService,
     private val authorityService: AuthorityService,
     private val evacuationGroupService: EvacuationGroupService,
-    private val tentMarkingService: TentMarkingService
+    private val tentMarkingService: TentMarkingService,
 ) {
     fun getDepartments(onlyWithAttendees: Boolean = false): List<DepartmentEntry> {
-        val departments = departmentRepository
-            .findAll()
-            .filter { authorityService.hasAuthorityFilter(it, AuthorityService.LK_KARLSRUHE_ALLOWED) }
+        val departments =
+            departmentRepository
+                .findAll()
+                .filter { authorityService.hasAuthorityFilter(it, AuthorityService.LK_KARLSRUHE_ALLOWED) }
 
         if (onlyWithAttendees) {
             val departmentsWithAttendees = attendeeService.getDepartmentIdsForAllAttendees()
@@ -34,21 +35,18 @@ class DepartmentService(
         return departments
     }
 
-    fun getDepartmentsForSelecting(): List<DepartmentEntry> {
-        return departmentRepository.findAll().sortedBy { it.name }
-    }
+    fun getDepartmentsForSelecting(): List<DepartmentEntry> = departmentRepository.findAll().sortedBy { it.name }
 
-    fun getDepartment(id: Long): DepartmentEntry {
-        return departmentRepository
+    fun getDepartment(id: Long): DepartmentEntry =
+        departmentRepository
             .findByIdOrNull(id)
             ?.let {
                 authorityService.hasAuthority(
                     it,
-                    AuthorityService.LK_KARLSRUHE_ALLOWED
+                    AuthorityService.LK_KARLSRUHE_ALLOWED,
                 )
             }
             ?: throw NotFoundException("Department with id $id not found")
-    }
 
     @Transactional
     fun createDepartment(department: DepartmentEntry): DepartmentEntry {
@@ -75,22 +73,21 @@ class DepartmentService(
         department: DepartmentEntry,
         departmentPhoneNumber: String,
         nameKommandant: String,
-        phoneNumberKommandant: String
-    ): DepartmentEntry {
-        return departmentRepository.save(
+        phoneNumberKommandant: String,
+    ): DepartmentEntry =
+        departmentRepository.save(
             department.copy(
                 phoneNumber = departmentPhoneNumber,
                 nameKommandant = nameKommandant,
-                phoneNumberKommandant = phoneNumberKommandant
-            )
+                phoneNumberKommandant = phoneNumberKommandant,
+            ),
         )
-    }
 
     @Transactional
     fun updateTentMarkings(
         departmentId: Long,
         tentMarkings: Set<RestDepartmentTentMarkingRequest>,
-        evacuationGroupId: String
+        evacuationGroupId: String,
     ): DepartmentEntry {
         authorityService.isLkKarlsruhe()
         val department = getDepartment(departmentId)
@@ -98,12 +95,13 @@ class DepartmentService(
         val updatedTentMarkings =
             tentMarkings.map { RestDepartmentTentMarkingRequest.to(it, departmentId) }.toSet()
 
-        val updatedDepartment = saveDepartmentForLKKarlsruhe(
-            department.copy(
-                tentMarkings = updatedTentMarkings,
-                evacuationGroup = evacuationGroup
+        val updatedDepartment =
+            saveDepartmentForLKKarlsruhe(
+                department.copy(
+                    tentMarkings = updatedTentMarkings,
+                    evacuationGroup = evacuationGroup,
+                ),
             )
-        )
         tentMarkingService.deleteTentMarkingsWithoutDepartment()
         return updatedDepartment
     }

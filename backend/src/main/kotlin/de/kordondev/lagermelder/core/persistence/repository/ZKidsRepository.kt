@@ -8,7 +8,6 @@ interface ZKidsRepository : CrudRepository<ZKidEntry, String> {
     @Query("SELECT z FROM ZKidEntry z WHERE z.department.id = :departmentId AND z.role = 'Z_KID'")
     fun findByDepartment(departmentId: Long): List<ZKidEntry>
 
-
     @Query("SELECT z FROM ZKidEntry z WHERE z.partOfDepartment.id = :partOfDepartmentId AND z.role = 'Z_KID'")
     fun findByPartOfDepartment(partOfDepartmentId: Long): List<ZKidEntry>
 
