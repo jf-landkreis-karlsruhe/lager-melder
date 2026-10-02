@@ -131,7 +131,7 @@ class SettingsServiceTest {
         ChildEntry(
             firstName = "child",
             lastName = "last",
-            birthday = "01-01-2018",
+            birthday = "2018-01-01",
             food = Food.MEAT,
             tShirtSize = "S",
             additionalInformation = "",

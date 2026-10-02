@@ -80,7 +80,7 @@ class AttendeeControllerTest(
                 firstName = "att1",
                 lastName = "endee1",
                 departmentId = department.id,
-                birthday = "05-09-2006",
+                birthday = "2006-09-05",
                 food = Food.VEGETARIAN,
                 tShirtSize = Entities.TShirtSizeMock.M.size,
                 additionalInformation = "no",
