@@ -56,6 +56,10 @@ Run the checks for every sub-project you touched. Only commit when they pass.
 
 ### Commits
 
+- The main branch is `main` (not the stale `master`). Branch off `main` and open pull requests against `main`.
+- CI (`.github/workflows/dockerimage.yml`) runs the same checks on every pull request: `./gradlew check`, frontend
+  lint/format/type-check/unit tests and the Playwright tests in the Playwright Docker image. Images are only built when
+  the checks pass.
 - Keep commits small and focused. Put mechanical changes (formatting, renames) in a separate commit from behaviour changes.
 - Do not reformat code you did not otherwise touch, unless that is the purpose of the commit.
 
