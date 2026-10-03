@@ -20,7 +20,8 @@ import org.springframework.web.context.WebApplicationContext
 
 /**
  * Uses raw JSON exactly as the frontend sends it, independent of the server's ObjectMapper configuration.
- * Enums are exchanged by name (see frontend/src/services/attendee.ts Food, department.ts DepartmentFeatures).
+ * Enums are exchanged by name (see frontend/src/services/attendee.ts Food, department.ts DepartmentFeatures), and
+ * optional fields like partOfDepartmentId are left out (undefined in TypeScript).
  */
 @Transactional
 @IntegrationTest
@@ -39,13 +40,13 @@ class JsonContractTest(
     }
 
     @Test
-    fun enumsAreExchangedByName() {
+    fun attendeeAsSentByTheFrontend() {
         val department = webTestHelper.createDepartment(mockMvc, setOf(DepartmentFeatures.YOUTH_GROUPS))
         val attendeeJson =
             """
             {"firstName": "Anna", "lastName": "Schmidt", "departmentId": ${department.id}, "birthday": "2012-04-03",
              "food": "MEAT", "tShirtSize": "S", "additionalInformation": "", "role": "YOUTH", "juleikaNumber": "",
-             "juleikaExpireDate": "", "partOfDepartmentId": ${department.id}, "helperDays": []}
+             "juleikaExpireDate": "", "helperDays": []}
             """.trimIndent()
 
         mockMvc
