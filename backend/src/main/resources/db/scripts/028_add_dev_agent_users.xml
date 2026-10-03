@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <!-- Users with a known password for local development and the browser agent (see AGENTS.md).
+         Only loaded in the dev context. Password for all users: lagermelder-dev -->
+    <changeSet id="202610030" author="kordon" context="dev">
+        <insert tableName="users">
+            <column name="username" value="admin@dev.lagermelder"/>
+            <column name="role" value="ADMIN"/>
+            <column name="password" value="$2a$12$alNB4bIejbwzLizwApUGxOo6bwuzD85EE6XOT6ri4AHPrBSlW6w/."/>
+            <column name="department_id" valueNumeric="1"/>
+        </insert>
+        <insert tableName="users">
+            <column name="username" value="fachgebietsleiter@dev.lagermelder"/>
+            <column name="role" value="SPECIALIZED_FIELD_DIRECTOR"/>
+            <column name="password" value="$2a$12$alNB4bIejbwzLizwApUGxOo6bwuzD85EE6XOT6ri4AHPrBSlW6w/."/>
+            <column name="department_id" valueNumeric="3"/>
+        </insert>
+        <insert tableName="users">
+            <column name="username" value="lk-karlsruhe@dev.lagermelder"/>
+            <column name="role" value="LK_KARLSRUHE"/>
+            <column name="password" value="$2a$12$alNB4bIejbwzLizwApUGxOo6bwuzD85EE6XOT6ri4AHPrBSlW6w/."/>
+            <column name="department_id" valueNumeric="3"/>
+        </insert>
+        <insert tableName="users">
+            <column name="username" value="feuerwehr@dev.lagermelder"/>
+            <column name="role" value="USER"/>
+            <column name="password" value="$2a$12$alNB4bIejbwzLizwApUGxOo6bwuzD85EE6XOT6ri4AHPrBSlW6w/."/>
+            <column name="department_id" valueNumeric="2"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

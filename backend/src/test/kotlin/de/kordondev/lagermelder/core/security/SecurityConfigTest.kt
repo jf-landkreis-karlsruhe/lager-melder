@@ -79,6 +79,17 @@ class SecurityConfigTest(
     }
 
     @Test
+    fun devAgentUsersCanLogIn() {
+        // users from db/scripts/028_add_dev_agent_users.xml, documented in AGENTS.md
+        listOf(
+            "admin@dev.lagermelder",
+            "fachgebietsleiter@dev.lagermelder",
+            "lk-karlsruhe@dev.lagermelder",
+            "feuerwehr@dev.lagermelder",
+        ).forEach { login(it, "lagermelder-dev") }
+    }
+
+    @Test
     fun loginWithWrongPasswordIsUnauthorized() {
         mockMvc
             .perform(webTestHelper.post("/login", RestLoginUser(ADMIN_USERNAME, "wrong")))
