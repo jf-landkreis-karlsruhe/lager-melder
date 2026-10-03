@@ -82,9 +82,7 @@ onBeforeUnmount(() => {
               class="manual-code-input mr-3"
               variant="underlined"
             />
-            <v-btn :disabled="!manualCode || !manualCodeValid" type="submit" small outlined rounded>
-              Abschicken
-            </v-btn>
+            <v-btn :disabled="!manualCode || !manualCodeValid" type="submit" small outlined rounded> Abschicken </v-btn>
           </v-row>
         </v-form>
       </v-row>

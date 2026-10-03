@@ -70,12 +70,7 @@ const deleteEventInternal = () => {
         <div class="pa-4">
           <h3>TShirtgröße erstellen</h3>
           <form v-on:submit.prevent="createTShirtSizeInternal()">
-            <v-text-field
-              v-model="newTShirtSize"
-              label="TShirtgröße"
-              required
-              :variant="'underlined'"
-            />
+            <v-text-field v-model="newTShirtSize" label="TShirtgröße" required :variant="'underlined'" />
             <v-row class="v-row" justify="end">
               <v-btn
                 color="primary"
@@ -93,9 +88,7 @@ const deleteEventInternal = () => {
           <h3>TShirtgrößen verwalten</h3>
           <div class="flex-row flex-center">
             <v-card class="event-card mt-6 p-6">
-              <p v-if="!tShirtSizes || tShirtSizes.length === 0" class="mb-0">
-                ℹ️ Keine TShirtgrößen vorhanden.
-              </p>
+              <p v-if="!tShirtSizes || tShirtSizes.length === 0" class="mb-0">ℹ️ Keine TShirtgrößen vorhanden.</p>
               <div class="flex-row event" v-for="tShirtSize in tShirtSizes" :key="tShirtSize">
                 <div class="flex-row flex-grow">
                   <div class="flex-grow">
@@ -103,9 +96,7 @@ const deleteEventInternal = () => {
                   </div>
 
                   <div>
-                    <v-icon medium @click.prevent="openDeleteDialog(tShirtSize)">
-                      mdi-delete
-                    </v-icon>
+                    <v-icon medium @click.prevent="openDeleteDialog(tShirtSize)"> mdi-delete </v-icon>
                   </div>
                 </div>
               </div>
@@ -121,8 +112,7 @@ const deleteEventInternal = () => {
         <v-card-title class="headline">TShirtgröße ersetzen </v-card-title>
         <v-card-text>
           Durch welches TShirtgröße soll die Größe ({{ tShirtSizeToDelete }}) ersetzt werden?
-          <v-select v-model="tShirtSizeToReplace" :items="tShirtSizes" label="TShirtgröße" required>
-          </v-select>
+          <v-select v-model="tShirtSizeToReplace" :items="tShirtSizes" label="TShirtgröße" required> </v-select>
         </v-card-text>
         <v-card-text v-if="tShirtSizeToDelete === tShirtSizeToReplace">
           <v-icon medium>mdi-warning</v-icon>

@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import {
-  sendReminderMail,
-  sendRegistrationFinishedMail,
-  SentTo,
-  sentToReadable
-} from '../../services/mails'
+import { sendReminderMail, sendRegistrationFinishedMail, SentTo, sentToReadable } from '../../services/mails'
 import MailReminderText from './LmMailReminderText.vue'
 import MailRegistrationEndText from './LmMailRegistrationEndText.vue'
 import { useToast } from 'vue-toastification'
@@ -76,9 +71,7 @@ const sendRegistrationEndEmail = () => {
           <v-row justify="end" class="mb-2">
             <v-dialog v-model="reminderDialogOpen" persistent max-width="500">
               <template v-slot:activator="{ props }">
-                <v-btn rounded color="primary" dark v-bind="props" class="my-4">
-                  Errinnerungsmail senden
-                </v-btn>
+                <v-btn rounded color="primary" dark v-bind="props" class="my-4"> Errinnerungsmail senden </v-btn>
               </template>
 
               <v-card class="mb-4">
@@ -103,9 +96,7 @@ const sendRegistrationEndEmail = () => {
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn rounded @click="closeModal"> Schließen </v-btn>
-                    <v-btn color="primary" v-if="!emailSent" :loading="sendingEmail" type="submit">
-                      Senden
-                    </v-btn>
+                    <v-btn color="primary" v-if="!emailSent" :loading="sendingEmail" type="submit"> Senden </v-btn>
                   </v-card-actions>
                 </form>
               </v-card>
@@ -124,9 +115,7 @@ const sendRegistrationEndEmail = () => {
           <v-row justify="end">
             <v-dialog v-model="registrationEndDialogOpen" persistent max-width="500">
               <template v-slot:activator="{ props }">
-                <v-btn rounded color="primary" dark v-bind="props" class="my-4">
-                  Registrierungsende Mail senden
-                </v-btn>
+                <v-btn rounded color="primary" dark v-bind="props" class="my-4"> Registrierungsende Mail senden </v-btn>
               </template>
               <v-card class="mb-0">
                 <form v-on:submit.prevent="sendRegistrationEndEmail">
@@ -150,9 +139,7 @@ const sendRegistrationEndEmail = () => {
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn rounded @click="closeModal"> Schließen </v-btn>
-                    <v-btn color="primary" v-if="!emailSent" :loading="sendingEmail" type="submit">
-                      Senden
-                    </v-btn>
+                    <v-btn color="primary" v-if="!emailSent" :loading="sendingEmail" type="submit"> Senden </v-btn>
                   </v-card-actions>
                 </form>
               </v-card>

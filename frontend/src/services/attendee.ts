@@ -144,4 +144,3 @@ export const getZeltagerIcon = (attendee: Attendee) => {
   }
   return ''
 }
-

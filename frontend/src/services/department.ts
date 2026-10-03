@@ -10,13 +10,9 @@ export const getDepartments = (query?: { onlyWithAttendees?: boolean }) =>
   )
 
 export const getDepartmentsForSelecting = () =>
-    getData<DepartmentShort[]>(
-        `departments/for-selecting`,
-        withAuthenticationHeader()
-    )
+  getData<DepartmentShort[]>(`departments/for-selecting`, withAuthenticationHeader())
 
-export const getDepartment = (id: number) =>
-  getData<Department>(`departments/${id}`, withAuthenticationHeader())
+export const getDepartment = (id: number) => getData<Department>(`departments/${id}`, withAuthenticationHeader())
 
 export const getMyDepartment = () => {
   const departmentId = getTokenData().departmentId
@@ -31,7 +27,11 @@ export const updatePauseDepartment = (departmentId: number, pause: boolean) =>
     paused: pause
   })
 
-export const updateTentMarkings = (departmentId: number, evacuationGroupId: string, tentMarkings: TentMarkingRequest[]) =>
+export const updateTentMarkings = (
+  departmentId: number,
+  evacuationGroupId: string,
+  tentMarkings: TentMarkingRequest[]
+) =>
   putData<Department>(
     `departments/${departmentId}/evacuation-groups/${evacuationGroupId}/tent-markings`,
     withAuthenticationHeader(),
@@ -60,18 +60,14 @@ export interface DepartmentShort {
 }
 
 export enum DepartmentFeatures {
-  "CHILD_GROUPS"= "CHILD_GROUPS",
-  "YOUTH_GROUPS" = "YOUTH_GROUPS",
-  "ZKIDS" = "ZKIDS",
-  "HELPER" = "HELPER",
+  'CHILD_GROUPS' = 'CHILD_GROUPS',
+  'YOUTH_GROUPS' = 'YOUTH_GROUPS',
+  'ZKIDS' = 'ZKIDS',
+  'HELPER' = 'HELPER'
 }
 
 export const updateRegistration = (registration: RegistrationData) =>
-  putData<Tents>(
-    `departments/registration/${registration.departmentId}`,
-    withAuthenticationHeader(),
-    registration
-  )
+  putData<Tents>(`departments/registration/${registration.departmentId}`, withAuthenticationHeader(), registration)
 
 export interface RegistrationData {
   departmentId: number

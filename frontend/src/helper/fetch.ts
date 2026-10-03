@@ -47,13 +47,12 @@ export const deleteData = (relativeUrl: string, headers: HeadersInit, body: obje
 }
 
 export const fetchData = async (relativeUrl: string, config: RequestInit): Promise<Response> => {
-  return fetch(`${BASE_URL}/${relativeUrl}`, config)
-    .then((res) => {
-      if (!res.ok) {
-        throw res
-      }
-      return res
-    })
+  return fetch(`${BASE_URL}/${relativeUrl}`, config).then((res) => {
+    if (!res.ok) {
+      throw res
+    }
+    return res
+  })
 }
 
 export const getErrorMessage = async (

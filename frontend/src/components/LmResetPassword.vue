@@ -21,17 +21,11 @@ const resetPasswordHandler = async () => {
     return
   }
   loading.value = true
-  const success = await resetPasswordWithToken(route.params.token as string, password.value).catch(
-    async (err) => {
-      loading.value = false
-      await showErrorToast(
-        toast,
-        err,
-        'Password konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.'
-      )
-      return undefined
-    }
-  )
+  const success = await resetPasswordWithToken(route.params.token as string, password.value).catch(async (err) => {
+    loading.value = false
+    await showErrorToast(toast, err, 'Password konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.')
+    return undefined
+  })
   if (success) {
     toast.success('Password erfolgreich zurückgesetzt.')
     loading.value = false
@@ -75,9 +69,7 @@ watch(
               <v-card-actions>
                 <v-container>
                   <v-row justify="end">
-                    <v-btn color="primary" type="submit" :loading="loading" rounded>
-                      Passwort zurücksetzen
-                    </v-btn>
+                    <v-btn color="primary" type="submit" :loading="loading" rounded> Passwort zurücksetzen </v-btn>
                   </v-row>
                 </v-container>
               </v-card-actions>

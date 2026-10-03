@@ -47,9 +47,7 @@ const forgotPasswordHandler = async () => {
               <v-card-actions>
                 <v-container>
                   <v-row justify="end">
-                    <v-btn color="primary" type="submit" :loading="loading" rounded>
-                      Mail versenden
-                    </v-btn>
+                    <v-btn color="primary" type="submit" :loading="loading" rounded> Mail versenden </v-btn>
                   </v-row>
                 </v-container>
               </v-card-actions>

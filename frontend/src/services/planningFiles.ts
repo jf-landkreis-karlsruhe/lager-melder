@@ -29,14 +29,11 @@ export const getBatchesOrderedByCreationDate = (): Promise<FileReponse> => {
 }
 
 export const getEventCodes = (): Promise<FileReponse> => {
-  return fetchData(
-    `planning-files/events?frontendBaseUrl=${encodeURI(`${window.location.origin}/events`)}`,
-    {
-      headers: {
-        ...withAuthenticationHeader()
-      }
+  return fetchData(`planning-files/events?frontendBaseUrl=${encodeURI(`${window.location.origin}/events`)}`, {
+    headers: {
+      ...withAuthenticationHeader()
     }
-  )
+  })
     .then((r) => r.blob())
     .then((blob) => ({
       data: blob,
