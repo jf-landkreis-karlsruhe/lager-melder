@@ -8,9 +8,7 @@ import AttendeesShort from './LMAttendeesShort.vue'
 import LmContainer from '../LmContainer.vue'
 import TentsShort from './LMTentsShort.vue'
 import { type Event, EventType, getEventByType } from '@/services/event'
-import { useToast } from 'vue-toastification'
 
-const toast = useToast()
 const departments = ref<Department[]>([])
 const enterEvent = ref<Event>({} as Event)
 

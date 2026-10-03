@@ -21,7 +21,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  timeoutId && clearTimeout(timeoutId)
+  if (timeoutId) clearTimeout(timeoutId)
   window.removeEventListener('focus', checkToken)
   window.removeEventListener(AuthenticationChangedEvent, checkToken)
 })

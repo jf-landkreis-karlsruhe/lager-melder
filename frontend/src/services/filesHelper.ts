@@ -8,14 +8,6 @@ export function showFile(blob: Blob, fileName: string) {
   // otherwise only Chrome works like it should
   const newBlob = new Blob([blob], { type: 'application/pdf' })
 
-  // IE doesn't allow using a blob object directly as link href
-  // instead it is necessary to use msSaveOrOpenBlob
-  if (window.navigator && (window.navigator as any).msSaveOrOpenBlob) {
-    ;(window.navigator as any).msSaveOrOpenBlob(newBlob)
-    return
-  }
-
-  // For other browsers:
   // Create a link pointing to the ObjectURL containing the blob.
   const data = window.URL.createObjectURL(newBlob)
   const link = document.createElement('a')

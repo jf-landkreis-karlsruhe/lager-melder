@@ -1,8 +1,6 @@
-import { createToastInterface, type ToastInterface } from 'vue-toastification'
+import { type ToastInterface } from 'vue-toastification'
 import { BASE_URL } from '../assets/config'
 import type { ErrorResponse } from '@/services/errorConstants'
-
-const toast = createToastInterface()
 
 export const getData = async <T>(relativeUrl: string, headers: HeadersInit) => {
   return fetchData(relativeUrl, {
@@ -93,6 +91,6 @@ export const showErrorToast = async (toast: ToastInterface, error: Response, def
   toast.error(err.message)
 }
 
-const isValidatedErrorResponse = (err: Record<string, any>): err is ErrorResponse => {
-  return err.key && err.messages
+const isValidatedErrorResponse = (err: Partial<ErrorResponse>): err is ErrorResponse => {
+  return !!err.key && !!err.messages
 }

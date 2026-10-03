@@ -95,14 +95,14 @@ export interface Attendee extends NewAttendee {
   status: AttendeeStatus | null | undefined
 }
 
-export interface Youth extends Attendee {}
+export type Youth = Attendee
 
 export interface YouthLeader extends Attendee {
   juleikaNumber: string
   juleikaExpireDate: string
 }
 
-export interface Child extends Attendee {}
+export type Child = Attendee
 
 export interface ChildLeader extends Attendee {
   juleikaNumber: string

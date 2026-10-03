@@ -20,7 +20,7 @@ onMounted(() => {
   getEvacuationGroup().then((evacGroup) => {
     evacuationGroups.value = evacGroup
   })
-  Promise.all([globalEventSummary() as Promise<any>, getDepartments({ onlyWithAttendees: true })]).then(
+  Promise.all([globalEventSummary(), getDepartments({ onlyWithAttendees: true })]).then(
     ([summary, deps]: [GlobalEventSummary, Department[]]) => {
       departmentSummary.value = {
         total: summary.total,

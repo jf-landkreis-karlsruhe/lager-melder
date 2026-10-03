@@ -20,7 +20,7 @@ export interface ErrorMessage {
   fieldName: string
 }
 
-export const getErrorMessage = async (err: any) => {
+export const getErrorMessage = async (err: Response) => {
   try {
     const errMess = await err.json()
     if (isError(errMess)) {

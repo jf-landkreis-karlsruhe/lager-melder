@@ -22,6 +22,7 @@ const leaderEmail = ref<string>(props.department.leaderEMail)
 const shortName = ref<string>(props.department.shortName)
 const headDepartmentName = ref<string>(props.department.headDepartmentName)
 const phoneNumber = ref<string>(props.department.phoneNumber)
+const features = ref<DepartmentFeatures[]>([...props.department.features])
 const rolesList = ref<{ value: Roles; title: string }[]>([
   { value: Roles.USER, title: rolesTitle(Roles.USER) },
   {
@@ -42,7 +43,8 @@ const onUpdateDepartment = () => {
     leaderEMail: leaderEmail.value,
     shortName: shortName.value,
     phoneNumber: phoneNumber.value,
-    headDepartmentName: headDepartmentName.value
+    headDepartmentName: headDepartmentName.value,
+    features: features.value
   }
   updateDepartment(updatedDepartment)
     .then(() => {
@@ -123,29 +125,19 @@ onMounted(async () => {
           </div>
           <div class="d-flex space-between flex-wrap" style="gap: 20px">
             <v-switch
-              v-model="department.features"
+              v-model="features"
               color="primary"
               label="Teilnehmer"
               :value="DepartmentFeatures.YOUTH_GROUPS"
             ></v-switch>
             <v-switch
-              v-model="department.features"
+              v-model="features"
               color="primary"
               label="Kindergruppentag"
               :value="DepartmentFeatures.CHILD_GROUPS"
             ></v-switch>
-            <v-switch
-              v-model="department.features"
-              color="primary"
-              label="Z Kids"
-              :value="DepartmentFeatures.ZKIDS"
-            ></v-switch>
-            <v-switch
-              v-model="department.features"
-              color="primary"
-              label="Helfer"
-              :value="DepartmentFeatures.HELPER"
-            ></v-switch>
+            <v-switch v-model="features" color="primary" label="Z Kids" :value="DepartmentFeatures.ZKIDS"></v-switch>
+            <v-switch v-model="features" color="primary" label="Helfer" :value="DepartmentFeatures.HELPER"></v-switch>
           </div>
         </v-row>
         <v-row justify="end">

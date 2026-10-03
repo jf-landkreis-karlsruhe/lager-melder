@@ -129,8 +129,8 @@ const requiredRule = [
             <template #selection="{ item }">
               <v-icon class="mr-4">mdi-tshirt-crew-outline</v-icon>{{ item.title }}
             </template>
-            <template #item="{ props }">
-              <v-list-item v-bind="props"></v-list-item>
+            <template #item="{ props: itemProps }">
+              <v-list-item v-bind="itemProps"></v-list-item>
             </template>
           </v-select>
 
@@ -149,8 +149,8 @@ const requiredRule = [
               <v-icon class="mr-4">{{ item.props.prependIcon }}</v-icon>
               {{ item.title }}
             </template>
-            <template #item="{ props }">
-              <v-list-item v-bind="props"></v-list-item>
+            <template #item="{ props: itemProps }">
+              <v-list-item v-bind="itemProps"></v-list-item>
             </template>
           </v-select>
         </div>

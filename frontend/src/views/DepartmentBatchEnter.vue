@@ -2,13 +2,11 @@
 import { onMounted, ref } from 'vue'
 import { DepartmentFeatures, getDepartment } from '../services/department'
 import { type Attendees, getAttendeesPartOfDepartment } from '../services/attendee'
-import { useToast } from 'vue-toastification'
 import { useRoute } from 'vue-router'
 import type { Department } from '@/services/department'
 import AttendeeBatchEvent from '@/components/batch/AttendeeBatchEvent.vue'
 import SubsidyOverview from '@/components/batch/SubsidyOverview.vue'
 
-const toast = useToast()
 const route = useRoute()
 const departmentId = ref<number>(0)
 const department = ref<Department | undefined>()

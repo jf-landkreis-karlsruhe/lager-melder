@@ -95,7 +95,7 @@ const startEdit = () => {
     </form>
     <div v-if="!edit" class="d-flex flex-wrap justify-space-between align-baseline">
       <div class="d-flex flex-wrap flex-grow-1">
-        <v-chip v-for="tent in department.tentMarkings" class="mx-2 my-2" size="x-large">
+        <v-chip v-for="tent in department.tentMarkings" :key="tent.id" class="mx-2 my-2" size="x-large">
           {{ tent.name }}
         </v-chip>
         <p v-if="!department.tentMarkings || department.tentMarkings.length === 0">-</p>

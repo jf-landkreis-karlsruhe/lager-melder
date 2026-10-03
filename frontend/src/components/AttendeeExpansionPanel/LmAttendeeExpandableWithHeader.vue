@@ -72,6 +72,8 @@ const closeAddNewAttendeeForm = (): void => {
 }
 
 const handleSaveNewAttendee = (newAttendee: Attendee) => {
+  // the ref itself is passed on purpose: the parent reads the panels after the list was re-rendered
+  // eslint-disable-next-line vue/no-ref-as-operand
   emit('save-new', newAttendee, props.role, closeAddNewAttendeeForm, expansionPanels)
 }
 
