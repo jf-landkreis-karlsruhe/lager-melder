@@ -37,7 +37,7 @@ const mountComponent = () =>
 
 describe('AttendeeBatchEvent', () => {
   beforeEach(() => {
-    vi.mocked(batchEnterAttendees).mockReset().mockResolvedValue(new Response())
+    vi.mocked(batchEnterAttendees).mockReset().mockResolvedValue([])
   })
 
   it('lists attendees per group', async () => {
