@@ -54,7 +54,7 @@ class AttendeeControllerTest(
             .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(attendee.firstName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(attendee.lastName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.birthday").value(attendee.birthday))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.food").value(attendee.food.toString()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.food").value(attendee.food.name))
             .andExpect(MockMvcResultMatchers.jsonPath("$.tShirtSize").value(attendee.tShirtSize))
             .andExpect(MockMvcResultMatchers.jsonPath("$.additionalInformation").value(attendee.additionalInformation))
             .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(attendee.role.name))
@@ -98,7 +98,7 @@ class AttendeeControllerTest(
             .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(updatedAttendee.firstName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(updatedAttendee.lastName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.birthday").value(updatedAttendee.birthday))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.food").value(updatedAttendee.food.toString()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.food").value(updatedAttendee.food.name))
             .andExpect(MockMvcResultMatchers.jsonPath("$.tShirtSize").value(updatedAttendee.tShirtSize))
             .andExpect(
                 MockMvcResultMatchers.jsonPath("$.additionalInformation").value(updatedAttendee.additionalInformation),
