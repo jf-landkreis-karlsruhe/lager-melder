@@ -272,14 +272,14 @@ function scrollTo(el: HTMLElement, callback: () => void) {
           <h2 class="mb-0">Zeltlager</h2>
           <div>Anzahl Teilnehmer: {{ totalAttendeeCount }} (Anwesend: {{ enteredAttendeesCount }})</div>
         </div>
-        <LmRegistrationEndBanner v-if="attendeesRegistrationEnd" :registrationEnd="attendeesRegistrationEnd" />
+        <LmRegistrationEndBanner v-if="attendeesRegistrationEnd" :registration-end="attendeesRegistrationEnd" />
 
         <LmAttendeeExpandableWithHeader
           :department="props.department"
           header-label="Jugendliche"
           :attendee-list="youthAttendeeList"
           :role="attendeeRoleYouth"
-          :attendeesCanBeEdited="attendeesCanBeEdited"
+          :attendees-can-be-edited="attendeesCanBeEdited"
           :t-shirt-sizes="tShirtSizes"
           :departments="departments"
           :event-days="eventDays"
@@ -295,7 +295,7 @@ function scrollTo(el: HTMLElement, callback: () => void) {
         :department="props.department"
         :attendee-list="youthLeaderAttendeeList"
         :role="attendeeRoleYouthLeader"
-        :attendeesCanBeEdited="attendeesCanBeEdited"
+        :attendees-can-be-edited="attendeesCanBeEdited"
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
@@ -328,7 +328,7 @@ function scrollTo(el: HTMLElement, callback: () => void) {
 
       <div v-if="department && department.id">
         <RegistrationInformation
-          :departmentId="department.id"
+          :department-id="department.id"
           :department-phone-number="department.phoneNumber"
           :name-kommandant="department.nameKommandant"
           :phone-number-kommandant="department.phoneNumberKommandant"
@@ -338,14 +338,14 @@ function scrollTo(el: HTMLElement, callback: () => void) {
 
     <div v-if="department && department.features.includes(DepartmentFeatures.CHILD_GROUPS)" class="mt-12 child-groups">
       <h2>Kindergruppentag</h2>
-      <LmRegistrationEndBanner :registrationEnd="childGroupRegistrationEnd" />
+      <LmRegistrationEndBanner :registration-end="childGroupRegistrationEnd" />
 
       <LmAttendeeExpandableWithHeader
         header-label="Kinder"
         :department="props.department"
         :attendee-list="childAttendeeList"
         :role="attendeeRoleChild"
-        :attendeesCanBeEdited="childGroupsCanBeEdited"
+        :attendees-can-be-edited="childGroupsCanBeEdited"
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
@@ -360,7 +360,7 @@ function scrollTo(el: HTMLElement, callback: () => void) {
         :department="props.department"
         :attendee-list="childLeaderAttendeeList"
         :role="attendeeRoleChildLeader"
-        :attendeesCanBeEdited="childGroupsCanBeEdited"
+        :attendees-can-be-edited="childGroupsCanBeEdited"
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
@@ -373,14 +373,14 @@ function scrollTo(el: HTMLElement, callback: () => void) {
 
     <div v-if="department && department.features.includes(DepartmentFeatures.ZKIDS)" class="mt-12">
       <h2>Z Kids Gruppe</h2>
-      <LmRegistrationEndBanner :registrationEnd="attendeesRegistrationEnd" />
+      <LmRegistrationEndBanner :registration-end="attendeesRegistrationEnd" />
 
       <LmAttendeeExpandableWithHeader
         header-label="zKids"
         :department="props.department"
         :attendee-list="zKidsAttendeeList"
         :role="attendeeRoleZKid"
-        :attendeesCanBeEdited="attendeesCanBeEdited"
+        :attendees-can-be-edited="attendeesCanBeEdited"
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"
@@ -393,14 +393,14 @@ function scrollTo(el: HTMLElement, callback: () => void) {
 
     <div v-if="department && department.features.includes(DepartmentFeatures.HELPER)" class="mt-12 helpers-group">
       <h2>Helfer Gruppe</h2>
-      <LmRegistrationEndBanner :registrationEnd="helpersRegistrationEnd" />
+      <LmRegistrationEndBanner :registration-end="helpersRegistrationEnd" />
 
       <LmAttendeeExpandableWithHeader
         header-label="Helfer"
         :department="props.department"
         :attendee-list="helpersAttendeeList"
         :role="attendeeRoleHelper"
-        :attendeesCanBeEdited="helpersCanBeEdited"
+        :attendees-can-be-edited="helpersCanBeEdited"
         :t-shirt-sizes="tShirtSizes"
         :departments="departments"
         :event-days="eventDays"

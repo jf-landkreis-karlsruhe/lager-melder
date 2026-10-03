@@ -67,13 +67,13 @@ onBeforeUnmount(() => {
         <v-form
           ref="manualCodeForm"
           v-model="manualCodeValid"
-          @submit.prevent="manualCodeSubmit"
           class="manual-code-form d-flex justify-center mt-8 mb-12"
+          @submit.prevent="manualCodeSubmit"
         >
           <v-row class="manual-code-row align-center ga-3">
             <v-text-field
-              v-model="manualCode"
               ref="manualCodeInput"
+              v-model="manualCode"
               label="Manuelle Eingabe"
               :autofocus="true"
               :hide-details="false"

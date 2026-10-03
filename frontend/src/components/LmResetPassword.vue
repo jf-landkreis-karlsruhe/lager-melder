@@ -13,7 +13,7 @@ const toast = useToast()
 const password = ref<string>('')
 const password_repeat = ref<string>('')
 const loading = ref<boolean>(false)
-let password_differs = ref<boolean>(false)
+const password_differs = ref<boolean>(false)
 
 const resetPasswordHandler = async () => {
   if (password.value !== password_repeat.value) {
@@ -51,16 +51,16 @@ watch(
             <form @submit.prevent="resetPasswordHandler">
               <v-card-text>
                 <v-text-field
+                  v-model="password"
                   type="password"
                   prepend-icon="mdi-lock"
-                  v-model="password"
                   label="Passwort"
                   variant="underlined"
                 />
                 <v-text-field
+                  v-model="password_repeat"
                   type="password"
                   prepend-icon="mdi-lock"
-                  v-model="password_repeat"
                   label="Passwort wiederholen"
                   variant="underlined"
                   :error-messages="password_differs ? 'Passwörter stimmen nicht überein.' : ''"

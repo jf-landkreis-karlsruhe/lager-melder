@@ -44,12 +44,12 @@ onMounted(() => {
       <h2 class="ml-md-4">Allgemein</h2>
       <v-row justify="center">
         <v-col sm="12">
-          <form class="pa-4" v-on:submit.prevent="saveSettings(settings)">
+          <form class="pa-4" @submit.prevent="saveSettings(settings)">
             <div>
               <h3>Anmeldung</h3>
               <v-text-field
-                type="date"
                 v-model="settings.registrationEnd"
+                type="date"
                 label="Registrierungsende Teilnehmer"
                 :variant="'underlined'"
                 :error-messages="
@@ -59,8 +59,8 @@ onMounted(() => {
                 "
               />
               <v-text-field
-                type="date"
                 v-model="settings.startDownloadRegistrationFiles"
+                type="date"
                 label="Anfangszeitpunkt des Downloads der Anmeldeunterlagen"
                 :variant="'underlined'"
                 :error-messages="
@@ -70,14 +70,14 @@ onMounted(() => {
                 "
               />
               <v-text-field
-                type="date"
                 v-model="settings.childGroupsRegistrationEnd"
+                type="date"
                 label="Registrierungsende Kindergruppen"
                 :variant="'underlined'"
               />
               <v-text-field
-                type="date"
                 v-model="settings.helpersRegistrationEnd"
+                type="date"
                 label="Registrierungsende Helfer"
                 :variant="'underlined'"
                 :error-messages="
@@ -88,44 +88,44 @@ onMounted(() => {
               />
               <h3>Veranstalltung</h3>
               <v-text-field
-                type="date"
                 v-model="settings.eventStart"
+                type="date"
                 label="Anfang der Veranstalltung"
                 :variant="'underlined'"
                 hint="Benutzt für Landesjugendplan, Teilnehmerliste Landkreis, Anmeldeliste, Pädagogische Betreuer"
               />
               <v-text-field
-                type="date"
                 v-model="settings.eventEnd"
+                type="date"
                 label="Ende der Veranstalltung"
                 :variant="'underlined'"
                 hint="Benutzt für Landesjugendplan, Teilnehmerliste Landkreis, Anmeldeliste, Pädagogische Betreuer"
               />
               <v-text-field
-                type="text"
                 v-model="settings.eventName"
+                type="text"
                 label="Veranstalltungsname"
                 :variant="'underlined'"
                 hint="Benutzt für Teilnehmerliste Landkreis"
               />
               <v-text-field
-                type="text"
                 v-model="settings.hostCity"
+                type="text"
                 label="Veranstalltungsort (Ort, Gemeinde)"
                 :variant="'underlined'"
                 hint="Benutzt für Landesjugendplan, Anmeldeliste"
               />
               <v-text-field
-                type="text"
                 v-model="settings.eventAddress"
+                type="text"
                 label="Veranstalltungsadresse"
                 :variant="'underlined'"
                 hint="Benutzt für Teilnehmerliste Landkreis"
               />
               <h3>Organisator</h3>
               <v-text-field
-                type="text"
                 v-model="settings.organizer"
+                type="text"
                 label="Organisator"
                 :variant="'underlined'"
                 hint="Benutzt für Landesjugendplan, Pädagogische Betreuer"
@@ -139,16 +139,16 @@ onMounted(() => {
               />
               <h3>Zuschuss</h3>
               <v-text-field
-                type="text"
                 v-model="settings.moneyPerYouthLoader"
+                type="text"
                 label="Zuschuss pro Betreuer"
                 :variant="'underlined'"
                 hint="Benutzt für Pädagogische Betreuer"
               />
               <h3>Schichten</h3>
               <v-text-field
-                type="number"
                 v-model="settings.numberOfDuties"
+                type="number"
                 label="Anzahl der Schichten"
                 :variant="'underlined'"
                 :min="0"

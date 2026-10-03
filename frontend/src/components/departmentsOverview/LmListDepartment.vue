@@ -36,7 +36,7 @@ onMounted(async () => {
         <h1>Feuerwehren</h1>
         <div v-for="department in departments" :key="department.id">
           <v-card class="pa-6" variant="outlined" max-width="700">
-            <template v-slot:title>
+            <template #title>
               <h2><span v-if="department.paused">⏸️ </span>{{ department.name }}</h2>
             </template>
             <EditDepartment :department="department" />
@@ -51,7 +51,7 @@ onMounted(async () => {
     <div class="add-new-department">
       <LmContainer>
         <h1>Feuerwehr hinzufügen</h1>
-        <AddDepartment :onDepartmentCreated="onDepartmentCreated" class="mb-8" />
+        <AddDepartment :on-department-created="onDepartmentCreated" class="mb-8" />
       </LmContainer>
     </div>
   </div>

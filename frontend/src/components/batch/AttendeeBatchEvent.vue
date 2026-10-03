@@ -63,9 +63,9 @@ const leave = () => {
 
 <template>
   <v-card class="pa-6">
-    <form v-on:submit.prevent="enter">
+    <form @submit.prevent="enter">
       <h2>{{ props.headline }}</h2>
-      <v-checkbox-btn v-if="hasAttendees" v-model="allSelected" @change="selectAllAttendees()" label="Alle auswählen" />
+      <v-checkbox-btn v-if="hasAttendees" v-model="allSelected" label="Alle auswählen" @change="selectAllAttendees()" />
       <div v-for="attendeeGroup in attendeeGroups">
         <h3>{{ attendeeGroup.headline }}</h3>
         <v-checkbox-btn

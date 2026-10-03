@@ -74,13 +74,9 @@ onMounted(() => {
           </p>
 
           <p class="pt-6">Die Größen der Zelte sind angegeben in Länge x Breite.</p>
-          <form
-            v-if="tents"
-            v-on:submit.prevent="saveRegistrationInformation"
-            class="w-30 d-flex align-center flex-column"
-          >
+          <form v-if="tents" class="w-30 d-flex align-center flex-column" @submit.prevent="saveRegistrationInformation">
             <label class="text-caption d-block">SG 200 (4m x 5,9m)</label>
-            <v-btn-toggle class="mb-2" v-model="tents.sg200" divided variant="outlined" required>
+            <v-btn-toggle v-model="tents.sg200" class="mb-2" divided variant="outlined" required>
               <v-btn icon="mdi-numeric-0"></v-btn>
               <v-btn icon="mdi-numeric-1"></v-btn>
               <v-btn icon="mdi-numeric-2"></v-btn>
@@ -90,7 +86,7 @@ onMounted(() => {
               <v-btn icon="mdi-numeric-6"></v-btn>
             </v-btn-toggle>
             <label class="text-caption d-block">SG 20 (5m x 4,74m)</label>
-            <v-btn-toggle class="mb-2" v-model="tents.sg20" divided variant="outlined" required>
+            <v-btn-toggle v-model="tents.sg20" class="mb-2" divided variant="outlined" required>
               <v-btn icon="mdi-numeric-0"></v-btn>
               <v-btn icon="mdi-numeric-1"></v-btn>
               <v-btn icon="mdi-numeric-2"></v-btn>
@@ -100,7 +96,7 @@ onMounted(() => {
               <v-btn icon="mdi-numeric-6"></v-btn>
             </v-btn-toggle>
             <label class="text-caption d-block">SG 30 (6m x 5,64m)</label>
-            <v-btn-toggle class="mb-2" v-model="tents.sg30" divided variant="outlined" required>
+            <v-btn-toggle v-model="tents.sg30" class="mb-2" divided variant="outlined" required>
               <v-btn icon="mdi-numeric-0"></v-btn>
               <v-btn icon="mdi-numeric-1"></v-btn>
               <v-btn icon="mdi-numeric-2"></v-btn>
@@ -110,7 +106,7 @@ onMounted(() => {
               <v-btn icon="mdi-numeric-6"></v-btn>
             </v-btn-toggle>
             <label class="text-caption d-block">SG 40 (8m x 5,64m)</label>
-            <v-btn-toggle class="mb-2" v-model="tents.sg40" divided variant="outlined" required>
+            <v-btn-toggle v-model="tents.sg40" class="mb-2" divided variant="outlined" required>
               <v-btn icon="mdi-numeric-0"></v-btn>
               <v-btn icon="mdi-numeric-1"></v-btn>
               <v-btn icon="mdi-numeric-2"></v-btn>
@@ -120,7 +116,7 @@ onMounted(() => {
               <v-btn icon="mdi-numeric-6"></v-btn>
             </v-btn-toggle>
             <label class="text-caption d-block">SG 50 (10m x 5,64m)</label>
-            <v-btn-toggle class="mb-2" v-model="tents.sg50" divided variant="outlined" required>
+            <v-btn-toggle v-model="tents.sg50" class="mb-2" divided variant="outlined" required>
               <v-btn icon="mdi-numeric-0"></v-btn>
               <v-btn icon="mdi-numeric-1"></v-btn>
               <v-btn icon="mdi-numeric-2"></v-btn>
@@ -136,9 +132,9 @@ onMounted(() => {
               während der ganzen Zeit des Zeltlagers einen Jugendleiter erreichen können.
             </p>
             <v-text-field
+              v-model="phoneNumber"
               class="w-75 pt-2"
               type="text"
-              v-model="phoneNumber"
               label="Kontaktnummer"
               variant="underlined"
             />
@@ -146,18 +142,18 @@ onMounted(() => {
             <h5>Erreichbarkeit Kommandant</h5>
             <div class="d-flex align-center flex-wrap w-100">
               <v-text-field
+                v-model="nameKommandant"
                 style="flex: 1 1 150px"
                 class="mx-4"
                 type="text"
-                v-model="nameKommandant"
                 label="Name"
                 variant="underlined"
               />
               <v-text-field
+                v-model="phoneNumberKommandant"
                 style="flex: 1 1 250px"
                 class="mx-4"
                 type="text"
-                v-model="phoneNumberKommandant"
                 label="Kontaktnummer"
                 variant="underlined"
               />

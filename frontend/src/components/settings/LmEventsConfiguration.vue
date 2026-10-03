@@ -84,7 +84,7 @@ const downloadEventsPDF = () => {
       <v-col sm="12">
         <div class="pa-4">
           <h3>Event erstellen</h3>
-          <form v-on:submit.prevent="createEventInternal()">
+          <form @submit.prevent="createEventInternal()">
             <v-text-field v-model="eventName" label="Titel des Event" required :variant="'underlined'" />
             <v-row class="v-row" justify="end">
               <v-btn color="primary" :loading="loadingEventId === '0'" type="submit" rounded>
@@ -98,7 +98,7 @@ const downloadEventsPDF = () => {
           <h2>Event QR Codes</h2>
           <p class="d-flex justify-space-between align-center mb-6">
             Die QR Codes für alle Events herrunterladen.
-            <v-btn small class="underline" :loading="loadingDownload" @click="downloadEventsPDF" rounded>
+            <v-btn small class="underline" :loading="loadingDownload" rounded @click="downloadEventsPDF">
               Herunterladen
               <v-icon right dark> mdi-cloud-download </v-icon>
             </v-btn>
@@ -110,15 +110,15 @@ const downloadEventsPDF = () => {
           <div class="flex-row flex-center">
             <v-card class="event-card mt-6 p-6">
               <p v-if="!events || events.length === 0" class="mb-0">ℹ️ Keine Events vorhanden.</p>
-              <div class="flex-row event" v-for="event in events" :key="event.id">
+              <div v-for="event in events" :key="event.id" class="flex-row event">
                 <div class="flex-row flex-grow">
                   <div v-if="!editingEventIds.includes(event.id)">
                     {{ event.name }}
                   </div>
                   <div v-if="editingEventIds.includes(event.id)" style="width: 100%">
                     <v-text-field
-                      type="text"
                       v-model="event.name"
+                      type="text"
                       label="Titel des Event"
                       :variant="'underlined'"
                       required
@@ -141,22 +141,22 @@ const downloadEventsPDF = () => {
                       </v-btn>
                     </div>
                     <v-icon
+                      v-if="event.type === eventTypeLocation"
                       medium
                       @click.prevent="deleteEventInternal(event.id)"
-                      v-if="event.type === eventTypeLocation"
                     >
                       mdi-delete
                     </v-icon>
-                    <div style="width: 24px; height: 24px" v-if="event.type !== eventTypeLocation"></div>
+                    <div v-if="event.type !== eventTypeLocation" style="width: 24px; height: 24px"></div>
                   </div>
                 </div>
               </div>
 
               <form
                 v-for="event in events"
-                :key="'form-' + event.id"
                 :id="createFormName(event)"
-                v-on:submit.prevent="saveEvent(event)"
+                :key="'form-' + event.id"
+                @submit.prevent="saveEvent(event)"
               />
             </v-card>
           </div>

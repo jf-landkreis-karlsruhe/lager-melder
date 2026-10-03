@@ -2,7 +2,7 @@ import type { EventDays } from '@/services/eventDays'
 
 export interface TShirtSizeSelect {
   title: string
-  props: Object
+  props: object
 }
 export interface HelperDaySelect {
   title: string

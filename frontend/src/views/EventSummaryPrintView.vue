@@ -62,7 +62,7 @@ const emptySummary: Distribution = {
   <LmContainer v-if="hasLKKarlsruheRole()">
     <div v-if="departmentSummary !== null">
       <CheckedInSummary
-        :departmentDistribution="departmentSummary.total"
+        :department-distribution="departmentSummary.total"
         :paused="false"
         :name="departmentSummary.total.name"
       />

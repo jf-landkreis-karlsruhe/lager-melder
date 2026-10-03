@@ -64,7 +64,7 @@ const startEdit = () => {
 <template>
   <div :style="'background: ' + department.evacuationGroup?.color + '33; padding: 9px;border-radius:3px'">
     <h4>Zelte</h4>
-    <form v-if="edit" v-on:submit.prevent="saveEvacuationGroups()">
+    <form v-if="edit" @submit.prevent="saveEvacuationGroups()">
       <div>
         <v-select
           v-model="department.evacuationGroup"
@@ -85,7 +85,7 @@ const startEdit = () => {
         ></v-combobox>
       </div>
       <div class="d-flex justify-end">
-        <v-btn @click.prevent="edit = false" rounded class="mx-2">
+        <v-btn rounded class="mx-2" @click.prevent="edit = false">
           <v-icon medium class="mx-2"> mdi-cancel</v-icon>
         </v-btn>
         <v-btn type="submit" :loading="loading" rounded class="mx-2">
@@ -95,7 +95,7 @@ const startEdit = () => {
     </form>
     <div v-if="!edit" class="d-flex flex-wrap justify-space-between align-baseline">
       <div class="d-flex flex-wrap flex-grow-1">
-        <v-chip class="mx-2 my-2" v-for="tent in department.tentMarkings" size="x-large">
+        <v-chip v-for="tent in department.tentMarkings" class="mx-2 my-2" size="x-large">
           {{ tent.name }}
         </v-chip>
         <p v-if="!department.tentMarkings || department.tentMarkings.length === 0">-</p>

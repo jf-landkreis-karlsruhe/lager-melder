@@ -70,12 +70,12 @@ const sendRegistrationEndEmail = () => {
           <MailReminderText />
           <v-row justify="end" class="mb-2">
             <v-dialog v-model="reminderDialogOpen" persistent max-width="500">
-              <template v-slot:activator="{ props }">
+              <template #activator="{ props }">
                 <v-btn rounded color="primary" dark v-bind="props" class="my-4"> Errinnerungsmail senden </v-btn>
               </template>
 
               <v-card class="mb-4">
-                <form class="pa-4" v-on:submit.prevent="sendReminderEmail">
+                <form class="pa-4" @submit.prevent="sendReminderEmail">
                   <v-card-title class="headline"> Errinnerungsmail versenden </v-card-title>
                   <v-card-text v-if="!emailSent">
                     An welche Gruppe soll die Mail verschickt werden?
@@ -96,7 +96,7 @@ const sendRegistrationEndEmail = () => {
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn rounded @click="closeModal"> Schließen </v-btn>
-                    <v-btn color="primary" v-if="!emailSent" :loading="sendingEmail" type="submit"> Senden </v-btn>
+                    <v-btn v-if="!emailSent" color="primary" :loading="sendingEmail" type="submit"> Senden </v-btn>
                   </v-card-actions>
                 </form>
               </v-card>
@@ -114,11 +114,11 @@ const sendRegistrationEndEmail = () => {
           <MailRegistrationEndText />
           <v-row justify="end">
             <v-dialog v-model="registrationEndDialogOpen" persistent max-width="500">
-              <template v-slot:activator="{ props }">
+              <template #activator="{ props }">
                 <v-btn rounded color="primary" dark v-bind="props" class="my-4"> Registrierungsende Mail senden </v-btn>
               </template>
               <v-card class="mb-0">
-                <form v-on:submit.prevent="sendRegistrationEndEmail">
+                <form @submit.prevent="sendRegistrationEndEmail">
                   <v-card-title class="headline"> Registrierungsende Mail versenden </v-card-title>
                   <v-card-text v-if="!emailSent">
                     An welche Gruppe soll die Mail verschickt werden?
@@ -139,7 +139,7 @@ const sendRegistrationEndEmail = () => {
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn rounded @click="closeModal"> Schließen </v-btn>
-                    <v-btn color="primary" v-if="!emailSent" :loading="sendingEmail" type="submit"> Senden </v-btn>
+                    <v-btn v-if="!emailSent" color="primary" :loading="sendingEmail" type="submit"> Senden </v-btn>
                   </v-card-actions>
                 </form>
               </v-card>

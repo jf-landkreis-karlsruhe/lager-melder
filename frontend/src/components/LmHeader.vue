@@ -59,16 +59,16 @@ const checkToken = () => {
               <li class="nav-item">
                 <router-link to="/files">Anmeldeunterlagen</router-link>
               </li>
-              <li class="nav-item admin" v-if="hasSpecializedFieldDirectorRole()">
+              <li v-if="hasSpecializedFieldDirectorRole()" class="nav-item admin">
                 <router-link to="/feuerwehr">Feuerwehren</router-link>
               </li>
-              <li class="nav-item admin" v-if="hasLKKarlsruheRole()">
+              <li v-if="hasLKKarlsruheRole()" class="nav-item admin">
                 <router-link to="/planung"> Planung</router-link>
               </li>
-              <li class="nav-item admin" v-if="hasLKKarlsruheRole()">
+              <li v-if="hasLKKarlsruheRole()" class="nav-item admin">
                 <router-link to="/anwesend"> Anwesend </router-link>
               </li>
-              <li class="nav-item admin" v-if="hasSpecializedFieldDirectorRole()">
+              <li v-if="hasSpecializedFieldDirectorRole()" class="nav-item admin">
                 <router-link to="/einstellungen"> Einstellungen </router-link>
               </li>
             </ul>

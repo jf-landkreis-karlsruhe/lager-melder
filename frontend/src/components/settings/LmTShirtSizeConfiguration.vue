@@ -69,7 +69,7 @@ const deleteEventInternal = () => {
       <v-col sm="12">
         <div class="pa-4">
           <h3>TShirtgröße erstellen</h3>
-          <form v-on:submit.prevent="createTShirtSizeInternal()">
+          <form @submit.prevent="createTShirtSizeInternal()">
             <v-text-field v-model="newTShirtSize" label="TShirtgröße" required :variant="'underlined'" />
             <v-row class="v-row" justify="end">
               <v-btn
@@ -89,7 +89,7 @@ const deleteEventInternal = () => {
           <div class="flex-row flex-center">
             <v-card class="event-card mt-6 p-6">
               <p v-if="!tShirtSizes || tShirtSizes.length === 0" class="mb-0">ℹ️ Keine TShirtgrößen vorhanden.</p>
-              <div class="flex-row event" v-for="tShirtSize in tShirtSizes" :key="tShirtSize">
+              <div v-for="tShirtSize in tShirtSizes" :key="tShirtSize" class="flex-row event">
                 <div class="flex-row flex-grow">
                   <div class="flex-grow">
                     {{ tShirtSize }}
@@ -108,7 +108,7 @@ const deleteEventInternal = () => {
   </v-card>
   <v-dialog v-model="deleteModal" persistent max-width="500">
     <v-card class="mb-0">
-      <form v-on:submit.prevent="deleteEventInternal">
+      <form @submit.prevent="deleteEventInternal">
         <v-card-title class="headline">TShirtgröße ersetzen </v-card-title>
         <v-card-text>
           Durch welches TShirtgröße soll die Größe ({{ tShirtSizeToDelete }}) ersetzt werden?
