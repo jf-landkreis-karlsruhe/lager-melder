@@ -19,7 +19,8 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:docker": "docker run --rm --ipc=host -v \"$PWD\":/work -v lm-frontend-node-modules:/work/node_modules -w /work mcr.microsoft.com/playwright:v1.63.0-noble sh -c \"npm install --no-audit --no-fund --loglevel=error && npx playwright test\"",
-    "test:e2e:update-screenshots": "docker run --rm --ipc=host -v \"$PWD\":/work -v lm-frontend-node-modules:/work/node_modules -w /work mcr.microsoft.com/playwright:v1.63.0-noble sh -c \"npm install --no-audit --no-fund --loglevel=error && npx playwright test e2e/visual.spec.ts --update-snapshots\""
+    "test:e2e:update-screenshots": "docker run --rm --ipc=host -v \"$PWD\":/work -v lm-frontend-node-modules:/work/node_modules -w /work mcr.microsoft.com/playwright:v1.63.0-noble sh -c \"npm install --no-audit --no-fund --loglevel=error && npx playwright test e2e/visual.spec.ts --update-snapshots\"",
+    "dev:agent": "vite --host 0.0.0.0 --port 9000"
   },
   "dependencies": {
     "chart.js": "^4.4.1",
