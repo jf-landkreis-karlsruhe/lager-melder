@@ -1,5 +1,9 @@
 # Lagermelder
 
+Online-Anmeldung und Organisation des Kreiszeltlagers der Jugendfeuerwehr Landkreis Karlsruhe.
+Was die Anwendung fachlich kann (Rollen, Anmeldung, Anmelde- und Planungsunterlagen, Check-in), steht in
+[`docs/FEATURES.md`](docs/FEATURES.md). Technische Architektur: [`backend/ARCHITECTURE.md`](backend/ARCHITECTURE.md).
+
 ## Quickstart when app already run on your machine (docker images already created)
 
 - Then start them with:

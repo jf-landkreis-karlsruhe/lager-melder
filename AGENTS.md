@@ -11,6 +11,9 @@ Monorepo with four sub-projects:
 | `account-creator/` | Go CLI                           |
 | `page-to-pdf/`   | Node.js + Puppeteer                |
 
+What the application does for its users (roles, registration, generated files, check-in, domain terms):
+see [`docs/FEATURES.md`](docs/FEATURES.md) (German). Read it before changing behaviour.
+
 Most active development happens in `frontend/`. All commands below assume you are inside `frontend/` unless stated otherwise.
 
 ---

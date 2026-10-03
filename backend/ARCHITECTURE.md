@@ -3,6 +3,7 @@
 Spring Boot 4 + Kotlin service that manages registrations for a tent camp ("Kreiszeltlager"):
 departments (fire brigade youth groups) register their attendees, the organisers configure deadlines,
 download generated PDFs/CSVs and check attendees in and out of events via codes/QR codes.
+The functional description (roles, features, domain terms) is in [`docs/FEATURES.md`](../docs/FEATURES.md).
 
 - Base package: `de.kordondev.lagermelder`
 - All endpoints are served below the servlet context path `/api`
