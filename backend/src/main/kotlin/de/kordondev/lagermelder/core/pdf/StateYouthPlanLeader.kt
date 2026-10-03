@@ -42,18 +42,19 @@ class StateYouthPlanLeader(
         private const val DAYS_OF_EVENT = 5
     }
 
-    fun createStateYouthPlanLeaderPdf(attendees: List<Attendee>): PDDocument {
+    fun createStateYouthPlanLeaderPdf(attendees: List<Attendee>): ByteArray {
         val resource: Resource = resourceLoader.getResource("classpath:data/stateYouthPlanLeader.pdf")
         val settings = settingsService.getSettings()
 
         val youthLeaders = attendees.filter { it.role == AttendeeRole.YOUTH_LEADER }
         logger.info("youthLeaders ${youthLeaders.size}")
         val result = PDDocument()
+        val templates = mutableListOf<PDDocument>()
         val fields = mutableListOf<PDField>()
 
         var page = 1
         for (i in youthLeaders.indices step ATTENDEES_ON_PAGE) {
-            val pdfDocument = PDDocument.load(resource.inputStream)
+            val pdfDocument = pdfHelper.loadTemplate(resource, templates)
 
             val attendeesForPage =
                 if (youthLeaders.size <= i + ATTENDEES_ON_PAGE) {
@@ -67,7 +68,7 @@ class StateYouthPlanLeader(
         }
 
         if (youthLeaders.isEmpty()) {
-            val pdfDocument = PDDocument.load(resource.inputStream)
+            val pdfDocument = pdfHelper.loadTemplate(resource, templates)
             val form = pdfDocument.documentCatalog.acroForm
             fillGeneralData(form, page, settings, fields)
             result.addPage(pdfDocument.getPage(0))
@@ -86,7 +87,7 @@ class StateYouthPlanLeader(
         result.documentCatalog.acroForm = finalForm
         finalForm.fields = fields
         finalForm.needAppearances = true
-        return result
+        return pdfHelper.saveAndClose(result, templates)
     }
 
     fun fillGeneralData(

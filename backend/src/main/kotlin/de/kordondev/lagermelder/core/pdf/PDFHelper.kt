@@ -8,11 +8,34 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox
 import org.apache.pdfbox.pdmodel.interactive.form.PDField
+import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
+import java.io.ByteArrayOutputStream
 import java.time.format.DateTimeFormatter
 
 @Service
 class PDFHelper {
+    /**
+     * Loads a PDF form template. Pages of a template are added to the result document, which keeps referencing the
+     * template's streams. The template must therefore stay referenced (and open) until the result is saved, otherwise
+     * PDFBox closes it on garbage collection ("COSStream has been closed"). Collect templates and pass them to [saveAndClose].
+     */
+    fun loadTemplate(
+        resource: Resource,
+        templates: MutableList<PDDocument>,
+    ): PDDocument = PDDocument.load(resource.inputStream).also { templates.add(it) }
+
+    fun saveAndClose(
+        result: PDDocument,
+        templates: List<PDDocument>,
+    ): ByteArray =
+        ByteArrayOutputStream().use { out ->
+            result.save(out)
+            result.close()
+            templates.forEach { it.close() }
+            out.toByteArray()
+        }
+
     companion object {
         var germanDate = DateTimeFormatter.ofPattern("dd.MM.yyyy")
         var germanDateShort = DateTimeFormatter.ofPattern("dd.MM.yy")

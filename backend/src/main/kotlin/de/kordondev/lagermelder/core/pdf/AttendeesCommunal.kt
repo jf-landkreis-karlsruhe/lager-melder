@@ -42,17 +42,18 @@ class AttendeesCommunal(
     fun createAttendeesCommunalPdf(
         attendees: List<Attendee>,
         department: DepartmentEntry,
-    ): PDDocument {
+    ): ByteArray {
         val resource: Resource = resourceLoader.getResource("classpath:data/attendeesCommunal.pdf")
         val settings = settingsService.getSettings()
 
         logger.info("attendees ${attendees.size}")
         val result = PDDocument()
+        val templates = mutableListOf<PDDocument>()
         val fields = mutableListOf<PDField>()
 
         var page = 1
         var lastAttendeeIndex = 0
-        val pdfDocument = PDDocument.load(resource.inputStream)
+        val pdfDocument = pdfHelper.loadTemplate(resource, templates)
 
         if (attendees.isEmpty()) {
             fields.addAll(fillFirstPage(pdfDocument, department.name, attendees, page))
@@ -60,7 +61,7 @@ class AttendeesCommunal(
         }
 
         for (i in 0..attendees.size - ATTENDEES_ON_SECOND_PAGE step ATTENDEES_ON_FIRST_PAGE) {
-            val pdfDocument = PDDocument.load(resource.inputStream)
+            val pdfDocument = pdfHelper.loadTemplate(resource, templates)
 
             val attendeesForPage =
                 if (attendees.size <= i + ATTENDEES_ON_FIRST_PAGE) {
@@ -83,7 +84,7 @@ class AttendeesCommunal(
         result.documentCatalog.acroForm = finalForm
         finalForm.fields = fields
         finalForm.needAppearances = true
-        return result
+        return pdfHelper.saveAndClose(result, templates)
     }
 
     fun fillFirstPage(

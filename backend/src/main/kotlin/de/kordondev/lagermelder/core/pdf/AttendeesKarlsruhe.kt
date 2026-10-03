@@ -39,22 +39,24 @@ class AttendeesKarlsruhe(
     fun createAttendeesKarlsruhePdf(
         attendees: List<Attendee>,
         group: Group,
-    ): PDDocument {
+    ): ByteArray {
         val resource: Resource = resourceLoader.getResource("classpath:data/attendees_LRA_KA.pdf")
         val settings = getSettings(group)
 
         logger.info("attendeeSize ${attendees.size}")
 
         val result = PDDocument()
+
+        val templates = mutableListOf<PDDocument>()
         val fields = mutableListOf<PDField>()
 
         if (attendees.size <= ATTENDEES_ON_FIRST_PAGE) {
-            val pdfDocument = PDDocument.load(resource.inputStream)
+            val pdfDocument = pdfHelper.loadTemplate(resource, templates)
             fields.addAll(fillPage(pdfDocument, attendees, TABLE_ROW_START_PAGE_1, 1000, settings))
             fields.addAll(fillFirstPage(pdfDocument, 1000, settings))
             result.addPage(pdfDocument.getPage(0))
         } else {
-            var pdfDocument = PDDocument.load(resource.inputStream)
+            var pdfDocument = pdfHelper.loadTemplate(resource, templates)
             fields.addAll(
                 fillPage(
                     pdfDocument,
@@ -68,7 +70,7 @@ class AttendeesKarlsruhe(
             result.addPage(pdfDocument.getPage(0))
             var page = 1002
             for (i in ATTENDEES_ON_FIRST_PAGE until attendees.size step ATTENDEES_ON_SECOND_PAGE) {
-                pdfDocument = PDDocument.load(resource.inputStream)
+                pdfDocument = pdfHelper.loadTemplate(resource, templates)
 
                 val attendeesForPage =
                     if (attendees.size <= i + ATTENDEES_ON_SECOND_PAGE) {
@@ -95,7 +97,7 @@ class AttendeesKarlsruhe(
         result.documentCatalog.acroForm = finalForm
         finalForm.fields = fields
         finalForm.needAppearances = true
-        return result
+        return pdfHelper.saveAndClose(result, templates)
     }
 
     fun fillPage(
