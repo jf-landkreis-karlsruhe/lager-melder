@@ -20,7 +20,7 @@ onMounted(() => {
   getEvacuationGroup().then((evacGroup) => {
     evacuationGroups.value = evacGroup
   })
-  Promise.all([globalEventSummary() as Promise<any>, getDepartments({ onlyWithAttendees: true })]).then(
+  Promise.all([globalEventSummary(), getDepartments({ onlyWithAttendees: true })]).then(
     ([summary, deps]: [GlobalEventSummary, Department[]]) => {
       departmentSummary.value = {
         total: summary.total,
@@ -62,7 +62,7 @@ const emptySummary: Distribution = {
   <LmContainer v-if="hasLKKarlsruheRole()">
     <div v-if="departmentSummary !== null">
       <CheckedInSummary
-        :departmentDistribution="departmentSummary.total"
+        :department-distribution="departmentSummary.total"
         :paused="false"
         :name="departmentSummary.total.name"
       />

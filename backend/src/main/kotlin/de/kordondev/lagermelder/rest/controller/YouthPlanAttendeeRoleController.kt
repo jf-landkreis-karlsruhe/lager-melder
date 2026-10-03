@@ -7,10 +7,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class YouthPlanAttendeeRoleController(
-    private val youthPlanAttendeeRoleService: YouthPlanAttendeeRoleService
+    private val youthPlanAttendeeRoleService: YouthPlanAttendeeRoleService,
 ) {
     @GetMapping("/youth-plan-attendees/distribution")
-    fun getYouthPlanDistribution(): YouthPlanDistribution {
-        return youthPlanAttendeeRoleService.getAttendeeDistribution()
-    }
+    fun getYouthPlanDistribution(): YouthPlanDistribution = youthPlanAttendeeRoleService.getAttendeeDistribution()
 }

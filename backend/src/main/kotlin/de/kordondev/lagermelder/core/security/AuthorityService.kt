@@ -16,42 +16,59 @@ import java.util.*
 
 @Service("authorityService")
 class AuthorityService {
-
-    fun hasAuthorityFilter(department: DepartmentEntry, allowedRoles: List<String>): Boolean {
-        return SecurityContextHolder
+    fun hasAuthorityFilter(
+        department: DepartmentEntry,
+        allowedRoles: List<String>,
+    ): Boolean =
+        SecurityContextHolder
             .getContext()
             .authentication!!
             .authorities
             .map { it.authority }
-            .any { authority -> authority == DEPARTMENT_ID_PREFIX + department.id.toString() || allowedRoles.any { ROLE_PREFIX + it.toString() == authority } }
-    }
+            .any { authority ->
+                authority == DEPARTMENT_ID_PREFIX + department.id.toString() ||
+                    allowedRoles.any { ROLE_PREFIX + it.toString() == authority }
+            }
 
-    fun hasAuthorityFilter(attendee: Attendee, allowedRoles: List<String>): Boolean {
-        return hasAuthorityFilter(attendee.department, allowedRoles);
-    }
+    fun hasAuthorityFilter(
+        attendee: Attendee,
+        allowedRoles: List<String>,
+    ): Boolean = hasAuthorityFilter(attendee.department, allowedRoles)
 
-    fun hasAuthority(department: DepartmentEntry, allowedRoles: List<String>): DepartmentEntry {
+    fun hasAuthority(
+        department: DepartmentEntry,
+        allowedRoles: List<String>,
+    ): DepartmentEntry {
         if (hasAuthorityFilter(department, allowedRoles)) {
             return department
         }
         throw AccessDeniedException("You are not allowed to access department with other department id")
     }
 
-    fun hasAuthority(attendee: Attendee, allowedRoles: List<String>): Attendee {
+    fun hasAuthority(
+        attendee: Attendee,
+        allowedRoles: List<String>,
+    ): Attendee {
         if (hasAuthorityFilter(attendee, allowedRoles)) {
             return attendee
         }
         throw AccessDeniedException("You are not allowed to access attendee from other department id")
     }
 
-    fun hasAuthority(tents: TentsEntity, allowedRoles: List<String>): TentsEntity {
+    fun hasAuthority(
+        tents: TentsEntity,
+        allowedRoles: List<String>,
+    ): TentsEntity {
         if (hasAuthorityFilter(tents.department, allowedRoles)) {
             return tents
         }
         throw AccessDeniedException("You are not allowed to change attendees from other departments")
     }
 
-    fun hasAuthority(user: UserEntry, allowedRoles: List<String>): UserEntry {
+    fun hasAuthority(
+        user: UserEntry,
+        allowedRoles: List<String>,
+    ): UserEntry {
         if (hasRole(allowedRoles) || hasUserId(user.id)) {
             return user
         }
@@ -61,13 +78,13 @@ class AuthorityService {
     fun hasUserId(userId: Long): Boolean {
         val loggedInUserId = getUserId()
         if (loggedInUserId.isEmpty) {
-            return false;
+            return false
         }
         return loggedInUserId.get() == USER_ID_PREFIX + userId.toString()
     }
 
-    fun getUserId(): Optional<String> {
-        return SecurityContextHolder
+    fun getUserId(): Optional<String> =
+        SecurityContextHolder
             .getContext()
             .authentication!!
             .authorities
@@ -75,27 +92,24 @@ class AuthorityService {
             .map { it.authority!! }
             .filter { it.startsWith(USER_ID_PREFIX) }
             .findFirst()
-    }
 
-    fun hasRole(allowedRoles: List<String>): Boolean {
-        return SecurityContextHolder
+    fun hasRole(allowedRoles: List<String>): Boolean =
+        SecurityContextHolder
             .getContext()
             .authentication!!
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
             .anyMatch { authority -> allowedRoles.any { authority == ROLE_PREFIX + it } }
-    }
 
-    fun isAdminFilter(): Boolean {
-        return SecurityContextHolder
+    fun isAdminFilter(): Boolean =
+        SecurityContextHolder
             .getContext()
             .authentication!!
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
             .anyMatch { requesterRole -> ADMIN_ALLOWED.any { ROLE_PREFIX + it == requesterRole } }
-    }
 
     fun isAdmin() {
         if (!isAdminFilter()) {
@@ -103,15 +117,14 @@ class AuthorityService {
         }
     }
 
-    fun isSpecializedFieldDirectorFilter(): Boolean {
-        return SecurityContextHolder
+    fun isSpecializedFieldDirectorFilter(): Boolean =
+        SecurityContextHolder
             .getContext()
             .authentication!!
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
             .anyMatch { requesterRole -> SPECIALIZED_FIELD_DIRECTOR_ALLOWED.any { ROLE_PREFIX + it == requesterRole } }
-    }
 
     fun isSpecializedFieldDirector() {
         if (!isSpecializedFieldDirectorFilter()) {
@@ -125,15 +138,14 @@ class AuthorityService {
         }
     }
 
-    fun isLkKarlsruheFilter(): Boolean {
-        return SecurityContextHolder
+    fun isLkKarlsruheFilter(): Boolean =
+        SecurityContextHolder
             .getContext()
             .authentication!!
             .authorities
             .stream()
             .map(GrantedAuthority::getAuthority)
             .anyMatch { requesterRole -> LK_KARLSRUHE_ALLOWED.any { ROLE_PREFIX + it == requesterRole } }
-    }
 
     companion object {
         val USER_ALLOWED = listOf(Roles.USER, Roles.LK_KARLSRUHE, Roles.SPECIALIZED_FIELD_DIRECTOR, Roles.ADMIN)
@@ -142,5 +154,4 @@ class AuthorityService {
             listOf(Roles.SPECIALIZED_FIELD_DIRECTOR, Roles.ADMIN)
         val ADMIN_ALLOWED = listOf(Roles.ADMIN)
     }
-
 }

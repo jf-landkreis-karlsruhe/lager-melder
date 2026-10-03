@@ -16,14 +16,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @SpringBootApplication
 class LagermelderApplication {
-
     val logger: Logger = LoggerFactory.getLogger(LagermelderApplication::class.java)
 
     @Bean
     fun init(
         departmentRepository: DepartmentRepository,
         userRepository: UserRepository,
-        @Value("\${application.admin.passwordHash}") adminHash: String
+        @Value("\${application.admin.passwordHash}") adminHash: String,
     ) = ApplicationRunner {
         logger.info("Initializing database")
         val adminUsername = "admin@jf-landkreis-karlsruhe.de"
@@ -35,18 +34,19 @@ class LagermelderApplication {
         departmentRepository: DepartmentRepository,
         userRepository: UserRepository,
         adminUsername: String,
-        adminHash: String
+        adminHash: String,
     ) {
-        val adminDepartment = DepartmentEntry(
-            name = "admin",
-            leaderName = "KordonDev",
-            leaderEMail = "KordonDev@mail.ka",
-            phoneNumber = "",
-            shortName = "",
-            headDepartmentName = "",
-            paused = false,
-            evacuationGroup = null
-        )
+        val adminDepartment =
+            DepartmentEntry(
+                name = "admin",
+                leaderName = "KordonDev",
+                leaderEMail = "KordonDev@mail.ka",
+                phoneNumber = "",
+                shortName = "",
+                headDepartmentName = "",
+                paused = false,
+                evacuationGroup = null,
+            )
         departmentRepository.save(adminDepartment)
 
         userRepository.saveAll(
@@ -55,17 +55,14 @@ class LagermelderApplication {
                     role = Roles.ADMIN,
                     userName = adminUsername,
                     passWord = adminHash,
-                    department = adminDepartment
-                )
-            )
+                    department = adminDepartment,
+                ),
+            ),
         )
     }
 
-
     @Bean
-    fun bCryptPasswordEncoder(): BCryptPasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+    fun bCryptPasswordEncoder(): BCryptPasswordEncoder = BCryptPasswordEncoder()
 }
 
 fun main(args: Array<String>) {

@@ -27,7 +27,7 @@ data class RestDepartmentRequest(
             id: Long,
             features: Set<DepartmentFeatureEntry>,
             evacuationGroup: EvacuationGroupEntry?,
-            tentMarkings: Set<TentMarkingEntry>
+            tentMarkings: Set<TentMarkingEntry>,
         ) = DepartmentEntry(
             id = id,
             name = department.name,
@@ -35,16 +35,20 @@ data class RestDepartmentRequest(
             leaderEMail = department.leaderEMail,
             phoneNumber = department.phoneNumber,
             shortName = department.shortName,
-            features = department.features.map {
-                features.firstOrNull { feature -> feature.feature == it }
-                    ?: DepartmentFeatureEntry(
-                        id = UUID.randomUUID().toString(), departmentId = id, feature = it
-                    )
-            }.toSet(),
+            features =
+                department.features
+                    .map {
+                        features.firstOrNull { feature -> feature.feature == it }
+                            ?: DepartmentFeatureEntry(
+                                id = UUID.randomUUID().toString(),
+                                departmentId = id,
+                                feature = it,
+                            )
+                    }.toSet(),
             headDepartmentName = department.headDepartmentName,
             paused = department.paused,
             evacuationGroup = evacuationGroup,
-            tentMarkings = tentMarkings
+            tentMarkings = tentMarkings,
         )
     }
 }

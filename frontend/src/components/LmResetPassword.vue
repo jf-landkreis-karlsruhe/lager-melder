@@ -13,7 +13,7 @@ const toast = useToast()
 const password = ref<string>('')
 const password_repeat = ref<string>('')
 const loading = ref<boolean>(false)
-let password_differs = ref<boolean>(false)
+const password_differs = ref<boolean>(false)
 
 const resetPasswordHandler = async () => {
   if (password.value !== password_repeat.value) {
@@ -21,17 +21,11 @@ const resetPasswordHandler = async () => {
     return
   }
   loading.value = true
-  const success = await resetPasswordWithToken(route.params.token as string, password.value).catch(
-    async (err) => {
-      loading.value = false
-      await showErrorToast(
-        toast,
-        err,
-        'Password konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.'
-      )
-      return undefined
-    }
-  )
+  const success = await resetPasswordWithToken(route.params.token as string, password.value).catch(async (err) => {
+    loading.value = false
+    await showErrorToast(toast, err, 'Password konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.')
+    return undefined
+  })
   if (success) {
     toast.success('Password erfolgreich zurückgesetzt.')
     loading.value = false
@@ -57,16 +51,16 @@ watch(
             <form @submit.prevent="resetPasswordHandler">
               <v-card-text>
                 <v-text-field
+                  v-model="password"
                   type="password"
                   prepend-icon="mdi-lock"
-                  v-model="password"
                   label="Passwort"
                   variant="underlined"
                 />
                 <v-text-field
+                  v-model="password_repeat"
                   type="password"
                   prepend-icon="mdi-lock"
-                  v-model="password_repeat"
                   label="Passwort wiederholen"
                   variant="underlined"
                   :error-messages="password_differs ? 'Passwörter stimmen nicht überein.' : ''"
@@ -75,9 +69,7 @@ watch(
               <v-card-actions>
                 <v-container>
                   <v-row justify="end">
-                    <v-btn color="primary" type="submit" :loading="loading" rounded>
-                      Passwort zurücksetzen
-                    </v-btn>
+                    <v-btn color="primary" type="submit" :loading="loading" rounded> Passwort zurücksetzen </v-btn>
                   </v-row>
                 </v-container>
               </v-card-actions>

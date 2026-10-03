@@ -81,9 +81,7 @@ const router = createRouter({
 })
 
 export const pathNeedsAuthentication = (path: string) => {
-  return !(
-      path.startsWith('/passwort-zuruecksetzen') || ['/login', '/passwort-vergessen'].includes(path)
-  )
+  return !(path.startsWith('/passwort-zuruecksetzen') || ['/login', '/passwort-vergessen'].includes(path))
 }
 
 export default router

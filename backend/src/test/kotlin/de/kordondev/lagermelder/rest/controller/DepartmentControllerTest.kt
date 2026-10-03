@@ -1,8 +1,10 @@
 package de.kordondev.lagermelder.rest.controller
 
+import de.kordondev.lagermelder.core.persistence.entry.DepartmentFeatures
 import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.security.SecurityConstants
 import de.kordondev.lagermelder.helper.Entities
+import de.kordondev.lagermelder.helper.IntegrationTest
 import de.kordondev.lagermelder.helper.WebTestHelper
 import de.kordondev.lagermelder.rest.model.RestDepartment
 import jakarta.transaction.Transactional
@@ -10,7 +12,6 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -18,8 +19,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @Transactional
-@SpringBootTest
-class DepartmentControllerTest(val context: WebApplicationContext) {
+@IntegrationTest
+class DepartmentControllerTest(
+    val context: WebApplicationContext,
+) {
     lateinit var restMockMvc: MockMvc
 
     @Autowired
@@ -33,10 +36,10 @@ class DepartmentControllerTest(val context: WebApplicationContext) {
     @Test
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun addDepartment() {
-
         val department = Entities.restDepartmentRequest()
 
-        restMockMvc.perform(webTestHelper.post("/departments", department))
+        restMockMvc
+            .perform(webTestHelper.post("/departments", department))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(department.name))
@@ -47,29 +50,34 @@ class DepartmentControllerTest(val context: WebApplicationContext) {
     @Test
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun updateDepartment() {
-
         val department = Entities.restDepartmentRequest()
 
-        var createdDepartment = webTestHelper.toObject(
-            restMockMvc.perform(webTestHelper.post("/departments", department))
-                .andExpect(MockMvcResultMatchers.status().isOk), RestDepartment::class.java
-        )
+        var createdDepartment =
+            webTestHelper.toObject(
+                restMockMvc
+                    .perform(webTestHelper.post("/departments", department))
+                    .andExpect(MockMvcResultMatchers.status().isOk),
+                RestDepartment::class.java,
+            )
 
         val newName = "new name"
         createdDepartment = createdDepartment.copy(name = newName)
-        restMockMvc.perform(webTestHelper.put("/departments/${createdDepartment.id}", createdDepartment))
+        restMockMvc
+            .perform(webTestHelper.put("/departments/${createdDepartment.id}", createdDepartment))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(newName))
 
         val newLeaderName = "new leader name"
         createdDepartment = createdDepartment.copy(leaderName = newLeaderName)
-        restMockMvc.perform(webTestHelper.put("/departments/${createdDepartment.id}", createdDepartment))
+        restMockMvc
+            .perform(webTestHelper.put("/departments/${createdDepartment.id}", createdDepartment))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.leaderName").value(newLeaderName))
 
         val newLeaderEMail = "new leader mail"
         createdDepartment = createdDepartment.copy(leaderName = newLeaderEMail)
-        restMockMvc.perform(webTestHelper.put("/departments/${createdDepartment.id}", createdDepartment))
+        restMockMvc
+            .perform(webTestHelper.put("/departments/${createdDepartment.id}", createdDepartment))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.leaderName").value(newLeaderEMail))
     }
@@ -77,44 +85,47 @@ class DepartmentControllerTest(val context: WebApplicationContext) {
     @Test
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun deleteDepartment() {
-
         val department = Entities.restDepartmentRequest()
 
-        var createdDepartment = webTestHelper.toObject(
-            restMockMvc.perform(webTestHelper.post("/departments", department))
-                .andExpect(MockMvcResultMatchers.status().isOk), RestDepartment::class.java
-        )
+        var createdDepartment =
+            webTestHelper.toObject(
+                restMockMvc
+                    .perform(webTestHelper.post("/departments", department))
+                    .andExpect(MockMvcResultMatchers.status().isOk),
+                RestDepartment::class.java,
+            )
 
-        restMockMvc.perform(webTestHelper.get("/departments/${createdDepartment.id}"))
+        restMockMvc
+            .perform(webTestHelper.get("/departments/${createdDepartment.id}"))
             .andExpect(MockMvcResultMatchers.status().isOk)
 
-        restMockMvc.perform(webTestHelper.delete("/departments/${createdDepartment.id}"))
+        restMockMvc
+            .perform(webTestHelper.delete("/departments/${createdDepartment.id}"))
             .andExpect(MockMvcResultMatchers.status().isOk)
 
-        restMockMvc.perform(webTestHelper.get("/departments/${createdDepartment.id}"))
+        restMockMvc
+            .perform(webTestHelper.get("/departments/${createdDepartment.id}"))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
+    @Test
     @WithMockUser(authorities = [SecurityConstants.ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR])
     fun getAttendeesForDepartment() {
-
-        val department = Entities.restDepartmentRequest()
-
-        var createdDepartment = webTestHelper.toObject(
-            restMockMvc.perform(webTestHelper.post("/departments", department))
-                .andExpect(MockMvcResultMatchers.status().isOk), RestDepartment::class.java
-        )
+        val createdDepartment = webTestHelper.createDepartment(restMockMvc, setOf(DepartmentFeatures.YOUTH_GROUPS))
 
         val attendee1 = Entities.restAttendeeRequest().copy(departmentId = createdDepartment.id)
         val attendee2 = Entities.restAttendeeRequest().copy(departmentId = createdDepartment.id, firstName = "first")
 
-        restMockMvc.perform(webTestHelper.post("/attendees", attendee1))
+        restMockMvc
+            .perform(webTestHelper.post("/attendees", attendee1))
             .andExpect(MockMvcResultMatchers.status().isOk)
-        restMockMvc.perform(webTestHelper.post("/attendees", attendee2))
+        restMockMvc
+            .perform(webTestHelper.post("/attendees", attendee2))
             .andExpect(MockMvcResultMatchers.status().isOk)
 
-        restMockMvc.perform(webTestHelper.get("/departments/${createdDepartment.id}/attendees"))
+        restMockMvc
+            .perform(webTestHelper.get("/departments/${createdDepartment.id}/attendees"))
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.*", hasSize<Any>(2)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.youths", hasSize<Any>(2)))
     }
 }

@@ -71,21 +71,19 @@ export const getStartDownloadRegistrationFiles = () => {
   ).then((settings) => {
     return {
       ...settings,
-      startDownloadRegistrationFiles: new Date(
-        settings.startDownloadRegistrationFiles
-      ),
-    };
-  });
-};
+      startDownloadRegistrationFiles: new Date(settings.startDownloadRegistrationFiles)
+    }
+  })
+}
 
 const toInstantString = (dateString: string, toStartOfDay: boolean) => {
-  const date = new Date(dateString);
-  date.setHours(toStartOfDay ? 5 : 23);
-  date.setMinutes(toStartOfDay ? 0 : 59);
-  date.setSeconds(toStartOfDay ? 1 : 59);
-  return date.toISOString();
-};
+  const date = new Date(dateString)
+  date.setHours(toStartOfDay ? 5 : 23)
+  date.setMinutes(toStartOfDay ? 0 : 59)
+  date.setSeconds(toStartOfDay ? 1 : 59)
+  return date.toISOString()
+}
 
 const toDate = (dateString: string) => {
-  return new Date(dateString).toISOString().split("T")[0];
-};
+  return new Date(dateString).toISOString().split('T')[0]
+}

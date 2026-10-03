@@ -8,9 +8,7 @@ const route = useRoute()
 const department = ref<Department>({} as Department)
 
 onMounted(() => {
-  const departmentIdString = Array.isArray(route.params.eventCode)
-    ? route.params.id[0]
-    : (route.params.id as string)
+  const departmentIdString = Array.isArray(route.params.eventCode) ? route.params.id[0] : (route.params.id as string)
   const departmentId = parseInt(departmentIdString, 10)
   // departmentId to number
   getDepartment(departmentId).then((dep) => {

@@ -17,10 +17,13 @@ data class RestDepartmentWithUserRequest(
     val leaderName: String,
     @field:Email(message = "leaderEMail needs to be an email")
     val leaderEMail: String,
-    val features: Set<DepartmentFeatures>
+    val features: Set<DepartmentFeatures>,
 ) {
     companion object {
-        fun toDepartment(departmentWithUser: RestDepartmentWithUserRequest, departmentId: Long) = DepartmentEntry(
+        fun toDepartment(
+            departmentWithUser: RestDepartmentWithUserRequest,
+            departmentId: Long,
+        ) = DepartmentEntry(
             id = departmentId,
             name = departmentWithUser.departmentName,
             leaderName = departmentWithUser.leaderName,
@@ -30,15 +33,17 @@ data class RestDepartmentWithUserRequest(
             features = departmentWithUser.features.map { DepartmentFeatureEntry(UUID.randomUUID().toString(), departmentId, it) }.toSet(),
             headDepartmentName = "",
             paused = false,
-            evacuationGroup = null
+            evacuationGroup = null,
         )
 
-        fun toUser(departmentWithUser: RestDepartmentWithUserRequest, department: DepartmentEntry) = UserEntry(
+        fun toUser(
+            departmentWithUser: RestDepartmentWithUserRequest,
+            department: DepartmentEntry,
+        ) = UserEntry(
             userName = departmentWithUser.username,
             passWord = "",
             department = department,
-            role = Roles.USER
+            role = Roles.USER,
         )
-
     }
 }

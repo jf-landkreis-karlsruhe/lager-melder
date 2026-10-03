@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:PlanningFilesService.kt:PlanningFilesService$attendees.youths.isEmpty() &amp;&amp; attendees.youthLeaders.isEmpty() &amp;&amp; attendees.zKids.isEmpty() &amp;&amp; attendees.helpers.isEmpty()</ID>
+    <ID>CyclomaticComplexMethod:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$fun fillAttendeeInForm: List&lt;PDField&gt;</ID>
+    <ID>LargeClass:PlanningFilesService.kt:PlanningFilesService</ID>
+    <ID>LongMethod:AttendeeRoleHelperTest.kt:AttendeeRoleHelperTest$private fun createAttendee: Attendee</ID>
+    <ID>LongMethod:RestAttendeeRequest.kt:RestAttendeeRequest.Companion$fun to: Attendee</ID>
+    <ID>MagicNumber:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$1000</ID>
+    <ID>MagicNumber:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$13</ID>
+    <ID>MagicNumber:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$14</ID>
+    <ID>MagicNumber:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$16</ID>
+    <ID>MagicNumber:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$17</ID>
+    <ID>MagicNumber:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$33</ID>
+    <ID>MagicNumber:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$35</ID>
+    <ID>MagicNumber:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$352</ID>
+    <ID>MagicNumber:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$40F</ID>
+    <ID>MagicNumber:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$455</ID>
+    <ID>MagicNumber:AttendeesKarlsruhe.kt:AttendeesKarlsruhe$50F</ID>
+    <ID>MagicNumber:PDFHelper.kt:PDFHelper$12F</ID>
+    <ID>MagicNumber:PlanningFilesService.kt:PlanningFilesService$1.4F</ID>
+    <ID>MagicNumber:PlanningFilesService.kt:PlanningFilesService$12F</ID>
+    <ID>MagicNumber:PlanningFilesService.kt:PlanningFilesService$16</ID>
+    <ID>MagicNumber:PlanningFilesService.kt:PlanningFilesService$16F</ID>
+    <ID>MagicNumber:PlanningFilesService.kt:PlanningFilesService$18</ID>
+    <ID>MagicNumber:PlanningFilesService.kt:PlanningFilesService$3F</ID>
+    <ID>MagicNumber:PlanningFilesService.kt:PlanningFilesService$40F</ID>
+    <ID>MagicNumber:PlanningFilesService.kt:PlanningFilesService$5</ID>
+    <ID>MagicNumber:PlanningFilesService.kt:PlanningFilesService$50F</ID>
+    <ID>MagicNumber:PlanningFilesService.kt:PlanningFilesService$5F</ID>
+    <ID>MagicNumber:SettingsService.kt:SettingsService$30</ID>
+    <ID>MagicNumber:SettingsService.kt:SettingsService$33</ID>
+    <ID>MagicNumber:SettingsService.kt:SettingsService$35</ID>
+    <ID>MagicNumber:SettingsService.kt:SettingsService$45</ID>
+    <ID>MagicNumber:SettingsService.kt:SettingsService$60</ID>
+    <ID>MagicNumber:SettingsService.kt:SettingsService$65</ID>
+    <ID>MagicNumber:SettingsService.kt:SettingsService$7</ID>
+    <ID>MagicNumber:SpringSecurityConfig.kt:SpringSecurityConfig$1800L</ID>
+    <ID>MagicNumber:StateYouthPlanAttendees.kt:StateYouthPlanAttendees$15F</ID>
+    <ID>MagicNumber:StateYouthPlanAttendees.kt:StateYouthPlanAttendees$50F</ID>
+    <ID>MagicNumber:StateYouthPlanLeader.kt:StateYouthPlanLeader$5</ID>
+    <ID>MagicNumber:StateYouthPlanLeader.kt:StateYouthPlanLeader$50F</ID>
+    <ID>MaxLineLength:PlanningFilesService.kt:PlanningFilesService$" ${att.firstName} ${att.lastName} aus ${att.department.name}. Kommentar: ${att.additionalInformation}. (Jugendwart: ${att.department.leaderEMail}, EMail: ${att.department.leaderEMail})"</ID>
+    <ID>MaxLineLength:PlanningFilesService.kt:PlanningFilesService$"Jugendwart: ${department.leaderName}, EMail: ${department.leaderEMail}, Telefon während Kreiszeltlager: ${department.phoneNumber}"</ID>
+    <ID>MaxLineLength:YouthLeadersRepository.kt:YouthLeadersRepository$"Select a from YouthLeaderEntry a LEFT JOIN YouthPlanAttendeeRoleEntry ypa ON a.id = ypa.attendeeId where ypa.attendeeId is NULL AND a.role = 'YOUTH_LEADER'"</ID>
+    <ID>MaxLineLength:YouthsRepository.kt:YouthsRepository$"Select a from YouthEntry a LEFT JOIN YouthPlanAttendeeRoleEntry ypa ON a.id = ypa.attendeeId where ypa.attendeeId is NULL AND a.role = 'YOUTH'"</ID>
+    <ID>ReturnCount:MailService.kt:MailService$private fun filterDepartmentsBy: Boolean</ID>
+    <ID>ReturnCount:PlanningFilesService.kt:PlanningFilesService$private fun colorForAgeGroup: Color</ID>
+    <ID>SwallowedException:Helper.kt:Helper.Companion$e: UnexpectedTypeException</ID>
+    <ID>TooGenericExceptionThrown:CreateJWTAuthentication.kt:CreateJWTAuthentication$throw RuntimeException(e)</ID>
+    <ID>TooManyFunctions:AttendeeService.kt:AttendeeService</ID>
+    <ID>TooManyFunctions:AuthorityService.kt:AuthorityService</ID>
+    <ID>TooManyFunctions:DepartmentController.kt:DepartmentController</ID>
+    <ID>TooManyFunctions:EventService.kt:EventService</ID>
+    <ID>TooManyFunctions:ExceptionHandler.kt:ExceptionHandler : ResponseEntityExceptionHandler</ID>
+    <ID>TooManyFunctions:PlanningFilesService.kt:PlanningFilesService</ID>
+    <ID>UnusedParameter:CreateJWTAuthentication.kt:CreateJWTAuthentication$response: HttpServletResponse</ID>
+    <ID>UtilityClassWithPublicConstructor:Helper.kt:Helper</ID>
+    <ID>UtilityClassWithPublicConstructor:PasswordGenerator.kt:PasswordGenerator</ID>
+    <ID>UtilityClassWithPublicConstructor:UserEntry.kt:Roles</ID>
+  </CurrentIssues>
+</SmellBaseline>

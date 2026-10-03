@@ -44,8 +44,8 @@ const handleFormSave = (editedAttendee: Attendee) => {
 <template>
   <v-expansion-panel :readonly="!props.attendeesCanBeEdited" :class="{ highlighted: props.isHighlighted }">
     <v-expansion-panel-title
-      :expand-icon="props.attendeesCanBeEdited ? 'mdi-menu-down' : ''"
       ref="expansionPanel"
+      :expand-icon="props.attendeesCanBeEdited ? 'mdi-menu-down' : ''"
       :class="props.attendeesCanBeEdited ? '' : 'readonly'"
     >
       <div class="d-flex justify-space-between align-center flex-1-1-100">
@@ -66,9 +66,9 @@ const handleFormSave = (editedAttendee: Attendee) => {
           </div>
         </div>
         <div
+          v-if="props.role !== AttendeeRole.CHILD && props.role != AttendeeRole.CHILD_LEADER"
           class="shirt-and-food d-flex justify-start"
           style="flex: 3"
-          v-if="props.role !== AttendeeRole.CHILD && props.role != AttendeeRole.CHILD_LEADER"
         >
           <div class="shirt d-flex flex-column justify-center align-center mr-sm-10">
             <v-icon class="mb-1">mdi-tshirt-crew-outline</v-icon>

@@ -14,7 +14,7 @@ const eventName = ref<string>('')
 let intervalId: number | undefined
 
 const manualCode = ref<string>('')
-const manualCodeForm = ref<HTMLElement | undefined>()
+const manualCodeForm = ref<{ validate: () => void; reset: () => void } | undefined>()
 const manualCodeInput = ref<HTMLElement | undefined>()
 const manualCodeValid = ref<boolean>(false)
 
@@ -36,14 +36,14 @@ const submitEvent = async (attendeeCode: string) => {
 }
 
 const manualCodeSubmit = async () => {
-  const manCodeForm = manualCodeForm.value as any
+  const manCodeForm = manualCodeForm.value
   const manCode = manualCode.value
-  manCodeForm.validate()
+  manCodeForm?.validate()
   await submitEvent(manCode)
-  manCodeForm.reset()
-  ;(document?.activeElement as any)?.blur()
+  manCodeForm?.reset()
+  ;(document.activeElement as HTMLElement | null)?.blur()
   await nextTick()
-  ;(manualCodeInput.value as any)?.focus()
+  manualCodeInput.value?.focus()
 }
 
 onMounted(async () => {
@@ -67,13 +67,13 @@ onBeforeUnmount(() => {
         <v-form
           ref="manualCodeForm"
           v-model="manualCodeValid"
-          @submit.prevent="manualCodeSubmit"
           class="manual-code-form d-flex justify-center mt-8 mb-12"
+          @submit.prevent="manualCodeSubmit"
         >
           <v-row class="manual-code-row align-center ga-3">
             <v-text-field
-              v-model="manualCode"
               ref="manualCodeInput"
+              v-model="manualCode"
               label="Manuelle Eingabe"
               :autofocus="true"
               :hide-details="false"
@@ -82,9 +82,7 @@ onBeforeUnmount(() => {
               class="manual-code-input mr-3"
               variant="underlined"
             />
-            <v-btn :disabled="!manualCode || !manualCodeValid" type="submit" small outlined rounded>
-              Abschicken
-            </v-btn>
+            <v-btn :disabled="!manualCode || !manualCodeValid" type="submit" small outlined rounded> Abschicken </v-btn>
           </v-row>
         </v-form>
       </v-row>

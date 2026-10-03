@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew check*)",
+      "Bash(./gradlew test*)",
+      "Bash(./gradlew spotlessApply*)",
+      "Bash(./gradlew spotlessCheck*)",
+      "Bash(./gradlew detekt*)",
+      "Bash(./gradlew bootRun*)",
+      "Bash(npm run lint*)",
+      "Bash(npm run format*)",
+      "Bash(npm run type-check*)",
+      "Bash(npm run test:unit*)",
+      "Bash(npm run test:coverage*)",
+      "Bash(npm run test:e2e*)",
+      "Bash(npm run dev:agent*)",
+      "Bash(npm run build*)",
+      "Bash(docker compose -f backend/docker-compose/docker-compose-postgres.yml up -d*)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f*)",
+      "Bash(git push --tags*)",
+      "Bash(git push * --tags*)",
+      "Bash(git tag *deploy*)",
+      "Bash(git push * deploy*)",
+      "Bash(./gradlew jib*)",
+      "Bash(./gradlew * jib*)",
+      "Read(**/.env)",
+      "Edit(**/.env)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/format-file.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pre-commit-check.sh",
+            "timeout": 300,
+            "statusMessage": "Running pre-commit checks (lint, format, types)..."
+          }
+        ]
+      }
+    ]
+  }
+}

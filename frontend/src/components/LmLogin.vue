@@ -43,18 +43,18 @@ onMounted(() => {
             <form @submit.prevent="loginHandler">
               <v-card-text>
                 <v-text-field
+                  id="username"
+                  v-model="username"
                   variant="underlined"
                   prepend-icon="mdi-account"
-                  v-model="username"
-                  id="username"
                   label="Benutzername"
                   type="email"
                 />
                 <v-text-field
-                  type="password"
                   id="password"
-                  prepend-icon="mdi-lock"
                   v-model="password"
+                  type="password"
+                  prepend-icon="mdi-lock"
                   label="Passwort"
                   variant="underlined"
                 />

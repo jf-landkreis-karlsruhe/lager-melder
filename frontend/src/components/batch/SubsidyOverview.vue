@@ -14,7 +14,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-card class="pa-6" v-if="subsidy && subsidy.participants">
+  <v-card v-if="subsidy && subsidy.participants" class="pa-6">
     <h2>Zuschüsse</h2>
     <p>
       <b>Jugendgruppe</b><br />

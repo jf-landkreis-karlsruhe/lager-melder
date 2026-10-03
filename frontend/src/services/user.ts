@@ -1,5 +1,5 @@
 import { Roles, withAuthenticationHeader } from './authentication'
-import {type Department, DepartmentFeatures} from './department'
+import { type Department, DepartmentFeatures } from './department'
 import { putData, getData, postData } from '../helper/fetch'
 
 export interface User {

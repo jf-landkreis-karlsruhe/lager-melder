@@ -11,10 +11,8 @@ import java.util.*
 data class EventDayEntity(
     @Id
     val id: String = UUID.randomUUID().toString(),
-
     @Column(name = "name")
     val name: String,
-
     @Column(name = "day_of_event")
-    val dayOfEvent: Int
+    val dayOfEvent: Int,
 )

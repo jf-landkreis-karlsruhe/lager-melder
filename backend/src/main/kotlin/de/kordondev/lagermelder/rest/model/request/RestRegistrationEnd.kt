@@ -11,7 +11,7 @@ data class RestRegistrationEnd(
     val childGroupsCanBeEdited: Boolean,
     val helpersRegistrationEnd: Instant,
     val helpersCanBeEdited: Boolean,
-    val eventEnd: LocalDate
+    val eventEnd: LocalDate,
 ) {
     companion object {
         fun of(
@@ -19,8 +19,8 @@ data class RestRegistrationEnd(
             attendeesCanBeEdited: Boolean,
             childGroupsCanBeEdited: Boolean,
             helperCanBeEdited: Boolean,
-        ): RestRegistrationEnd {
-            return RestRegistrationEnd(
+        ): RestRegistrationEnd =
+            RestRegistrationEnd(
                 registrationEnd = settings.registrationEnd,
                 attendeesCanBeEdited = attendeesCanBeEdited,
                 childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd,
@@ -29,6 +29,5 @@ data class RestRegistrationEnd(
                 helpersCanBeEdited = helperCanBeEdited,
                 eventEnd = settings.eventEnd,
             )
-        }
     }
 }

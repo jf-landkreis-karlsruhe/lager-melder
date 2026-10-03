@@ -11,21 +11,20 @@ import org.springframework.stereotype.Service
 class TentsService(
     private val tentsRepository: TentsRepository,
     private val authorityService: AuthorityService,
-    private val settingsService: SettingsService
+    private val settingsService: SettingsService,
 ) {
-
-    fun getAllTents(): List<TentsEntity> {
-        return tentsRepository.findAll()
+    fun getAllTents(): List<TentsEntity> =
+        tentsRepository
+            .findAll()
             .filter { authorityService.hasAuthorityFilter(it.department, AuthorityService.LK_KARLSRUHE_ALLOWED) }
-    }
 
-    fun getForDepartment(department: DepartmentEntry): TentsEntity {
-        return tentsRepository.findByDepartment(department)
+    fun getForDepartment(department: DepartmentEntry): TentsEntity =
+        tentsRepository
+            .findByDepartment(department)
             ?.let {
                 authorityService.hasAuthority(it, AuthorityService.LK_KARLSRUHE_ALLOWED)
             }
             ?: TentsEntity(0, department, 0, 0, 0, 0, 0)
-    }
 
     fun saveForDepartment(tents: TentsEntity): TentsEntity {
         authorityService.hasAuthority(tents, AuthorityService.LK_KARLSRUHE_ALLOWED)

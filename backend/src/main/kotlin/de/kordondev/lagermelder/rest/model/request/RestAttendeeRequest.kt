@@ -27,110 +27,125 @@ data class RestAttendeeRequest(
     val juleikaNumber: String,
     val juleikaExpireDate: String,
     val partOfDepartmentId: Long,
-    val helperDays: Set<String> = emptySet()
+    val helperDays: Set<String> = emptySet(),
 ) {
     companion object {
-        fun to(attendee: RestAttendeeRequest, department: DepartmentEntry, partOfDepartment: DepartmentEntry?, eventDays: Set<EventDayEntity>): Attendee {
-            return when (attendee.role) {
-                AttendeeRole.YOUTH -> YouthEntry(
-                    id = UUID.randomUUID().toString(),
-                    firstName = attendee.firstName,
-                    lastName = attendee.lastName,
-                    birthday = attendee.birthday,
-                    food = attendee.food,
-                    tShirtSize = attendee.tShirtSize,
-                    additionalInformation = attendee.additionalInformation,
-                    role = attendee.role,
-                    department = department,
-                    code = "",
-                    status = null
-                )
+        fun to(
+            attendee: RestAttendeeRequest,
+            department: DepartmentEntry,
+            partOfDepartment: DepartmentEntry?,
+            eventDays: Set<EventDayEntity>,
+        ): Attendee =
+            when (attendee.role) {
+                AttendeeRole.YOUTH -> {
+                    YouthEntry(
+                        id = UUID.randomUUID().toString(),
+                        firstName = attendee.firstName,
+                        lastName = attendee.lastName,
+                        birthday = attendee.birthday,
+                        food = attendee.food,
+                        tShirtSize = attendee.tShirtSize,
+                        additionalInformation = attendee.additionalInformation,
+                        role = attendee.role,
+                        department = department,
+                        code = "",
+                        status = null,
+                    )
+                }
 
-                AttendeeRole.YOUTH_LEADER -> YouthLeaderEntry(
-                    id = UUID.randomUUID().toString(),
-                    firstName = attendee.firstName,
-                    lastName = attendee.lastName,
-                    birthday = attendee.birthday,
-                    food = attendee.food,
-                    tShirtSize = attendee.tShirtSize,
-                    additionalInformation = attendee.additionalInformation,
-                    role = attendee.role,
-                    department = department,
-                    code = "",
-                    status = null,
-                    juleikaNumber = attendee.juleikaNumber,
-                    juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate)
-                )
+                AttendeeRole.YOUTH_LEADER -> {
+                    YouthLeaderEntry(
+                        id = UUID.randomUUID().toString(),
+                        firstName = attendee.firstName,
+                        lastName = attendee.lastName,
+                        birthday = attendee.birthday,
+                        food = attendee.food,
+                        tShirtSize = attendee.tShirtSize,
+                        additionalInformation = attendee.additionalInformation,
+                        role = attendee.role,
+                        department = department,
+                        code = "",
+                        status = null,
+                        juleikaNumber = attendee.juleikaNumber,
+                        juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate),
+                    )
+                }
 
-                AttendeeRole.CHILD -> ChildEntry(
-                    id = UUID.randomUUID().toString(),
-                    firstName = attendee.firstName,
-                    lastName = attendee.lastName,
-                    birthday = attendee.birthday,
-                    food = attendee.food,
-                    tShirtSize = attendee.tShirtSize,
-                    additionalInformation = attendee.additionalInformation,
-                    role = attendee.role,
-                    department = department,
-                    code = "",
-                    status = null
-                )
+                AttendeeRole.CHILD -> {
+                    ChildEntry(
+                        id = UUID.randomUUID().toString(),
+                        firstName = attendee.firstName,
+                        lastName = attendee.lastName,
+                        birthday = attendee.birthday,
+                        food = attendee.food,
+                        tShirtSize = attendee.tShirtSize,
+                        additionalInformation = attendee.additionalInformation,
+                        role = attendee.role,
+                        department = department,
+                        code = "",
+                        status = null,
+                    )
+                }
 
-                AttendeeRole.CHILD_LEADER -> ChildLeaderEntry(
-                    id = UUID.randomUUID().toString(),
-                    firstName = attendee.firstName,
-                    lastName = attendee.lastName,
-                    birthday = attendee.birthday,
-                    food = attendee.food,
-                    tShirtSize = attendee.tShirtSize,
-                    additionalInformation = attendee.additionalInformation,
-                    role = attendee.role,
-                    department = department,
-                    code = "",
-                    status = null,
-                    juleikaNumber = attendee.juleikaNumber,
-                    juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate)
-                )
+                AttendeeRole.CHILD_LEADER -> {
+                    ChildLeaderEntry(
+                        id = UUID.randomUUID().toString(),
+                        firstName = attendee.firstName,
+                        lastName = attendee.lastName,
+                        birthday = attendee.birthday,
+                        food = attendee.food,
+                        tShirtSize = attendee.tShirtSize,
+                        additionalInformation = attendee.additionalInformation,
+                        role = attendee.role,
+                        department = department,
+                        code = "",
+                        status = null,
+                        juleikaNumber = attendee.juleikaNumber,
+                        juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate),
+                    )
+                }
 
-                AttendeeRole.Z_KID -> ZKidEntry(
-                    id = UUID.randomUUID().toString(),
-                    firstName = attendee.firstName,
-                    lastName = attendee.lastName,
-                    birthday = attendee.birthday,
-                    food = attendee.food,
-                    tShirtSize = attendee.tShirtSize,
-                    additionalInformation = attendee.additionalInformation,
-                    role = attendee.role,
-                    department = department,
-                    code = "",
-                    status = null,
-                    // at this point we know that partOfDepartment is not null, because we could load it from the database
-                    // but all other Attendee types do not have a partOfDepartment
-                    partOfDepartment = partOfDepartment!!
-                )
+                AttendeeRole.Z_KID -> {
+                    ZKidEntry(
+                        id = UUID.randomUUID().toString(),
+                        firstName = attendee.firstName,
+                        lastName = attendee.lastName,
+                        birthday = attendee.birthday,
+                        food = attendee.food,
+                        tShirtSize = attendee.tShirtSize,
+                        additionalInformation = attendee.additionalInformation,
+                        role = attendee.role,
+                        department = department,
+                        code = "",
+                        status = null,
+                        // at this point we know that partOfDepartment is not null, because we could load it from the database
+                        // but all other Attendee types do not have a partOfDepartment
+                        partOfDepartment = partOfDepartment!!,
+                    )
+                }
 
-                AttendeeRole.HELPER -> HelperEntity(
-                    id = UUID.randomUUID().toString(),
-                    firstName = attendee.firstName,
-                    lastName = attendee.lastName,
-                    food = attendee.food,
-                    tShirtSize = attendee.tShirtSize,
-                    additionalInformation = attendee.additionalInformation,
-                    role = attendee.role,
-                    department = department,
-                    code = "",
-                    status = null,
-                    helperDays = eventDays.filter { it.id in attendee.helperDays }.toSet()
-                )
+                AttendeeRole.HELPER -> {
+                    HelperEntity(
+                        id = UUID.randomUUID().toString(),
+                        firstName = attendee.firstName,
+                        lastName = attendee.lastName,
+                        food = attendee.food,
+                        tShirtSize = attendee.tShirtSize,
+                        additionalInformation = attendee.additionalInformation,
+                        role = attendee.role,
+                        department = department,
+                        code = "",
+                        status = null,
+                        helperDays = eventDays.filter { it.id in attendee.helperDays }.toSet(),
+                    )
+                }
             }
-        }
 
-        private fun toDateOrNull(date: String): LocalDate? {
-            return if (date != "") {
+        private fun toDateOrNull(date: String): LocalDate? =
+            if (date != "") {
                 LocalDate.parse(date)
             } else {
                 null
             }
-        }
     }
 }

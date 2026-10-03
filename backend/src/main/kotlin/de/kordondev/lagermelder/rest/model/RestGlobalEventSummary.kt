@@ -2,7 +2,7 @@ package de.kordondev.lagermelder.rest.model
 
 data class RestGlobalEventSummary(
     val total: Distribution,
-    val departments: List<Distribution>
+    val departments: List<Distribution>,
 )
 
 data class Distribution(

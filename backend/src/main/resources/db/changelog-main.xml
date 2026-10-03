@@ -30,5 +30,6 @@
     <include file="classpath:db/scripts/025_contact_kommandant.xml"/>
     <include file="classpath:db/scripts/026_add_helper_registration_end.xml"/>
     <include file="classpath:db/scripts/027_add_number_of_duties.xml"/>
+    <include file="classpath:db/scripts/028_add_dev_agent_users.xml"/>
 
 </databaseChangeLog>

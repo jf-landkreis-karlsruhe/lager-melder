@@ -7,9 +7,10 @@ data class RestTentMarking(
     val name: String,
 ) {
     companion object {
-        fun of(tentMarking: TentMarkingEntry) = RestTentMarking(
-            id = tentMarking.id,
-            name = tentMarking.name,
-        )
+        fun of(tentMarking: TentMarkingEntry) =
+            RestTentMarking(
+                id = tentMarking.id,
+                name = tentMarking.name,
+            )
     }
 }

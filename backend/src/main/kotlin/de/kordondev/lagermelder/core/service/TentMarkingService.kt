@@ -5,9 +5,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class TentMarkingService(
-    private val tentMarkingsRepository: TentMarkingsRepository
+    private val tentMarkingsRepository: TentMarkingsRepository,
 ) {
-
     fun deleteTentMarkingsWithoutDepartment() {
         tentMarkingsRepository.deleteWithoutDepartmentId()
     }

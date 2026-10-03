@@ -6,7 +6,7 @@ import { type AttendeeGroup, type AttendeeWithSelected } from '@/components/batc
 import { batchEnterAttendees } from '@/services/event'
 
 const toast = useToast()
-const attendeeGroups = ref<AttendeeGroup<AttendeeWithSelected[]>[]>([])
+const selectableAttendeeGroups = ref<AttendeeGroup<AttendeeWithSelected[]>[]>([])
 const allSelected = ref<boolean>(false)
 const hasAttendees = ref<boolean>(true)
 
@@ -20,23 +20,23 @@ const props = defineProps<{
 watch(
   () => props.attendeeGroups,
   () => {
-    attendeeGroups.value = props.attendeeGroups.map((ag) => ({
+    selectableAttendeeGroups.value = props.attendeeGroups.map((ag) => ({
       headline: ag.headline,
       attendees: ag.attendees.map((a) => ({ ...a, selected: false }) as AttendeeWithSelected)
     }))
-    hasAttendees.value = attendeeGroups.value.some((ag) => ag.attendees.length > 0)
+    hasAttendees.value = selectableAttendeeGroups.value.some((ag) => ag.attendees.length > 0)
   },
   { deep: true }
 )
 
 const selectAllAttendees = () => {
-  const nextState = attendeeGroups.value.some((ag) => ag.attendees.some((youth) => !youth.selected))
-  attendeeGroups.value.flatMap((ag) => ag.attendees).forEach((attendee) => (attendee.selected = nextState))
+  const nextState = selectableAttendeeGroups.value.some((ag) => ag.attendees.some((youth) => !youth.selected))
+  selectableAttendeeGroups.value.flatMap((ag) => ag.attendees).forEach((attendee) => (attendee.selected = nextState))
   allSelected.value = nextState
 }
 
 const enter = () => {
-  const selectedAttendees = attendeeGroups.value.flatMap((ag) => ag.attendees).filter((a) => a.selected)
+  const selectedAttendees = selectableAttendeeGroups.value.flatMap((ag) => ag.attendees).filter((a) => a.selected)
   const attendeeCodes = selectedAttendees.map((a) => a.code)
   batchEnterAttendees(props.enterCode, attendeeCodes)
     .then(() => {
@@ -48,7 +48,7 @@ const enter = () => {
     })
 }
 const leave = () => {
-  const selectedAttendees = attendeeGroups.value.flatMap((ag) => ag.attendees).filter((a) => a.selected)
+  const selectedAttendees = selectableAttendeeGroups.value.flatMap((ag) => ag.attendees).filter((a) => a.selected)
   const attendeeCodes = selectedAttendees.map((a) => a.code)
   batchEnterAttendees(props.leaveCode, attendeeCodes)
     .then(() => {
@@ -63,13 +63,14 @@ const leave = () => {
 
 <template>
   <v-card class="pa-6">
-    <form v-on:submit.prevent="enter">
+    <form @submit.prevent="enter">
       <h2>{{ props.headline }}</h2>
-      <v-checkbox-btn v-if="hasAttendees" v-model="allSelected" @change="selectAllAttendees()" label="Alle auswählen" />
-      <div v-for="attendeeGroup in attendeeGroups">
+      <v-checkbox-btn v-if="hasAttendees" v-model="allSelected" label="Alle auswählen" @change="selectAllAttendees()" />
+      <div v-for="attendeeGroup in selectableAttendeeGroups" :key="attendeeGroup.headline">
         <h3>{{ attendeeGroup.headline }}</h3>
         <v-checkbox-btn
           v-for="attendee in attendeeGroup.attendees"
+          :key="attendee.id"
           v-model="attendee.selected"
           :label="getZeltagerIcon(attendee) + attendee.firstName + ' ' + attendee.lastName"
         />

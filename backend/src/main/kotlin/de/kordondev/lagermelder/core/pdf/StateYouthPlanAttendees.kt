@@ -18,90 +18,94 @@ import org.springframework.stereotype.Service
 class StateYouthPlanAttendees(
     private val resourceLoader: ResourceLoader,
     private val pdfHelper: PDFHelper,
-    private val settingsService: SettingsService
+    private val settingsService: SettingsService,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(StateYouthPlanAttendees::class.java)
 
-    val SUM_DAYS_PAGE_1 = "Tage_gesamt"
-    val COPY_SUM_DAYS_PAGE_1_TO_PAGE_2 = "Texteingabe510"
-    val SUM_DAYS_PAGE_2 = "Texteingabe500"
-    val YEAR = "Landesjugendplan"
-    val ORGANISATION_ADDRESS = "Adresse"
-    val CATEGORY = "Art_der_Massnahme"
-    val START_DATE = "Beginn_der_Massnahme"
-    val END_DATE = "Ende_der_Massnahme"
-    val EVENT_ADDRESS = "Ort_der_Massnahme"
-    val TABLE_ROW_START_PAGE_1 = listOf(96, 106, 116, 126, 136, 146, 156, 166, 176, 186, 196, 206, 216, 239, 250)
-    val ATTENDEES_ON_FIRST_PAGE = TABLE_ROW_START_PAGE_1.size
-    val TABLE_ROW_START_PAGE_2 = listOf(
-        513,
-        523,
-        533,
-        543,
-        553,
-        563,
-        573,
-        583,
-        593,
-        603,
-        613,
-        623,
-        646,
-        657,
-        910,
-        921,
-        932,
-        943,
-        954,
-        965,
-        976,
-        987,
-        998,
-        1009,
-        1020
-    )
-    val ATTENDEES_ON_SECOND_PAGE = TABLE_ROW_START_PAGE_2.size
+    companion object {
+        private const val SUM_DAYS_PAGE_1 = "Tage_gesamt"
+        private const val COPY_SUM_DAYS_PAGE_1_TO_PAGE_2 = "Texteingabe510"
+        private const val SUM_DAYS_PAGE_2 = "Texteingabe500"
+        private const val YEAR = "Landesjugendplan"
+        private const val ORGANISATION_ADDRESS = "Adresse"
+        private const val CATEGORY = "Art_der_Massnahme"
+        private const val START_DATE = "Beginn_der_Massnahme"
+        private const val END_DATE = "Ende_der_Massnahme"
+        private const val EVENT_ADDRESS = "Ort_der_Massnahme"
+        private val TABLE_ROW_START_PAGE_1 = listOf(96, 106, 116, 126, 136, 146, 156, 166, 176, 186, 196, 206, 216, 239, 250)
+        private val ATTENDEES_ON_FIRST_PAGE = TABLE_ROW_START_PAGE_1.size
+        private val TABLE_ROW_START_PAGE_2 =
+            listOf(
+                513,
+                523,
+                533,
+                543,
+                553,
+                563,
+                573,
+                583,
+                593,
+                603,
+                613,
+                623,
+                646,
+                657,
+                910,
+                921,
+                932,
+                943,
+                954,
+                965,
+                976,
+                987,
+                998,
+                1009,
+                1020,
+            )
+        private val ATTENDEES_ON_SECOND_PAGE = TABLE_ROW_START_PAGE_2.size
 
-    val DAYS_OF_EVENT = 5
+        private const val DAYS_OF_EVENT = 5
+    }
 
-    fun createStateYouthPlanAttendees(attendees: List<Attendee>): PDDocument {
+    fun createStateYouthPlanAttendees(attendees: List<Attendee>): ByteArray {
         val resource: Resource = resourceLoader.getResource("classpath:data/stateYouthPlanAttendees.pdf")
         val settings = settingsService.getSettings()
 
         logger.info("attendeeSize ${attendees.size}")
 
         val result = PDDocument()
+
+        val templates = mutableListOf<PDDocument>()
         val fields = mutableListOf<PDField>()
 
         if (attendees.size <= ATTENDEES_ON_FIRST_PAGE) {
-            val pdfDocument = PDDocument.load(resource.inputStream)
+            val pdfDocument = pdfHelper.loadTemplate(resource, templates)
             fields.addAll(fillPage(pdfDocument, attendees, TABLE_ROW_START_PAGE_1, 1, settings))
             fields.addAll(fillFirstPage(pdfDocument, attendees, 1, settings))
             result.addPage(pdfDocument.getPage(0))
-
         } else {
-            var pdfDocument = PDDocument.load(resource.inputStream)
+            var pdfDocument = pdfHelper.loadTemplate(resource, templates)
             fields.addAll(
                 fillPage(
                     pdfDocument,
                     attendees.subList(0, ATTENDEES_ON_FIRST_PAGE),
                     TABLE_ROW_START_PAGE_1,
                     1,
-                    settings
-                )
+                    settings,
+                ),
             )
             fields.addAll(fillFirstPage(pdfDocument, attendees.subList(0, ATTENDEES_ON_FIRST_PAGE), 1, settings))
             result.addPage(pdfDocument.getPage(0))
             var page = 2
             for (i in ATTENDEES_ON_FIRST_PAGE until attendees.size step ATTENDEES_ON_SECOND_PAGE) {
+                pdfDocument = pdfHelper.loadTemplate(resource, templates)
 
-                pdfDocument = PDDocument.load(resource.inputStream)
-
-                val attendeesForPage = if (attendees.size <= i + ATTENDEES_ON_SECOND_PAGE) {
-                    attendees.subList(i, attendees.size)
-                } else {
-                    attendees.subList(i, i + ATTENDEES_ON_SECOND_PAGE)
-                }
+                val attendeesForPage =
+                    if (attendees.size <= i + ATTENDEES_ON_SECOND_PAGE) {
+                        attendees.subList(i, attendees.size)
+                    } else {
+                        attendees.subList(i, i + ATTENDEES_ON_SECOND_PAGE)
+                    }
                 fields.addAll(fillPage(pdfDocument, attendeesForPage, TABLE_ROW_START_PAGE_2, page, settings))
                 fields.addAll(fillSecondPage(pdfDocument, attendeesForPage, page))
                 result.addPage(pdfDocument.getPage(1))
@@ -114,7 +118,7 @@ class StateYouthPlanAttendees(
                 result,
                 "${attendees.first().department.name} - Teilnehmer Landesjugendplan",
                 50F,
-                15F
+                15F,
             )
         }
 
@@ -122,16 +126,15 @@ class StateYouthPlanAttendees(
         result.documentCatalog.acroForm = finalForm
         finalForm.fields = fields
         finalForm.needAppearances = true
-        return result
+        return pdfHelper.saveAndClose(result, templates)
     }
-
 
     fun fillPage(
         pdfDocument: PDDocument,
         attendees: List<Attendee>,
         cellIds: List<Int>,
         page: Int,
-        settings: SettingsEntry
+        settings: SettingsEntry,
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
         val form = pdfDocument.documentCatalog.acroForm
@@ -145,10 +148,10 @@ class StateYouthPlanAttendees(
         pdfDocument: PDDocument,
         attendees: List<Attendee>,
         page: Int,
-        settings: SettingsEntry
+        settings: SettingsEntry,
     ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
-        val form = pdfDocument.documentCatalog.acroForm;
+        val form = pdfDocument.documentCatalog.acroForm
         pdfHelper.fillField(form, SUM_DAYS_PAGE_1, "${attendees.size * DAYS_OF_EVENT}", page)?.let { fields.add(it) }
         pdfHelper.fillField(form, YEAR, "${settings.eventStart.year}", page)?.let { fields.add(it) }
         pdfHelper.fillField(form, ORGANISATION_ADDRESS, "${settings.organisationAddress}", page)?.let { fields.add(it) }
@@ -158,12 +161,17 @@ class StateYouthPlanAttendees(
         return fields
     }
 
-    fun fillSecondPage(pdfDocument: PDDocument, attendees: List<Attendee>, page: Int): MutableList<PDField> {
+    fun fillSecondPage(
+        pdfDocument: PDDocument,
+        attendees: List<Attendee>,
+        page: Int,
+    ): MutableList<PDField> {
         val fields = mutableListOf<PDField>()
-        val form = pdfDocument.documentCatalog.acroForm;
+        val form = pdfDocument.documentCatalog.acroForm
         val previousDays = (ATTENDEES_ON_FIRST_PAGE + ATTENDEES_ON_SECOND_PAGE * (page - 2)) * DAYS_OF_EVENT
         pdfHelper.fillField(form, COPY_SUM_DAYS_PAGE_1_TO_PAGE_2, "$previousDays", page)?.let { fields.add(it) }
-        pdfHelper.fillField(form, SUM_DAYS_PAGE_2, "${previousDays + attendees.size * DAYS_OF_EVENT}", page)
+        pdfHelper
+            .fillField(form, SUM_DAYS_PAGE_2, "${previousDays + attendees.size * DAYS_OF_EVENT}", page)
             ?.let { fields.add(it) }
         return fields
     }
@@ -173,7 +181,7 @@ class StateYouthPlanAttendees(
         form: PDAcroForm,
         firstCellId: Int,
         page: Number,
-        settings: SettingsEntry
+        settings: SettingsEntry,
     ): List<PDField> {
         val fields = mutableListOf<PDField>()
         val nameCellId = firstCellId + 2
@@ -181,21 +189,23 @@ class StateYouthPlanAttendees(
         val startCellId = firstCellId + 5
         val endCellId = firstCellId + 6
         val daysCellId = firstCellId + 7
-        pdfHelper.fillField(form, "Texteingabe$nameCellId", "${attendee.lastName}, ${attendee.firstName}", page)
+        pdfHelper
+            .fillField(form, "Texteingabe$nameCellId", "${attendee.lastName}, ${attendee.firstName}", page)
             ?.let { fields.add(it) }
-        pdfHelper.fillField(
-            form,
-            "Texteingabe$birthDateCellId",
-            pdfHelper.formatBirthday(Helper.getBirthday(attendee), germanDate),
-            page
-        )?.let { fields.add(it) }
-        pdfHelper.fillField(form, "Texteingabe$startCellId", settings.eventStart.format(germanDate), page)
+        pdfHelper
+            .fillField(
+                form,
+                "Texteingabe$birthDateCellId",
+                pdfHelper.formatBirthday(Helper.getBirthday(attendee), germanDate),
+                page,
+            )?.let { fields.add(it) }
+        pdfHelper
+            .fillField(form, "Texteingabe$startCellId", settings.eventStart.format(germanDate), page)
             ?.let { fields.add(it) }
-        pdfHelper.fillField(form, "Texteingabe$endCellId", settings.eventEnd.format(germanDate), page)
+        pdfHelper
+            .fillField(form, "Texteingabe$endCellId", settings.eventEnd.format(germanDate), page)
             ?.let { fields.add(it) }
         pdfHelper.fillField(form, "Texteingabe$daysCellId", "$DAYS_OF_EVENT", page)?.let { fields.add(it) }
         return fields
     }
-
-
 }

@@ -8,17 +8,16 @@ import jakarta.validation.constraints.NotNull
 data class RestEventRequest(
     @field:NotNull(message = "name cannot be missing")
     @field:NotBlank(message = "name cannot be blank")
-    val name: String
+    val name: String,
 ) {
     companion object {
-        fun to(event: RestEventRequest): EventEntry {
-            return EventEntry(
+        fun to(event: RestEventRequest): EventEntry =
+            EventEntry(
                 id = 0,
                 name = event.name,
                 code = "",
                 type = EventType.Location,
-                trashed = false
+                trashed = false,
             )
-        }
     }
 }

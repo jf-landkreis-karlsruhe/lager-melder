@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--init",
+        "mcr.microsoft.com/playwright/mcp:v0.0.82",
+        "--headless",
+        "--browser",
+        "chromium",
+        "--no-sandbox",
+        "--isolated",
+        "--viewport-size",
+        "1280x900"
+      ]
+    }
+  }
+}

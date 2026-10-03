@@ -23,7 +23,7 @@ onMounted(() => {
   getEvacuationGroup().then((evacGroup) => {
     evacuationGroups.value = evacGroup
   })
-  Promise.all([globalEventSummary() as Promise<any>, getDepartments({ onlyWithAttendees: true })]).then(
+  Promise.all([globalEventSummary(), getDepartments({ onlyWithAttendees: true })]).then(
     ([summary, deps]: [GlobalEventSummary, Department[]]) => {
       departmentSummary.value = {
         total: summary.total,
@@ -104,14 +104,14 @@ const updatePauseDepartmentInternal = (department: Department) => {
     <router-link to="/anwesend-print"> Druckansicht </router-link>
     <div v-if="departmentSummary !== null">
       <CheckedInSummary
-        :departmentDistribution="departmentSummary.total"
+        :department-distribution="departmentSummary.total"
         :paused="false"
         :name="departmentSummary.total.name"
       />
       Pausierte Feuerwehren sind nicht in der Gesamtanzahl enthalten.
       <div v-for="dep in departmentSummary.departments" :key="dep.id">
         <CheckedInSummary
-          :departmentDistribution="dep.distribution"
+          :department-distribution="dep.distribution"
           :paused="dep.department.paused"
           :name="dep.department.name"
         />
@@ -121,7 +121,7 @@ const updatePauseDepartmentInternal = (department: Department) => {
           :evacuation-groups="evacuationGroups"
         />
         <div class="d-flex justify-space-between align-center flex-grow-1 flex-wrap mt-4">
-          <v-btn @click="updatePauseDepartmentInternal(dep.department)" class="checkin" rounded>
+          <v-btn class="checkin" rounded @click="updatePauseDepartmentInternal(dep.department)">
             <span v-if="dep.department.paused">Zurückmelden</span>
             <span v-if="!dep.department.paused">Anwesenheit pausieren</span>
           </v-btn>

@@ -1,4 +1,4 @@
-package de.kordondev.lagermelder.rest.model.request;
+package de.kordondev.lagermelder.rest.model.request
 
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
 import jakarta.validation.constraints.FutureOrPresent
@@ -12,67 +12,55 @@ data class RestSettingsRequest(
     @NotNull
     @FutureOrPresent
     val registrationEnd: Instant,
-
     @NotNull
     @NotBlank
     val hostCity: String,
-
     @NotNull
     val eventStart: LocalDate,
-
     @NotNull
     val eventEnd: LocalDate,
-
     @NotNull
     @NotBlank
     val eventName: String,
-
     @NotNull
     @NotBlank
     val eventAddress: String,
-
     @NotNull
     @NotBlank
     val organizer: String,
-
     @NotNull
     @NotBlank
     val organisationAddress: String, // Multiline
-
     @NotNull
     @NotBlank
     val moneyPerYouthLoader: String,
-
     @NotNull
     val startDownloadRegistrationFiles: Instant,
-
     @NotNull
     val childGroupsRegistrationEnd: Instant,
-
     @NotNull
     val helpersRegistrationEnd: Instant,
-
     @NotNull
     @Min(value = 0)
-    val numberOfDuties: Int
-
+    val numberOfDuties: Int,
 ) {
     companion object {
-        fun to(settings: RestSettingsRequest) = SettingsEntry(
-            id = 0,
-            registrationEnd = settings.registrationEnd,
-            hostCity = settings.hostCity,
-            eventStart = settings.eventStart,
-            eventEnd = settings.eventEnd,
-            eventName = settings.eventName,
-            eventAddress = settings.eventAddress,
-            organizer = settings.organizer,
-            organisationAddress = settings.organisationAddress,
-            moneyPerYouthLoader = settings.moneyPerYouthLoader,
-            startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles,
-            childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd,
-            helpersRegistrationEnd = settings.helpersRegistrationEnd,
-            numberOfDuties = settings.numberOfDuties
-        )
+        fun to(settings: RestSettingsRequest) =
+            SettingsEntry(
+                id = 0,
+                registrationEnd = settings.registrationEnd,
+                hostCity = settings.hostCity,
+                eventStart = settings.eventStart,
+                eventEnd = settings.eventEnd,
+                eventName = settings.eventName,
+                eventAddress = settings.eventAddress,
+                organizer = settings.organizer,
+                organisationAddress = settings.organisationAddress,
+                moneyPerYouthLoader = settings.moneyPerYouthLoader,
+                startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles,
+                childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd,
+                helpersRegistrationEnd = settings.helpersRegistrationEnd,
+                numberOfDuties = settings.numberOfDuties,
+            )
     }
 }

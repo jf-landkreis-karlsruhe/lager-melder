@@ -33,23 +33,22 @@ class AuthorityServiceTest {
         authorityService = AuthorityService()
     }
 
-
     // Department
     @Test
     fun isUser_has_DepartmentId_department_hasAuthorityFilter() {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(true)
     }
 
@@ -58,16 +57,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(false)
     }
 
@@ -76,16 +75,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(true)
     }
 
@@ -94,16 +93,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(true)
     }
 
@@ -112,16 +111,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(true)
     }
 
@@ -130,32 +129,31 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         val dep = Entities.department()
         assertThat(
             authorityService.hasAuthorityFilter(
                 dep,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(true)
     }
-
 
     @Test
     fun isUser_has_DepartmentId_department_hasAuthority() {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         val dep = Entities.department()
         assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(
-            dep
+            dep,
         )
     }
 
@@ -164,8 +162,8 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         val dep = Entities.department()
@@ -179,13 +177,13 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         val dep = Entities.department()
         assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(
-            dep
+            dep,
         )
     }
 
@@ -194,13 +192,13 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         val dep = Entities.department()
         assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(
-            dep
+            dep,
         )
     }
 
@@ -209,13 +207,13 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         val dep = Entities.department()
         assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(
-            dep
+            dep,
         )
     }
 
@@ -224,16 +222,15 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         val dep = Entities.department()
         assertThat(authorityService.hasAuthority(dep, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR))).isEqualTo(
-            dep
+            dep,
         )
     }
-
 
     // Attendee
     @Test
@@ -241,16 +238,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(true)
     }
 
@@ -259,16 +256,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(false)
     }
 
@@ -277,16 +274,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(true)
     }
 
@@ -295,16 +292,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(true)
     }
 
@@ -313,16 +310,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(true)
     }
 
@@ -331,16 +328,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthorityFilter(
                 attendee,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(true)
     }
 
@@ -349,16 +346,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthority(
                 attendee,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(attendee)
     }
 
@@ -367,13 +364,13 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         val attendee = Entities.attendee()
         Assertions.assertThrows(
-            AccessDeniedException::class.java
+            AccessDeniedException::class.java,
         ) { authorityService.hasAuthority(attendee, listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)) }
     }
 
@@ -382,16 +379,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthority(
                 attendee,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(attendee)
     }
 
@@ -400,16 +397,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthority(
                 attendee,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(attendee)
     }
 
@@ -418,16 +415,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthority(
                 attendee,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(attendee)
     }
 
@@ -436,16 +433,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         val attendee = Entities.attendee()
         assertThat(
             authorityService.hasAuthority(
                 attendee,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(attendee)
     }
 
@@ -455,8 +452,8 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         assertThat(authorityService.isSpecializedFieldDirectorFilter()).isEqualTo(false)
@@ -467,8 +464,8 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         assertThat(authorityService.isSpecializedFieldDirectorFilter()).isEqualTo(true)
@@ -479,8 +476,8 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         assertThat(authorityService.isSpecializedFieldDirectorFilter()).isEqualTo(true)
@@ -491,23 +488,24 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         Assertions.assertThrows(
-            AccessDeniedException::class.java
+            AccessDeniedException::class.java,
         ) {
             authorityService.isSpecializedFieldDirector()
         }
     }
 
+    @Test
     fun `isSpecializedFieldDirector__isSpecializedFieldDirector`() {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         assertThat(authorityService.isSpecializedFieldDirector()).isEqualTo(Unit)
@@ -518,8 +516,8 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         assertThat(authorityService.isSpecializedFieldDirector()).isEqualTo(Unit)
@@ -531,8 +529,8 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         assertThat(authorityService.isAdminFilter()).isEqualTo(false)
@@ -543,8 +541,8 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         assertThat(authorityService.isAdminFilter()).isEqualTo(false)
@@ -555,8 +553,8 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         assertThat(authorityService.isAdminFilter()).isEqualTo(true)
@@ -567,10 +565,9 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
-
     }
 
     @Test
@@ -578,12 +575,12 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         )
 
         Assertions.assertThrows(
-            AccessDeniedException::class.java
+            AccessDeniedException::class.java,
         ) { authorityService.isAdmin() }
     }
 
@@ -592,20 +589,20 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(DEPARTMENT_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN),
+            ),
         )
 
         assertThat(authorityService.isAdmin()).isEqualTo(Unit)
     }
 
-
+    @Test
     fun `isUser__hasAuthority`() {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(USER_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER.toString())
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER.toString()),
+            ),
         )
 
         val user = Entities.user()
@@ -619,16 +616,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(USER_ID_PREFIX + "1"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER)
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.USER),
+            ),
         )
 
         val user = Entities.user()
         assertThat(
             authorityService.hasAuthority(
                 user,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(user)
     }
 
@@ -637,16 +634,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(USER_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR.toString())
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.SPECIALIZED_FIELD_DIRECTOR.toString()),
+            ),
         )
 
         val user = Entities.user()
         assertThat(
             authorityService.hasAuthority(
                 user,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(user)
     }
 
@@ -655,16 +652,16 @@ class AuthorityServiceTest {
         `when`(SecurityContextHolder.getContext().authentication!!.authorities).thenReturn(
             listOf(
                 SimpleGrantedAuthority(USER_ID_PREFIX + "0"),
-                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN.toString())
-            )
+                SimpleGrantedAuthority(ROLE_PREFIX + Roles.ADMIN.toString()),
+            ),
         )
 
         val user = Entities.user()
         assertThat(
             authorityService.hasAuthority(
                 user,
-                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR)
-            )
+                listOf(Roles.ADMIN, Roles.SPECIALIZED_FIELD_DIRECTOR),
+            ),
         ).isEqualTo(user)
     }
 }

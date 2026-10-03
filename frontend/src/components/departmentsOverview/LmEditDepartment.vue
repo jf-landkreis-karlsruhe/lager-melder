@@ -22,6 +22,7 @@ const leaderEmail = ref<string>(props.department.leaderEMail)
 const shortName = ref<string>(props.department.shortName)
 const headDepartmentName = ref<string>(props.department.headDepartmentName)
 const phoneNumber = ref<string>(props.department.phoneNumber)
+const features = ref<DepartmentFeatures[]>([...props.department.features])
 const rolesList = ref<{ value: Roles; title: string }[]>([
   { value: Roles.USER, title: rolesTitle(Roles.USER) },
   {
@@ -42,7 +43,8 @@ const onUpdateDepartment = () => {
     leaderEMail: leaderEmail.value,
     shortName: shortName.value,
     phoneNumber: phoneNumber.value,
-    headDepartmentName: headDepartmentName.value
+    headDepartmentName: headDepartmentName.value,
+    features: features.value
   }
   updateDepartment(updatedDepartment)
     .then(() => {
@@ -88,7 +90,7 @@ onMounted(async () => {
 
 <template>
   <div v-if="!error">
-    <form v-on:submit.prevent="onUpdateDepartment">
+    <form @submit.prevent="onUpdateDepartment">
       <v-container>
         <v-row align="baseline" justify="space-between">
           <div>
@@ -97,23 +99,23 @@ onMounted(async () => {
         </v-row>
         <v-row align="center" justify="center" wrap="wrap" style="gap: 20px">
           <div class="flex-grow-1" style="min-width: 200px">
-            <v-text-field variant="underlined" v-model="shortName" label="Name kurz" />
+            <v-text-field v-model="shortName" variant="underlined" label="Name kurz" />
           </div>
           <div class="flex-grow-1" style="min-width: 300px">
-            <v-text-field variant="underlined" v-model="headDepartmentName" label="Gemeinde" />
+            <v-text-field v-model="headDepartmentName" variant="underlined" label="Gemeinde" />
           </div>
         </v-row>
         <v-row align="center" justify="end" wrap="wrap" style="gap: 20px">
           <div class="fixed-width">
-            <v-text-field variant="underlined" v-model="leaderName" label="Jugendwart" required />
+            <v-text-field v-model="leaderName" variant="underlined" label="Jugendwart" required />
           </div>
           <div class="flex-grow">
-            <v-text-field variant="underlined" type="email" v-model="leaderEmail" label="Jugendwart Email" required />
+            <v-text-field v-model="leaderEmail" variant="underlined" type="email" label="Jugendwart Email" required />
           </div>
         </v-row>
         <v-row align="center" justify="center" wrap="wrap" style="gap: 20px">
           <div class="flex-grow">
-            <v-text-field variant="underlined" v-model="phoneNumber" label="Kontaktnummer" />
+            <v-text-field v-model="phoneNumber" variant="underlined" label="Kontaktnummer" />
           </div>
         </v-row>
 
@@ -123,29 +125,19 @@ onMounted(async () => {
           </div>
           <div class="d-flex space-between flex-wrap" style="gap: 20px">
             <v-switch
+              v-model="features"
               color="primary"
-              v-model="department.features"
               label="Teilnehmer"
               :value="DepartmentFeatures.YOUTH_GROUPS"
             ></v-switch>
             <v-switch
+              v-model="features"
               color="primary"
-              v-model="department.features"
               label="Kindergruppentag"
               :value="DepartmentFeatures.CHILD_GROUPS"
             ></v-switch>
-            <v-switch
-              color="primary"
-              v-model="department.features"
-              label="Z Kids"
-              :value="DepartmentFeatures.ZKIDS"
-            ></v-switch>
-            <v-switch
-              color="primary"
-              v-model="department.features"
-              label="Helfer"
-              :value="DepartmentFeatures.HELPER"
-            ></v-switch>
+            <v-switch v-model="features" color="primary" label="Z Kids" :value="DepartmentFeatures.ZKIDS"></v-switch>
+            <v-switch v-model="features" color="primary" label="Helfer" :value="DepartmentFeatures.HELPER"></v-switch>
           </div>
         </v-row>
         <v-row justify="end">
@@ -153,7 +145,7 @@ onMounted(async () => {
         </v-row>
       </v-container>
     </form>
-    <form v-on:submit.prevent="onUpdateRole">
+    <form @submit.prevent="onUpdateRole">
       <v-container v-if="user.role !== 'ADMIN'">
         <v-row>
           <h4>Login</h4>
@@ -161,8 +153,8 @@ onMounted(async () => {
         <v-row align="center" justify="space-between" wrap="wrap" style="gap: 20px">
           <div class="flex-grow">
             <v-text-field
-              type="text"
               v-model="user.username"
+              type="text"
               label="Benutzername"
               variant="underlined"
               hint="Read only"

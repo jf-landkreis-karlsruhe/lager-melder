@@ -6,6 +6,50 @@ on:
   pull_request:
 
 jobs:
+  frontend-checks:
+    name: Frontend - Lint, format, type-check, unit tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint:check
+      - run: npm run format:check
+      - run: npm run type-check
+      - run: npm run test:unit:run
+
+  frontend-e2e:
+    name: Frontend - Playwright E2E and visual tests
+    runs-on: ubuntu-latest
+    # same image as used for the screenshot baselines (npm run test:e2e:update-screenshots)
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --ipc=host
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npx playwright test
+        env:
+          HOME: /root
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+          retention-days: 7
+
   build-and-push-backend:
     name: Backend - Build, containerize and push
     # run only when code is compiling and tests are passing
@@ -21,9 +65,18 @@ jobs:
       - name: Install dependencies
         run: ./gradlew dependencies
         working-directory: ./backend
-      - name: Execute Tests
-        run: ./gradlew test
+      - name: Lint, static analysis and tests
+        # spotlessCheck (ktlint), detekt, unit/integration/architecture tests (Testcontainers), JaCoCo
+        run: ./gradlew check
         working-directory: ./backend
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: backend-reports
+          path: |
+            backend/build/reports/
+            backend/build/test-results/
+          retention-days: 7
       - name: Build java
         run: ./gradlew assemble
         working-directory: ./backend
@@ -45,6 +98,7 @@ jobs:
 
   build-and-push-frontend:
     name: Frontend - Build, containerize and push
+    needs: [frontend-checks, frontend-e2e]
     # run only when code is compiling and tests are passing
     runs-on: ubuntu-latest
 

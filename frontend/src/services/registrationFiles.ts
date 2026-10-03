@@ -19,7 +19,11 @@ export const getStateYouthPlanLeader = (
     }))
 }
 
-export const getAttendeesKarlsruhe = (departmentId: number, departmentName: string, group: Group): Promise<FileReponse> => {
+export const getAttendeesKarlsruhe = (
+  departmentId: number,
+  departmentName: string,
+  group: Group
+): Promise<FileReponse> => {
   return fetchData(`registrationFiles/attendeesKarlsruhe/${departmentId}?group=${group}`, {
     headers: {
       ...withAuthenticationHeader()
@@ -49,10 +53,7 @@ export const getStateYouthPlanAttendees = (
     }))
 }
 
-export const getAttendeesCommunal = (
-  departmentId: number,
-  departmentName: string
-): Promise<FileReponse> => {
+export const getAttendeesCommunal = (departmentId: number, departmentName: string): Promise<FileReponse> => {
   return fetchData(`registrationFiles/attendeesCommunal/${departmentId}`, {
     headers: {
       ...withAuthenticationHeader()

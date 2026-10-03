@@ -62,11 +62,11 @@ const addDepartmentAndUser = () => {
 
 <template>
   <div class="mb-10">
-    <form v-on:submit.prevent="addDepartmentAndUser()">
-      <v-text-field variant="underlined" v-model="departmentName" label="Name der Feuerwehr" required />
-      <v-text-field variant="underlined" v-model="leaderName" label="Jugendwart" required />
-      <v-text-field variant="underlined" v-model="leaderMail" type="email" label="Jugendwart Email" required />
-      <v-text-field variant="underlined" v-model="username" label="Benutzername" required />
+    <form @submit.prevent="addDepartmentAndUser()">
+      <v-text-field v-model="departmentName" variant="underlined" label="Name der Feuerwehr" required />
+      <v-text-field v-model="leaderName" variant="underlined" label="Jugendwart" required />
+      <v-text-field v-model="leaderMail" variant="underlined" type="email" label="Jugendwart Email" required />
+      <v-text-field v-model="username" variant="underlined" label="Benutzername" required />
       <v-row justify="end">
         <v-btn color="primary" :loading="loading" type="submit" rounded>
           <span v-if="created"> <v-icon medium>mdi-check</v-icon> Erstellt </span>
