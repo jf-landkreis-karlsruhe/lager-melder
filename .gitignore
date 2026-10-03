@@ -1,6 +1,10 @@
 # Local .terraform directories
 **/.terraform/*
 .claude/**
+# shared Claude Code project config (hooks, permissions); personal settings.local.json stays ignored
+!.claude/settings.json
+!.claude/hooks/
+!.claude/hooks/**
 
 # .tfstate files
 *.tfstate
