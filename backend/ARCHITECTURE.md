@@ -231,3 +231,9 @@ Things to know when writing integration tests:
 - The frontend `errorConstants.ts` lacks `CHANGED_ROLE`, `WRONG_TYPE` and `MAIL_NOT_SEND_ERROR`, so those messages are not shown.
 - An unknown `group` parameter for registration files raises `IllegalArgumentException`, which results in a 500.
 - `getAttendeesForDepartment` filters child leaders without the feature check that the other attendee types have.
+- Errors sent with `sendError` (e.g. 401 for a wrong password at `/login`) are forwarded to `/error`, which is not
+  `permitAll`. The client therefore gets 403 without a body instead of 401. `/error` should be permitted in `SpringSecurityConfig`.
+- `application.yml` also sets `spring.jpa.properties.jakarta.persistence.jdbc.url` with a fixed port 5432. Hibernate uses it,
+  so overriding only `spring.datasource.url` (e.g. a second local instance) migrates one database and reads another.
+- Jackson 3 changed defaults that the frontend relies on (enums via `toString()`, missing primitives). They are restored in
+  `rest/JacksonConfiguration.kt`; `JsonContractTest` guards the contract.

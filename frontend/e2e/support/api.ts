@@ -1,4 +1,4 @@
-import type { Page, Route } from '@playwright/test'
+import { type Page, type Route } from '@playwright/test'
 
 export type Role = 'USER' | 'LK_KARLSRUHE' | 'SPECIALIZED_FIELD_DIRECTOR' | 'ADMIN'
 

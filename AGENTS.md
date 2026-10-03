@@ -26,11 +26,12 @@ Run the checks for every sub-project you touched. Only commit when they pass.
 | Sub-project | Commands (run inside the directory) |
 |---|---|
 | `backend/` | `./gradlew spotlessApply` then `./gradlew check` (ktlint, detekt, all tests incl. architecture tests) |
-| `frontend/` | `npm run format`, `npm run lint`, `npm run type-check`, `npx vitest run` |
+| `frontend/` | `npm run format`, `npm run lint:check`, `npm run type-check`, `npm run test:unit:run`, and `npm run test:e2e:docker` when UI behaviour or layout changed |
 
 - Never commit with failing or skipped checks. If a check fails for reasons unrelated to your change, stop and report it instead of working around it.
 - Never bypass checks (`--no-verify`, `@Disabled`, deleting tests, raising thresholds, adding entries to the detekt baseline or to the allow-lists in `ArchitectureTest`).
 - Backend integration tests need a running Docker daemon (Testcontainers). If Docker is unavailable, say so. Do not skip the tests silently.
+- After changing a page or component, look at the rendered result in the browser (see [Viewing the app in a browser](#viewing-the-app-in-a-browser)) before committing.
 
 ### Tests
 
@@ -38,6 +39,9 @@ Run the checks for every sub-project you touched. Only commit when they pass.
 - Every test function must carry `@Test` / `@ParameterizedTest`. Methods without them never run, and `ArchitectureTest` fails on them.
 - Backend: use `@IntegrationTest` (never plain `@SpringBootTest`) for tests that need Spring or the database. Prefer plain unit tests for logic in services and helpers.
 - Backend authorization: when an endpoint touches department-owned data, test both the allowed case and the forbidden case (a `USER` of another department gets 403).
+- Frontend: logic in helpers and services gets Vitest unit tests; components get Vitest component tests (Vuetify is registered in `vitest.setup.ts`); user flows get Playwright tests in `frontend/e2e/` with the mocked API from `e2e/support/api.ts`.
+- When you change an API contract, adapt the fixtures in `frontend/e2e/support/api.ts` and `backend/.../JsonContractTest.kt`, which sends JSON exactly as the frontend does.
+- Visual regression screenshots (`frontend/e2e/__screenshots__/linux/`) are only updated with `npm run test:e2e:update-screenshots`, and only for intended layout changes. Look at the new screenshots before committing them.
 
 ### Architecture
 
@@ -58,35 +62,66 @@ Run the checks for every sub-project you touched. Only commit when they pass.
 
 ```sh
 cd frontend
-npm install          # install dependencies
-npm run dev          # dev server at localhost:9000 (sets VITE_BACKEND_URL)
-npm run build        # type-check + vite build
-npm run type-check   # vue-tsc --build --force
-npm run lint         # eslint --fix on all .vue/.ts files
-npm run format       # prettier --write src/
-npm run test:unit    # run all tests (vitest, watch mode)
+npm install                       # install dependencies
+npm run dev                       # dev server at localhost:9000, talks to the backend at 127.0.0.1:8080 directly
+npm run dev:agent                 # dev server at localhost:9000, proxies /api to the backend (for the browser agent)
+npm run build                     # type-check + vite build
+npm run type-check                # vue-tsc --build --force (app, unit tests, e2e)
+npm run lint                      # eslint --fix
+npm run lint:check                # eslint without fixes, fails on warnings
+npm run format                    # prettier --write src/ e2e/
+npm run format:check              # prettier --check src/ e2e/
+npm run test:unit                 # vitest, watch mode
+npm run test:unit:run             # vitest, single run
+npm run test:coverage             # vitest with coverage report (coverage/index.html)
+npm run test:e2e                  # Playwright with a local browser (npx playwright install chromium)
+npm run test:e2e:docker           # Playwright in the official Docker image (no local browser needed)
+npm run test:e2e:update-screenshots  # recreate visual regression baselines (Docker, linux)
 ```
 
 ### Running Tests
 
 ```sh
-# All tests (watch mode)
-npm run test:unit
-
-# All tests (single run, CI mode)
-npx vitest run
-
-# Single test file
-npx vitest run src/components/__tests__/LmFooter.spec.ts
-
-# Single test by name
+# Single unit test file / single test by name
+npx vitest run src/helper/__tests__/juleika.spec.ts
 npx vitest run -t "test name here"
 
-# Single file, single run, with coverage
-npx vitest run --coverage src/components/__tests__/LmFooter.spec.ts
+# Single E2E file
+npx playwright test e2e/login.spec.ts
 ```
 
-Test files live in `__tests__/` subdirectories next to the code they test and use the `*.spec.ts` naming pattern. The test environment is `jsdom` (configured in `vitest.config.ts`).
+- Unit and component tests live in `__tests__/` next to the code (`*.spec.ts`, jsdom, time zone Europe/Berlin).
+- E2E tests live in `frontend/e2e/` and run against the Vite dev server with a mocked backend. `mockApi(page, overrides)`
+  answers known endpoints with fixtures and returns the list of unmocked calls. `loginAs(page, role)` fakes a login per role.
+- Visual tests (`e2e/visual.spec.ts`) compare against Linux baselines, so run them in Docker (`test:e2e:docker`).
+
+---
+
+## Viewing the app in a browser
+
+The Playwright MCP server (configured in `/.mcp.json`) gives the agent a real Chromium. It runs in Docker, so it reaches
+the app via `host.docker.internal`. Use `browser_navigate`, `browser_snapshot` (accessibility tree) and
+`browser_take_screenshot` to check pages after UI changes.
+
+1. Start Postgres: `docker compose -f backend/docker-compose/docker-compose-postgres.yml up -d`
+2. Start the backend: `cd backend && SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun` (port 8080)
+3. Start the frontend in agent mode: `cd frontend && npm run dev:agent` (port 9000, proxies `/api` to the backend)
+4. Open `http://host.docker.internal:9000/login` in the browser of the MCP server.
+
+Dev users (only in the Liquibase `dev` context), password `lagermelder-dev` for all:
+
+| User | Role |
+|---|---|
+| `feuerwehr@dev.lagermelder` | `USER` (department Ettlingen) |
+| `lk-karlsruhe@dev.lagermelder` | `LK_KARLSRUHE` |
+| `fachgebietsleiter@dev.lagermelder` | `SPECIALIZED_FIELD_DIRECTOR` |
+| `admin@dev.lagermelder` | `ADMIN` |
+
+Notes:
+- On a fresh database, log in as `fachgebietsleiter@dev.lagermelder` once first. The settings are created on first read,
+  which only this role may do. Until then, department users cannot add attendees.
+- If a backend is already running from an older checkout, restart it so new Liquibase changesets (e.g. the dev users) are applied.
+- Do not change data you did not create yourself in a shared dev database.
 
 ---
 
@@ -130,13 +165,13 @@ Always run `npm run format` after bulk edits.
 
 ## Code Style — ESLint
 
-Config lives in `frontend/.eslintrc.cjs`. Extends:
-- `plugin:vue/vue3-essential`
-- `eslint:recommended`
-- `@vue/eslint-config-typescript`
-- `@vue/eslint-config-prettier/skip-formatting`
+Config lives in `frontend/eslint.config.js` (ESLint 9 flat config). It uses:
+- `eslint-plugin-vue` `flat/recommended` (attribute order, hyphenated props/events in templates, `v-for` keys, no prop mutation)
+- `@vue/eslint-config-typescript` recommended rules (no `any`, no unused variables)
+- `@vue/eslint-config-prettier/skip-formatting` (formatting is Prettier's job)
 
 Custom rule: `vue/no-undef-components` is set to `error`; `v-*` (Vuetify) and `router-*` components are whitelisted.
+Only disable a rule for a single line, with a comment that explains why.
 
 ---
 
