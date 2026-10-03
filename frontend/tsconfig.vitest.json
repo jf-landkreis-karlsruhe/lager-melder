@@ -8,5 +8,11 @@
       "node",
       "jsdom"
     ]
-  }
+  },
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue",
+    "vitest.setup.ts"
+  ]
 }
