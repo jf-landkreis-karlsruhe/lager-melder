@@ -15,22 +15,29 @@ cd "$root"
 
 # Staged, modified and new files: covers `git add -A && git commit` in one command.
 changed=$( { git diff --name-only --cached --diff-filter=ACMR; git diff --name-only --diff-filter=ACMR; git ls-files --others --exclude-standard; } | sort -u)
+# Deleted files: a deletion alone can break imports elsewhere, so it also counts as touching the sub-project.
+deleted=$( { git diff --name-only --cached --diff-filter=D; git diff --name-only --diff-filter=D; } | sort -u)
 
 failed=0
 report() { echo "$1" >&2; failed=1; }
 
-frontend_files=$(echo "$changed" | grep -E '^frontend/.*\.(ts|vue|js|cjs|mjs)$' | grep -vE '^frontend/(dist|node_modules)/' || true)
-if [ -n "$frontend_files" ]; then
+frontend_pattern='^frontend/.*\.(ts|vue|js|cjs|mjs)$'
+frontend_files=$(echo "$changed" | grep -E "$frontend_pattern" | grep -vE '^frontend/(dist|node_modules)/' || true)
+frontend_deleted=$(echo "$deleted" | grep -E "$frontend_pattern" || true)
+if [ -n "$frontend_files" ] || [ -n "$frontend_deleted" ]; then
   bin="$root/frontend/node_modules/.bin"
-  rel=$(echo "$frontend_files" | sed 's#^frontend/##')
-  # shellcheck disable=SC2086
-  (cd frontend && "$bin/eslint" --max-warnings=0 $rel) >&2 || report "Frontend: ESLint failed (npm run lint)."
-  # shellcheck disable=SC2086
-  (cd frontend && "$bin/prettier" --check --log-level=warn $rel) >&2 || report "Frontend: Prettier check failed (npm run format)."
+  # Only lint files that still exist in the working tree (a staged file may have been deleted since).
+  rel=$(echo "$frontend_files" | while read -r f; do [ -f "$f" ] && echo "${f#frontend/}"; done || true)
+  if [ -n "$rel" ]; then
+    # shellcheck disable=SC2086
+    (cd frontend && "$bin/eslint" --max-warnings=0 $rel) >&2 || report "Frontend: ESLint failed (npm run lint)."
+    # shellcheck disable=SC2086
+    (cd frontend && "$bin/prettier" --check --log-level=warn $rel) >&2 || report "Frontend: Prettier check failed (npm run format)."
+  fi
   (cd frontend && "$bin/vue-tsc" --build --force) >&2 || report "Frontend: type check failed (npm run type-check)."
 fi
 
-if echo "$changed" | grep -qE '^backend/.*\.(kt|kts)$'; then
+if echo "$changed"$'\n'"$deleted" | grep -qE '^backend/.*\.(kt|kts)$'; then
   (cd backend && ./gradlew -q --console=plain spotlessCheck detekt) >&2 \
     || report "Backend: spotlessCheck/detekt failed (./gradlew spotlessApply, see build/reports/detekt)."
 fi
