@@ -16,18 +16,18 @@ import org.springframework.web.bind.annotation.*
 class UserController(
     private val userService: UserService,
     private val departmentService: DepartmentService,
-    private val securityService: SecurityService
+    private val securityService: SecurityService,
 ) {
-
     @GetMapping("/users/me")
-    fun getMe(): RestUser {
-        return userService
+    fun getMe(): RestUser =
+        userService
             .getMe()
             .let { RestUser.of(it) }
-    }
 
     @GetMapping("/users/department/{id}")
-    fun getUserForDepartment(@PathVariable("id") id: Long): RestUser {
+    fun getUserForDepartment(
+        @PathVariable("id") id: Long,
+    ): RestUser {
         val department = departmentService.getDepartment(id)
         return userService
             .getUserForDepartment(department)
@@ -35,19 +35,20 @@ class UserController(
     }
 
     @PostMapping("/users")
-    fun addUser(@RequestBody(required = true) @Valid user: RestUserRequest): RestUser {
+    fun addUser(
+        @RequestBody(required = true) @Valid user: RestUserRequest,
+    ): RestUser {
         val department = departmentService.getDepartment(user.departmentId)
         return userService
             .createUser(
-                RestUserRequest.to(user, 0, department)
-            )
-            .let { RestUser.of(it) }
+                RestUserRequest.to(user, 0, department),
+            ).let { RestUser.of(it) }
     }
 
     @PutMapping("/users/{id}/password")
     fun changePassword(
         @RequestBody(required = true) @Valid user: RestUserRequest,
-        @PathVariable("id") id: Long
+        @PathVariable("id") id: Long,
     ): RestUser {
         val department = departmentService.getDepartment(user.departmentId)
         return userService
@@ -56,7 +57,9 @@ class UserController(
     }
 
     @PostMapping("/users/{id}/sendRegistrationEmail")
-    fun sendRegistrationEmail(@PathVariable("id") id: Long): RestUser {
+    fun sendRegistrationEmail(
+        @PathVariable("id") id: Long,
+    ): RestUser {
         val user = userService.getUser(id)
         return userService
             .updatePasswordAndSendEmail(user)
@@ -66,27 +69,23 @@ class UserController(
     @PutMapping("/users/{id}/role")
     fun updateRole(
         @PathVariable("id") id: Long,
-        @RequestBody(required = true) @Valid userRole: RestUserRoleRequest
-    ): RestUser {
-        return userService
+        @RequestBody(required = true) @Valid userRole: RestUserRoleRequest,
+    ): RestUser =
+        userService
             .updateRole(id, userRole.role)
-            .let { RestUser.of(it)}
-    }
+            .let { RestUser.of(it) }
 
     @PutMapping("/users/forgotPasswordToken")
     fun sendForgotPasswordEmail(
-        @RequestBody(required = true) @Valid passwordPasswordTokenRequest: RestPasswordPasswordTokenRequest
-    ): RestOk {
-        return securityService.sendResetPasswordLink(
+        @RequestBody(required = true) @Valid passwordPasswordTokenRequest: RestPasswordPasswordTokenRequest,
+    ): RestOk =
+        securityService.sendResetPasswordLink(
             passwordPasswordTokenRequest.username,
-            passwordPasswordTokenRequest.linkAddress
+            passwordPasswordTokenRequest.linkAddress,
         )
-    }
 
     @PutMapping("/users/resetPasswordWithToken")
     fun resetPasswordWithToken(
-        @RequestBody(required = true) @Valid resetPasswordRequest: RestResetPasswordTokenRequest
-    ): RestOk {
-        return securityService.resetPasswordWithToken(resetPasswordRequest.token, resetPasswordRequest.password)
-    }
+        @RequestBody(required = true) @Valid resetPasswordRequest: RestResetPasswordTokenRequest,
+    ): RestOk = securityService.resetPasswordWithToken(resetPasswordRequest.token, resetPasswordRequest.password)
 }

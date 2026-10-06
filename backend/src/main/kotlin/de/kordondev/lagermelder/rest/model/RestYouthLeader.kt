@@ -19,23 +19,24 @@ data class RestYouthLeader(
     val code: String,
     val status: String,
     val juleikaNumber: String,
-    val juleikaExpireDate: String
+    val juleikaExpireDate: String,
 ) {
     companion object {
-        fun of(attendee: YouthLeaderEntry) = RestYouthLeader(
-            id = attendee.id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            birthday = attendee.birthday,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            departmentId = attendee.department.id,
-            code = attendee.code,
-            status = attendee.status.toString(),
-            juleikaNumber = attendee.juleikaNumber,
-            juleikaExpireDate = attendee.juleikaExpireDate?.toString() ?: ""
-        )
+        fun of(attendee: YouthLeaderEntry) =
+            RestYouthLeader(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName,
+                birthday = attendee.birthday,
+                food = attendee.food,
+                tShirtSize = attendee.tShirtSize,
+                additionalInformation = attendee.additionalInformation,
+                role = attendee.role,
+                departmentId = attendee.department.id,
+                code = attendee.code,
+                status = attendee.status.toString(),
+                juleikaNumber = attendee.juleikaNumber,
+                juleikaExpireDate = attendee.juleikaExpireDate?.toString() ?: "",
+            )
     }
 }

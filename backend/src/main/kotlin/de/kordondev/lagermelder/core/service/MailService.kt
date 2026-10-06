@@ -12,12 +12,13 @@ class MailService(
     private val departmentService: DepartmentService,
     private val attendeeService: AttendeeService,
     private val mailSenderService: MailSenderService,
-    private val settingsService: SettingsService
+    private val settingsService: SettingsService,
 ) {
     fun sendReminderMail(sendTo: SendTo): Number {
         authorityService.isSpecializedFieldDirector()
         val settings = settingsService.getSettings()
-        return departmentService.getDepartments()
+        return departmentService
+            .getDepartments()
             .filter { filterDepartmentsBy(it, sendTo) }
             .map { mailSenderService.sendReminderMail(it.leaderEMail, it.leaderName, settings) }
             .count { it }
@@ -26,13 +27,17 @@ class MailService(
     fun sendRegistrationFinishedMail(sendTo: SendTo): Number {
         authorityService.isSpecializedFieldDirector()
         val settings = settingsService.getSettings()
-        return departmentService.getDepartments()
+        return departmentService
+            .getDepartments()
             .filter { filterDepartmentsBy(it, sendTo) }
             .map { mailSenderService.sendRegistrationFinishedMail(it.leaderEMail, it.leaderName, settings) }
             .count { it }
     }
 
-    private fun filterDepartmentsBy(department: DepartmentEntry, sendTo: SendTo): Boolean {
+    private fun filterDepartmentsBy(
+        department: DepartmentEntry,
+        sendTo: SendTo,
+    ): Boolean {
         if (sendTo == SendTo.ALL_DEPARTMENTS) {
             return true
         }

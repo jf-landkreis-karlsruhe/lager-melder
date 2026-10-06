@@ -22,26 +22,21 @@ class EventService(
     val eventRepository: EventRepository,
     val attendeeInEventRepository: AttendeeInEventRepository,
     val departmentService: DepartmentService,
-    private val settingsService: SettingsService
+    private val settingsService: SettingsService,
 ) {
-    fun getEventByCode(code: String): EventEntry {
-        return eventRepository.findByCodeAndTrashedIsFalse(code)
+    fun getEventByCode(code: String): EventEntry =
+        eventRepository.findByCodeAndTrashedIsFalse(code)
             ?: throw NotFoundException("Event not found for code $code")
-    }
 
-    fun getEventByType(type: EventType): EventEntry {
-        return eventRepository.findByTypeAndTrashedIsFalse(type)
+    fun getEventByType(type: EventType): EventEntry =
+        eventRepository.findByTypeAndTrashedIsFalse(type)
             ?: throw NotFoundException("Event not found for type $type")
-    }
 
-    fun getEvent(id: Long): EventEntry {
-        return eventRepository.findByIdAndTrashedIsFalse(id)
+    fun getEvent(id: Long): EventEntry =
+        eventRepository.findByIdAndTrashedIsFalse(id)
             ?: throw NotFoundException("Event with $id not found")
-    }
 
-    fun getEvents(): List<EventEntry> {
-        return eventRepository.findAllByTrashedIsFalse()
-    }
+    fun getEvents(): List<EventEntry> = eventRepository.findAllByTrashedIsFalse()
 
     fun createEvent(event: EventEntry): EventEntry {
         authorityService.isSpecializedFieldDirector()
@@ -49,9 +44,13 @@ class EventService(
         return eventRepository.save(event.copy(code = code))
     }
 
-    fun saveEvent(id: Long, event: EventEntry): EventEntry {
+    fun saveEvent(
+        id: Long,
+        event: EventEntry,
+    ): EventEntry {
         authorityService.isSpecializedFieldDirector()
-        return eventRepository.findByIdAndTrashedIsFalse(id)
+        return eventRepository
+            .findByIdAndTrashedIsFalse(id)
             ?.let {
                 eventRepository.save(event.copy(code = it.code, id = id, type = it.type))
             }
@@ -68,8 +67,10 @@ class EventService(
         }
     }
 
-
-    fun addAttendeeToEvent(eventCode: String, attendeeCode: String): AttendeeInEvent {
+    fun addAttendeeToEvent(
+        eventCode: String,
+        attendeeCode: String,
+    ): AttendeeInEvent {
         authorityService.isLkKarlsruhe()
         if (!settingsService.canCheckInAttendees()) {
             throw WrongTimeException("Teilnehmer können ab 1 Woche vor dem Event eingecheckt werden.")
@@ -87,13 +88,14 @@ class EventService(
         if (attendeeStatus != null) {
             attendeeService.updateAttendeeStatus(attendee, attendeeStatus)
         }
-        return attendeeInEventRepository.save(attendeeInEvent)
+        return attendeeInEventRepository
+            .save(attendeeInEvent)
             .let {
                 AttendeeInEvent(
                     attendeeFirstName = attendee.firstName,
                     attendeeLastName = attendee.lastName,
                     eventName = event.name,
-                    time = attendeeInEvent.time
+                    time = attendeeInEvent.time,
                 )
             }
     }
@@ -103,73 +105,113 @@ class EventService(
         return calculateEventSummary()
     }
 
-    fun getGlobalEventSummary(): Distribution {
-        return calculateEventSummary().total
-    }
+    fun getGlobalEventSummary(): Distribution = calculateEventSummary().total
 
     private fun calculateEventSummary(): RestGlobalEventSummary {
         val attendees = attendeeService.getAllAttendees()
-        val updatedZKid = attendees.zKids
-            .map { it.copy(role = if (it.partOfDepartment.headDepartmentName == "LK Karlsruhe") AttendeeRole.HELPER else AttendeeRole.YOUTH) }
-        val updatedYouthLeaders = attendees.youthLeaders
-            .map { if (it.department.headDepartmentName == "LK Karlsruhe") it.copy(role = AttendeeRole.HELPER) else it }
-        val updatedYouths = attendees.youths
-            .map { if (it.department.headDepartmentName == "LK Karlsruhe") it.copy(role = AttendeeRole.HELPER) else it }
+        val updatedZKid =
+            attendees.zKids
+                .map {
+                    it.copy(
+                        role =
+                            if (it.partOfDepartment.headDepartmentName ==
+                                "LK Karlsruhe"
+                            ) {
+                                AttendeeRole.HELPER
+                            } else {
+                                AttendeeRole.YOUTH
+                            },
+                    )
+                }
+        val updatedYouthLeaders =
+            attendees.youthLeaders
+                .map { if (it.department.headDepartmentName == "LK Karlsruhe") it.copy(role = AttendeeRole.HELPER) else it }
+        val updatedYouths =
+            attendees.youths
+                .map { if (it.department.headDepartmentName == "LK Karlsruhe") it.copy(role = AttendeeRole.HELPER) else it }
         val allAttendees =
             (updatedYouths + updatedYouthLeaders + attendees.childLeaders + attendees.children + updatedZKid + attendees.helpers)
         val attendeesByDepartment = allAttendees.groupBy { attendeeService.getPartOfDepartmentOrDepartment(it) }
 
-        val notPausedAttendees = attendeesByDepartment.entries
-            .filter { !it.key.paused }
-            .flatMap { it.value }
+        val notPausedAttendees =
+            attendeesByDepartment.entries
+                .filter { !it.key.paused }
+                .flatMap { it.value }
 
         return RestGlobalEventSummary(
             total = sumUp(notPausedAttendees, "Zeltlager Gesamt"),
-            departments = attendeesByDepartment.keys.map { sumUp(attendeesByDepartment[it]!!, it.name) }
+            departments = attendeesByDepartment.keys.map { sumUp(attendeesByDepartment[it]!!, it.name) },
         )
     }
 
-    fun addAttendeesToEvent(eventCode: String, attendeeCodes: List<String>): List<AttendeeInEvent> {
-        return attendeeCodes.map { addAttendeeToEvent(eventCode, it) }
-    }
+    fun addAttendeesToEvent(
+        eventCode: String,
+        attendeeCodes: List<String>,
+    ): List<AttendeeInEvent> =
+        attendeeCodes.map {
+            addAttendeeToEvent(eventCode, it)
+        }
 
-    private fun sumUp(attendees: List<Attendee>, name: String): Distribution {
+    private fun sumUp(
+        attendees: List<Attendee>,
+        name: String,
+    ): Distribution {
         val groupedAttendees = attendees.groupBy { attendeeRoleStatus(it.status, it.role) }
         return Distribution(
             name = name,
-            youths = groupedAttendees[attendeeRoleStatus(
-                AttendeeStatus.ENTERED,
-                AttendeeRole.YOUTH
-            )]?.size ?: 0,
-            youthLeaders = groupedAttendees[attendeeRoleStatus(
-                AttendeeStatus.ENTERED,
-                AttendeeRole.YOUTH_LEADER
-            )]?.size ?: 0,
-            children = groupedAttendees[attendeeRoleStatus(
-                AttendeeStatus.ENTERED,
-                AttendeeRole.CHILD
-            )]?.size ?: 0,
-            childLeaders = groupedAttendees[attendeeRoleStatus(
-                AttendeeStatus.ENTERED,
-                AttendeeRole.CHILD_LEADER
-            )]?.size ?: 0,
-            helpers = groupedAttendees[attendeeRoleStatus(
-                AttendeeStatus.ENTERED,
-                AttendeeRole.HELPER
-            )]?.size ?: 0
+            youths =
+                groupedAttendees[
+                    attendeeRoleStatus(
+                        AttendeeStatus.ENTERED,
+                        AttendeeRole.YOUTH,
+                    ),
+                ]?.size ?: 0,
+            youthLeaders =
+                groupedAttendees[
+                    attendeeRoleStatus(
+                        AttendeeStatus.ENTERED,
+                        AttendeeRole.YOUTH_LEADER,
+                    ),
+                ]?.size ?: 0,
+            children =
+                groupedAttendees[
+                    attendeeRoleStatus(
+                        AttendeeStatus.ENTERED,
+                        AttendeeRole.CHILD,
+                    ),
+                ]?.size ?: 0,
+            childLeaders =
+                groupedAttendees[
+                    attendeeRoleStatus(
+                        AttendeeStatus.ENTERED,
+                        AttendeeRole.CHILD_LEADER,
+                    ),
+                ]?.size ?: 0,
+            helpers =
+                groupedAttendees[
+                    attendeeRoleStatus(
+                        AttendeeStatus.ENTERED,
+                        AttendeeRole.HELPER,
+                    ),
+                ]?.size ?: 0,
         )
     }
 
-    private fun attendeeRoleStatus(status: AttendeeStatus?, role: AttendeeRole): String {
-        return "$status + $role"
-    }
+    private fun attendeeRoleStatus(
+        status: AttendeeStatus?,
+        role: AttendeeRole,
+    ): String = "$status + $role"
 
-    fun addDepartmentToEvent(eventCode: String, departmentId: Long): List<AttendeeInEvent> {
+    fun addDepartmentToEvent(
+        eventCode: String,
+        departmentId: Long,
+    ): List<AttendeeInEvent> {
         authorityService.isLkKarlsruhe()
         if (!settingsService.canCheckInAttendees()) {
             throw WrongTimeException("Teilnehmer können ab 1 Woche vor dem Event eingecheckt werden.")
         }
-        return departmentService.getDepartment(departmentId)
+        return departmentService
+            .getDepartment(departmentId)
             .let { attendeeService.getAttendeesForDepartment(it) }
             .let { it.youths + it.youthLeaders }
             .map { addAttendeeToEvent(eventCode, it.code) }

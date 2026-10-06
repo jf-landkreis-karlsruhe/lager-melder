@@ -3,12 +3,12 @@ package de.kordondev.lagermelder.rest.controller
 import de.kordondev.lagermelder.core.persistence.entry.Roles
 import de.kordondev.lagermelder.core.security.SecurityConstants.ROLE_PREFIX
 import de.kordondev.lagermelder.helper.Entities
+import de.kordondev.lagermelder.helper.IntegrationTest
 import de.kordondev.lagermelder.helper.WebTestHelper
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -17,9 +17,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @Transactional
-@SpringBootTest
-class AuthorizationControllerTest(val context: WebApplicationContext) {
-
+@IntegrationTest
+class AuthorizationControllerTest(
+    val context: WebApplicationContext,
+) {
     lateinit var restMockMvc: MockMvc
 
     @Autowired
@@ -35,19 +36,19 @@ class AuthorizationControllerTest(val context: WebApplicationContext) {
     fun addDepartmentAndUser() {
         val departmentWithUserRequest = Entities.restDepartmentWithUserRequest()
 
-        restMockMvc.perform(
-            post("/register").contentType(WebTestHelper.CONTENT_TYPE_JSON)
-                .content(webTestHelper.toJSON(departmentWithUserRequest))
-        )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+        restMockMvc
+            .perform(
+                post("/register")
+                    .contentType(WebTestHelper.CONTENT_TYPE_JSON)
+                    .content(webTestHelper.toJSON(departmentWithUserRequest)),
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.userId").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$.departmentId").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(Roles.USER))
             .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(departmentWithUserRequest.username))
             .andExpect(
-                MockMvcResultMatchers.jsonPath("$.departmentName").value(departmentWithUserRequest.departmentName)
-            )
-            .andExpect(MockMvcResultMatchers.jsonPath("$.leaderName").value(departmentWithUserRequest.leaderName))
+                MockMvcResultMatchers.jsonPath("$.departmentName").value(departmentWithUserRequest.departmentName),
+            ).andExpect(MockMvcResultMatchers.jsonPath("$.leaderName").value(departmentWithUserRequest.leaderName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.leaderEMail").value(departmentWithUserRequest.leaderEMail))
     }
 
@@ -56,19 +57,21 @@ class AuthorizationControllerTest(val context: WebApplicationContext) {
     fun addDepartmentAndUserFailsWhenDepartmentNameAlreadyExists() {
         val departmentWithUserRequest = Entities.restDepartmentWithUserRequest()
 
-        restMockMvc.perform(
-            post("/register").contentType(WebTestHelper.CONTENT_TYPE_JSON)
-                .content(webTestHelper.toJSON(departmentWithUserRequest))
-        )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+        restMockMvc
+            .perform(
+                post("/register")
+                    .contentType(WebTestHelper.CONTENT_TYPE_JSON)
+                    .content(webTestHelper.toJSON(departmentWithUserRequest)),
+            ).andExpect(MockMvcResultMatchers.status().isOk)
 
         val secondRequestWithSameDepartmentName = departmentWithUserRequest.copy(username = "other-user@email.de")
 
-        restMockMvc.perform(
-            post("/register").contentType(WebTestHelper.CONTENT_TYPE_JSON)
-                .content(webTestHelper.toJSON(secondRequestWithSameDepartmentName))
-        )
-            .andExpect(MockMvcResultMatchers.status().isForbidden)
+        restMockMvc
+            .perform(
+                post("/register")
+                    .contentType(WebTestHelper.CONTENT_TYPE_JSON)
+                    .content(webTestHelper.toJSON(secondRequestWithSameDepartmentName)),
+            ).andExpect(MockMvcResultMatchers.status().isForbidden)
             .andExpect(MockMvcResultMatchers.jsonPath("$.key").value("RESOURCE_ALREADY_EXISTS_ERROR"))
     }
 
@@ -77,20 +80,21 @@ class AuthorizationControllerTest(val context: WebApplicationContext) {
     fun addDepartmentAndUserFailsWhenUsernameAlreadyExists() {
         val departmentWithUserRequest = Entities.restDepartmentWithUserRequest()
 
-        restMockMvc.perform(
-            post("/register").contentType(WebTestHelper.CONTENT_TYPE_JSON)
-                .content(webTestHelper.toJSON(departmentWithUserRequest))
-        )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+        restMockMvc
+            .perform(
+                post("/register")
+                    .contentType(WebTestHelper.CONTENT_TYPE_JSON)
+                    .content(webTestHelper.toJSON(departmentWithUserRequest)),
+            ).andExpect(MockMvcResultMatchers.status().isOk)
 
         val secondRequestWithSameUsername = departmentWithUserRequest.copy(departmentName = "other department")
 
-        restMockMvc.perform(
-            post("/register").contentType(WebTestHelper.CONTENT_TYPE_JSON)
-                .content(webTestHelper.toJSON(secondRequestWithSameUsername))
-        )
-            .andExpect(MockMvcResultMatchers.status().isForbidden)
+        restMockMvc
+            .perform(
+                post("/register")
+                    .contentType(WebTestHelper.CONTENT_TYPE_JSON)
+                    .content(webTestHelper.toJSON(secondRequestWithSameUsername)),
+            ).andExpect(MockMvcResultMatchers.status().isForbidden)
             .andExpect(MockMvcResultMatchers.jsonPath("$.key").value("RESOURCE_ALREADY_EXISTS_ERROR"))
     }
-
 }

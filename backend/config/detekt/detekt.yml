@@ -1,0 +1,8 @@
+# Overrides on top of the detekt default config (buildUponDefaultConfig = true).
+# Existing findings are frozen in baseline.xml; new code must not add findings.
+
+style:
+  WildcardImport:
+    active: false # wildcard imports are used throughout the codebase (ktlint rule disabled too)
+  MaxLineLength:
+    maxLineLength: 140 # keep in sync with .editorconfig

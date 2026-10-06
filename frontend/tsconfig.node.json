@@ -3,9 +3,8 @@
   "include": [
     "vite.config.*",
     "vitest.config.*",
-    "cypress.config.*",
-    "nightwatch.conf.*",
-    "playwright.config.*"
+    "playwright.config.*",
+    "e2e/**/*"
   ],
   "compilerOptions": {
     "composite": true,
@@ -14,6 +13,10 @@
     "moduleResolution": "Bundler",
     "types": [
       "node"
+    ],
+    "lib": [
+      "ES2022",
+      "DOM"
     ]
   }
 }

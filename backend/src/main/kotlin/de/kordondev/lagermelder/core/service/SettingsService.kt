@@ -13,10 +13,11 @@ import java.time.temporal.ChronoUnit
 @Service
 class SettingsService(
     private val settingsRepository: SettingsRepository,
-    private val authorityService: AuthorityService
+    private val authorityService: AuthorityService,
 ) {
-
-    private val SETTINGS_ID = 1L
+    companion object {
+        private const val SETTINGS_ID = 1L
+    }
 
     fun getSettings(): SettingsEntry {
         val settingsList = settingsRepository.findAll().toList()
@@ -36,8 +37,8 @@ class SettingsService(
                     moneyPerYouthLoader = "8,99",
                     childGroupsRegistrationEnd = Instant.now().plus(35, ChronoUnit.DAYS),
                     helpersRegistrationEnd = Instant.now().plus(33, ChronoUnit.DAYS),
-                    numberOfDuties = 0
-                )
+                    numberOfDuties = 0,
+                ),
             )
         }
         return settingsList.first()
@@ -51,9 +52,8 @@ class SettingsService(
         return settingsRepository.save(settings.copy(id = SETTINGS_ID))
     }
 
-
-    fun canBeEdited(attendee: Attendee): Boolean {
-        return when (attendee) {
+    fun canBeEdited(attendee: Attendee): Boolean =
+        when (attendee) {
             is YouthEntry, is YouthLeaderEntry -> {
                 attendeesCanBeEdited()
             }
@@ -70,9 +70,10 @@ class SettingsService(
                 attendeesCanBeEdited()
             }
 
-            else -> false
+            else -> {
+                false
+            }
         }
-    }
 
     fun attendeesCanBeEdited(): Boolean {
         if (authorityService.isSpecializedFieldDirectorFilter()) {
@@ -88,9 +89,7 @@ class SettingsService(
         return Instant.now().isBefore(getSettings().childGroupsRegistrationEnd)
     }
 
-    fun canRegistrationFilesDownloaded(): Boolean {
-        return Instant.now().isAfter(getSettings().startDownloadRegistrationFiles)
-    }
+    fun canRegistrationFilesDownloaded(): Boolean = Instant.now().isAfter(getSettings().startDownloadRegistrationFiles)
 
     fun helpersCanBeEdited(): Boolean {
         if (authorityService.isSpecializedFieldDirectorFilter()) {

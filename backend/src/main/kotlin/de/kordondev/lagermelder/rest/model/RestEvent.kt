@@ -7,16 +7,15 @@ data class RestEvent(
     val id: Long,
     val name: String,
     val code: String,
-    val type: EventType
+    val type: EventType,
 ) {
     companion object {
-        fun of(event: EventEntry): RestEvent {
-            return RestEvent(
+        fun of(event: EventEntry): RestEvent =
+            RestEvent(
                 id = event.id,
                 name = event.name,
                 code = event.code,
-                type = event.type
+                type = event.type,
             )
-        }
     }
 }

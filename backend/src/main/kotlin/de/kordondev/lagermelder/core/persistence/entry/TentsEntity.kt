@@ -7,15 +7,12 @@ import java.util.*
 @Entity
 @Table(name = "tents")
 data class TentsEntity(
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
-
     @OneToOne
-    @JoinColumn(name= "department_id", referencedColumnName = "id")
+    @JoinColumn(name = "department_id", referencedColumnName = "id")
     val department: DepartmentEntry,
-
     @Column(name = "sg200")
     val sg200: Int,
     @Column(name = "sg20")
@@ -25,12 +22,9 @@ data class TentsEntity(
     @Column(name = "sg40")
     val sg40: Int,
     @Column(name = "sg50")
-    val sg50: Int
+    val sg50: Int,
 ) {
-
-    override fun toString(): String {
-        return "$id"
-    }
+    override fun toString(): String = "$id"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -40,7 +34,5 @@ data class TentsEntity(
         return id != null && id == other.id
     }
 
-    override fun hashCode(): Int {
-        return Objects.hash(this.id)
-    }
+    override fun hashCode(): Int = Objects.hash(this.id)
 }

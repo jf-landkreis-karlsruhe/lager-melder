@@ -3,19 +3,23 @@ package de.kordondev.lagermelder.helper
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.rest.model.request.*
+import java.time.Instant
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.*
 
-
-class Entities() {
-    enum class TShirtSizeMock(val size: String) {
-        S164("164"),
+class Entities {
+    enum class TShirtSizeMock(
+        val size: String,
+    ) {
+        S("S"),
         M("M"),
         L("L"),
     }
+
     companion object {
-        fun department(): DepartmentEntry {
-            return DepartmentEntry(
+        fun department(): DepartmentEntry =
+            DepartmentEntry(
                 id = 1L,
                 name = "Dep",
                 leaderName = "depLeader",
@@ -26,12 +30,11 @@ class Entities() {
                 "",
                 paused = false,
                 emptySet(),
-                null
+                null,
             )
-        }
 
-        fun departmentEntry(): DepartmentEntry {
-            return DepartmentEntry(
+        fun departmentEntry(): DepartmentEntry =
+            DepartmentEntry(
                 id = 1L,
                 name = "Dep",
                 leaderName = "depLeader",
@@ -42,75 +45,68 @@ class Entities() {
                 "",
                 paused = false,
                 emptySet(),
-                null
+                null,
             )
-        }
 
-        fun attendee(): Attendee {
-            return YouthEntry(
+        fun attendee(): Attendee =
+            YouthEntry(
                 UUID.randomUUID().toString(),
                 "att",
                 "endee",
-                "20-09-2005",
+                "2005-09-20",
                 Food.MEAT,
-                TShirtSizeMock.S164.size,
+                TShirtSizeMock.S.size,
                 "",
                 "code",
                 AttendeeRole.YOUTH,
                 department(),
                 status = null,
             )
-        }
 
-        fun restAttendeeRequest(departmentId: Long = department().id): RestAttendeeRequest {
-            return RestAttendeeRequest(
+        fun restAttendeeRequest(departmentId: Long = department().id): RestAttendeeRequest =
+            RestAttendeeRequest(
                 firstName = "att",
                 lastName = "endee",
                 departmentId = departmentId,
-                birthday = "05-09-2005",
+                birthday = "2005-09-05",
                 food = Food.MEAT,
-                tShirtSize = TShirtSizeMock.S164.size,
+                tShirtSize = TShirtSizeMock.S.size,
                 additionalInformation = "n",
                 role = AttendeeRole.YOUTH,
                 juleikaNumber = "12345678",
                 juleikaExpireDate = LocalDate.of(2099, 5, 5).toString(),
                 partOfDepartmentId = departmentId,
-                helperDays = emptySet()
+                helperDays = emptySet(),
             )
 
-        }
-
-        fun restUserRequest(departmentId: Long = department().id): RestUserRequest {
-            return RestUserRequest(
+        fun restUserRequest(departmentId: Long = department().id): RestUserRequest =
+            RestUserRequest(
                 username = "username@email.de",
                 password = "password",
                 departmentId = departmentId,
-                role = Roles.USER
+                role = Roles.USER,
             )
-        }
 
-        fun user(): UserEntry {
-            return UserEntry(
+        fun user(): UserEntry =
+            UserEntry(
                 id = 1L,
                 role = Roles.USER,
                 department = departmentEntry(),
                 userName = "user@email.de",
-                passWord = "pass"
+                passWord = "pass",
             )
-        }
 
-        fun restDepartmentWithUserRequest(): RestDepartmentWithUserRequest {
-            return RestDepartmentWithUserRequest(
+        fun restDepartmentWithUserRequest(): RestDepartmentWithUserRequest =
+            RestDepartmentWithUserRequest(
                 username = "username@email.de",
                 departmentName = "department",
                 leaderName = "leaderName",
                 leaderEMail = "leader@department.de",
-                features = setOf(DepartmentFeatures.CHILD_GROUPS, DepartmentFeatures.YOUTH_GROUPS)
+                features = setOf(DepartmentFeatures.CHILD_GROUPS, DepartmentFeatures.YOUTH_GROUPS),
             )
-        }
 
-        fun restDepartmentRequest(): RestDepartmentRequest {
-            return RestDepartmentRequest(
+        fun restDepartmentRequest(): RestDepartmentRequest =
+            RestDepartmentRequest(
                 name = "department",
                 leaderEMail = "leader@mail.de",
                 leaderName = "leader",
@@ -118,13 +114,51 @@ class Entities() {
                 shortName = "",
                 features = emptySet(),
                 headDepartmentName = "",
-                paused = false
+                paused = false,
+            )
+
+        fun event(): RestEventRequest = RestEventRequest("event")
+
+        fun eventEntry(type: EventType = EventType.Location): EventEntry =
+            EventEntry(id = 1L, name = "event", code = "eventCode", type = type, trashed = false)
+
+        fun restSettingsRequest(): RestSettingsRequest {
+            val settings = settings()
+            return RestSettingsRequest(
+                registrationEnd = settings.registrationEnd,
+                hostCity = settings.hostCity,
+                eventStart = settings.eventStart,
+                eventEnd = settings.eventEnd,
+                eventName = settings.eventName,
+                eventAddress = settings.eventAddress,
+                organizer = settings.organizer,
+                organisationAddress = settings.organisationAddress,
+                moneyPerYouthLoader = settings.moneyPerYouthLoader,
+                startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles,
+                childGroupsRegistrationEnd = settings.childGroupsRegistrationEnd,
+                helpersRegistrationEnd = settings.helpersRegistrationEnd,
+                numberOfDuties = settings.numberOfDuties,
             )
         }
 
-        fun event(): RestEventRequest {
-            return RestEventRequest("event")
+        fun settings(): SettingsEntry {
+            val now = Instant.now()
+            return SettingsEntry(
+                id = 1L,
+                registrationEnd = now.plus(10, ChronoUnit.DAYS),
+                hostCity = "city",
+                eventStart = LocalDate.now().plusDays(60),
+                eventEnd = LocalDate.now().plusDays(65),
+                eventName = "event",
+                eventAddress = "address",
+                organizer = "organizer",
+                organisationAddress = "organisation",
+                moneyPerYouthLoader = "8,99",
+                startDownloadRegistrationFiles = now.plus(20, ChronoUnit.DAYS),
+                childGroupsRegistrationEnd = now.plus(10, ChronoUnit.DAYS),
+                helpersRegistrationEnd = now.plus(10, ChronoUnit.DAYS),
+                numberOfDuties = 0,
+            )
         }
-
     }
 }

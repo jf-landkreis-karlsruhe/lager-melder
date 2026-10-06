@@ -8,5 +8,5 @@ data class Attendees(
     val children: List<ChildEntry>,
     val childLeaders: List<ChildLeaderEntry>,
     val zKids: List<ZKidEntry>,
-    val helpers: List<HelperEntity>
+    val helpers: List<HelperEntity>,
 )

@@ -9,25 +9,23 @@ import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.*
 import java.io.IOException
 
-
 @RestController
 class RegistrationFilesController(
     private val registrationFilesService: RegistrationFilesService,
-    private val authorityService: AuthorityService
+    private val authorityService: AuthorityService,
 ) {
-
     @ResponseBody
     @Throws(IOException::class)
     @GetMapping(value = ["registrationFiles/attendeesKarlsruhe/{id}"], produces = ["application/pdf"])
     fun getAttendeesKarlsruhe(
         @PathVariable(value = "id") id: Long,
         @RequestParam("group") requestGroup: String,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ): ByteArray? {
         val group = Group.getGroup(requestGroup)
         response.addHeader(
             HttpHeaders.CONTENT_DISPOSITION,
-            "attachment;filename=Jugendamt-${group.name}.pdf"
+            "attachment;filename=Jugendamt-${group.name}.pdf",
         )
         return registrationFilesService.getAttendeesKarlsruhe(id, group)
     }
@@ -38,12 +36,12 @@ class RegistrationFilesController(
     fun getStateYouthPlanLeader(
         @PathVariable(value = "id") id: Long,
         @RequestParam("group") requestGroup: String,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ): ByteArray? {
         val group = Group.getGroup(requestGroup)
         response.addHeader(
             HttpHeaders.CONTENT_DISPOSITION,
-            "attachment;filename=Betreuer-Landesjugendplan-${group.name}.pdf"
+            "attachment;filename=Betreuer-Landesjugendplan-${group.name}.pdf",
         )
         return registrationFilesService.getStateYouthPlanLeader(id, group)
     }
@@ -52,13 +50,14 @@ class RegistrationFilesController(
     @Throws(IOException::class)
     @GetMapping(value = ["registrationFiles/stateYouthPlanAttendees/{id}"], produces = ["application/pdf"])
     fun getStateYouthPlanAttendees(
-        @PathVariable(value = "id") id: Long, response: HttpServletResponse,
-        @RequestParam("group") requestGroup: String
+        @PathVariable(value = "id") id: Long,
+        response: HttpServletResponse,
+        @RequestParam("group") requestGroup: String,
     ): ByteArray? {
         val group = Group.getGroup(requestGroup)
         response.addHeader(
             HttpHeaders.CONTENT_DISPOSITION,
-            "attachment;filename=Teilnehmer-Landesjugendplan-${group.name}.pdf"
+            "attachment;filename=Teilnehmer-Landesjugendplan-${group.name}.pdf",
         )
         return registrationFilesService.getStateYouthPlanYouth(id, group)
     }
@@ -66,7 +65,10 @@ class RegistrationFilesController(
     @ResponseBody
     @Throws(IOException::class)
     @GetMapping(value = ["registrationFiles/attendeesCommunal/{id}"], produces = ["application/pdf"])
-    fun getAttendeesCommunal(@PathVariable(value = "id") id: Long, response: HttpServletResponse): ByteArray? {
+    fun getAttendeesCommunal(
+        @PathVariable(value = "id") id: Long,
+        response: HttpServletResponse,
+    ): ByteArray? {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=Teilnehmer-Kommandant.pdf")
         return registrationFilesService.getAttendeesCommunal(id)
     }
@@ -78,5 +80,4 @@ class RegistrationFilesController(
         authorityService.isLkKarlsruhe()
         return registrationFilesService.getSubsidy(id)
     }
-
 }

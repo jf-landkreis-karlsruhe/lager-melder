@@ -41,14 +41,13 @@ class AttendeeService(
             children = allAttendees.children.filter { byAuthority(it) && hasFeature(it) },
             childLeaders = allAttendees.childLeaders.filter { byAuthority(it) && hasFeature(it) },
             zKids = allAttendees.zKids.filter { byAuthority(it) && hasFeature(it) },
-            helpers = allAttendees.helpers.filter { byAuthority(it) && hasFeature(it) }
+            helpers = allAttendees.helpers.filter { byAuthority(it) && hasFeature(it) },
         )
     }
 
-    fun getAttendee(id: String): Attendee {
-        return getAttendeeOrNull(id)
+    fun getAttendee(id: String): Attendee =
+        getAttendeeOrNull(id)
             ?: throw NotFoundException("Attendee with id $id not found")
-    }
 
     fun createAttendee(attendee: Attendee): Attendee {
         authorityService.hasAuthority(attendee, AuthorityService.LK_KARLSRUHE_ALLOWED)
@@ -61,7 +60,10 @@ class AttendeeService(
         return saveAttendeeToDB(attendee, attendee::class, id, code, Instant.now())
     }
 
-    fun saveAttendee(id: String, attendee: Attendee): Attendee {
+    fun saveAttendee(
+        id: String,
+        attendee: Attendee,
+    ): Attendee {
         checkCanAttendeeBeEdited(attendee)
         checkFirstNameAndLastNameAreUnique(attendee, id)
         tShirtSizeValidator.validate(attendee.tShirtSize)
@@ -70,10 +72,9 @@ class AttendeeService(
             ?.let {
                 authorityService.hasAuthority(
                     it,
-                    AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED
+                    AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED,
                 )
-            }
-            ?.let { saveAttendeeToDB(attendee, it::class, it.id, it.code, it.createdAt) }
+            }?.let { saveAttendeeToDB(attendee, it::class, it.id, it.code, it.createdAt) }
             ?: createAttendee(attendee)
     }
 
@@ -83,11 +84,10 @@ class AttendeeService(
             ?.let {
                 checkCanAttendeeBeEdited(it)
                 it
-            }
-            ?.let {
+            }?.let {
                 authorityService.hasAuthority(
                     it,
-                    AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED
+                    AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED,
                 )
                 eventRepository.deleteAllByAttendeeCode(it.code)
                 when (it) {
@@ -103,48 +103,44 @@ class AttendeeService(
             ?: throw NotFoundException("Attendee with id $id not found and therefore not deleted")
     }
 
-    fun getAttendeesForDepartment(department: DepartmentEntry): Attendees {
-        return Attendees(
+    fun getAttendeesForDepartment(department: DepartmentEntry): Attendees =
+        Attendees(
             youths = youthRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
-            youthLeaders =  youthLeaderRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            youthLeaders = youthLeaderRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
             children = childRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
             childLeaders = childLeaderRepository.findByDepartment(department.id).filter { byAuthority(it) }.toList(),
             zKids = zKidRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
-            helpers = helperRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList()
+            helpers = helperRepository.findByDepartment(department.id).filter { byAuthority(it) && hasFeature(it) }.toList(),
         )
-    }
 
-    fun getAttendeesForDepartmentWithZKidsBeingPartOf(departmentId: Long): Attendees {
-        return Attendees(
+    fun getAttendeesForDepartmentWithZKidsBeingPartOf(departmentId: Long): Attendees =
+        Attendees(
             youths = youthRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
-            youthLeaders =  youthLeaderRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
+            youthLeaders = youthLeaderRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
             children = childRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
             childLeaders = childLeaderRepository.findByDepartment(departmentId).filter { byAuthority(it) }.toList(),
             zKids = zKidRepository.findByPartOfDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
-            helpers = helperRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList()
+            helpers = helperRepository.findByDepartment(departmentId).filter { byAuthority(it) && hasFeature(it) }.toList(),
         )
-    }
 
-    fun getAttendeeByCode(code: String): Attendee {
-        return baseAttendeeRepository.findByCode(code)
+    fun getAttendeeByCode(code: String): Attendee =
+        baseAttendeeRepository
+            .findByCode(code)
             ?.let { getAttendee(it.id) }
             ?: throw NotFoundException("No Attendee for code $code found")
-    }
 
-    fun getAllAttendees(): Attendees {
-        return Attendees(
+    fun getAllAttendees(): Attendees =
+        Attendees(
             youths = youthRepository.findAll().toList(),
             youthLeaders = youthLeaderRepository.findAll().toList(),
             children = childRepository.findAll().toList(),
             childLeaders = childLeaderRepository.findAll().toList(),
             zKids = zKidRepository.findAll().toList(),
-            helpers = helperRepository.findAll().toList()
+            helpers = helperRepository.findAll().toList(),
         )
-    }
 
-    fun getAttendeesWithoutYouthPlanRole(): List<Attendee> {
-        return (youthRepository.findAttendeesWithoutYouthPlanRole() + youthLeaderRepository.findAttendeesWithoutYouthPlanRole())
-    }
+    fun getAttendeesWithoutYouthPlanRole(): List<Attendee> =
+        (youthRepository.findAttendeesWithoutYouthPlanRole() + youthLeaderRepository.findAttendeesWithoutYouthPlanRole())
 
     fun getAllAttendeesIn(ids: List<String>): List<Attendee> {
         val attendees = baseAttendeeRepository.findAllById(ids)
@@ -154,14 +150,14 @@ class AttendeeService(
         val youths = youthRepository.findAllByIds(youthIds)
         val youthLeaders = youthLeaderRepository.findAllByIds(youthLeaderIds)
         return (youths + youthLeaders)
-
     }
 
-    fun getDepartmentIdsForAllAttendees(): List<Long> {
-        return baseAttendeeRepository.findDistinctDepartmentIdsFromAllAttendees()
-    }
+    fun getDepartmentIdsForAllAttendees(): List<Long> = baseAttendeeRepository.findDistinctDepartmentIdsFromAllAttendees()
 
-    fun updateAttendeeStatus(attendee: Attendee, status: AttendeeStatus) {
+    fun updateAttendeeStatus(
+        attendee: Attendee,
+        status: AttendeeStatus,
+    ) {
         when (attendee) {
             is YouthEntry -> youthRepository.save(attendee.copy(status = status))
             is YouthLeaderEntry -> youthLeaderRepository.save(attendee.copy(status = status))
@@ -173,15 +169,20 @@ class AttendeeService(
         }
     }
 
-    private fun checkFirstNameAndLastNameAreUnique(attendee: Attendee, id: String = UUID.randomUUID().toString()) {
-        baseAttendeeRepository.findByDepartmentAndFirstNameAndLastName(
-            attendee.department,
-            attendee.firstName,
-            attendee.lastName
-        )
-            ?.let {
+    private fun checkFirstNameAndLastNameAreUnique(
+        attendee: Attendee,
+        id: String = UUID.randomUUID().toString(),
+    ) {
+        baseAttendeeRepository
+            .findByDepartmentAndFirstNameAndLastName(
+                attendee.department,
+                attendee.firstName,
+                attendee.lastName,
+            )?.let {
                 if (it.id != id) {
-                    throw UniqueException("Vorname (${attendee.firstName}) und Nachname (${attendee.lastName}) müssen pro Feuerwehr einmalig sein")
+                    throw UniqueException(
+                        "Vorname (${attendee.firstName}) und Nachname (${attendee.lastName}) müssen pro Feuerwehr einmalig sein",
+                    )
                 }
             }
     }
@@ -192,24 +193,25 @@ class AttendeeService(
         }
     }
 
-    fun replaceTShirtSize(oldSize: String, newSize: String) {
+    fun replaceTShirtSize(
+        oldSize: String,
+        newSize: String,
+    ) {
         baseAttendeeRepository.findAllBytShirtSize(oldSize).forEach {
             baseAttendeeRepository.save(it.copy(tShirtSize = newSize))
         }
     }
 
-    fun getAttendeesPerDepartments(): Map<Long, List<Attendee>> {
-        return baseAttendeeRepository.findByRoleIn(
-            listOf(
-                AttendeeRole.YOUTH_LEADER.name,
-                AttendeeRole.YOUTH.name
-            )
-        )
-            .groupBy { it.department.id }
-    }
+    fun getAttendeesPerDepartments(): Map<Long, List<Attendee>> =
+        baseAttendeeRepository
+            .findByRoleIn(
+                listOf(
+                    AttendeeRole.YOUTH_LEADER,
+                    AttendeeRole.YOUTH,
+                ),
+            ).groupBy { it.department.id }
 
-    fun getYouthLeaderIn(attendees: List<Attendee>) =
-        youthLeaderRepository.findAllByIds(attendees.map { it.id })
+    fun getYouthLeaderIn(attendees: List<Attendee>) = youthLeaderRepository.findAllByIds(attendees.map { it.id })
 
     fun getPartOfDepartmentOrDepartment(attendee: Attendee): DepartmentEntry {
         if (attendee is ZKidEntry) {
@@ -218,9 +220,8 @@ class AttendeeService(
         return attendee.department
     }
 
-    private fun byAuthority(attendee: Attendee): Boolean {
-        return authorityService.hasAuthorityFilter(attendee, AuthorityService.LK_KARLSRUHE_ALLOWED)
-    }
+    private fun byAuthority(attendee: Attendee): Boolean =
+        authorityService.hasAuthorityFilter(attendee, AuthorityService.LK_KARLSRUHE_ALLOWED)
 
     private fun hasFeature(attendee: Attendee): Boolean {
         val features = attendee.department.features.map { it.feature }
@@ -233,8 +234,9 @@ class AttendeeService(
         }
     }
 
-    private fun getAttendeeOrNull(id: String): Attendee? {
-        return baseAttendeeRepository.findByIdOrNull(id)
+    private fun getAttendeeOrNull(id: String): Attendee? =
+        baseAttendeeRepository
+            .findByIdOrNull(id)
             ?.let {
                 when (it.role) {
                     AttendeeRole.YOUTH -> youthRepository.findByIdOrNull(it.id)
@@ -244,19 +246,19 @@ class AttendeeService(
                     AttendeeRole.Z_KID -> zKidRepository.findByIdOrNull(it.id)
                     AttendeeRole.HELPER -> helperRepository.findByIdOrNull(it.id)
                 }
-            }
-            ?.let { authorityService.hasAuthority(it, AuthorityService.LK_KARLSRUHE_ALLOWED) }
-    }
+            }?.let { authorityService.hasAuthority(it, AuthorityService.LK_KARLSRUHE_ALLOWED) }
 
     private fun saveAttendeeToDB(
         toSave: Attendee,
         dbAttendeeClass: KClass<out Attendee>,
         id: String,
         code: String,
-        createdAt: Instant
+        createdAt: Instant,
     ): Attendee {
         if (toSave::class != dbAttendeeClass) {
-            throw ChangedRoleException("The role of the attendee to save (${toSave::class}) is not the same as the stored role ($dbAttendeeClass).")
+            throw ChangedRoleException(
+                "The role of the attendee to save (${toSave::class}) is not the same as the stored role ($dbAttendeeClass).",
+            )
         }
         return when (toSave) {
             is YouthEntry -> youthRepository.save(toSave.copy(code = code, id = id, createdAt = createdAt))
@@ -268,5 +270,4 @@ class AttendeeService(
             else -> throw UnexpectedTypeException("Attendee type ${toSave.role} to save is not of expected type (AttendeeService)")
         }
     }
-
 }

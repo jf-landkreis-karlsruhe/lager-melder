@@ -7,16 +7,15 @@ data class RestAttendeeInEvent(
     val attendeeFirstName: String,
     val attendeeLastName: String,
     val eventName: String,
-    val time: Instant
+    val time: Instant,
 ) {
     companion object {
-        fun of(attendeeInEvent: AttendeeInEvent): RestAttendeeInEvent {
-            return RestAttendeeInEvent(
+        fun of(attendeeInEvent: AttendeeInEvent): RestAttendeeInEvent =
+            RestAttendeeInEvent(
                 attendeeFirstName = attendeeInEvent.attendeeFirstName,
                 attendeeLastName = attendeeInEvent.attendeeLastName,
                 eventName = attendeeInEvent.eventName,
-                time = attendeeInEvent.time
+                time = attendeeInEvent.time,
             )
-        }
     }
 }

@@ -168,7 +168,7 @@ onMounted(() => {
           <p class="mr-8">
             Hier können alle Lagerausweise heruntergeladen werden.
             <br />
-            <v-btn class="mb-4" color="var(--lm-c-accent)" @click="downloadBatchesPDF" small :loading="loadingBatches">
+            <v-btn class="mb-4" color="var(--lm-c-accent)" small :loading="loadingBatches" @click="downloadBatchesPDF">
               Herunterladen
               <v-icon right dark> mdi-cloud-download</v-icon>
             </v-btn>
@@ -179,9 +179,9 @@ onMounted(() => {
             <v-btn
               class="mb-4"
               color="var(--lm-c-accent)"
-              @click="downloadBatchesPDFOrderedByCreationDate"
               small
               :loading="loadingBatchesByCreationDate"
+              @click="downloadBatchesPDFOrderedByCreationDate"
             >
               Herunterladen
               <v-icon right dark> mdi-cloud-download</v-icon>
@@ -204,7 +204,7 @@ onMounted(() => {
         <p class="mr-8">
           Hier kann die Liste der Essen heruntergeladen werden.
           <br />
-          <v-btn color="var(--lm-c-accent)" @click="downloadFoodPDF" small :loading="loadingFood">
+          <v-btn color="var(--lm-c-accent)" small :loading="loadingFood" @click="downloadFoodPDF">
             Herunterladen
             <v-icon right dark> mdi-cloud-download </v-icon>
           </v-btn>
@@ -220,9 +220,9 @@ onMounted(() => {
           <br />
           <v-btn
             color="var(--lm-c-accent)"
-            @click="downloadAdditionalInformationPDF"
             small
             :loading="loadingAdditionalInformation"
+            @click="downloadAdditionalInformationPDF"
           >
             Herunterladen
             <v-icon right dark> mdi-cloud-download</v-icon>
@@ -237,7 +237,7 @@ onMounted(() => {
         <p class="mr-8">
           Hier kann die Liste der TShirts und Armbänder pro Feuerwehr heruntergeladen werden.
           <br />
-          <v-btn color="var(--lm-c-accent)" @click="downloadTShirtsPDF" small :loading="loadingTshirt">
+          <v-btn color="var(--lm-c-accent)" small :loading="loadingTshirt" @click="downloadTShirtsPDF">
             Herunterladen
             <v-icon right dark> mdi-cloud-download </v-icon>
           </v-btn>
@@ -253,9 +253,9 @@ onMounted(() => {
           <br />
           <v-btn
             color="var(--lm-c-accent)"
-            @click="downloadDepartmentOverview"
             small
             :loading="loadingDepartmentOverview"
+            @click="downloadDepartmentOverview"
           >
             Herunterladen
             <v-icon right dark> mdi-cloud-download </v-icon>
@@ -270,7 +270,7 @@ onMounted(() => {
         <p class="mr-8">
           Hier kann eine Liste aller Kontaktdaten der Feuerwehren, die sich angemeldet haben, heruntergeladen werden.
           <br />
-          <v-btn color="var(--lm-c-accent)" @click="downloadContactList" small :loading="loadingContactList">
+          <v-btn color="var(--lm-c-accent)" small :loading="loadingContactList" @click="downloadContactList">
             Herunterladen
             <v-icon right dark> mdi-cloud-download</v-icon>
           </v-btn>
@@ -284,7 +284,7 @@ onMounted(() => {
         <p class="mr-8">
           Hier können die Zeltmarkierungen heruntergeladen werden.
           <br />
-          <v-btn color="var(--lm-c-accent)" @click="downloadTentMarkingPDF" small :loading="loadingTentMarkings">
+          <v-btn color="var(--lm-c-accent)" small :loading="loadingTentMarkings" @click="downloadTentMarkingPDF">
             Herunterladen
             <v-icon right dark> mdi-cloud-download</v-icon>
           </v-btn>
@@ -298,7 +298,7 @@ onMounted(() => {
         <p class="mr-8">
           Hier kann heruntergeladen werden, welche Jugendfeuerwehren nicht genug Juleikas haben.
           <br />
-          <v-btn color="var(--lm-c-accent)" @click="downloadMissingJuleika" small :loading="loadingMissingJuleika">
+          <v-btn color="var(--lm-c-accent)" small :loading="loadingMissingJuleika" @click="downloadMissingJuleika">
             Herunterladen
             <v-icon right dark> mdi-cloud-download</v-icon>
           </v-btn>
@@ -314,9 +314,9 @@ onMounted(() => {
           <br />
           <v-btn
             color="var(--lm-c-accent)"
-            @click="downloadTentsAndDutiesCsv"
             small
             :loading="loadingTentsAndDutiesCsv"
+            @click="downloadTentsAndDutiesCsv"
           >
             Herunterladen
             <v-icon right dark> mdi-cloud-download</v-icon>
@@ -335,7 +335,7 @@ onMounted(() => {
           <div>
             <p class="mr-8">Hier stehen wie viele Zelte insgesamt angemeldet wurden.</p>
             <v-simple-table>
-              <template v-slot:default>
+              <template #default>
                 <thead>
                   <tr>
                     <th class="text-left">Größe (Länge x Breite)</th>
@@ -380,8 +380,8 @@ onMounted(() => {
     <v-row>
       <v-col cols="5">
         <v-text-field
-          prepend-icon="mdi-magnify"
           v-model="filterInput"
+          prepend-icon="mdi-magnify"
           label="Filter nach Feuerwehr"
           variant="underlined"
           class="w"

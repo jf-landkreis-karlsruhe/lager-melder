@@ -37,19 +37,17 @@ const forgotPasswordHandler = async () => {
             <form @submit.prevent="forgotPasswordHandler">
               <v-card-text>
                 <v-text-field
+                  v-model="username"
                   type="email"
                   variant="underlined"
                   prepend-icon="mdi-account"
-                  v-model="username"
                   label="Benutzername"
                 />
               </v-card-text>
               <v-card-actions>
                 <v-container>
                   <v-row justify="end">
-                    <v-btn color="primary" type="submit" :loading="loading" rounded>
-                      Mail versenden
-                    </v-btn>
+                    <v-btn color="primary" type="submit" :loading="loading" rounded> Mail versenden </v-btn>
                   </v-row>
                 </v-container>
               </v-card-actions>

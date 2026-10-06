@@ -9,26 +9,24 @@ import org.hibernate.Hibernate
 @Entity
 @Table(name = "reset_token")
 data class ResetTokenEntry(
-  @Id
-  @Column(name = "token", unique = true)
-  val token: String,
-
-  @Column(name = "user_id")
-  val userId: Long,
+    @Id
+    @Column(name = "token", unique = true)
+    val token: String,
+    @Column(name = "user_id")
+    val userId: Long,
 ) {
-
     companion object {
-        fun of(token: String, userId: Long): ResetTokenEntry {
-            return ResetTokenEntry(
+        fun of(
+            token: String,
+            userId: Long,
+        ): ResetTokenEntry =
+            ResetTokenEntry(
                 token = token,
-                userId = userId
+                userId = userId,
             )
-        }
     }
 
-    override fun toString(): String {
-        return "$userId $token"
-    }
+    override fun toString(): String = "$userId $token"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

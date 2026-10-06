@@ -41,7 +41,7 @@ const expansionPanels = ref<InstanceType<typeof LmAttendeeExpansionPanel>[]>([])
 
 const attendeeListWithAllAttributes = computed<Attendee[]>(() => {
   return props.attendeeList.map((attendee) => {
-    let newAttendee = { ...attendee }
+    const newAttendee = { ...attendee }
     if (!attendee.helperDays) {
       newAttendee.helperDays = []
     }
@@ -72,6 +72,8 @@ const closeAddNewAttendeeForm = (): void => {
 }
 
 const handleSaveNewAttendee = (newAttendee: Attendee) => {
+  // the ref itself is passed on purpose: the parent reads the panels after the list was re-rendered
+  // eslint-disable-next-line vue/no-ref-as-operand
   emit('save-new', newAttendee, props.role, closeAddNewAttendeeForm, expansionPanels)
 }
 
@@ -97,7 +99,7 @@ const juleikaIsInvalid = (attendee: Attendee): boolean => {
 
       <label v-if="attendeesCanBeEdited">
         <span class="mr-2 d-none d-sm-inline-block" style="cursor: pointer">{{ props.headerLabel }} hinzufügen</span>
-        <v-btn @click="openAddNewAttendeeForm(props.role)" color="primary" class="ma-0 mb-1" icon size="x-small">
+        <v-btn color="primary" class="ma-0 mb-1" icon size="x-small" @click="openAddNewAttendeeForm(props.role)">
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </label>
@@ -111,10 +113,11 @@ const juleikaIsInvalid = (attendee: Attendee): boolean => {
       <slot></slot>
     </div>
 
-    <v-expansion-panels class="mb-4" :key="attendeeListWithAllAttributes.length">
+    <v-expansion-panels :key="attendeeListWithAllAttributes.length" class="mb-4">
       <LmAttendeeExpansionPanel
         v-for="(attendee, index) in attendeeListWithAllAttributes"
         :key="attendee.id"
+        ref="expansionPanels"
         :attendee="attendee"
         :role="props.role"
         :role-title="props.headerLabel"
@@ -122,9 +125,8 @@ const juleikaIsInvalid = (attendee: Attendee): boolean => {
         :event-days="props.eventDays"
         :t-shirt-sizes="props.tShirtSizes"
         :loading="loading"
-        :attendeesCanBeEdited="props.attendeesCanBeEdited"
+        :attendees-can-be-edited="props.attendeesCanBeEdited"
         :is-highlighted="props.showHighlights && juleikaIsInvalid(attendee)"
-        ref="expansionPanels"
         @update="emit('update', $event, expansionPanels[index])"
         @delete="emit('delete', $event)"
       ></LmAttendeeExpansionPanel>

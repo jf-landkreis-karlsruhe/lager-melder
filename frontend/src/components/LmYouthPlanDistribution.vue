@@ -36,8 +36,8 @@ const openModal = () => {
 
 <template>
   <v-dialog v-model="dialogOpen" persistent max-width="500">
-    <template v-slot:activator="{ props }" v-if="hasSpecializedFieldDirectorRole()">
-      <v-btn rounded color="primary" dark v-bind="props" @click="openModal" class="mb-2">
+    <template v-if="hasSpecializedFieldDirectorRole()" #activator="{ props }">
+      <v-btn rounded color="primary" dark v-bind="props" class="mb-2" @click="openModal">
         Verteilung Pädagogischer Betreuer anzeigen
       </v-btn>
     </template>

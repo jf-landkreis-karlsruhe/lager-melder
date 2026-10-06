@@ -39,17 +39,22 @@ const props = defineProps<{
     </div>
 
     <div
+      v-if="!props.hideTents"
       :style="
         'background: ' +
         departmentDistribution.department.evacuationGroup?.color +
         '33; padding: 9px 9px 0;border-radius:3px'
       "
-      v-if="!props.hideTents"
     >
       <h4>Zelte</h4>
       <div class="d-flex flex-wrap justify-space-between align-baseline">
         <div class="d-flex flex-wrap flex-grow-1">
-          <v-chip class="mx-2 my-2" v-for="tent in props.departmentDistribution.department.tentMarkings" size="x-large">
+          <v-chip
+            v-for="tent in props.departmentDistribution.department.tentMarkings"
+            :key="tent.id"
+            class="mx-2 my-2"
+            size="x-large"
+          >
             {{ tent.name }}
           </v-chip>
           <p

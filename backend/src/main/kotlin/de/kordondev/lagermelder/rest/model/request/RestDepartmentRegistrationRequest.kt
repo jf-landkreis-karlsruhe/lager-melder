@@ -7,5 +7,5 @@ data class RestDepartmentRegistrationRequest(
     val departmentId: Long,
     val departmentPhoneNumber: String,
     val nameKommandant: String,
-    val phoneNumberKommandant: String
+    val phoneNumberKommandant: String,
 )

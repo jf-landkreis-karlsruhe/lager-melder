@@ -6,7 +6,6 @@ const props = defineProps<{
   registrationEnd: Date | null
 }>()
 
-
 let now = new Date()
 
 const registrationEndLocalized = computed<string | undefined>(() => dateTimeLocalized(props.registrationEnd))
@@ -33,7 +32,6 @@ const registrationEndDiff = computed<
   return { days, hours, minutes, seconds }
 })
 
-
 onBeforeMount(async () => {
   setInterval(() => {
     now = new Date()
@@ -45,10 +43,7 @@ onBeforeMount(async () => {
   <div v-if="props.registrationEnd && registrationEndDiff" class="mb-5">
     <v-alert color="warning" type="warning" border="top">
       <div style="color: #333333">
-        <b>
-          Anmeldeschluss {{ registrationEndDiff ? 'ist' : 'war' }} am:
-          {{ registrationEndLocalized }} Uhr
-        </b>
+        <b> Anmeldeschluss {{ registrationEndDiff ? 'ist' : 'war' }} am: {{ registrationEndLocalized }} Uhr </b>
         <br />
         <div v-if="registrationEndDiff">
           Das sind noch {{ registrationEndDiff.days }}
@@ -64,5 +59,4 @@ onBeforeMount(async () => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

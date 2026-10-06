@@ -50,14 +50,14 @@ onMounted(() => {
       </p>
       <FileList
         v-if="departmentId"
-        :departmentId="departmentId"
-        :departmentName="departmentName"
+        :department-id="departmentId"
+        :department-name="departmentName"
         :group="Group.PARTICIPANT"
       />
       <FileList
         v-if="departmentId"
-        :departmentId="departmentId"
-        :departmentName="departmentName"
+        :department-id="departmentId"
+        :department-name="departmentName"
         :group="Group.CHILD_GROUP"
       />
       <p>
@@ -71,8 +71,8 @@ onMounted(() => {
         <h2>Anmeldeunterlagen aller Feuerwehren</h2>
         <div v-for="department in departments" :key="department.id">
           <h3>Feuerwehr {{ department.name }}</h3>
-          <FileList :departmentId="department.id" :departmentName="department.name" :group="Group.PARTICIPANT" />
-          <FileList :departmentId="department.id" :departmentName="department.name" :group="Group.CHILD_GROUP" />
+          <FileList :department-id="department.id" :department-name="department.name" :group="Group.PARTICIPANT" />
+          <FileList :department-id="department.id" :department-name="department.name" :group="Group.CHILD_GROUP" />
           <br />
         </div>
       </div>

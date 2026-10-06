@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository
 interface AttendeeInEventRepository : CrudRepository<AttendeeInEventEntry, Long> {
     @Modifying
     @Query(
-        "DELETE FROM AttendeeInEventEntry a WHERE a.attendeeCode = :attendeeCode"
+        "DELETE FROM AttendeeInEventEntry a WHERE a.attendeeCode = :attendeeCode",
     )
     fun deleteAllByAttendeeCode(attendeeCode: String)
 }

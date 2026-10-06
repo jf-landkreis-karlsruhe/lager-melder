@@ -6,5 +6,5 @@ data class AttendeeInEvent(
     val attendeeFirstName: String,
     val attendeeLastName: String,
     val eventName: String,
-    val time: Instant
+    val time: Instant,
 )

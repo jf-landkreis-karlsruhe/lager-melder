@@ -7,12 +7,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class EvacuationGroupController(
-    private val evacuationGroupService: EvacuationGroupService
+    private val evacuationGroupService: EvacuationGroupService,
 ) {
-
     @GetMapping("/evacuation-groups")
-    fun getEvacuationGroups(): List<RestEvacuationGroup> {
-        return evacuationGroupService.getEvacuationGroups()
+    fun getEvacuationGroups(): List<RestEvacuationGroup> =
+        evacuationGroupService
+            .getEvacuationGroups()
             .map { RestEvacuationGroup.of(it) }
-    }
 }

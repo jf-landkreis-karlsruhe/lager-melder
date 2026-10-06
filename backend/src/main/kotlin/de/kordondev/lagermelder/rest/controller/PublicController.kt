@@ -8,22 +8,26 @@ import java.time.LocalDateTime
 
 @RestController
 class PublicController(
-    private val eventService: EventService
+    private val eventService: EventService,
 ) {
-    private val CACHE_DURATION_SECONDS = 600L
+    companion object {
+        private const val CACHE_DURATION_SECONDS = 600L
+    }
+
     private val roleCountCache = RestRoleCountCache(CACHE_DURATION_SECONDS)
 
     @GetMapping("/public/present-by-executed-role")
     fun getPresentByExecutedRoleCount(): RestRoleCount {
         roleCountCache.data?.let { return it }
 
-        return eventService.getGlobalEventSummary()
+        return eventService
+            .getGlobalEventSummary()
             .let { RestRoleCount.of(it) }
             .also { roleCountCache.data = it }
     }
 
     class RestRoleCountCache(
-        private val cacheDurationSeconds: Long
+        private val cacheDurationSeconds: Long,
     ) {
         private var cachedData: RestRoleCount? = null
         private var expires: LocalDateTime = LocalDateTime.MIN
@@ -36,6 +40,7 @@ class PublicController(
                 }
                 return cachedData
             }
+
             @Synchronized set(value) {
                 cachedData = value
                 expires = LocalDateTime.now().plusSeconds(cacheDurationSeconds)

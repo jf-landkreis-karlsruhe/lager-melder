@@ -46,13 +46,13 @@ export const login = async (username: string, password: string) => {
     }
   )
     .then((res) => res.Authorization)
-    .then((jwt: any) => {
+    .then((jwt: string) => {
       saveJWT(jwt)
       return jwt
     })
     .then((response) => {
       const loginEvent = new CustomEvent(AuthenticationChangedEvent)
-      window && window.dispatchEvent(loginEvent)
+      window.dispatchEvent(loginEvent)
       return decodeJWT(response)
     })
 }
@@ -60,19 +60,19 @@ export const login = async (username: string, password: string) => {
 export const renewToken = async () => {
   return getData<AuthorizationResponse>('authorization/renew-token', withAuthenticationHeader())
     .then((res) => res.Authorization)
-    .then((jwt: any) => {
+    .then((jwt: string) => {
       saveJWT(jwt)
       return jwt
     })
     .then((response) => {
       const loginEvent = new CustomEvent(AuthenticationChangedEvent)
-      window && window.dispatchEvent(loginEvent)
+      window.dispatchEvent(loginEvent)
       return decodeJWT(response)
     })
 }
 
 export const forgotPassword = async (username: string) => {
-  return putData<{}>(
+  return putData<unknown>(
     'users/forgotPasswordToken',
     {},
     {
@@ -83,7 +83,7 @@ export const forgotPassword = async (username: string) => {
 }
 
 export const resetPasswordWithToken = async (token: string, password: string) => {
-  return putData<{}>(
+  return putData<unknown>(
     'users/resetPasswordWithToken',
     {},
     {
@@ -96,7 +96,7 @@ export const resetPasswordWithToken = async (token: string, password: string) =>
 export const logout = () => {
   localStorage.removeItem(TOKEN_STORAGE)
   const loggoutEvent = new CustomEvent(AuthenticationChangedEvent)
-  window && window.dispatchEvent(loggoutEvent)
+  window.dispatchEvent(loggoutEvent)
 }
 
 export const isLoggedIn = () => !!getToken()
@@ -139,7 +139,7 @@ const decodeJWT = (jwt: string): JWT => {
   return JSON.parse(jsonPayload)
 }
 
-const saveJWT = (jwt: JWT) => {
+const saveJWT = (jwt: string) => {
   localStorage.setItem(TOKEN_STORAGE, JSON.stringify(jwt))
 }
 

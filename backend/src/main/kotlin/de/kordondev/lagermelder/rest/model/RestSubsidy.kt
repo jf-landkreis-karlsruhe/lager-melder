@@ -10,5 +10,5 @@ data class SubsidyDistribution(
     val stateYouthPlanLeaders: Int,
     val stateYouthPlanParticipants: Int,
     val karlsruheLeaders: Int,
-    val karlsruheParticipants: Int
+    val karlsruheParticipants: Int,
 )

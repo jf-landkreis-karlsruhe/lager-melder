@@ -74,7 +74,7 @@ const requiredRule = [
 </script>
 
 <template>
-  <v-form @submit.prevent="handleSubmit" v-model="isFormValid">
+  <v-form v-model="isFormValid" @submit.prevent="handleSubmit">
     <h3>{{ props.roleTitle }} hinzufügen</h3>
     <div class="d-flex flex-row align-start flex-wrap ga-4 mt-4">
       <!-- First column -->
@@ -87,8 +87,8 @@ const requiredRule = [
             style="flex: 1"
             required
             :rules="requiredRule"
-            :modelValue="current.firstName"
-            @update:modelValue="current.firstName = $event"
+            :model-value="current.firstName"
+            @update:model-value="current.firstName = $event"
           ></v-text-field>
           <v-text-field
             label="Nachname"
@@ -97,15 +97,15 @@ const requiredRule = [
             style="flex: 1"
             required
             :rules="requiredRule"
-            :modelValue="current.lastName"
-            @update:modelValue="current.lastName = $event"
+            :model-value="current.lastName"
+            @update:model-value="current.lastName = $event"
           ></v-text-field>
         </div>
 
         <v-text-field
           v-if="props.role !== AttendeeRole.HELPER"
-          type="date"
           v-model="current.birthday"
+          type="date"
           label="Geburtsdatum"
           required
           variant="outlined"
@@ -123,14 +123,14 @@ const requiredRule = [
             label="T-Shirt-Größe"
             required
             :rules="tshirtRules"
-            :modelValue="current.tShirtSize"
-            @update:modelValue="current.tShirtSize = $event"
+            :model-value="current.tShirtSize"
+            @update:model-value="current.tShirtSize = $event"
           >
-            <template v-slot:selection="{ item }">
+            <template #selection="{ item }">
               <v-icon class="mr-4">mdi-tshirt-crew-outline</v-icon>{{ item.title }}
             </template>
-            <template v-slot:item="{ props }">
-              <v-list-item v-bind="props"></v-list-item>
+            <template #item="{ props: itemProps }">
+              <v-list-item v-bind="itemProps"></v-list-item>
             </template>
           </v-select>
 
@@ -142,15 +142,15 @@ const requiredRule = [
             label="Essen"
             required
             :rules="requiredRule"
-            :modelValue="current.food"
-            @update:modelValue="current.food = $event"
+            :model-value="current.food"
+            @update:model-value="current.food = $event"
           >
-            <template v-slot:selection="{ item }">
+            <template #selection="{ item }">
               <v-icon class="mr-4">{{ item.props.prependIcon }}</v-icon>
               {{ item.title }}
             </template>
-            <template v-slot:item="{ props }">
-              <v-list-item v-bind="props"></v-list-item>
+            <template #item="{ props: itemProps }">
+              <v-list-item v-bind="itemProps"></v-list-item>
             </template>
           </v-select>
         </div>
@@ -166,13 +166,13 @@ const requiredRule = [
             label="Juleika-Nummer"
             variant="outlined"
             density="comfortable"
-            :modelValue="current.juleikaNumber"
-            @update:modelValue="current.juleikaNumber = $event"
+            :model-value="current.juleikaNumber"
+            @update:model-value="current.juleikaNumber = $event"
           ></v-text-field>
 
           <v-text-field
-            type="date"
             v-model="current.juleikaExpireDate"
+            type="date"
             label="Juleika-Ablaufdatum"
             variant="outlined"
             density="comfortable"
@@ -188,8 +188,8 @@ const requiredRule = [
           label="Teil von"
           required
           :rules="requiredRule"
-          :modelValue="current.partOfDepartmentId"
-          @update:modelValue="current.partOfDepartmentId = $event"
+          :model-value="current.partOfDepartmentId"
+          @update:model-value="current.partOfDepartmentId = $event"
         >
         </v-select>
 
@@ -203,8 +203,8 @@ const requiredRule = [
           item-title="title"
           label="Helfertage"
           :rules="helperDaysRules"
-          :modelValue="current.helperDays"
-          @update:modelValue="current.helperDays = $event"
+          :model-value="current.helperDays"
+          @update:model-value="current.helperDays = $event"
         >
         </v-select>
 
@@ -215,8 +215,8 @@ const requiredRule = [
           :rows="[AttendeeRole.YOUTH, AttendeeRole.CHILD].includes(props.role) ? 7 : 2"
           auto-grow
           clearable
-          :modelValue="current.additionalInformation"
-          @update:modelValue="current.additionalInformation = $event"
+          :model-value="current.additionalInformation"
+          @update:model-value="current.additionalInformation = $event"
         ></v-textarea>
       </div>
     </div>

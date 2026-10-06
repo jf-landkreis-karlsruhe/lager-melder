@@ -17,21 +17,22 @@ data class RestChild(
     val additionalInformation: String,
     val role: AttendeeRole,
     val code: String,
-    val status: String
+    val status: String,
 ) {
     companion object {
-        fun of(attendee: ChildEntry) = RestChild(
-            id = attendee.id,
-            firstName = attendee.firstName,
-            lastName = attendee.lastName,
-            birthday = attendee.birthday,
-            food = attendee.food,
-            tShirtSize = attendee.tShirtSize,
-            additionalInformation = attendee.additionalInformation,
-            role = attendee.role,
-            departmentId = attendee.department.id,
-            code = attendee.code,
-            status = attendee.status.toString()
-        )
+        fun of(attendee: ChildEntry) =
+            RestChild(
+                id = attendee.id,
+                firstName = attendee.firstName,
+                lastName = attendee.lastName,
+                birthday = attendee.birthday,
+                food = attendee.food,
+                tShirtSize = attendee.tShirtSize,
+                additionalInformation = attendee.additionalInformation,
+                role = attendee.role,
+                departmentId = attendee.department.id,
+                code = attendee.code,
+                status = attendee.status.toString(),
+            )
     }
 }
