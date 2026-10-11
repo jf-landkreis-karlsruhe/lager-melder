@@ -8,10 +8,13 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class JuleikaController(private val juleikaValidationService: JuleikaValidationService) {
-
+class JuleikaController(
+    private val juleikaValidationService: JuleikaValidationService,
+) {
     @PostMapping("/juleika/validate")
-    fun validate(@RequestBody request: JuleikaValidationRequest): RestJuleikaValidation {
+    fun validate(
+        @RequestBody request: JuleikaValidationRequest,
+    ): RestJuleikaValidation {
         val result = juleikaValidationService.validate(request.cardNumber, request.lastName)
         return RestJuleikaValidation(valid = result.valid, expireDate = result.expireDate)
     }
