@@ -25,7 +25,7 @@ data class RestAttendeeRequest(
     @field:NotNull(message = "role is missing")
     val role: AttendeeRole,
     val juleikaNumber: String,
-    val juleikaExpireDate: String,
+    val juleikaExpireDate: String?,
     val partOfDepartmentId: Long,
     val helperDays: Set<String> = emptySet(),
 ) {
@@ -67,7 +67,7 @@ data class RestAttendeeRequest(
                         code = "",
                         status = null,
                         juleikaNumber = attendee.juleikaNumber,
-                        juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate),
+                        juleikaExpireDate = attendee.juleikaExpireDate?.let { LocalDate.parse(it) },
                     )
                 }
 
@@ -101,7 +101,7 @@ data class RestAttendeeRequest(
                         code = "",
                         status = null,
                         juleikaNumber = attendee.juleikaNumber,
-                        juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate),
+                        juleikaExpireDate = attendee.juleikaExpireDate?.let { LocalDate.parse(it) },
                     )
                 }
 
@@ -139,13 +139,6 @@ data class RestAttendeeRequest(
                         helperDays = eventDays.filter { it.id in attendee.helperDays }.toSet(),
                     )
                 }
-            }
-
-        private fun toDateOrNull(date: String): LocalDate? =
-            if (date != "") {
-                LocalDate.parse(date)
-            } else {
-                null
             }
     }
 }
