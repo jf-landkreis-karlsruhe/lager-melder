@@ -36,7 +36,8 @@ const isLeaderRole = computed(
 )
 
 // Juleika validation state
-const juleikaValidated = ref<boolean>(false)
+// a stored number with expire date was checked when it was saved, so editing other fields needs no new check
+const juleikaValidated = ref<boolean>(!!props.attendee.juleikaNumber && !!props.attendee.juleikaExpireDate)
 const juleikaValidating = ref<boolean>(false)
 const juleikaValidationFailed = ref<boolean>(false)
 

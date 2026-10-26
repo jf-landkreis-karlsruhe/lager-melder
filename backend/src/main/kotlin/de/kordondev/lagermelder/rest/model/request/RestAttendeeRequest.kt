@@ -67,7 +67,7 @@ data class RestAttendeeRequest(
                         code = "",
                         status = null,
                         juleikaNumber = attendee.juleikaNumber,
-                        juleikaExpireDate = attendee.juleikaExpireDate?.let { LocalDate.parse(it) },
+                        juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate),
                     )
                 }
 
@@ -101,7 +101,7 @@ data class RestAttendeeRequest(
                         code = "",
                         status = null,
                         juleikaNumber = attendee.juleikaNumber,
-                        juleikaExpireDate = attendee.juleikaExpireDate?.let { LocalDate.parse(it) },
+                        juleikaExpireDate = toDateOrNull(attendee.juleikaExpireDate),
                     )
                 }
 
@@ -140,5 +140,7 @@ data class RestAttendeeRequest(
                     )
                 }
             }
+
+        private fun toDateOrNull(date: String?): LocalDate? = date?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
     }
 }

@@ -15,6 +15,9 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class JuleikaApiResponse(
@@ -69,7 +72,7 @@ class RealJuleikaValidationService(
 
             if (response.statusCode() == HttpStatus.OK.value()) {
                 val body = objectMapper.readValue(response.body(), JuleikaApiResponse::class.java)
-                JuleikaValidationResult(valid = body.status == "valid", expireDate = body.validTill)
+                JuleikaValidationResult(valid = body.status == "valid", expireDate = parseExpireDate(body.validTill))
             } else {
                 INVALID
             }
@@ -88,5 +91,19 @@ class RealJuleikaValidationService(
     companion object {
         private const val JULEIKA_API_URL = "https://app.juleica.de/api/card-is-valid"
         private val INVALID = JuleikaValidationResult(valid = false, expireDate = null)
+        private val GERMAN_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu")
+
+        // the API documents no date format, so accept ISO (2026-12-31) and German (31.12.2026) dates
+        internal fun parseExpireDate(date: String?): LocalDate? {
+            if (date.isNullOrBlank()) return null
+            val trimmed = date.trim()
+            return listOf(DateTimeFormatter.ISO_LOCAL_DATE, GERMAN_DATE).firstNotNullOfOrNull { format ->
+                try {
+                    LocalDate.parse(trimmed, format)
+                } catch (_: DateTimeParseException) {
+                    null
+                }
+            }
+        }
     }
 }

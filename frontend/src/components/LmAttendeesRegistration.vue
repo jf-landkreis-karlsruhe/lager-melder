@@ -24,7 +24,7 @@ import type { DepartmentSelect, TShirtSizeSelect } from '@/components/AttendeeEx
 import { type EventDays, getEventDays } from '@/services/eventDays'
 import { getErrorMessage } from '@/services/errorConstants'
 import { useToast } from 'vue-toastification'
-import { isValidJuleikaNumber } from '@/helper/juleika'
+import { isValidJuleikaExpireDate, isValidJuleikaNumber } from '@/helper/juleika'
 
 const toast = useToast()
 
@@ -121,11 +121,17 @@ const numberOfNeededValidYouthLeaders = computed<number>(() => {
 })
 
 const numberOfValidYouthLeaders = computed<number>(() => {
-  return youthLeaderAttendeeList.value.filter(youthLeaderValidJuleikaNumberFilter).length
+  return youthLeaderAttendeeList.value
+    .filter(youthLeaderValidJuleikaNumberFilter)
+    .filter(youthLeaderValidJuleikaExpireDateFilter).length
 })
 
 const youthLeaderValidJuleikaNumberFilter = (youthLeader: Attendee) => {
   return isValidJuleikaNumber(youthLeader.juleikaNumber)
+}
+
+const youthLeaderValidJuleikaExpireDateFilter = (youthLeader: Attendee) => {
+  return isValidJuleikaExpireDate(youthLeader.juleikaExpireDate, eventEnd)
 }
 
 const saveNewAttendee = async (

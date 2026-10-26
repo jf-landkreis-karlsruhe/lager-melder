@@ -82,7 +82,7 @@ export interface NewAttendee {
   tShirtSize: string
   additionalInformation: string
   role: AttendeeRole
-    juleikaNumber: string
+  juleikaNumber: string
   juleikaExpireDate?: string
   partOfDepartmentId: number | undefined
   helperDays: string[]

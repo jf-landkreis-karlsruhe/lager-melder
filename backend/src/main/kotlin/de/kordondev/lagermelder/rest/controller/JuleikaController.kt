@@ -16,6 +16,6 @@ class JuleikaController(
         @RequestBody request: JuleikaValidationRequest,
     ): RestJuleikaValidation {
         val result = juleikaValidationService.validate(request.cardNumber, request.lastName)
-        return RestJuleikaValidation(valid = result.valid, expireDate = result.expireDate)
+        return RestJuleikaValidation(valid = result.valid, expireDate = result.expireDate?.toString())
     }
 }

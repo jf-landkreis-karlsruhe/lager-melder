@@ -423,8 +423,15 @@ class AttendeeRoleHelperTest {
     ): List<Attendee> {
         var attendees = listOf<Attendee>()
         for (i in 1..count) {
-            val attendee = createAttendeeAge(randomId(), age, eventDate, AttendeeRole.YOUTH_LEADER) as YouthLeaderEntry
-            attendees = attendees.plus(attendee.copy(juleikaNumber = ""))
+            var attendee = createAttendeeAge(randomId(), age, eventDate, AttendeeRole.YOUTH_LEADER) as YouthLeaderEntry
+            attendee =
+                if ((count % 2) == 0) {
+                    attendee.copy(juleikaNumber = "")
+                } else {
+                    attendee.copy(juleikaExpireDate = eventDate.minusDays(1))
+                }
+
+            attendees = attendees.plus(attendee)
         }
         return attendees
     }

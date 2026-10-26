@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 @ConditionalOnProperty(name = ["application.juleika.use-mock"], havingValue = "true")
@@ -15,8 +16,12 @@ class MockJuleikaValidationService : JuleikaValidationService {
         lastName: String,
     ): JuleikaValidationResult {
         val valid = cardNumber.isNotBlank() && lastName.isNotBlank() && cardNumber.endsWith("0")
-        val expireDate = if (valid) "08.12.2025" else null
+        val expireDate = if (valid) MOCK_EXPIRE_DATE else null
         logger.info("Mock Juleika validation for card $cardNumber / lastName $lastName → valid=$valid expireDate=$expireDate")
         return JuleikaValidationResult(valid = valid, expireDate = expireDate)
+    }
+
+    companion object {
+        val MOCK_EXPIRE_DATE: LocalDate = LocalDate.of(2099, 12, 31)
     }
 }
