@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import org.mockito.kotlin.mock
 import java.time.LocalDate
 
 class RealJuleikaValidationServiceTest {
@@ -18,6 +19,22 @@ class RealJuleikaValidationServiceTest {
     fun returnsNullForUnknownExpireDates(date: String) {
         assertThat(RealJuleikaValidationService.parseExpireDate(date)).isNull()
     }
+
+    @Test
+    fun treatsValidCardWithoutKnownExpireDateAsInvalid() {
+        val result = service().toResult(JuleikaApiResponse(status = "valid", validTill = "unknown"), "12340")
+
+        assertThat(result).isEqualTo(JuleikaValidationResult(valid = false, expireDate = null))
+    }
+
+    @Test
+    fun returnsExpireDateOfValidCard() {
+        val result = service().toResult(JuleikaApiResponse(status = "valid", validTill = "08.12.2026"), "12340")
+
+        assertThat(result).isEqualTo(JuleikaValidationResult(valid = true, expireDate = LocalDate.of(2026, 12, 8)))
+    }
+
+    private fun service() = RealJuleikaValidationService(JuleikaConfig(), mock())
 
     @Test
     fun returnsNullWithoutExpireDate() {

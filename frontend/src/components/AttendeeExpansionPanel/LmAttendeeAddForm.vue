@@ -40,9 +40,13 @@ const isLeaderRole = computed(
 const juleikaValidated = ref<boolean>(!!props.attendee.juleikaNumber && !!props.attendee.juleikaExpireDate)
 const juleikaValidating = ref<boolean>(false)
 const juleikaValidationFailed = ref<boolean>(false)
+// only the response of the latest check counts, number or last name may have changed while a request was running
+let juleikaRequestId = 0
 
 const resetJuleikaState = () => {
+  juleikaRequestId++
   juleikaValidated.value = false
+  juleikaValidating.value = false
   juleikaValidationFailed.value = false
   current.value.juleikaExpireDate = undefined
 }
@@ -61,23 +65,24 @@ const handleJuleikaBlur = async () => {
   if (!isLeaderRole.value) return
   if (!current.value.juleikaNumber || !current.value.lastName) return
 
+  const requestId = ++juleikaRequestId
   juleikaValidating.value = true
   juleikaValidationFailed.value = false
   juleikaValidated.value = false
   try {
     const result = await validateJuleika(current.value.juleikaNumber, current.value.lastName)
-    juleikaValidated.value = result.valid
-    juleikaValidationFailed.value = !result.valid
-    if (result.valid) {
-      current.value.juleikaExpireDate = result.expireDate
-    } else {
-      current.value.juleikaExpireDate = undefined
-    }
+    if (requestId !== juleikaRequestId) return
+    // without an expire date the leader does not count as having a valid Juleika
+    const valid = result.valid && !!result.expireDate
+    juleikaValidated.value = valid
+    juleikaValidationFailed.value = !valid
+    current.value.juleikaExpireDate = valid ? result.expireDate : undefined
   } catch {
+    if (requestId !== juleikaRequestId) return
     juleikaValidationFailed.value = true
     current.value.juleikaExpireDate = undefined
   } finally {
-    juleikaValidating.value = false
+    if (requestId === juleikaRequestId) juleikaValidating.value = false
   }
 }
 

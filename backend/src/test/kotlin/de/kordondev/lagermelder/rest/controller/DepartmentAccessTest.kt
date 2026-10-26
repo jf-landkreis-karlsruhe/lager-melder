@@ -11,6 +11,7 @@ import de.kordondev.lagermelder.helper.IntegrationTest
 import de.kordondev.lagermelder.helper.WebTestHelper
 import de.kordondev.lagermelder.rest.model.RestAttendee
 import de.kordondev.lagermelder.rest.model.RestDepartment
+import de.kordondev.lagermelder.rest.model.request.JuleikaValidationRequest
 import jakarta.transaction.Transactional
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
@@ -162,6 +163,23 @@ class DepartmentAccessTest(
         mockMvc
             .perform(webTestHelper.put("/settings", Entities.restSettingsRequest()).with(roleUser(Roles.SPECIALIZED_FIELD_DIRECTOR)))
             .andExpect(status().isOk)
+    }
+
+    @Test
+    fun userCanValidateJuleika() {
+        mockMvc
+            .perform(webTestHelper.post("/juleika/validate", JuleikaValidationRequest("12340", "Leiter")).with(departmentUser()))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.valid").value(true))
+    }
+
+    @Test
+    fun accountWithoutRoleCannotValidateJuleika() {
+        val withoutRole = user("without-role").authorities(SimpleGrantedAuthority(USER_ID_PREFIX + "997"))
+
+        mockMvc
+            .perform(webTestHelper.post("/juleika/validate", JuleikaValidationRequest("12340", "Leiter")).with(withoutRole))
+            .andExpect(status().isForbidden)
     }
 
     private fun departmentUser(): RequestPostProcessor =

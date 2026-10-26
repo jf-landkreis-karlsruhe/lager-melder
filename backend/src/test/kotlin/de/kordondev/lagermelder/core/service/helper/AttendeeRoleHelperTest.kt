@@ -1,6 +1,5 @@
 package de.kordondev.lagermelder.core.service.helper
 
-import de.kordondev.lagermelder.core.juleika.MockJuleikaValidationService
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.helper.Entities
@@ -17,7 +16,7 @@ class AttendeeRoleHelperTest {
 
     @BeforeEach
     fun setup() {
-        attendeeRoleHelper = AttendeeRoleHelper(MockJuleikaValidationService())
+        attendeeRoleHelper = AttendeeRoleHelper()
     }
 
     @Test

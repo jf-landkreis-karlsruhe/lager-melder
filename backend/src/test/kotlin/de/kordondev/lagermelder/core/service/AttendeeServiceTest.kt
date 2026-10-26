@@ -2,6 +2,7 @@ package de.kordondev.lagermelder.core.service
 
 import de.kordondev.lagermelder.core.persistence.entry.BaseAttendeeEntry
 import de.kordondev.lagermelder.core.persistence.entry.YouthEntry
+import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.persistence.repository.AttendeeInEventRepository
 import de.kordondev.lagermelder.core.persistence.repository.BaseAttendeeRepository
 import de.kordondev.lagermelder.core.persistence.repository.YouthsRepository
@@ -16,6 +17,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doThrow
@@ -33,6 +35,7 @@ class AttendeeServiceTest {
     private lateinit var youthRepository: YouthsRepository
     private lateinit var baseAttendeeRepository: BaseAttendeeRepository
     private lateinit var attendeeInEventRepository: AttendeeInEventRepository
+    private lateinit var juleikaService: JuleikaService
     private lateinit var attendeeService: AttendeeService
 
     private val attendee = Entities.attendee() as YouthEntry
@@ -45,6 +48,7 @@ class AttendeeServiceTest {
         youthRepository = mock()
         baseAttendeeRepository = mock()
         attendeeInEventRepository = mock()
+        juleikaService = mock()
         attendeeService =
             AttendeeService(
                 authorityService = authorityService,
@@ -58,9 +62,11 @@ class AttendeeServiceTest {
                 helperRepository = mock(),
                 baseAttendeeRepository = baseAttendeeRepository,
                 eventRepository = attendeeInEventRepository,
+                juleikaService = juleikaService,
             )
 
         whenever(settingsService.canBeEdited(any())).doReturn(true)
+        whenever(juleikaService.withCheckedExpireDate(any(), anyOrNull())).doAnswer { it.arguments[0] as Attendee }
         whenever(youthRepository.save(any<YouthEntry>())).doAnswer { it.arguments[0] as YouthEntry }
     }
 
@@ -71,6 +77,15 @@ class AttendeeServiceTest {
         assertThat(created.id).isNotEqualTo(attendee.id)
         assertThat(created.code).isNotEqualTo(attendee.code).hasSize(8)
         verify(youthRepository).save(any<YouthEntry>())
+    }
+
+    @Test
+    fun createAttendeeStoresAttendeeWithCheckedJuleika() {
+        whenever(juleikaService.withCheckedExpireDate(attendee, null)).doReturn(attendee.copy(additionalInformation = "checked"))
+
+        val created = attendeeService.createAttendee(attendee)
+
+        assertThat(created.additionalInformation).isEqualTo("checked")
     }
 
     @Test

@@ -46,7 +46,7 @@ class JsonContractTest(
             """
             {"firstName": "Anna", "lastName": "Schmidt", "departmentId": ${department.id}, "birthday": "2012-04-03",
              "food": "MEAT", "tShirtSize": "S", "additionalInformation": "", "role": "YOUTH", "juleikaNumber": "",
-             "juleikaExpireDate": "", "helperDays": []}
+             "helperDays": []}
             """.trimIndent()
 
         mockMvc
@@ -60,4 +60,47 @@ class JsonContractTest(
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.features[0]").value("YOUTH_GROUPS"))
     }
+
+    @Test
+    fun juleikaValidationAsSentByTheFrontend() {
+        mockMvc
+            .perform(
+                post("/juleika/validate")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"cardNumber": "12340", "lastName": "Leiter"}"""),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.valid").value(true))
+            .andExpect(jsonPath("$.expireDate").value("2099-12-31"))
+    }
+
+    @Test
+    fun youthLeaderGetsExpireDateOfJuleikaApiInsteadOfTheSentOne() {
+        val department = webTestHelper.createDepartment(mockMvc, setOf(DepartmentFeatures.YOUTH_GROUPS))
+
+        mockMvc
+            .perform(post("/attendees").contentType(MediaType.APPLICATION_JSON).content(youthLeaderJson(department.id, "12340")))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.juleikaNumber").value("12340"))
+            .andExpect(jsonPath("$.juleikaExpireDate").value("2099-12-31"))
+    }
+
+    @Test
+    fun youthLeaderWithInvalidJuleikaGetsNoExpireDate() {
+        val department = webTestHelper.createDepartment(mockMvc, setOf(DepartmentFeatures.YOUTH_GROUPS))
+
+        mockMvc
+            .perform(post("/attendees").contentType(MediaType.APPLICATION_JSON).content(youthLeaderJson(department.id, "12345")))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.juleikaExpireDate").doesNotExist())
+    }
+
+    // the mocked Juleika API accepts numbers ending in 0 and returns 2099-12-31, the client sends its own date
+    private fun youthLeaderJson(
+        departmentId: Long,
+        juleikaNumber: String,
+    ) = """
+        {"firstName": "Lea", "lastName": "Leiter", "departmentId": $departmentId, "birthday": "2000-01-01",
+         "food": "MEAT", "tShirtSize": "S", "additionalInformation": "", "role": "YOUTH_LEADER",
+         "juleikaNumber": "$juleikaNumber", "juleikaExpireDate": "2030-01-01", "helperDays": []}
+        """.trimIndent()
 }

@@ -49,4 +49,44 @@ test.describe('add attendee', () => {
       departmentId: 2
     })
   })
+
+  test('creates a youth leader after checking the Juleika', async ({ page }) => {
+    let createdBody: Record<string, unknown> | undefined
+    await loginAs(page, 'USER')
+    const { unmocked } = await mockApi(page, {
+      'POST attendees': async (route) => {
+        createdBody = route.request().postDataJSON()
+        await route.fulfill({
+          json: { ...youthLeader, ...createdBody, id: 'leader-2', code: 'LEA12345', status: null }
+        })
+      }
+    })
+    await page.goto('/teilnehmer')
+
+    await page.getByRole('button', { name: 'Jugendleiter hinzufügen' }).click()
+    const dialog = page.getByRole('dialog')
+    await dialog.getByLabel('Vorname').fill('Lea')
+    await dialog.getByLabel('Nachname').fill('Leiter')
+    await dialog.getByLabel('Geburtsdatum').fill('2000-01-01')
+    await dialog.getByRole('combobox').first().click()
+    await page.getByRole('listbox').getByText('L', { exact: true }).click()
+    const save = dialog.getByRole('button', { name: 'Speichern' })
+    await expect(save).toBeDisabled()
+
+    await dialog.getByLabel('Juleika-Nummer').fill('12340')
+    await dialog.getByLabel('Juleika-Nummer').blur()
+
+    await expect(dialog.getByText('Juleika gültig')).toBeVisible()
+    await expect(dialog.getByLabel('Juleika-Ablaufdatum')).toHaveValue('2099-12-31')
+    await save.click()
+
+    await expect(page.getByText('Lea Leiter')).toBeVisible()
+    expect(createdBody).toMatchObject({
+      lastName: 'Leiter',
+      role: 'YOUTH_LEADER',
+      juleikaNumber: '12340',
+      juleikaExpireDate: '2099-12-31'
+    })
+    expect(unmocked).toEqual([])
+  })
 })

@@ -15,6 +15,7 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -32,6 +33,7 @@ class RealJuleikaValidationService(
     private val objectMapper: ObjectMapper,
 ) : JuleikaValidationService {
     private val logger: Logger = LoggerFactory.getLogger(RealJuleikaValidationService::class.java)
+    private val httpClient: HttpClient = HttpClient.newBuilder().connectTimeout(TIMEOUT).build()
 
     override fun validate(
         cardNumber: String,
@@ -60,19 +62,16 @@ class RealJuleikaValidationService(
                 HttpRequest
                     .newBuilder(uri)
                     .header("Authorization", "Bearer ${juleikaConfig.token}")
+                    .timeout(TIMEOUT)
                     .GET()
                     .build()
 
-            val response =
-                HttpClient
-                    .newHttpClient()
-                    .send(request, HttpResponse.BodyHandlers.ofString())
+            val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
 
             logger.info("Juleika validation for card $cardNumber: HTTP ${response.statusCode()}")
 
             if (response.statusCode() == HttpStatus.OK.value()) {
-                val body = objectMapper.readValue(response.body(), JuleikaApiResponse::class.java)
-                JuleikaValidationResult(valid = body.status == "valid", expireDate = parseExpireDate(body.validTill))
+                toResult(objectMapper.readValue(response.body(), JuleikaApiResponse::class.java), cardNumber)
             } else {
                 INVALID
             }
@@ -88,7 +87,21 @@ class RealJuleikaValidationService(
             INVALID
         }
 
+    // without an expire date a leader does not count as having a valid Juleika, so a valid card without one is not confirmed
+    internal fun toResult(
+        body: JuleikaApiResponse,
+        cardNumber: String,
+    ): JuleikaValidationResult {
+        val expireDate = parseExpireDate(body.validTill)
+        if (body.status == "valid" && expireDate == null) {
+            logger.warn("Juleika API returned valid card $cardNumber with unknown expire date '${body.validTill}'")
+            return INVALID
+        }
+        return JuleikaValidationResult(valid = body.status == "valid", expireDate = expireDate)
+    }
+
     companion object {
+        private val TIMEOUT: Duration = Duration.ofSeconds(10)
         private const val JULEIKA_API_URL = "https://app.juleica.de/api/card-is-valid"
         private val INVALID = JuleikaValidationResult(valid = false, expireDate = null)
         private val GERMAN_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu")

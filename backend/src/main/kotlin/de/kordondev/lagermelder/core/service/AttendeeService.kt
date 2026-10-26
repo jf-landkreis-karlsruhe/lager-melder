@@ -30,6 +30,7 @@ class AttendeeService(
     private val helperRepository: HelperRepository,
     private val baseAttendeeRepository: BaseAttendeeRepository,
     private val eventRepository: AttendeeInEventRepository,
+    private val juleikaService: JuleikaService,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AttendeeService::class.java)
 
@@ -57,7 +58,7 @@ class AttendeeService(
 
         val code = PasswordGenerator.generateCode()
         val id = UUID.randomUUID().toString()
-        return saveAttendeeToDB(attendee, attendee::class, id, code, Instant.now())
+        return saveAttendeeToDB(juleikaService.withCheckedExpireDate(attendee), attendee::class, id, code, Instant.now())
     }
 
     fun saveAttendee(
@@ -74,7 +75,7 @@ class AttendeeService(
                     it,
                     AuthorityService.SPECIALIZED_FIELD_DIRECTOR_ALLOWED,
                 )
-            }?.let { saveAttendeeToDB(attendee, it::class, it.id, it.code, it.createdAt) }
+            }?.let { saveAttendeeToDB(juleikaService.withCheckedExpireDate(attendee, it), it::class, it.id, it.code, it.createdAt) }
             ?: createAttendee(attendee)
     }
 
