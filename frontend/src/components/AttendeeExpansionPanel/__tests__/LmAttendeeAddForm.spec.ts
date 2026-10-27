@@ -18,18 +18,29 @@ const mountForm = (attendee: Attendee) =>
     }
   })
 
-const saveButton = (wrapper: ReturnType<typeof mountForm>) => wrapper.find('button[type="submit"]')
+const submit = async (wrapper: ReturnType<typeof mountForm>) => {
+  await flushPromises()
+  await wrapper.find('form').trigger('submit')
+  await flushPromises()
+}
+
+const savedAttendee = (wrapper: ReturnType<typeof mountForm>) =>
+  wrapper.emitted('save')?.[0]?.[0] as Attendee | undefined
 
 const inputWithLabel = (wrapper: ReturnType<typeof mountForm>, label: string) =>
   wrapper.findAll('input').find((input) => input.element.closest('.v-input')?.textContent?.includes(label))!
 
 const juleikaNumberInput = (wrapper: ReturnType<typeof mountForm>) => inputWithLabel(wrapper, 'Juleika-Nummer')
 
-const newLeaderWithJuleika = (): Attendee => ({
+const newLeader = (): Attendee => ({
   ...getAttendeeDefault(AttendeeRole.YOUTH_LEADER, 1),
+  firstName: 'Lea',
   lastName: 'Leiter',
-  juleikaNumber: '12340'
+  birthday: '2000-01-01',
+  tShirtSize: 'M'
 })
+
+const newLeaderWithJuleika = (): Attendee => ({ ...newLeader(), juleikaNumber: '12340' })
 
 const deferred = <T>() => {
   let resolve: (value: T) => void = () => {}
@@ -53,38 +64,55 @@ describe('LmAttendeeAddForm', () => {
     vi.mocked(validateJuleika).mockReset()
   })
 
-  it('lets an existing leader with stored Juleika be saved without a new check', async () => {
+  it('saves an existing leader with stored Juleika without a new check', async () => {
     const wrapper = mountForm(storedLeader())
-    await flushPromises()
+    await submit(wrapper)
 
-    expect(saveButton(wrapper).attributes('disabled')).toBeUndefined()
     expect(validateJuleika).not.toHaveBeenCalled()
+    expect(savedAttendee(wrapper)).toMatchObject({ juleikaNumber: '12340', juleikaExpireDate: '2030-01-01' })
   })
 
-  it('requires a check for a new leader', async () => {
-    const wrapper = mountForm(getAttendeeDefault(AttendeeRole.YOUTH_LEADER, 1))
-    await flushPromises()
+  it('saves a new leader without Juleika', async () => {
+    const wrapper = mountForm(newLeader())
+    await submit(wrapper)
 
-    expect(saveButton(wrapper).attributes('disabled')).toBeDefined()
+    expect(validateJuleika).not.toHaveBeenCalled()
+    expect(savedAttendee(wrapper)).toMatchObject({ juleikaNumber: '' })
+    expect(savedAttendee(wrapper)?.juleikaExpireDate).toBeUndefined()
   })
 
-  it('requires a new check when the Juleika number of an existing leader changes', async () => {
+  it('drops the stored expire date when the Juleika number of an existing leader changes', async () => {
     const wrapper = mountForm(storedLeader())
     await juleikaNumberInput(wrapper).setValue('99990')
-    await flushPromises()
+    await submit(wrapper)
 
-    expect(saveButton(wrapper).attributes('disabled')).toBeDefined()
+    expect(savedAttendee(wrapper)).toMatchObject({ juleikaNumber: '99990' })
+    expect(savedAttendee(wrapper)?.juleikaExpireDate).toBeUndefined()
   })
 
-  it('enables saving after a successful check', async () => {
+  it('saves the expire date of a successful check', async () => {
     vi.mocked(validateJuleika).mockResolvedValue({ valid: true, expireDate: '2030-01-01' })
     const wrapper = mountForm(newLeaderWithJuleika())
 
     await juleikaNumberInput(wrapper).trigger('blur')
-    await flushPromises()
+    await submit(wrapper)
 
     expect(validateJuleika).toHaveBeenCalledWith('12340', 'Leiter')
-    expect(saveButton(wrapper).attributes('disabled')).toBeUndefined()
+    expect(wrapper.text()).toContain('Juleika gültig')
+    expect(savedAttendee(wrapper)).toMatchObject({ juleikaNumber: '12340', juleikaExpireDate: '2030-01-01' })
+  })
+
+  it('saves a leader whose Juleika is invalid without expire date', async () => {
+    vi.mocked(validateJuleika).mockResolvedValue({ valid: false })
+    const wrapper = mountForm(newLeaderWithJuleika())
+
+    await juleikaNumberInput(wrapper).trigger('blur')
+    await flushPromises()
+    expect(wrapper.text()).toContain('Juleika ungültig oder nicht gefunden.')
+
+    await submit(wrapper)
+    expect(savedAttendee(wrapper)).toMatchObject({ juleikaNumber: '12340' })
+    expect(savedAttendee(wrapper)?.juleikaExpireDate).toBeUndefined()
   })
 
   it('does not accept a valid Juleika without expire date', async () => {
@@ -94,8 +122,21 @@ describe('LmAttendeeAddForm', () => {
     await juleikaNumberInput(wrapper).trigger('blur')
     await flushPromises()
 
-    expect(saveButton(wrapper).attributes('disabled')).toBeDefined()
     expect(wrapper.text()).toContain('Juleika ungültig oder nicht gefunden')
+  })
+
+  it('waits for a running check before saving', async () => {
+    const pending = deferred<JuleikaValidationResult>()
+    vi.mocked(validateJuleika).mockReturnValue(pending.promise)
+    const wrapper = mountForm(newLeaderWithJuleika())
+
+    await juleikaNumberInput(wrapper).trigger('blur')
+    await submit(wrapper)
+    expect(wrapper.emitted('save')).toBeUndefined()
+
+    pending.resolve({ valid: true, expireDate: '2030-01-01' })
+    await flushPromises()
+    expect(savedAttendee(wrapper)).toMatchObject({ juleikaExpireDate: '2030-01-01' })
   })
 
   it('ignores the result of a check for a number that was changed in the meantime', async () => {
@@ -108,7 +149,7 @@ describe('LmAttendeeAddForm', () => {
     pending.resolve({ valid: true, expireDate: '2030-01-01' })
     await flushPromises()
 
-    expect(saveButton(wrapper).attributes('disabled')).toBeDefined()
+    expect(wrapper.text()).not.toContain('Juleika gültig')
   })
 
   it('only applies the result of the latest check', async () => {
@@ -122,8 +163,8 @@ describe('LmAttendeeAddForm', () => {
     second.resolve({ valid: false })
     await flushPromises()
     first.resolve({ valid: true, expireDate: '2030-01-01' })
-    await flushPromises()
+    await submit(wrapper)
 
-    expect(saveButton(wrapper).attributes('disabled')).toBeDefined()
+    expect(savedAttendee(wrapper)?.juleikaExpireDate).toBeUndefined()
   })
 })

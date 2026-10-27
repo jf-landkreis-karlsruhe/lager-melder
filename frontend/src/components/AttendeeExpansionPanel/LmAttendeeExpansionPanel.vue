@@ -18,6 +18,7 @@ const props = defineProps<{
   loading?: boolean
   attendeesCanBeEdited: boolean
   isHighlighted?: boolean
+  juleikaIsInvalid?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -88,8 +89,14 @@ const handleFormSave = (editedAttendee: Attendee) => {
         >
           <v-icon class="mr-2">mdi-card-account-details-outline</v-icon>
           <div class="d-flex flex-column ga-2">
-            <span>{{ props.attendee.juleikaNumber ?? '-' }}</span>
-            <span>{{ dateAsText(props.attendee.juleikaExpireDate ?? '-') }}</span>
+            <!-- the expire date of an invalid Juleika is meaningless, so only the number is shown as a warning -->
+            <span v-if="props.juleikaIsInvalid" class="juleika-invalid" title="Keine gültige Juleika">
+              {{ props.attendee.juleikaNumber || '-' }}
+            </span>
+            <template v-else>
+              <span>{{ props.attendee.juleikaNumber || '-' }}</span>
+              <span>{{ dateAsText(props.attendee.juleikaExpireDate ?? '-') }}</span>
+            </template>
           </div>
         </div>
 
@@ -149,6 +156,10 @@ const handleFormSave = (editedAttendee: Attendee) => {
 .highlighted {
   border: 2px solid red;
   border-radius: 4px;
+}
+
+.juleika-invalid {
+  color: rgb(var(--v-theme-warning));
 }
 
 .is-attending-icon {

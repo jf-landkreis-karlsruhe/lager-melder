@@ -40,6 +40,8 @@ const isLeaderRole = computed(
 const juleikaValidated = ref<boolean>(!!props.attendee.juleikaNumber && !!props.attendee.juleikaExpireDate)
 const juleikaValidating = ref<boolean>(false)
 const juleikaValidationFailed = ref<boolean>(false)
+// the running check, saving waits for it so a valid Juleika is not lost when the save button is clicked right away
+let juleikaCheck: Promise<void> = Promise.resolve()
 // only the response of the latest check counts, number or last name may have changed while a request was running
 let juleikaRequestId = 0
 
@@ -61,10 +63,13 @@ const onLastNameChange = (value: string) => {
   resetJuleikaState()
 }
 
-const handleJuleikaBlur = async () => {
+const handleJuleikaBlur = () => {
   if (!isLeaderRole.value) return
   if (!current.value.juleikaNumber || !current.value.lastName) return
+  juleikaCheck = checkJuleika()
+}
 
+const checkJuleika = async () => {
   const requestId = ++juleikaRequestId
   juleikaValidating.value = true
   juleikaValidationFailed.value = false
@@ -86,6 +91,13 @@ const handleJuleikaBlur = async () => {
   }
 }
 
+// shown as hint, not as error: an error would make the form invalid, but leaders without valid Juleika may be saved
+const juleikaHint = computed(() => {
+  if (juleikaValidated.value) return 'Juleika gültig'
+  if (juleikaValidationFailed.value) return 'Juleika ungültig oder nicht gefunden.'
+  return 'Validierung erfolgt nach Eingabe von Nummer und Nachname'
+})
+
 const foodList = computed<{ value: Food; title: string }[]>(() => {
   return Object.values(Food).map((value: Food) => {
     return { value, title: foodText(value), props: { prependIcon: FOOD_ICON_MAP[value] } }
@@ -93,9 +105,10 @@ const foodList = computed<{ value: Food; title: string }[]>(() => {
 })
 const helperDays = computed<HelperDaySelect[]>(() => getHelperDaySelect(props.eventDays))
 
-const handleSubmit = () => {
+// leaders without a valid Juleika may be saved, they just do not count as leaders with Juleika
+const handleSubmit = async () => {
   if (!isFormValid.value) return
-  if (isLeaderRole.value && !juleikaValidated.value) return
+  await juleikaCheck
   // Children and child leaders don't get a tShirt, but it is required currently, therefore this is a hack
   if (props.role === AttendeeRole.CHILD || props.role === AttendeeRole.CHILD_LEADER) {
     current.value.tShirtSize = props.tShirtSizes[0].title
@@ -178,10 +191,9 @@ const requiredRule = [
         class="form-field"
         :loading="juleikaValidating"
         :model-value="current.juleikaNumber"
-        :hint="juleikaValidated ? 'Juleika gültig' : 'Validierung erfolgt nach Eingabe von Nummer und Nachname'"
+        :class="{ 'juleika-invalid': juleikaValidationFailed }"
+        :hint="juleikaHint"
         persistent-hint
-        :error="juleikaValidationFailed"
-        :error-messages="juleikaValidationFailed ? 'Juleika ungültig oder nicht gefunden' : []"
         @update:model-value="onJuleikaNumberChange($event)"
         @blur="handleJuleikaBlur"
       ></v-text-field>
@@ -295,15 +307,7 @@ const requiredRule = [
         </v-btn>
       </v-defaults-provider>
       <v-defaults-provider :defaults="{ VIcon: { color: '#fff' } }">
-        <v-btn
-          style="flex: 1"
-          color="primary"
-          :loading="loading"
-          prepend-icon="mdi-check"
-          variant="flat"
-          type="submit"
-          :disabled="isLeaderRole && !juleikaValidated"
-        >
+        <v-btn style="flex: 1" color="primary" :loading="loading" prepend-icon="mdi-check" variant="flat" type="submit">
           Speichern
         </v-btn>
       </v-defaults-provider>
@@ -315,6 +319,11 @@ const requiredRule = [
 .form-field {
   flex: 1;
   min-width: 180px;
+}
+
+.juleika-invalid .v-messages {
+  color: rgb(var(--v-theme-warning));
+  opacity: 1;
 }
 
 .comment-field {

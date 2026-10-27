@@ -124,6 +124,7 @@ const juleikaIsInvalid = (attendee: Attendee): boolean => {
         :loading="loading"
         :attendees-can-be-edited="props.attendeesCanBeEdited"
         :is-highlighted="props.showHighlights && juleikaIsInvalid(attendee)"
+        :juleika-is-invalid="juleikaIsInvalid(attendee)"
         @update="emit('update', $event, expansionPanels[index])"
         @delete="emit('delete', $event)"
       ></LmAttendeeExpansionPanel>
