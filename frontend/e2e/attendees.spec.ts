@@ -94,7 +94,7 @@ test.describe('add attendee', () => {
     await dialog.getByLabel('Juleika-Nummer').blur()
 
     await expect(dialog.getByText('Juleika gültig')).toBeVisible()
-    await expect(dialog.getByLabel('Juleika-Ablaufdatum')).toHaveValue('2099-12-31')
+    await expect(dialog.getByLabel('Juleika-Ablaufdatum')).toHaveValue('31.12.2099')
     await save.click()
 
     await expect(page.getByText('Lea Leiter')).toBeVisible()

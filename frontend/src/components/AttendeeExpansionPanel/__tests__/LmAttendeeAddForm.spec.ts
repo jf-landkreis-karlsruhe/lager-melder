@@ -72,6 +72,13 @@ describe('LmAttendeeAddForm', () => {
     expect(savedAttendee(wrapper)).toMatchObject({ juleikaNumber: '12340', juleikaExpireDate: '2030-01-01' })
   })
 
+  it('asks for the Juleika number with leading zeros', async () => {
+    const wrapper = mountForm(newLeader())
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Nummer mit führenden Nullen eingeben (z.B. 0012345)')
+  })
+
   it('saves a new leader without Juleika', async () => {
     const wrapper = mountForm(newLeader())
     await submit(wrapper)
@@ -99,6 +106,7 @@ describe('LmAttendeeAddForm', () => {
 
     expect(validateJuleika).toHaveBeenCalledWith('12340', 'Leiter')
     expect(wrapper.text()).toContain('Juleika gültig')
+    expect(inputWithLabel(wrapper, 'Juleika-Ablaufdatum').element.value).toBe('01.01.2030')
     expect(savedAttendee(wrapper)).toMatchObject({ juleikaNumber: '12340', juleikaExpireDate: '2030-01-01' })
   })
 

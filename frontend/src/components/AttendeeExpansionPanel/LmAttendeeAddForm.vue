@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { FOOD_ICON_MAP, foodText } from '@/helper/displayText'
+import { dateAsText, FOOD_ICON_MAP, foodText } from '@/helper/displayText'
 import { type Attendee, AttendeeRole, Food } from '@/services/attendee'
 import { type EventDays } from '@/services/eventDays'
 import {
@@ -95,7 +95,8 @@ const checkJuleika = async () => {
 const juleikaHint = computed(() => {
   if (juleikaValidated.value) return 'Juleika gültig'
   if (juleikaValidationFailed.value) return 'Juleika ungültig oder nicht gefunden.'
-  return 'Validierung erfolgt nach Eingabe von Nummer und Nachname'
+  // the Juleika API only finds the card with its leading zeros
+  return 'Nummer mit führenden Nullen eingeben (z.B. 0012345). Validierung erfolgt nach Eingabe von Nummer und Nachname'
 })
 
 const foodList = computed<{ value: Food; title: string }[]>(() => {
@@ -203,7 +204,7 @@ const requiredRule = [
         density="comfortable"
         class="form-field"
         disabled
-        :model-value="current.juleikaExpireDate"
+        :model-value="dateAsText(current.juleikaExpireDate ?? '')"
       ></v-text-field>
     </div>
 
