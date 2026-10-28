@@ -24,6 +24,7 @@ flowchart TD
         security["core.security<br/>JWT, AuthorityService"]
         pdf["core.pdf<br/>fill PDF forms"]
         mail["core.mail<br/>Thymeleaf mails"]
+        juleika["core.juleika<br/>Juleika API client"]
         subgraph persistence["core.persistence"]
             entry["entry<br/>JPA entities (*Entry / *Entity)"]
             repo["repository<br/>Spring Data CrudRepository"]
@@ -38,6 +39,7 @@ flowchart TD
     service --> security
     service --> pdf
     service --> mail
+    service --> juleika
     service --> helper
     repo --> entry
     controller -. throws .-> exception
@@ -54,6 +56,7 @@ flowchart TD
 | `core.security` | Spring Security config, JWT creation/verification, `AuthorityService` | |
 | `core.pdf` | Fills the PDF form templates in `resources/data/*.pdf` (PDFBox) | |
 | `core.mail` | Sends mails based on `resources/mail/*.html` (Thymeleaf) | Sending is disabled with `application.mail.send=false`. |
+| `core.juleika` | Checks a Juleika card against the Juleika API (`app.juleica.de`) | Only used through `JuleikaService`. A mock is used with `application.juleika.use-mock=true` (dev, tests). |
 | `core.persistence.entry` | JPA entities, enums | No dependency on services, security or rest. |
 | `core.persistence.repository` | `CrudRepository` interfaces, JPQL in `@Query` | |
 | `exception` | Domain exceptions carrying an error key, global `ExceptionHandler` | |
@@ -151,6 +154,9 @@ erDiagram
   `ZKidEntry` (belongs to another department via `partOfDepartment`) and `HelperEntity` (helper days).
 - The type is defined by `AttendeeRole`. All types implement `interfaces.Attendee`. `AttendeeService` routes to
   the matching repository, and the aggregated read model is `core.service.models.Attendees`.
+- The **Juleika expire date** of youth and child leaders is never taken from the client. `AttendeeService` stores the
+  date confirmed by the Juleika API (`JuleikaService.withCheckedExpireDate`), or none if the card is invalid. On an
+  update with unchanged number and last name the stored date is kept without a new check.
 - Every attendee gets a unique `code` (`PasswordGenerator.generateCode()`), which is used for check-in
   (`AttendeeInEventEntry`, `AttendeeStatus` ENTERED/LEFT).
 - **Departments** enable feature sets (`DepartmentFeatures`: youth groups, child groups, Z-Kids, helpers) that

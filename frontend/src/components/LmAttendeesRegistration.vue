@@ -319,7 +319,7 @@ function scrollTo(el: HTMLElement, callback: () => void) {
               <p>
                 Pro angefangene {{ NUMBER_YOUTH_LEADER_PER_YOUTHS }} Jugendliche ist ein Jugendleiter mit gültiger
                 Juleika erforderlich. <br />
-                Dazu bitte Juleikanummer und -Ablaufdatum angeben.
+                Bitte Juleika-Nummer beim Hinzufügen prüfen und bestätigen.
               </p>
             </div>
           </v-alert>

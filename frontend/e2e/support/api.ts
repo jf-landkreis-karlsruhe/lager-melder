@@ -97,7 +97,8 @@ const defaultResponses = (): Record<string, object> => ({
   },
   'GET departments/for-selecting': [{ id: department.id, name: department.name }],
   'GET tShirtSizes': ['140', '152', '164', 'S', 'M', 'L', 'XL'],
-  'GET event-days': [{ id: 'day-1', name: 'Freitag', dayOfEvent: 1 }]
+  'GET event-days': [{ id: 'day-1', name: 'Freitag', dayOfEvent: 1 }],
+  'POST juleika/validate': { valid: true, expireDate: '2099-12-31' }
 })
 
 /**

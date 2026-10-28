@@ -74,7 +74,7 @@ class Entities {
                 additionalInformation = "n",
                 role = AttendeeRole.YOUTH,
                 juleikaNumber = "12345678",
-                juleikaExpireDate = LocalDate.of(2099, 5, 5).toString(),
+                juleikaExpireDate = null,
                 partOfDepartmentId = departmentId,
                 helperDays = emptySet(),
             )

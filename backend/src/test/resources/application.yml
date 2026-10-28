@@ -20,6 +20,9 @@ management:
 application:
   mail:
     send: false
+  juleika:
+    # never call the real Juleika API from tests
+    use-mock: true
   admin:
     passwordHash: $2a$12$GbW1cJfrpAlYuAGMiV6Cju/l4KJZe1FLW3TNCcVLDqn2GHcrefRxq # password
   corsOrigins: http://test

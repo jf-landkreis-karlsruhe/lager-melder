@@ -25,7 +25,7 @@ data class RestAttendeeRequest(
     @field:NotNull(message = "role is missing")
     val role: AttendeeRole,
     val juleikaNumber: String,
-    val juleikaExpireDate: String,
+    val juleikaExpireDate: String?,
     val partOfDepartmentId: Long,
     val helperDays: Set<String> = emptySet(),
 ) {
@@ -141,11 +141,6 @@ data class RestAttendeeRequest(
                 }
             }
 
-        private fun toDateOrNull(date: String): LocalDate? =
-            if (date != "") {
-                LocalDate.parse(date)
-            } else {
-                null
-            }
+        private fun toDateOrNull(date: String?): LocalDate? = date?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
     }
 }

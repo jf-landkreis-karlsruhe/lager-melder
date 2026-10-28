@@ -48,9 +48,6 @@ const attendeeListWithAllAttributes = computed<Attendee[]>(() => {
     if (!attendee.juleikaNumber) {
       newAttendee.juleikaNumber = ''
     }
-    if (!attendee.juleikaExpireDate) {
-      newAttendee.juleikaExpireDate = ''
-    }
     return newAttendee
   })
 })
@@ -79,7 +76,7 @@ const handleSaveNewAttendee = (newAttendee: Attendee) => {
 
 const juleikaIsInvalid = (attendee: Attendee): boolean => {
   return (
-    attendee.role === AttendeeRole.YOUTH_LEADER &&
+    (attendee.role === AttendeeRole.YOUTH_LEADER || attendee.role === AttendeeRole.CHILD_LEADER) &&
     (!isValidJuleikaNumber(attendee.juleikaNumber) ||
       !isValidJuleikaExpireDate(attendee.juleikaExpireDate, props.eventEnd))
   )
@@ -127,6 +124,7 @@ const juleikaIsInvalid = (attendee: Attendee): boolean => {
         :loading="loading"
         :attendees-can-be-edited="props.attendeesCanBeEdited"
         :is-highlighted="props.showHighlights && juleikaIsInvalid(attendee)"
+        :juleika-is-invalid="juleikaIsInvalid(attendee)"
         @update="emit('update', $event, expansionPanels[index])"
         @delete="emit('delete', $event)"
       ></LmAttendeeExpansionPanel>
