@@ -47,6 +47,13 @@ test('every evacuation group but the first starts on a new page when printing', 
   await expect(sections.nth(1)).toHaveCSS('break-before', 'page')
 })
 
+test('tents have a border when printing', async ({ page }) => {
+  await page.goto('/anwesend-print')
+  await page.emulateMedia({ media: 'print' })
+
+  await expect(page.locator('.tent-chip', { hasText: 'R1' })).toHaveCSS('border-top-width', '1px')
+})
+
 test('the layout does not cut off content when printing', async ({ page }) => {
   await page.goto('/anwesend-print')
   await page.emulateMedia({ media: 'print' })

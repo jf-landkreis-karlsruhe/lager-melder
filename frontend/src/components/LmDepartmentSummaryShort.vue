@@ -57,7 +57,7 @@ const props = defineProps<{
           <v-chip
             v-for="tent in props.departmentDistribution.department.tentMarkings"
             :key="tent.id"
-            class="mx-2 my-2"
+            class="mx-2 my-2 tent-chip"
             size="x-large"
           >
             {{ tent.name }}
@@ -84,6 +84,9 @@ const props = defineProps<{
   padding: 0 15px;
 }
 @media print {
+  .tent-chip {
+    border: 1px solid #555;
+  }
   .no-break {
     page-break-inside: avoid;
     break-inside: avoid; /* für neuere Browser */
