@@ -46,7 +46,12 @@ const props = defineProps<{
         '33; padding: 9px 9px 0;border-radius:3px'
       "
     >
-      <h4>Zelte</h4>
+      <h4>
+        Zelte
+        <span v-if="departmentDistribution.department.evacuationGroup">
+          – Evakuierungsgruppe {{ departmentDistribution.department.evacuationGroup.name }}
+        </span>
+      </h4>
       <div class="d-flex flex-wrap justify-space-between align-baseline">
         <div class="d-flex flex-wrap flex-grow-1">
           <v-chip
