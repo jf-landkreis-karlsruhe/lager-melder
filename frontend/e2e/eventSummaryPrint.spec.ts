@@ -63,6 +63,15 @@ test('the layout does not cut off content when printing', async ({ page }) => {
   await expect(page.locator('.grid-container')).toHaveCSS('overflow', 'visible')
 })
 
+test('the layout does not add an empty page at the end when printing', async ({ page }) => {
+  await page.goto('/anwesend-print')
+  await page.emulateMedia({ media: 'print' })
+  await expect(page.locator('section.evacuation-group')).toHaveCount(2)
+
+  await expect(page.locator('body')).toHaveCSS('min-height', '0px')
+  await expect(page.locator('.v-application__wrap')).toHaveCSS('min-height', 'auto')
+})
+
 test('attendee overview still shows departments without evacuation group', async ({ page }) => {
   await page.goto('/anwesend')
 
