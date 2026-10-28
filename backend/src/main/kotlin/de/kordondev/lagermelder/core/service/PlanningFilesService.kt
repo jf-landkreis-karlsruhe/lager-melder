@@ -15,8 +15,8 @@ import de.kordondev.lagermelder.core.persistence.entry.TentsEntity
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.core.service.helper.AttendeeRoleHelper
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import de.kordondev.lagermelder.core.service.helper.BatchData
+import de.kordondev.lagermelder.core.service.helper.BatchPdfCreator
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.awt.Color
@@ -38,9 +38,8 @@ class PlanningFilesService(
     private val eventDayService: EventDayService,
     private val attendeeRoleHelper: AttendeeRoleHelper,
     private val tentsService: TentsService,
+    private val batchPdfCreator: BatchPdfCreator,
 ) {
-    private val yDistanceBetweenBatches = 141F
-    private val logger: Logger = LoggerFactory.getLogger(PlanningFilesService::class.java)
     private val headlineFont = Font(Font.TIMES_ROMAN, 20F, Font.NORMAL, Color.BLACK)
     private val markingFont = Font(Font.TIMES_ROMAN, 90F, Font.NORMAL, Color.BLACK)
     private val markingFontSmall = Font(Font.TIMES_ROMAN, 60F, Font.NORMAL, Color.BLACK)
@@ -74,93 +73,16 @@ class PlanningFilesService(
     }
 
     private fun createBatches(attendees: kotlin.collections.List<Attendee>): ByteArray {
-        val documentStream = ByteArrayOutputStream()
-        val document = Document(PageSize.A4)
-        val pdfCopy = PdfCopy(document, documentStream)
-        document.open()
-
-        logger.info("Creating batches for ${attendees.size} on ${1 + (attendees.size / 5)} pages")
-        var attendeeIndex = 0
-        while (attendeeIndex < attendees.size) {
-            val resource = resourceLoader.getResource("classpath:data/batch.pdf")
-            val pdfReader = PdfReader(resource.inputStream)
-            val pageStream = ByteArrayOutputStream()
-            val stamper = PdfStamper(pdfReader, pageStream)
-
-            val content = stamper.getOverContent(1)
-            content.setColorFill(Color.BLACK)
-            content.setFontAndSize(
-                BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED),
-                16F,
-            )
-
-            var attendeesOnPage = 0
-            while (attendeeIndex < attendees.size && attendeesOnPage < 5) {
-                addName(content, attendees[attendeeIndex], attendeesOnPage)
-                addDepartment(content, attendees[attendeeIndex], attendeesOnPage)
-                addBarCode(content, attendees[attendeeIndex], attendeesOnPage)
-
-                attendeesOnPage++
-                attendeeIndex++
+        val template = resourceLoader.getResource("classpath:data/batch.pdf").inputStream.use { it.readBytes() }
+        val batches =
+            attendees.map {
+                BatchData(
+                    name = "${it.firstName} ${it.lastName}",
+                    department = getPartOfDepartmentOrDepartmentName(it, true),
+                    code = it.code,
+                )
             }
-
-            stamper.close()
-            pdfReader.close()
-
-            val readInputPDF = PdfReader(pageStream.toByteArray())
-
-            pdfCopy.addPage(pdfCopy.getImportedPage(readInputPDF, 1))
-            pdfCopy.freeReader(readInputPDF)
-        }
-
-        document.close()
-        pdfCopy.close()
-
-        return documentStream.toByteArray()
-    }
-
-    private fun addName(
-        content: PdfContentByte,
-        attendee: Attendee,
-        attendeesOnPage: Int,
-    ) {
-        content.beginText()
-        val xValue = 345F
-        val yValue = 738F
-        content.setTextMatrix(xValue, yValue - yDistanceBetweenBatches * attendeesOnPage)
-        content.showText("${attendee.firstName} ${attendee.lastName}")
-        content.endText()
-    }
-
-    private fun addDepartment(
-        content: PdfContentByte,
-        attendee: Attendee,
-        attendeesOnPage: Int,
-    ) {
-        content.beginText()
-        val xValue = 335F
-        val yValue = 723F
-        content.setTextMatrix(xValue, yValue - yDistanceBetweenBatches * attendeesOnPage)
-        content.showText(getPartOfDepartmentOrDepartmentName(attendee, true))
-        content.endText()
-    }
-
-    private fun addBarCode(
-        content: PdfContentByte,
-        attendee: Attendee,
-        attendeesOnPage: Int,
-    ) {
-        val barcode = Barcode128()
-        barcode.code = attendee.code
-        barcode.barHeight = 40F
-        barcode.x = 1.4F
-        barcode.altText = attendee.code
-        barcode.baseline = 12F
-        barcode.size = 12F
-        val template = barcode.createTemplateWithBarcode(content, Color.BLACK, Color.BLACK)
-        val xValue = 320F
-        val yValue = 660F
-        content.addTemplate(template, xValue, yValue - yDistanceBetweenBatches * attendeesOnPage)
+        return batchPdfCreator.create(batches, template)
     }
 
     fun createEventPDF(frontendBaseUrl: String): ByteArray {
