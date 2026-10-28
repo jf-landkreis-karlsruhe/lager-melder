@@ -65,7 +65,8 @@ export const loginAs = async (page: Page, role: Role) => {
 type Handler = (route: Route) => Promise<void> | void
 export type ApiOverrides = Record<string, Handler | object>
 
-const inDays = (days: number) => new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
+/** A day as the backend sends registration dates, e.g. "2026-07-05". */
+const inDays = (days: number) => new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
 const defaultResponses = (): Record<string, object> => ({
   'GET settings/registration-end': {

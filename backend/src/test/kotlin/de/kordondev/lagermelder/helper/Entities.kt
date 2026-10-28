@@ -3,9 +3,7 @@ package de.kordondev.lagermelder.helper
 import de.kordondev.lagermelder.core.persistence.entry.*
 import de.kordondev.lagermelder.core.persistence.entry.interfaces.Attendee
 import de.kordondev.lagermelder.rest.model.request.*
-import java.time.Instant
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 import java.util.*
 
 class Entities {
@@ -141,11 +139,10 @@ class Entities {
             )
         }
 
-        fun settings(): SettingsEntry {
-            val now = Instant.now()
-            return SettingsEntry(
+        fun settings(): SettingsEntry =
+            SettingsEntry(
                 id = 1L,
-                registrationEnd = now.plus(10, ChronoUnit.DAYS),
+                registrationEnd = LocalDate.now().plusDays(10),
                 hostCity = "city",
                 eventStart = LocalDate.now().plusDays(60),
                 eventEnd = LocalDate.now().plusDays(65),
@@ -154,11 +151,10 @@ class Entities {
                 organizer = "organizer",
                 organisationAddress = "organisation",
                 moneyPerYouthLoader = "8,99",
-                startDownloadRegistrationFiles = now.plus(20, ChronoUnit.DAYS),
-                childGroupsRegistrationEnd = now.plus(10, ChronoUnit.DAYS),
-                helpersRegistrationEnd = now.plus(10, ChronoUnit.DAYS),
+                startDownloadRegistrationFiles = LocalDate.now().plusDays(20),
+                childGroupsRegistrationEnd = LocalDate.now().plusDays(10),
+                helpersRegistrationEnd = LocalDate.now().plusDays(10),
                 numberOfDuties = 0,
             )
-        }
     }
 }

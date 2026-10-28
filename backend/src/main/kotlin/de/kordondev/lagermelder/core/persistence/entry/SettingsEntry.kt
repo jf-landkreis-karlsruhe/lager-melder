@@ -5,8 +5,8 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.Hibernate
-import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 @Entity
@@ -15,7 +15,7 @@ data class SettingsEntry(
     @Id
     val id: Long = 0,
     @Column(name = "registration_end")
-    val registrationEnd: Instant,
+    val registrationEnd: LocalDate,
     @Column(name = "host_city")
     val hostCity: String,
     @Column(name = "event_start")
@@ -33,14 +33,21 @@ data class SettingsEntry(
     @Column(name = "moneyPerYouthLoader")
     val moneyPerYouthLoader: String,
     @Column(name = "start_download_registration_files")
-    val startDownloadRegistrationFiles: Instant,
+    val startDownloadRegistrationFiles: LocalDate,
     @Column(name = "child_groups_registration_end")
-    val childGroupsRegistrationEnd: Instant,
+    val childGroupsRegistrationEnd: LocalDate,
     @Column(name = "helpers_registration_end")
-    val helpersRegistrationEnd: Instant,
+    val helpersRegistrationEnd: LocalDate,
     @Column(name = "number_of_duties")
     val numberOfDuties: Int = 0,
 ) {
+    companion object {
+        /** Registration dates are whole days in the time zone of the event. */
+        val TIME_ZONE: ZoneId = ZoneId.of("Europe/Berlin")
+
+        fun today(): LocalDate = LocalDate.now(TIME_ZONE)
+    }
+
     fun childEventDay(): LocalDate = eventStart.plusDays(1)
 
     fun getDaysOfEvent(): Long = ChronoUnit.DAYS.between(eventStart, eventEnd) + 1

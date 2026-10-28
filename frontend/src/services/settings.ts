@@ -1,3 +1,4 @@
+import { endOfDay, startOfDay } from '@/helper/displayDate'
 import { withAuthenticationHeader } from './authentication'
 import { getData, putData } from '../helper/fetch'
 
@@ -18,14 +19,8 @@ export interface Settings {
   numberOfDuties: number
 }
 
-export const getSettings = () =>
-  getData<Settings>(`settings`, withAuthenticationHeader()).then((settings) => ({
-    ...settings,
-    registrationEnd: toDate(settings.registrationEnd),
-    childGroupsRegistrationEnd: toDate(settings.childGroupsRegistrationEnd),
-    helpersRegistrationEnd: toDate(settings.helpersRegistrationEnd),
-    startDownloadRegistrationFiles: toDate(settings.startDownloadRegistrationFiles)
-  }))
+// registration dates are days ("2026-07-05"), as needed by the date inputs
+export const getSettings = () => getData<Settings>(`settings`, withAuthenticationHeader())
 
 export interface RegistrationEnd<T = Date> {
   registrationEnd: T
@@ -41,23 +36,16 @@ export const getRegistrationEnd = () => {
   return getData<RegistrationEnd<string>>(`settings/registration-end`, withAuthenticationHeader()).then((settings) => {
     return {
       ...settings,
-      registrationEnd: new Date(settings.registrationEnd),
-      childGroupRegistrationEnd: new Date(settings.childGroupsRegistrationEnd),
-      helpersRegistrationEnd: new Date(settings.helpersRegistrationEnd),
+      registrationEnd: endOfDay(settings.registrationEnd),
+      childGroupRegistrationEnd: endOfDay(settings.childGroupsRegistrationEnd),
+      helpersRegistrationEnd: endOfDay(settings.helpersRegistrationEnd),
       eventEnd: new Date(settings.eventEnd)
     }
   })
 }
 
-export const updateSettings = (settings: Settings) => {
-  return putData<Settings>(`settings`, withAuthenticationHeader(), {
-    ...settings,
-    registrationEnd: toInstantString(settings.registrationEnd, false),
-    childGroupsRegistrationEnd: toInstantString(settings.childGroupsRegistrationEnd, false),
-    helpersRegistrationEnd: toInstantString(settings.helpersRegistrationEnd, false),
-    startDownloadRegistrationFiles: toInstantString(settings.startDownloadRegistrationFiles, true)
-  })
-}
+export const updateSettings = (settings: Settings) =>
+  putData<Settings>(`settings`, withAuthenticationHeader(), settings)
 
 export interface StartDownloadRegistrationFiles<T = Date> {
   startDownloadRegistrationFiles: T
@@ -71,19 +59,7 @@ export const getStartDownloadRegistrationFiles = () => {
   ).then((settings) => {
     return {
       ...settings,
-      startDownloadRegistrationFiles: new Date(settings.startDownloadRegistrationFiles)
+      startDownloadRegistrationFiles: startOfDay(settings.startDownloadRegistrationFiles)
     }
   })
-}
-
-const toInstantString = (dateString: string, toStartOfDay: boolean) => {
-  const date = new Date(dateString)
-  date.setHours(toStartOfDay ? 5 : 23)
-  date.setMinutes(toStartOfDay ? 0 : 59)
-  date.setSeconds(toStartOfDay ? 1 : 59)
-  return date.toISOString()
-}
-
-const toDate = (dateString: string) => {
-  return new Date(dateString).toISOString().split('T')[0]
 }

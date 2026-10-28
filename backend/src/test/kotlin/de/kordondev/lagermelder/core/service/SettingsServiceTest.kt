@@ -20,9 +20,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.Instant
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 class SettingsServiceTest {
     private lateinit var settingsRepository: SettingsRepository
@@ -39,6 +37,13 @@ class SettingsServiceTest {
     @Test
     fun youthCanBeEditedBeforeRegistrationEnd() {
         givenSettings(Entities.settings().copy(registrationEnd = inDays(1)))
+
+        assertThat(settingsService.canBeEdited(Entities.attendee())).isTrue()
+    }
+
+    @Test
+    fun youthCanBeEditedOnTheLastDayOfRegistration() {
+        givenSettings(Entities.settings().copy(registrationEnd = inDays(0)))
 
         assertThat(settingsService.canBeEdited(Entities.attendee())).isTrue()
     }
@@ -63,6 +68,27 @@ class SettingsServiceTest {
         givenSettings(Entities.settings().copy(registrationEnd = inDays(-1), childGroupsRegistrationEnd = inDays(1)))
 
         assertThat(settingsService.canBeEdited(child())).isTrue()
+    }
+
+    @Test
+    fun childrenCanBeEditedOnTheLastDayOfChildGroupsRegistration() {
+        givenSettings(Entities.settings().copy(childGroupsRegistrationEnd = inDays(0)))
+
+        assertThat(settingsService.canBeEdited(child())).isTrue()
+    }
+
+    @Test
+    fun childrenCannotBeEditedAfterChildGroupsRegistrationEnd() {
+        givenSettings(Entities.settings().copy(childGroupsRegistrationEnd = inDays(-1)))
+
+        assertThat(settingsService.canBeEdited(child())).isFalse()
+    }
+
+    @Test
+    fun helpersCanBeEditedOnTheLastDayOfHelpersRegistration() {
+        givenSettings(Entities.settings().copy(helpersRegistrationEnd = inDays(0)))
+
+        assertThat(settingsService.canBeEdited(helper())).isTrue()
     }
 
     @Test
@@ -91,6 +117,20 @@ class SettingsServiceTest {
         givenSettings(Entities.settings().copy(startDownloadRegistrationFiles = inDays(-1)))
 
         assertThat(settingsService.canRegistrationFilesDownloaded()).isTrue()
+    }
+
+    @Test
+    fun registrationFilesCanBeDownloadedOnStartDate() {
+        givenSettings(Entities.settings().copy(startDownloadRegistrationFiles = inDays(0)))
+
+        assertThat(settingsService.canRegistrationFilesDownloaded()).isTrue()
+    }
+
+    @Test
+    fun registrationFilesCannotBeDownloadedBeforeStartDate() {
+        givenSettings(Entities.settings().copy(startDownloadRegistrationFiles = inDays(1)))
+
+        assertThat(settingsService.canRegistrationFilesDownloaded()).isFalse()
     }
 
     @Test
@@ -125,7 +165,7 @@ class SettingsServiceTest {
         whenever(settingsRepository.findAll()).doReturn(listOf(settings))
     }
 
-    private fun inDays(days: Long): Instant = Instant.now().plus(days, ChronoUnit.DAYS)
+    private fun inDays(days: Long): LocalDate = SettingsEntry.today().plusDays(days)
 
     private fun child() =
         ChildEntry(

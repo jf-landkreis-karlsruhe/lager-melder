@@ -30,8 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
-import java.time.Instant
-import java.time.temporal.ChronoUnit
+import java.time.LocalDate
 
 /**
  * Settings, T-shirt sizes, tents, mails and the read-only lookup endpoints, used by the specialized field director.
@@ -78,7 +77,7 @@ class AdministrationControllerTest(
     @Test
     fun settingsRejectRegistrationEndAfterDownloadStart() {
         val request = Entities.restSettingsRequest()
-        val invalid = request.copy(registrationEnd = request.startDownloadRegistrationFiles.plus(1, ChronoUnit.DAYS))
+        val invalid = request.copy(registrationEnd = request.startDownloadRegistrationFiles.plusDays(1))
 
         mockMvc
             .perform(webTestHelper.put("/settings", invalid))
@@ -166,8 +165,8 @@ class AdministrationControllerTest(
 
         settingsRepository.save(
             settingsService.getSettings().copy(
-                registrationEnd = Instant.now().minus(2, ChronoUnit.DAYS),
-                startDownloadRegistrationFiles = Instant.now().minus(1, ChronoUnit.DAYS),
+                registrationEnd = LocalDate.now().minusDays(2),
+                startDownloadRegistrationFiles = LocalDate.now().minusDays(1),
             ),
         )
 

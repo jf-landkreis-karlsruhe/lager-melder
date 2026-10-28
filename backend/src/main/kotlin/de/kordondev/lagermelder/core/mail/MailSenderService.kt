@@ -16,7 +16,6 @@ import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import java.time.Duration
 import java.time.LocalDate
-import java.time.ZoneId
 
 @Service("MailSenderService")
 class MailSenderService(
@@ -45,7 +44,7 @@ class MailSenderService(
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
 
             val cxt = Context()
-            val registrationDeadlineDate = LocalDate.ofInstant(settings.registrationEnd, ZoneId.of("Europe/Berlin"))
+            val registrationDeadlineDate = settings.registrationEnd
             cxt.setVariable("leaderName", leaderName)
             cxt.setVariable("hostCity", settings.hostCity)
             cxt.setVariable("registrationDeadline", registrationDeadlineDate.format(germanDate))
@@ -78,8 +77,8 @@ class MailSenderService(
             authorityService.isAdmin()
             val headerLogoName = headerLogo
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
-            val registrationDeadlineDate = LocalDate.ofInstant(settings.registrationEnd, ZoneId.of("Europe/Berlin"))
-            val daysLeft = daysUntilEnd(LocalDate.now(), registrationDeadlineDate)
+            val registrationDeadlineDate = settings.registrationEnd
+            val daysLeft = daysUntilEnd(SettingsEntry.today(), registrationDeadlineDate)
 
             val cxt = Context()
             cxt.setVariable("leaderName", leaderName)
@@ -115,8 +114,7 @@ class MailSenderService(
             authorityService.isAdmin()
             val headerLogoName = headerLogo
             val headerLogo = ResourceUtils.getFile("classpath:static/$headerLogoName")
-            val startDownloadRegistrationFiles =
-                LocalDate.ofInstant(settings.startDownloadRegistrationFiles, ZoneId.of("Europe/Berlin"))
+            val startDownloadRegistrationFiles = settings.startDownloadRegistrationFiles
 
             val cxt = Context()
             cxt.setVariable("leaderName", leaderName)

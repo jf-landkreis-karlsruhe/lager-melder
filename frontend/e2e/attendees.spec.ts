@@ -143,4 +143,23 @@ test.describe('add attendee', () => {
     expect(createdBody?.juleikaExpireDate).toBeUndefined()
     expect(unmocked).toEqual([])
   })
+
+  test('shows the last minute of the registration end day', async ({ page }) => {
+    await loginAs(page, 'USER')
+    await mockApi(page, {
+      'GET settings/registration-end': {
+        registrationEnd: '2099-07-05',
+        attendeesCanBeEdited: true,
+        childGroupsRegistrationEnd: '2099-07-06',
+        childGroupsCanBeEdited: true,
+        helpersRegistrationEnd: '2099-07-07',
+        helpersCanBeEdited: true,
+        eventEnd: '2099-07-10'
+      }
+    })
+
+    await page.goto('/teilnehmer')
+
+    await expect(page.getByText('Anmeldeschluss ist am: Sonntag, 05.07.2099, 23:59 Uhr').first()).toBeVisible()
+  })
 })

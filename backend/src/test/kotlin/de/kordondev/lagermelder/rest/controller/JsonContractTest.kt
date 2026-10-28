@@ -13,6 +13,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -92,6 +93,31 @@ class JsonContractTest(
             .perform(post("/attendees").contentType(MediaType.APPLICATION_JSON).content(youthLeaderJson(department.id, "12345")))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.juleikaExpireDate").doesNotExist())
+    }
+
+    @Test
+    fun registrationDatesAreSentAndReturnedAsDays() {
+        val settingsJson =
+            """
+            {"id": 1, "registrationEnd": "2099-07-01", "childGroupsRegistrationEnd": "2099-07-02",
+             "helpersRegistrationEnd": "2099-07-03", "hostCity": "Ettlingen", "eventStart": "2099-08-01",
+             "eventEnd": "2099-08-05", "eventName": "Zeltlager", "eventAddress": "Platz", "organizer": "KJF",
+             "organisationAddress": "Adresse", "moneyPerYouthLoader": "8,99",
+             "startDownloadRegistrationFiles": "2099-07-10", "numberOfDuties": 2}
+            """.trimIndent()
+
+        mockMvc
+            .perform(put("/settings").contentType(MediaType.APPLICATION_JSON).content(settingsJson))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.registrationEnd").value("2099-07-01"))
+            .andExpect(jsonPath("$.startDownloadRegistrationFiles").value("2099-07-10"))
+
+        mockMvc
+            .perform(webTestHelper.get("/settings/registration-end"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.registrationEnd").value("2099-07-01"))
+            .andExpect(jsonPath("$.childGroupsRegistrationEnd").value("2099-07-02"))
+            .andExpect(jsonPath("$.helpersRegistrationEnd").value("2099-07-03"))
     }
 
     // the mocked Juleika API accepts numbers ending in 0 and returns 2099-12-31, the client sends its own date

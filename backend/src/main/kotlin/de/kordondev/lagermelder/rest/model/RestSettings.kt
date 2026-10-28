@@ -1,12 +1,11 @@
 package de.kordondev.lagermelder.rest.model
 
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
-import java.time.Instant
 import java.time.LocalDate
 
 data class RestSettings(
     val id: Long,
-    val registrationEnd: Instant,
+    val registrationEnd: LocalDate,
     val hostCity: String,
     val eventStart: LocalDate,
     val eventEnd: LocalDate,
@@ -15,9 +14,9 @@ data class RestSettings(
     val organizer: String,
     val organisationAddress: String, // Multiline
     val moneyPerYouthLoader: String,
-    val startDownloadRegistrationFiles: Instant,
-    val childGroupsRegistrationEnd: Instant,
-    val helpersRegistrationEnd: Instant,
+    val startDownloadRegistrationFiles: LocalDate,
+    val childGroupsRegistrationEnd: LocalDate,
+    val helpersRegistrationEnd: LocalDate,
     val numberOfDuties: Int,
 ) {
     companion object {

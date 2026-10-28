@@ -55,3 +55,24 @@ export const getDateFromDateWithTimeString = (date: Date | string, time: string)
   dateWithTime.setMinutes(minutes)
   return dateWithTime
 }
+
+/**
+ * Parses a day without time zone conversion (new Date('2026-07-05') would be midnight UTC)
+ * @param date day as string, e.g. "2026-07-05"
+ * @returns local date at 00:00
+ */
+export const startOfDay = (date: string): Date => {
+  const [year, month, day] = date.split('-').map((n) => Number(n))
+  return new Date(year, month - 1, day)
+}
+
+/**
+ * Registration ends are whole days, the last day is included
+ * @param date day as string, e.g. "2026-07-05"
+ * @returns local date at 23:59:59
+ */
+export const endOfDay = (date: string): Date => {
+  const end = startOfDay(date)
+  end.setHours(23, 59, 59)
+  return end
+}
