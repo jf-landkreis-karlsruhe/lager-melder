@@ -88,15 +88,14 @@ const handleFormSave = (editedAttendee: Attendee) => {
           style="flex: 3"
         >
           <v-icon class="mr-2">mdi-card-account-details-outline</v-icon>
-          <div class="d-flex flex-column ga-2">
-            <!-- the expire date of an invalid Juleika is meaningless, so only the number is shown as a warning -->
-            <span v-if="props.juleikaIsInvalid" class="juleika-invalid" title="Keine gültige Juleika">
-              {{ props.attendee.juleikaNumber || '-' }}
-            </span>
-            <template v-else>
-              <span>{{ props.attendee.juleikaNumber || '-' }}</span>
-              <span>{{ dateAsText(props.attendee.juleikaExpireDate ?? '-') }}</span>
-            </template>
+          <!-- the expire date stays visible, so it is clear why a Juleika expiring before the event end is invalid -->
+          <div
+            class="d-flex flex-column ga-2"
+            :class="{ 'juleika-invalid': props.juleikaIsInvalid }"
+            :title="props.juleikaIsInvalid ? 'Keine gültige Juleika' : undefined"
+          >
+            <span>{{ props.attendee.juleikaNumber || '-' }}</span>
+            <span v-if="props.attendee.juleikaExpireDate">{{ dateAsText(props.attendee.juleikaExpireDate) }}</span>
           </div>
         </div>
 
@@ -159,7 +158,7 @@ const handleFormSave = (editedAttendee: Attendee) => {
 }
 
 .juleika-invalid {
-  color: rgb(var(--v-theme-warning));
+  color: rgb(var(--v-theme-error));
 }
 
 .is-attending-icon {

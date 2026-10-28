@@ -16,11 +16,13 @@ test.describe('attendee registration', () => {
     expect(unmocked).toEqual([])
   })
 
-  test('shows only the number of a youth leader without valid Juleika', async ({ page }) => {
+  test('shows number and expire date of a youth leader whose Juleika expires before the event end', async ({
+    page
+  }) => {
     await mockApi(page, {
       [`GET departments/${department.id}/attendees`]: {
         youths: [youth],
-        youthLeaders: [{ ...youthLeader, juleikaNumber: '99999', juleikaExpireDate: null }],
+        youthLeaders: [{ ...youthLeader, juleikaNumber: '99999', juleikaExpireDate: '2027-07-01' }],
         children: [],
         childLeaders: [],
         zKids: [],
@@ -30,8 +32,10 @@ test.describe('attendee registration', () => {
 
     await page.goto('/teilnehmer')
 
-    await expect(page.getByTitle('Keine gültige Juleika')).toHaveText('99999')
-    await expect(page.getByTitle('Keine gültige Juleika')).toHaveCSS('color', 'rgb(251, 140, 0)')
+    const juleika = page.getByTitle('Keine gültige Juleika')
+    await expect(juleika).toContainText('99999')
+    await expect(juleika).toContainText('01.07.2027')
+    await expect(juleika).toHaveCSS('color', 'rgb(176, 0, 32)')
   })
 })
 
