@@ -24,8 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
-import java.time.Instant
-import java.time.temporal.ChronoUnit
+import java.time.LocalDate
 
 /**
  * Smoke tests for the generated PDFs/CSV: every endpoint must produce a valid file for realistic data
@@ -115,7 +114,7 @@ class GeneratedFilesControllerTest(
     @Test
     fun registrationFilesCannotBeDownloadedBeforeDownloadStart() {
         settingsRepository.save(
-            settingsService.getSettings().copy(startDownloadRegistrationFiles = Instant.now().plus(1, ChronoUnit.DAYS)),
+            settingsService.getSettings().copy(startDownloadRegistrationFiles = LocalDate.now().plusDays(1)),
         )
 
         mockMvc
@@ -125,11 +124,10 @@ class GeneratedFilesControllerTest(
     }
 
     private fun allowRegistrationFileDownload() {
-        val now = Instant.now()
         settingsRepository.save(
             settingsService.getSettings().copy(
-                registrationEnd = now.minus(2, ChronoUnit.DAYS),
-                startDownloadRegistrationFiles = now.minus(1, ChronoUnit.DAYS),
+                registrationEnd = LocalDate.now().minusDays(2),
+                startDownloadRegistrationFiles = LocalDate.now().minusDays(1),
             ),
         )
     }

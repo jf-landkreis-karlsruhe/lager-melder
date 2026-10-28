@@ -1,15 +1,14 @@
 package de.kordondev.lagermelder.rest.model.request
 
 import de.kordondev.lagermelder.core.persistence.entry.SettingsEntry
-import java.time.Instant
 import java.time.LocalDate
 
 data class RestRegistrationEnd(
-    val registrationEnd: Instant,
+    val registrationEnd: LocalDate,
     val attendeesCanBeEdited: Boolean,
-    val childGroupsRegistrationEnd: Instant,
+    val childGroupsRegistrationEnd: LocalDate,
     val childGroupsCanBeEdited: Boolean,
-    val helpersRegistrationEnd: Instant,
+    val helpersRegistrationEnd: LocalDate,
     val helpersCanBeEdited: Boolean,
     val eventEnd: LocalDate,
 ) {

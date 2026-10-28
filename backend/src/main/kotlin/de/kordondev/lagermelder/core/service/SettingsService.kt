@@ -6,7 +6,6 @@ import de.kordondev.lagermelder.core.persistence.repository.SettingsRepository
 import de.kordondev.lagermelder.core.security.AuthorityService
 import de.kordondev.lagermelder.exception.BadRequestException
 import org.springframework.stereotype.Service
-import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -25,8 +24,8 @@ class SettingsService(
             return saveSettings(
                 SettingsEntry(
                     id = SETTINGS_ID,
-                    registrationEnd = Instant.now().plus(30, ChronoUnit.DAYS),
-                    startDownloadRegistrationFiles = Instant.now().plus(45, ChronoUnit.DAYS),
+                    registrationEnd = LocalDate.now().plusDays(30),
+                    startDownloadRegistrationFiles = LocalDate.now().plusDays(45),
                     hostCity = "Austragungsort",
                     eventStart = LocalDate.now().plusDays(60),
                     eventEnd = LocalDate.now().plusDays(65),
@@ -35,8 +34,8 @@ class SettingsService(
                     organizer = "",
                     organisationAddress = "",
                     moneyPerYouthLoader = "8,99",
-                    childGroupsRegistrationEnd = Instant.now().plus(35, ChronoUnit.DAYS),
-                    helpersRegistrationEnd = Instant.now().plus(33, ChronoUnit.DAYS),
+                    childGroupsRegistrationEnd = LocalDate.now().plusDays(35),
+                    helpersRegistrationEnd = LocalDate.now().plusDays(33),
                     numberOfDuties = 0,
                 ),
             )
@@ -79,24 +78,27 @@ class SettingsService(
         if (authorityService.isSpecializedFieldDirectorFilter()) {
             return true
         }
-        return Instant.now().isBefore(getSettings().registrationEnd)
+        return isOnOrBefore(getSettings().registrationEnd)
     }
 
     fun childGroupsCanBeEdited(): Boolean {
         if (authorityService.isSpecializedFieldDirectorFilter()) {
             return true
         }
-        return Instant.now().isBefore(getSettings().childGroupsRegistrationEnd)
+        return isOnOrBefore(getSettings().childGroupsRegistrationEnd)
     }
 
-    fun canRegistrationFilesDownloaded(): Boolean = Instant.now().isAfter(getSettings().startDownloadRegistrationFiles)
+    fun canRegistrationFilesDownloaded(): Boolean = !SettingsEntry.today().isBefore(getSettings().startDownloadRegistrationFiles)
 
     fun helpersCanBeEdited(): Boolean {
         if (authorityService.isSpecializedFieldDirectorFilter()) {
             return true
         }
-        return Instant.now().isBefore(getSettings().helpersRegistrationEnd)
+        return isOnOrBefore(getSettings().helpersRegistrationEnd)
     }
+
+    /** The last day of a registration period is included until 23:59 (Europe/Berlin). */
+    private fun isOnOrBefore(lastDay: LocalDate): Boolean = !SettingsEntry.today().isAfter(lastDay)
 
     fun canCheckInAttendees(): Boolean {
         // Check if it is at most one week before the event
