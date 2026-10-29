@@ -46,13 +46,18 @@ const props = defineProps<{
         '33; padding: 9px 9px 0;border-radius:3px'
       "
     >
-      <h4>Zelte</h4>
+      <h4>
+        Zelte
+        <span v-if="departmentDistribution.department.evacuationGroup">
+          – Evakuierungsgruppe {{ departmentDistribution.department.evacuationGroup.name }}
+        </span>
+      </h4>
       <div class="d-flex flex-wrap justify-space-between align-baseline">
         <div class="d-flex flex-wrap flex-grow-1">
           <v-chip
             v-for="tent in props.departmentDistribution.department.tentMarkings"
             :key="tent.id"
-            class="mx-2 my-2"
+            class="mx-2 my-2 tent-chip"
             size="x-large"
           >
             {{ tent.name }}
@@ -79,6 +84,9 @@ const props = defineProps<{
   padding: 0 15px;
 }
 @media print {
+  .tent-chip {
+    border: 1px solid #555;
+  }
   .no-break {
     page-break-inside: avoid;
     break-inside: avoid; /* für neuere Browser */

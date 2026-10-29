@@ -25,6 +25,10 @@ import Header from './components/LmHeader.vue'
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
   overflow: hidden;
+  @media print {
+    height: auto;
+    overflow: visible;
+  }
 }
 
 .my-container {
@@ -32,6 +36,9 @@ import Header from './components/LmHeader.vue'
   flex-direction: column;
   min-height: 100%;
   height: 100%;
+  @media print {
+    height: auto;
+  }
 
   .header {
     flex: 0 1 auto;

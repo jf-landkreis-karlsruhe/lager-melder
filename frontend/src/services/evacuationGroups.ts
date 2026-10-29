@@ -40,3 +40,22 @@ export function sortDepartmentByEvacuationGroup(a: DepartmentDistribution, b: De
   }
   return evacuationA.localeCompare(evacuationB)
 }
+
+export interface EvacuationGroupSection {
+  group: EvacuationGroup
+  departments: DepartmentDistribution[]
+}
+
+export function groupByEvacuationGroup(departments: DepartmentDistribution[]): EvacuationGroupSection[] {
+  return departments
+    .filter((dep) => dep.department.evacuationGroup)
+    .sort(sortDepartmentByEvacuationGroup)
+    .reduce<EvacuationGroupSection[]>((sections, dep) => {
+      const group = dep.department.evacuationGroup!
+      const last = sections[sections.length - 1]
+      if (last?.group.id === group.id) {
+        return [...sections.slice(0, -1), { ...last, departments: [...last.departments, dep] }]
+      }
+      return [...sections, { group, departments: [dep] }]
+    }, [])
+}

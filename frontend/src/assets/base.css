@@ -69,3 +69,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* A minimum height of one screen adds an empty page at the end of a printout */
+@media print {
+  body,
+  body .v-application__wrap {
+    min-height: auto;
+  }
+}
