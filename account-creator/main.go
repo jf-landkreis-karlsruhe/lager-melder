@@ -11,30 +11,25 @@ import (
 func main() {
 	args := parseCommandLineArgs(os.Args[1:])
 
-	accounts := departmentToAccount(models.Departments, args.Domain)
-
-	for _, account := range accounts {
+	for email, department := range models.Departments {
+		account := toAccount(email, department, args.Domain)
 		response := httpclient.CreateAccount(account, args.Token, args.Url)
-		httpclient.AddHeadDepartment(response, models.Departments, args.Token, args.Url)
+		httpclient.AddHeadDepartment(response, department, args.Token, args.Url)
 	}
 }
 
-func departmentToAccount(departments map[string]models.Department, domain string) []models.AccountData {
-	var accounts []models.AccountData
-	for email, department := range departments {
-		account := models.AccountData{
-			Username:       email + domain,
-			DepartmentName: department.Name,
-			LeaderName:     department.Name,
-			LeaderEMail:    email + domain,
-			Features:       []string{"YOUTH_GROUPS", "CHILD_GROUPS"},
-			//Features: []string{"YOUTH_GROUPS", "HELPER"},
-			//Features: []string{"HELPER", "ZKIDS"},
-		}
-		account.Username = strings.ReplaceAll(account.Username, " ", "")
-		accounts = append(accounts, account)
+func toAccount(email string, department models.Department, domain string) models.AccountData {
+	account := models.AccountData{
+		Username:       email + domain,
+		DepartmentName: department.Name,
+		LeaderName:     department.Name,
+		LeaderEMail:    email + domain,
+		Features:       []string{"YOUTH_GROUPS", "CHILD_GROUPS"},
+		//Features: []string{"YOUTH_GROUPS", "HELPER"},
+		//Features: []string{"HELPER", "ZKIDS"},
 	}
-	return accounts
+	account.Username = strings.ReplaceAll(account.Username, " ", "")
+	return account
 }
 
 func parseCommandLineArgs(args []string) CommandLineArgs {

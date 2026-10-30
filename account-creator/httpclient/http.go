@@ -53,13 +53,12 @@ type RestDepartment struct {
 	HeadDepartmentName string   `json:"headDepartmentName"`
 }
 
-func AddHeadDepartment(department models.RegisterResponse, departments map[string]models.Department, accessToken, url string) {
-	restDepartment := loadDepartment(department.DepartmentId, accessToken, url)
-	myDepartment := departments[restDepartment.LeaderEMail]
-	restDepartment.HeadDepartmentName = myDepartment.HeadDepartment
-	restDepartment.ShortName = myDepartment.ShortName
+func AddHeadDepartment(response models.RegisterResponse, department models.Department, accessToken, url string) {
+	restDepartment := loadDepartment(response.DepartmentId, accessToken, url)
+	restDepartment.HeadDepartmentName = department.HeadDepartment
+	restDepartment.ShortName = department.ShortName
 
-	updateDepartment(department.DepartmentId, restDepartment, accessToken, url)
+	updateDepartment(response.DepartmentId, restDepartment, accessToken, url)
 }
 
 func loadDepartment(id int, accessToken, url string) RestDepartment {
